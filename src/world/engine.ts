@@ -159,6 +159,12 @@ export class Engine {
     for (const fn of this.resizeListeners) fn(cssWidth, cssHeight);
   }
 
+  /** Draw the picture. Rooms are drawn from their own scene: there the Sun's light shafts and the world's colour mood stay off. */
+  private draw(): void {
+    this.post.indoor = this.view !== null;
+    this.post.render(this.view ?? this.scene, this.camera, this.time);
+  }
+
   /** Lower the picture size when frames are slow, raise it again when there is room. */
   private tune(dt: number): void {
     if (!this.quality.dynamicResolution) return;
@@ -203,7 +209,7 @@ export class Engine {
 
     for (const fn of this.updates) fn(dt, this.time);
     this.renderer.info.reset();
-    this.post.render(this.view ?? this.scene, this.camera, this.time);
+    this.draw();
   };
 
   start(): void {
@@ -227,13 +233,13 @@ export class Engine {
     this.applyShift();
     for (const fn of this.updates) fn(dt, this.time);
     this.renderer.info.reset();
-    this.post.render(this.view ?? this.scene, this.camera, this.time);
+    this.draw();
   }
 
   /** Draw one frame right now (used for screenshots and the mission certificate). */
   renderOnce(): void {
     if (this.needsResize) this.resize();
-    this.post.render(this.view ?? this.scene, this.camera, this.time);
+    this.draw();
   }
 
   dispose(): void {

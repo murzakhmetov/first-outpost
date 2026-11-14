@@ -476,3 +476,110 @@
   color: rgba(236, 229, 216, 0.8);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
+
+/* ----- The "why it matters" card of a task film (shares the mission card's look) ----- */
+.cut-why h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cut-why-fact {
+  background: linear-gradient(180deg, rgba(242, 196, 109, 0.16), rgba(242, 196, 109, 0.07));
+  box-shadow: inset 0 0 0 1px rgba(242, 196, 109, 0.42);
+}
+.cut-why-fact > b {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f6d48d;
+}
+.cut-why-src {
+  opacity: 0.72;
+  font-size: 0.82em;
+  font-style: italic;
+}
+/* Short films keep the bars thin, so the place they show stays in view. */
+.cutscene.is-short .cut-bar {
+  height: 7vh;
+}
+/* The "Why?" button next to a step's title. */
+.why-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 3px 10px 3px 6px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: #1c1f38;
+  background: linear-gradient(180deg, #ffe39f, #f2c46d);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  vertical-align: middle;
+}
+.why-btn:hover {
+  filter: brightness(1.08);
+}
+.why-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+.why-btn.is-compact {
+  padding: 2px;
+  margin-left: 4px;
+}
+
+/* The night overlay is a button now: a tap skips the rest of the night. */
+button.night {
+  pointer-events: auto !important;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.night-skip {
+  margin-top: 2px;
+  font-size: 0.78rem;
+  font-style: normal;
+  opacity: 0.72;
+}
+
+/* A machine of the plan flashes when its energy changes. */
+.module {
+  position: relative;
+}
+.module-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: module-pulse 0.5s ease-out both;
+}
+@keyframes module-pulse {
+  from {
+    background: rgba(255, 214, 120, 0.22);
+    box-shadow: 0 0 0 0 rgba(255, 214, 120, 0.7);
+  }
+  to {
+    background: transparent;
+    box-shadow: 0 0 0 12px rgba(255, 214, 120, 0);
+  }
+}
+.less-motion .module-pulse {
+  display: none;
+}
+
+/* Read by screen readers only (the night's "Week N goes by" status). */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -50,12 +50,14 @@ function offlineFiles(): Plugin {
         .sort();
       // Models are big: the game asks the worker to keep only the ones this device uses. They still count
       // for the fingerprint, so a build with new models makes browsers refresh their copy.
-      const files = all.filter((path) => !path.startsWith('models/'));
+      const files = all.filter((path) => !path.startsWith('models/') && !path.startsWith('voice/'));
       const fingerprint = createHash('sha256');
       // The daily data file is not part of the build: it is fetched fresh, and a new copy each day must not
       // empty the whole saved game of every visitor.
+      // The voice files are named by a hash of their text and kept on demand by the worker; the voice manifest is
+      // always fetched fresh. New voices must not empty the saved game of every visitor.
       for (const path of all) {
-        if (path.endsWith('spaceweather-latest.json')) continue;
+        if (path.endsWith('spaceweather-latest.json') || path.startsWith('voice/')) continue;
         fingerprint.update(path).update(readFileSync(join(outDir, path)));
       }
       const urls = files.map((path) => (path === 'index.html' ? './' : `./${path}`));

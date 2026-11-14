@@ -238,6 +238,7 @@ export function SettingsPanel(): JSX.Element {
           ]}
         />
         {canSpeak(lang.value) && <Toggle on={s.speak} onChange={(speak) => updateSettings({ speak })} label={t('set.speak')} hint={t('set.speakHint')} />}
+        <Toggle on={s.voice} onChange={(voice) => updateSettings({ voice })} label={t('set.voice')} hint={t('set.voiceHint')} />
         <Toggle on={s.lessMotion} onChange={(lessMotion) => updateSettings({ lessMotion })} label={t('set.motion')} hint={t('set.motionHint')} />
         <Toggle on={s.patterns} onChange={(patterns) => updateSettings({ patterns })} label={t('set.contrast')} hint={t('set.contrastHint')} />
 
@@ -323,6 +324,7 @@ export function AboutPanel(): JSX.Element {
         </ul>
         <h3>{t('about.credits')}</h3>
         <p>{t('about.creditsText')}</p>
+        <p>{t('about.voiceCredit')}</p>
         <h3>{t('about.ai')}</h3>
         <p>{t('about.aiText')}</p>
         <p class="sub">{t('about.nasa')}</p>

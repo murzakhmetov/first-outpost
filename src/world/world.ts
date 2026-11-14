@@ -38,8 +38,12 @@ import { buildTerrain } from './terrain';
 import type { TerrainBuild } from './terrain';
 
 export type WorldMode = 'title' | 'overview' | 'focus' | 'eva' | 'cinema';
-/** The shots of the intro film (see `cinematic`). */
-export type CineShot = 'approach' | 'touchdown' | 'base' | 'crew' | 'goal';
+/**
+ * The camera shots of the films (see `cinematic`): the landing shots of the intro, the crew
+ * cheering, the lander taking off, a solar storm in the sky, a dust storm on the horizon, and
+ * `spot:<id>`, a slow flight round one of the outpost's places.
+ */
+export type CineShot = 'approach' | 'touchdown' | 'base' | 'crew' | 'goal' | 'cheer' | 'liftoff' | 'storm' | 'dust' | `spot:${SpotId}`;
 export type MarkerId = 'life' | 'farm' | 'lab' | 'shield' | 'power';
 
 /** Points above each building where the UI pins its labels. */
@@ -431,32 +435,82 @@ export class World {
     }
   }
 
-  // ----- Intro film ------------------------------------------------------------
+  // ----- Films -----------------------------------------------------------------
 
-  private cine: { shot: CineShot; time: number; landing: number; landed: boolean; dustTimer: number } | null = null;
+  private cine: {
+    shot: CineShot;
+    time: number;
+    landing: number;
+    landed: boolean;
+    dustTimer: number;
+    /** 0 until the lander takes off, then up to 1 high in the sky. */
+    liftoff: number;
+    hidCrew: boolean;
+    shakeTimer: number;
+    /** No shot yet: the first one jumps there instead of flying. */
+    fresh: boolean;
+    /** The week's weather and mood before the film: the storm and dust shots change them, the end puts them back. */
+    before: { dust: number; storm: number; mood: Mood };
+  } | null = null;
   private readonly cineTarget = new THREE.Vector3();
 
   /**
-   * One shot of the intro film. approach: the lander comes down from the sky, seen from
-   * the ground; touchdown: it lands in a cloud of dust; base: a slow flight round the
-   * outpost; crew: the cadet and Lumi; goal: a quiet wide view behind the mission card.
+   * A film starts. With `landing`, the lander starts high in the sky (the intro) and the
+   * other two cadets stay out of the shots.
+   */
+  startCinema(landing: boolean): void {
+    if (!this.ready) return;
+    if (this.cine) this.endCinematic(false);
+    this.setMode('cinema');
+    // The film look (stronger vignette; soft focus and colour fringes on high and ultra) eases in.
+    this.engine.post.setCinematic(true);
+    this.cine = {
+      shot: 'goal',
+      time: 0,
+      landing: landing ? 0 : 1,
+      landed: !landing,
+      dustTimer: 0,
+      liftoff: 0,
+      hidCrew: landing,
+      shakeTimer: 0,
+      fresh: true,
+      before: { dust: this.dustGoal, storm: this.stormGoal, mood: this.mood },
+    };
+    if (landing) {
+      this.props.lander.position.y = 46;
+      this.props.landerFlame.visible = true;
+      this.crew.group.visible = false;
+    }
+  }
+
+  /**
+   * One shot of a film. approach: the lander comes down from the sky, seen from the ground;
+   * touchdown: it lands in a cloud of dust; base: a slow flight round the outpost; crew: the
+   * cadet and Lumi; cheer: the same, cheering; goal: a quiet wide view behind the mission card;
+   * liftoff: the lander takes off for home; storm: a solar storm lights up the sky; dust: a dust
+   * storm rolls in; spot:<id>: a slow flight round one place of the outpost.
    */
   cinematic(shot: CineShot): void {
     if (!this.ready) return;
-    const first = !this.cine;
-    if (first) {
-      this.setMode('cinema');
-      this.cine = { shot, time: 0, landing: 0, landed: false, dustTimer: 0 };
-      this.props.lander.position.y = 46;
-      this.props.landerFlame.visible = true;
-      // The other two cadets stay out of the shots.
-      this.crew.group.visible = false;
-    }
+    if (!this.cine) this.startCinema(shot === 'approach');
     const cine = this.cine!;
+    // Only the intro's very first shot jumps; every other shot flies from where the camera is.
+    const first = cine.fresh && shot === 'approach';
+    cine.fresh = false;
     cine.shot = shot;
     cine.time = 0;
     const rig = this.rig;
     const pad = this.props.lander.position;
+    // A place of the outpost is framed from outside: the camera must not dive through a dome
+    // to reach a target inside it. The ground shots keep out of rocks and buildings.
+    rig.avoidBlockers = !shot.startsWith('spot:') && shot !== 'storm' && shot !== 'dust';
+    if (shot.startsWith('spot:')) {
+      this.finishLanding();
+      const spot = this.base.spots[shot.slice(5) as SpotId] ?? this.base.spots.overview;
+      // A little further out than the game's view, so the slow flight round it has room.
+      rig.setSpot({ ...spot, distance: spot.distance * 1.08 }, first);
+      return;
+    }
     switch (shot) {
       case 'approach':
         rig.setSpot({ target: new THREE.Vector3(pad.x, 47.5, pad.z), distance: 94, yaw: 2.35, pitch: -0.5 }, first);
@@ -486,21 +540,60 @@ export class World {
         this.finishLanding();
         rig.setSpot({ ...this.base.spots.overview, distance: this.base.spots.overview.distance * 1.15 });
         break;
+      case 'cheer': {
+        this.finishLanding();
+        this.eva.pose(13.9, 12.3, 1.14);
+        const ground = this.terrain.info.height(13.9, 12.3);
+        rig.setSpot({ target: new THREE.Vector3(13.9, ground + 0.85, 12.3), distance: 8.4, yaw: 1.1, pitch: 0.18 });
+        this.lumi.goal.set(13.9 + Math.sin(1.1) * 0.9 - Math.cos(1.1) * 1.1, ground + 2.3, 12.3 + Math.cos(1.1) * 0.9 + Math.sin(1.1) * 1.1);
+        this.lumi.setMood('happy');
+        this.astronaut.play('cheer');
+        setTimeout(() => this.ready && this.cine?.shot === 'cheer' && this.astronaut.play('none'), 3200);
+        break;
+      }
+      case 'liftoff':
+        this.finishLanding();
+        cine.liftoff = 0.0001;
+        this.props.landerFlame.visible = true;
+        this.onCine?.('liftoff');
+        rig.setSpot({ target: new THREE.Vector3(pad.x, 4, pad.z), distance: 30, yaw: 2.4, pitch: -0.05 });
+        break;
+      case 'storm':
+        this.finishLanding();
+        rig.setSpot({ ...this.base.spots.sky, distance: this.base.spots.sky.distance * 0.92 });
+        this.setWeather({ storm: 0.75 });
+        this.setMood('alert');
+        rig.addShake(0.25);
+        break;
+      case 'dust':
+        this.finishLanding();
+        rig.setSpot(this.base.spots.far ?? this.base.spots.overview);
+        this.setWeather({ dust: 0.85 });
+        break;
     }
   }
 
   /** The film is over: the lander stands on its pad and the camera goes back to the outpost. */
-  endCinematic(): void {
-    if (!this.cine) return;
+  endCinematic(toOverview = true): void {
+    const cine = this.cine;
+    if (!cine) return;
     this.finishLanding();
+    if (cine.liftoff > 0) {
+      this.props.lander.position.y = 0;
+      this.props.landerFlame.visible = false;
+    }
+    if (cine.hidCrew) this.crew.group.visible = true;
+    // The storm and dust shots make their own sky, and the cheer shot a happy Lumi: back to the week's.
+    this.setWeather({ dust: cine.before.dust, storm: cine.before.storm });
+    this.setMood(cine.before.mood);
     this.cine = null;
-    this.crew.group.visible = true;
-    this.setMode('overview');
+    this.engine.post.setCinematic(false);
+    if (toOverview) this.setMode('overview');
   }
 
   private finishLanding(): void {
     const cine = this.cine;
-    if (!cine) return;
+    if (!cine || cine.landed) return;
     cine.landing = 1;
     cine.landed = true;
     this.props.lander.position.y = 0;
@@ -552,12 +645,46 @@ export class World {
         }
       }
     }
+    if (cine.liftoff > 0 && cine.liftoff < 1) {
+      // About six seconds up into the sky, faster and faster; the camera watches from the ground.
+      cine.liftoff = Math.min(1, cine.liftoff + dt / 6);
+      const height = 60 * cine.liftoff ** 2.2;
+      lander.position.y = height;
+      const flame = this.props.landerFlame;
+      const flicker = 1 + Math.sin(time * 43) * 0.08 + Math.sin(time * 71) * 0.06;
+      flame.scale.set(flicker * 1.15, 1.35 * flicker, flicker * 1.15);
+      if (height < 10) {
+        cine.dustTimer -= dt;
+        if (cine.dustTimer <= 0) {
+          cine.dustTimer = 0.04;
+          const angle = Math.random() * Math.PI * 2;
+          const reach = 2 + Math.random() * 4.5;
+          this.tmp2.set(lander.position.x + Math.cos(angle) * reach, 0.1, lander.position.z + Math.sin(angle) * reach);
+          this.puffs.step(this.tmp2);
+        }
+        this.rig.addShake(dt * 0.6);
+      }
+      const aim = Math.max(4, height + 1.5);
+      this.rig.setSpot({ target: this.cineTarget.set(lander.position.x, aim, lander.position.z), distance: Math.max(30, aim * 1.05), yaw: 2.4, pitch: -Math.min(0.55, Math.atan2(aim - 3, 34)) });
+      if (cine.liftoff >= 1) this.props.landerFlame.visible = false;
+    }
+    if (cine.shot === 'storm') {
+      // The storm's particles shake the view now and then.
+      cine.shakeTimer -= dt;
+      if (cine.shakeTimer <= 0) {
+        cine.shakeTimer = 1.4 + Math.random() * 1.6;
+        this.rig.addShake(0.12 + Math.random() * 0.12);
+      }
+    }
+    // The slow flight round each place; "less motion" keeps the camera still instead.
+    if (this.calm) return;
     if (cine.shot === 'base' || cine.shot === 'goal') this.rig.rotate(dt * 0.035, 0);
-    if (cine.shot === 'crew') this.rig.rotate(dt * 0.02, 0);
+    if (cine.shot === 'crew' || cine.shot === 'cheer') this.rig.rotate(dt * 0.02, 0);
+    if (cine.shot.startsWith('spot:') || cine.shot === 'storm' || cine.shot === 'dust') this.rig.rotate(dt * 0.028, 0);
   }
 
-  /** Things that happen during the film, for sound. */
-  onCine: ((what: 'touchdown') => void) | null = null;
+  /** Things that happen during a film, for sound. */
+  onCine: ((what: 'touchdown' | 'liftoff') => void) | null = null;
 
   lookAt(spot: SpotId, instant = false): void {
     this.setMode('focus', spot, instant);
@@ -584,6 +711,17 @@ export class World {
   }
 
   /** Run the clock forward to a value over some seconds. Resolves when it arrives. */
+  /** A short shake of the camera (an alarm, a jolt). Calm mode keeps the camera still. */
+  shake(amount: number): void {
+    if (this.ready && !this.calm) this.rig.addShake(amount);
+  }
+
+  /** The running clock gets to its goal within `seconds` (the player skips the night). */
+  hurryClock(seconds = 0.35): void {
+    if (!this.clockDone || this.clockSpeed === 0) return;
+    this.clockSpeed = (this.clockGoal - this.clock) / Math.max(0.01, seconds);
+  }
+
   runClock(to: number, seconds: number): Promise<void> {
     return new Promise((resolve) => {
       this.clockDone?.();
@@ -633,6 +771,8 @@ export class World {
 
     if (this.rebuildWaiting && !this.eva.active && !this.interior.active) this.rebuild();
     this.rig.calm = this.calm;
+    // The post module cannot read the settings: "less motion" also calms the film look and the light shafts.
+    this.engine.post.lessMotion = this.calm;
     this.input.enabled = !this.paused;
     if (this.interior.active) {
       // Inside a building: only the room lives; the outside waits.

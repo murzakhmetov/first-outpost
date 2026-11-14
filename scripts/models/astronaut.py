@@ -32,8 +32,8 @@ from lib import (
 # materials because the game changes or shades them differently.
 PALETTE = {"suit": "#f4f1ec", "grey": "#b4bccb", "dark": "#353c58"}
 
-HEAD_RADIUS = 0.232
-BUBBLE_RADIUS = 0.372
+HEAD_RADIUS = 0.245
+BUBBLE_RADIUS = 0.395
 HEAD = (0.0, -0.015, 1.515)
 HELMET = (0.0, 0.0, 1.535)
 
@@ -107,9 +107,16 @@ def _torso():
         parts.append(torus("tank_band", 0.061, 0.008, (side * 0.245, 0.27, 0.95), material="dark", segments=18, sides=6))
         parts.append(cylinder("thruster", 0.03, 0.055, (side * 0.15, 0.3, 0.695), material="dark", segments=14, radius2=0.046))
     parts.append(sphere("pack_lamp", 0.03, (0.13, 0.368, 1.2), material="glow_green", segments=12, rings=8))
-    parts.append(cylinder("antenna", 0.008, 0.44, (-0.16, 0.3, 1.47), material="dark", segments=8))
-    parts.append(cylinder("antenna_base", 0.022, 0.04, (-0.16, 0.3, 1.27), material="grey", segments=12, round=0.005))
-    parts.append(sphere("antenna_tip", 0.022, (-0.16, 0.3, 1.7), material="glow_warm", segments=10, rings=6))
+    # Status lights down the back of the pack, so the cadet reads from behind and in the dark.
+    parts.append(sphere("pack_lamp_b", 0.022, (0.13, 0.372, 1.12), material="glow_cyan", segments=10, rings=6))
+    parts.append(sphere("pack_lamp_c", 0.022, (0.13, 0.372, 1.055), material="glow_warm", segments=10, rings=6))
+    parts.append(box("pack_lamp_bar", (0.07, 0.01, 0.014), (-0.1, 0.372, 1.12), material="glow_cyan", round=0.003))
+    parts.append(box("pack_lamp_bar", (0.05, 0.01, 0.014), (-0.1, 0.372, 1.06), material="glow_green", round=0.003))
+    # The aerial stands behind the helmet, on a little mount, so the bigger helmet does not swallow it.
+    parts.append(box("antenna_mount", (0.07, 0.05, 0.09), (-0.2, 0.37, 1.23), material="grey", round=0.012))
+    parts.append(cylinder("antenna", 0.009, 0.52, (-0.2, 0.385, 1.5), material="dark", segments=8))
+    parts.append(cylinder("antenna_base", 0.024, 0.04, (-0.2, 0.385, 1.27), material="grey", segments=12, round=0.005))
+    parts.append(sphere("antenna_tip", 0.026, (-0.2, 0.385, 1.78), material="glow_warm", segments=10, rings=6))
     return parts
 
 
@@ -180,6 +187,8 @@ def _arm(side):
     ]
     for index in range(3):
         upper.append(torus("elbow", 0.074, 0.021, (x, 0, 0.868 - index * 0.032), material="grey", segments=18, sides=8))
+    upper.append(torus("arm_stripe", 0.083, 0.011, (x, 0, 1.005), material="accent", segments=18, sides=6))
+    upper.append(torus("arm_stripe", 0.081, 0.008, (x, 0, 0.972), material="accent", segments=18, sides=6))
     lower = [
         lathe("forearm", [(0.066, 0.632), (0.08, 0.69), (0.083, 0.77), (0.072, 0.822)], loc=(x, 0, 0), material="suit", segments=18),
         torus("wrist", 0.07, 0.02, (x, 0, 0.63), material="accent", segments=18, sides=8),
@@ -199,12 +208,14 @@ def _leg(side):
     for index in range(2):
         upper.append(torus("knee", 0.1, 0.022, (x, 0, 0.338 - index * 0.032), material="grey", segments=18, sides=8))
     upper.append(box("knee_pad", (0.125, 0.05, 0.115), (x, -0.102, 0.33), rot=(8, 0, 0), material="accent", round=0.024, segments=3))
+    upper.append(torus("leg_stripe", 0.112, 0.011, (x, 0, 0.5), material="accent", segments=18, sides=6))
     lower = [
         lathe("shin", [(0.086, 0.1), (0.098, 0.16), (0.103, 0.24), (0.096, 0.3)], loc=(x, 0, 0), material="suit", segments=18),
         torus("ankle", 0.092, 0.02, (x, 0, 0.112), material="grey", segments=18, sides=8),
-        sphere("boot", 0.1, (x, -0.04, 0.078), scale=(1.05, 1.52, 0.8), material="accent", segments=18, rings=10),
-        box("sole", (0.2, 0.34, 0.046), (x, -0.045, 0.023), material="dark", round=0.02, segments=3),
-        box("toe", (0.15, 0.06, 0.05), (x, -0.185, 0.06), material="grey", round=0.022, segments=3),
+        sphere("boot", 0.104, (x, -0.04, 0.088), scale=(1.18, 1.52, 0.9), material="accent", segments=18, rings=10),
+        box("sole", (0.235, 0.37, 0.06), (x, -0.045, 0.03), material="dark", round=0.024, segments=3),
+        box("toe", (0.18, 0.07, 0.066), (x, -0.19, 0.072), material="grey", round=0.026, segments=3),
+        torus("boot_stripe", 0.099, 0.012, (x, 0, 0.145), material="grey", segments=18, sides=6),
     ]
     return upper, lower
 

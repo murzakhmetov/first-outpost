@@ -2,16 +2,19 @@
  * Texts in two languages, with placeholders and plural forms.
  */
 import { signal } from '@preact/signals';
+import { crewEn, crewRu } from './crew';
 import { en as enBase } from './en';
+import { filmsEn, filmsRu } from './films';
 import { minigamesEn, minigamesRu } from './minigames';
 import { ru as ruBase } from './ru';
+import { voiceEn, voiceRu } from './voice';
 
 export type Lang = 'en' | 'ru';
 export const LANGS: Lang[] = ['en', 'ru'];
 
-// The room games keep their texts in their own file.
-const en: Record<string, string> = { ...enBase, ...minigamesEn };
-const ru: Record<string, string> = { ...ruBase, ...minigamesRu };
+// The room games, the films, the voice and crew mode keep their texts in their own files.
+const en: Record<string, string> = { ...enBase, ...minigamesEn, ...filmsEn, ...voiceEn, ...crewEn };
+const ru: Record<string, string> = { ...ruBase, ...minigamesRu, ...filmsRu, ...voiceRu, ...crewRu };
 const DICTS: Record<Lang, Record<string, string>> = { en, ru };
 
 function detect(): Lang {

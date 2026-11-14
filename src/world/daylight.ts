@@ -227,6 +227,21 @@ export class Daylight {
     this.fog = site === 'mars' ? new THREE.FogExp2(0xe8c59c, 0.0013) : null;
     scene.fog = this.fog;
 
+    // The colour mood of each world (drawn on high and ultra): Mars is warm gold with violet shadows,
+    // the Moon is cool silver with deep blue shadows.
+    const look = post.look;
+    if (site === 'mars') {
+      look.high.set(1.07, 1.0, 0.9);
+      look.shadow.set(0.93, 0.92, 1.09);
+      look.amount = 0.85;
+      look.glow = 0.3;
+    } else {
+      look.high.set(0.97, 1.0, 1.06);
+      look.shadow.set(0.84, 0.92, 1.14);
+      look.amount = 0.9;
+      look.glow = 0.22;
+    }
+
     mountains.traverse((child) => {
       const mesh = child as THREE.Mesh;
       if (mesh.isMesh) this.mountainMaterials.push(mesh.material as THREE.MeshBasicMaterial);
@@ -348,6 +363,8 @@ export class Daylight {
     this.sky.dust = dust;
     this.sky.aurora = this.site === 'mars' ? this.storm * (0.35 + 0.65 * c.night) : 0;
     this.sky.starSpin = time * 0.004;
+    this.sky.setFancy(this.post.options.skyFancy);
+    this.sky.lessMotion = this.post.lessMotion;
     this.sky.update(camera, time, this.sunDir);
 
     for (const material of this.mountainMaterials) {
@@ -357,13 +374,33 @@ export class Daylight {
     // Shared material values.
     GLOBALS.time.value = time;
     GLOBALS.night.value = c.night;
+    GLOBALS.anime.value = this.post.options.grade ? 1 : 0;
     GLOBALS.rimColor.value.copy(c.rim).multiplyScalar(up ? 1 : 0.55);
     GLOBALS.skyColor.value.copy(c.horizon).lerp(c.zenith, 0.35);
     if (this.site === 'moon') GLOBALS.skyColor.value.set(0.16, 0.2, 0.32);
     GLOBALS.sunDirView.value.copy(lightDir).transformDirection(camera.matrixWorldInverse);
 
-    this.post.grade.exposure = c.exposure * (1 - 0.12 * dust);
+    // Outdoors the picture always starts from the same grade: a room's own grade must not leak out of the door.
+    const grade = this.post.grade;
+    grade.exposure = c.exposure * (1 - 0.12 * dust);
+    grade.saturation = this.site === 'moon' && this.post.options.grade ? 1.04 : 1.16;
+    grade.contrast = 1.07;
+    grade.tint.setRGB(1, 1, 1);
+    grade.bloom = 0.55;
+    grade.vignette = 0.35;
     this.post.specks = this.storm;
+
+    // Light shafts: Mars only (the Moon has no air to catch the light). They are strongest when the Sun is low and in dust.
+    const shafts = this.post.sun;
+    shafts.dir.copy(this.sunDir);
+    if (this.site === 'mars') {
+      const risen = THREE.MathUtils.smoothstep(this.sunDir.y, -0.03, 0.08);
+      const low = 1 - THREE.MathUtils.smoothstep(this.sunDir.y, 0.1, 0.5);
+      shafts.shafts = risen * Math.min(1.25, 0.28 + 0.55 * low + 1.1 * dust);
+      shafts.color.copy(c.glow).lerp(this.dustLight, dust * 0.6).multiplyScalar(0.65);
+    } else {
+      shafts.shafts = 0;
+    }
   }
 
   dispose(): void {

@@ -2,8 +2,9 @@
  * The game's shared state: what screen is showing, the mission, settings,
  * and the player's progress (kept on this device only).
  */
-import { signal } from '@preact/signals';
+import { computed, signal } from '@preact/signals';
 import type { Params } from '../i18n';
+import type { FilmId } from './films';
 import type { ChoiceResult, EarthAnswer } from '../sim/mission';
 import type { GameId, RoomId, ToolId } from '../sim/outpost';
 import type { InteriorHud } from '../world/interior';
@@ -25,6 +26,8 @@ export interface Settings {
   music: number;
   textScale: number;
   speak: boolean;
+  /** Recorded voices for the films and Lumi (see game/voice.ts). */
+  voice: boolean;
   lessMotion: boolean;
   patterns: boolean;
   leftHand: boolean;
@@ -59,6 +62,8 @@ export interface Profile {
   setup: SetupChoice;
   /** Worlds whose intro film the player has seen (it plays by itself only the first time). */
   introSeen?: string[];
+  /** Films seen (see game/films.ts): a task film plays by itself only if its part was not seen. */
+  filmsSeen?: string[];
 }
 
 export interface LumiLine {
@@ -84,6 +89,7 @@ const DEFAULT_SETTINGS: Settings = {
   music: 0.5,
   textScale: 1,
   speak: false,
+  voice: true,
   lessMotion: false,
   patterns: false,
   leftHand: false,
@@ -180,8 +186,10 @@ export const interiorHud = signal<InteriorHud | null>(null);
 export const roomGame = signal<GameId | null>(null);
 /** The workshop printer game: the tool being printed, or null. */
 export const printing = signal<ToolId | null>(null);
-/** The intro film is playing. */
-export const cutscene = signal(false);
+/** The film that is playing (see game/films.ts), or null. */
+export const film = signal<FilmId | null>(null);
+/** A film is playing. */
+export const cutscene = computed(() => film.value !== null);
 /** Creative mode: the thing being put on the ground, and whether the spot under the pointer is free. */
 export const placing = signal<{ kind: 'building' | 'decor'; id: string; valid: boolean } | null>(null);
 export const discovery = signal<{ id: string; science: number; fresh: boolean; key: number; kind: 'find' | 'building' } | null>(null);

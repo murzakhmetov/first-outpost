@@ -1,5 +1,7 @@
 /**
  * All sound is made by code with the Web Audio API: no audio files.
+ * The one exception is the voice-over (see voice.ts): recorded lines are decoded here and
+ * played through their own bus, so the volume setting applies and the music steps aside.
  *
  * Small truths kept on purpose:
  *   - the Moon has no air, so outside you hear only your own suit;
@@ -56,6 +58,10 @@ class AudioEngine {
   private sfxBus!: GainNode;
   private musicBus!: GainNode;
   private ambienceBus!: GainNode;
+  private voiceBus!: GainNode;
+  /** 1 normally; lower while a voice line plays (music and ambience step aside). */
+  private duck = 1;
+  private voicePlaying = 0;
   private noiseBuffer!: AudioBuffer;
   private ambienceNodes: AudioNode[] = [];
   private ambience: Ambience = 'none';
@@ -91,6 +97,8 @@ class AudioEngine {
     this.sfxBus = ctx.createGain();
     this.musicBus = ctx.createGain();
     this.ambienceBus = ctx.createGain();
+    this.voiceBus = ctx.createGain();
+    this.voiceBus.connect(this.master);
     this.sfxBus.connect(this.master);
     this.musicBus.connect(this.master);
     this.ambienceBus.connect(this.master);
@@ -134,12 +142,93 @@ class AudioEngine {
     this.applyVolumes();
   }
 
+  /** False when the sound volume is 0: voice lines would be silent, so they are not even downloaded. */
+  get voiceAudible(): boolean {
+    return this.sfxVolume > 0;
+  }
+
   private applyVolumes(): void {
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
     this.sfxBus.gain.setTargetAtTime(this.sfxVolume * 0.9, now, 0.05);
-    this.ambienceBus.gain.setTargetAtTime(this.sfxVolume * 0.5, now, 0.2);
-    this.musicBus.gain.setTargetAtTime(this.musicVolume * 0.42, now, 0.2);
+    this.ambienceBus.gain.setTargetAtTime(this.sfxVolume * 0.5 * (this.duck < 1 ? 0.6 : 1), now, 0.2);
+    this.musicBus.gain.setTargetAtTime(this.musicVolume * 0.42 * this.duck, now, 0.2);
+    this.voiceBus.gain.setTargetAtTime(this.sfxVolume * 1.1, now, 0.05);
+  }
+
+  /** Voice files are decoded here (null: no sound on this device, or the file is not a sound). */
+  async decodeVoice(data: ArrayBuffer): Promise<AudioBuffer | null> {
+    if (!this.ctx) this.unlock();
+    if (!this.ctx) return null;
+    try {
+      // A decoder that never answers must not hold a film back.
+      const timeout = new Promise<null>((resolve) => window.setTimeout(() => resolve(null), 8000));
+      return await Promise.race([this.ctx.decodeAudioData(data), timeout]);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Plays a decoded voice line. `done` resolves when it ends (or after its length plus a moment, so a
+   * suspended audio context can never hold a film back); `stop` cuts it off. Null when nothing can play.
+   * `radio` gives Mission Control a light radio sound.
+   */
+  playVoice(buffer: AudioBuffer, radio: boolean): { done: Promise<void>; stop: () => void } | null {
+    const ctx = this.ctx;
+    // A hidden tab has its sound paused (see unlock): a line started then would play when the tab comes back.
+    if (!ctx || this.sfxVolume <= 0 || document.hidden) return null;
+    if (ctx.state === 'suspended') void ctx.resume();
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const nodes: AudioNode[] = [source];
+    let tail: AudioNode = source;
+    if (radio) {
+      const low = ctx.createBiquadFilter();
+      low.type = 'highpass';
+      low.frequency.value = 280;
+      const high = ctx.createBiquadFilter();
+      high.type = 'lowpass';
+      high.frequency.value = 4600;
+      const presence = ctx.createBiquadFilter();
+      presence.type = 'peaking';
+      presence.frequency.value = 1800;
+      presence.gain.value = 3;
+      source.connect(low).connect(high).connect(presence);
+      tail = presence;
+      nodes.push(low, high, presence);
+    }
+    tail.connect(this.voiceBus);
+    this.voicePlaying += 1;
+    this.duck = 0.3;
+    this.applyVolumes();
+    let finished = false;
+    let timer = 0;
+    let resolveDone: () => void = () => undefined;
+    const done = new Promise<void>((resolve) => {
+      resolveDone = resolve;
+    });
+    const finish = (): void => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timer);
+      try {
+        source.stop();
+      } catch {
+        /* already stopped */
+      }
+      for (const node of nodes) node.disconnect();
+      this.voicePlaying = Math.max(0, this.voicePlaying - 1);
+      if (!this.voicePlaying) {
+        this.duck = 1;
+        this.applyVolumes();
+      }
+      resolveDone();
+    };
+    source.onended = finish;
+    timer = window.setTimeout(finish, (buffer.duration + 1.5) * 1000);
+    source.start();
+    return { done, stop: finish };
   }
 
   private tone(

@@ -64,6 +64,8 @@ import { QUALITY, guessTier, shiftTier } from '../world/quality';
 import { World } from '../world/world';
 import { audio, stopSpeaking } from './audio';
 import { SITE_CARDS, STARTER_CARDS, WINDOW_CARDS, cardById, unlockCards } from './codex';
+import { FILMS, seenKey } from './films';
+import type { EventFilmId, FilmId, TaskId } from './films';
 import { dataInfo, liveStartDate, loadData, refreshLive, simData } from './data';
 import {
   announce,
@@ -93,6 +95,8 @@ import {
   placing,
   printing,
   cutscene,
+  discovery,
+  film,
   profile,
   room,
   roomGame,
@@ -115,6 +119,9 @@ let cardsThisMission: string[] = [];
 let slowSeconds = 0;
 let stepsThisWalk = 0;
 let saidOnce = new Set<string>();
+/** Samples picked up quickly one after another on a walk (only for a cheer: it changes no score). */
+let sampleStreak = 0;
+let lastSampleAt = 0;
 
 const wait = (seconds: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, seconds * 1000));
 
@@ -238,7 +245,7 @@ function updateViewShift(currentScreen: string, currentStep: Step, inside = fals
 
 /** The world rebuilds its parts when the site or quality changes: hook them up again. */
 function bindWorld(): void {
-  if (world) world.onCine = () => audio.play('land');
+  if (world) world.onCine = (what) => audio.play(what === 'liftoff' ? 'whoosh' : 'land');
   if (!world) return;
   world.setSuitColor(profile.value.suit);
   world.eva.firstPerson = settings.value.firstPerson;
@@ -402,7 +409,11 @@ export function startDateFor(choice: SetupChoice): string {
   return new Date(first + Math.random() * Math.max(0, last - first)).toISOString().slice(0, 10);
 }
 
-export async function startMission(choice: SetupChoice): Promise<void> {
+/**
+ * Start a mission. Crew mode (src/net) passes the seed and the start date, so that every
+ * friend in the room plays the very same mission.
+ */
+export async function startMission(choice: SetupChoice, same?: { seed: number; startDate: string }): Promise<void> {
   if (!world) return;
   audio.play('confirm');
   updateProfile({ setup: choice });
@@ -415,8 +426,8 @@ export async function startMission(choice: SetupChoice): Promise<void> {
     site: choice.site,
     difficulty: choice.difficulty,
     weeks: choice.weeks,
-    startDate: startDateFor(choice),
-    seed: Math.floor(Math.random() * 2 ** 31),
+    startDate: same?.startDate ?? startDateFor(choice),
+    seed: same?.seed ?? Math.floor(Math.random() * 2 ** 31),
     tutorial: choice.tutorial,
     sunMode: choice.sunMode,
     windowId: choice.sunMode === 'featured' ? choice.windowId : undefined,
@@ -512,6 +523,7 @@ async function resumeSaved(saved: NonNullable<ReturnType<typeof loadMissionSave>
 }
 
 function resetStepSignals(): void {
+  stopFilm();
   stopPlacement();
   if (room.value !== null) world?.leaveRoom();
   room.value = null;
@@ -835,37 +847,125 @@ export function removePlaced(kind: 'building' | 'decor', id?: string, all = fals
   if (done) publish();
 }
 
-/** The intro film: why the crew is here and what the mission is (see ui/Cutscene). */
-export function playIntro(): boolean {
-  if (!state || !world || room.value !== null || cutscene.value || step.value === 'eva' || step.value === 'night') return false;
+// ---------------------------------------------------------------------------
+// Films (see films.ts and ui/Cutscene)
+// ---------------------------------------------------------------------------
+
+/** Runs when the film that is playing is over (the ending films open the debrief). */
+let afterFilm: (() => void) | null = null;
+/**
+ * What Lumi was saying and the banner that was up when a film started. A film often starts right
+ * after a step's line (a task film the first time, an event film), so both come back after it.
+ */
+let lineBeforeFilm: typeof lumiLine.value = null;
+let bannerBeforeFilm: typeof discovery.value = null;
+
+function filmSeen(id: FilmId): boolean {
+  if (!state) return true;
+  return (profile.value.filmsSeen ?? []).includes(seenKey(id, state.config.site));
+}
+
+/** Remember a film (or a task shown in the intro tour) as seen. */
+export function markFilmSeen(id: FilmId): void {
+  if (!state) return;
+  const key = seenKey(id, state.config.site);
+  const seen = profile.value.filmsSeen ?? [];
+  if (!seen.includes(key)) updateProfile({ filmsSeen: [...seen, key] });
+}
+
+/** Play a film. `then` runs when it is over. False when a film cannot start now. */
+export function playFilm(id: FilmId, then?: () => void): boolean {
+  const ending = id === 'win' || id === 'lose';
+  if (!state || !world || film.value !== null || room.value !== null || printing.value || step.value === 'eva') return false;
+  // The film player is part of the game screen: on the title screen (a mission resumed after its
+  // last night goes straight to the review) a film would never show and never end.
+  if (screen.value !== 'game') return false;
+  // While the week runs at night only the ending films may start.
+  if (step.value === 'night' && !ending) return false;
+  const data = FILMS[id];
+  if (!data || (data.sites && !data.sites.includes(state.config.site))) return false;
   panel.value = 'none';
   backToPause = false;
   stopPlacement();
+  lineBeforeFilm = ending ? null : lumiLine.peek();
+  bannerBeforeFilm = ending ? null : discovery.peek();
   hush();
-  cutscene.value = true;
+  afterFilm = then ?? null;
+  world.startCinema(!!data.landing);
+  film.value = id;
   return true;
 }
 
+/** The intro film: why the crew is here, what the tasks are and why they matter. */
+export function playIntro(): boolean {
+  return playFilm('intro');
+}
+
 /** One shot of the film. */
-export function introShot(shot: CineShot): void {
+export function filmShot(shot: CineShot): void {
   world?.cinematic(shot);
 }
 
 /** The film is over (or skipped from its last card): back to the week. */
-export function finishIntro(): void {
-  if (!cutscene.value) return;
-  cutscene.value = false;
+export function finishFilm(): void {
+  const id = film.value;
+  if (!id) return;
+  film.value = null;
   world?.endCinematic();
-  // The film may have been replayed from the menu: show what this step was showing.
+  // A film may have been played in the middle of a step: show what this step was showing.
   if (world && state) {
     if ((step.value === 'event' || step.value === 'eventResult') && state.now.eventId) world.lookAt(EVENTS[state.now.eventId].camera as SpotId);
     else if (step.value === 'evaIntro') world.lookAt('airlock');
   }
   audio.play('confirm');
   if (state) {
-    const seen = profile.value.introSeen ?? [];
-    if (!seen.includes(state.config.site)) updateProfile({ introSeen: [...seen, state.config.site] });
+    markFilmSeen(id);
+    if (id === 'intro') {
+      const seen = profile.value.introSeen ?? [];
+      if (!seen.includes(state.config.site)) updateProfile({ introSeen: [...seen, state.config.site] });
+    }
   }
+  // Lumi's line for this step and the banner of a new building come back (unless something newer is up).
+  const line = lineBeforeFilm;
+  const banner = bannerBeforeFilm;
+  lineBeforeFilm = null;
+  bannerBeforeFilm = null;
+  if (line && lumiLine.peek() === null) say(line.key, line.params, line.mood);
+  if (banner && discovery.peek() === null) announce(banner.id, banner.science, banner.fresh, banner.kind);
+  const then = afterFilm;
+  afterFilm = null;
+  then?.();
+}
+
+/** The old names, kept for the menu and the tests. */
+export const introShot = filmShot;
+export const finishIntro = finishFilm;
+
+/** A task's film plays by itself the first time the task comes up, unless the intro tour showed it. */
+function taskFilm(task: TaskId): void {
+  if (!state || isCreative(state) || filmSeen(`task.${task}`)) return;
+  playFilm(`task.${task}`);
+}
+
+/** Big moments get their film once (storms and harvests once per world). */
+function eventFilm(id: EventFilmId): void {
+  if (!state || isCreative(state) || filmSeen(id)) return;
+  playFilm(id);
+}
+
+/** The "Why?" buttons: replay a task's film any time between steps. */
+export function explainTask(task: TaskId): void {
+  if (!playFilm(`task.${task}`)) audio.play('deny');
+}
+
+/** A film is cut short because the mission ends or the player leaves. */
+function stopFilm(): void {
+  if (film.value === null) return;
+  film.value = null;
+  afterFilm = null;
+  lineBeforeFilm = null;
+  bannerBeforeFilm = null;
+  world?.endCinematic(false);
 }
 
 /** Print a tool: the printer game opens, and the tool is made when the print is finished. */
@@ -979,6 +1079,21 @@ function startWeek(first = false): void {
   }
   if (env.storm.strength > 0) unlockMission(['space_weather']);
   publish();
+  // A solar storm week: the camera looks up at the sky for a moment.
+  if (!first && env.storm.strength > 0) glanceAtSky();
+  // The first time the Sun blocks the radio to Earth (Mars solar conjunction) gets its film.
+  if (!first && env.conjunction) eventFilm('conjunction');
+  // The first dust storm gets its film (on the first week the intro plays instead).
+  if (!first && env.reason === 'dust') eventFilm('dust');
+}
+
+/** A quick look up at the sky, then back to the outpost (not in calm mode). */
+function glanceAtSky(): void {
+  if (!world || settings.value.lessMotion) return;
+  world.lookAt('sky');
+  window.setTimeout(() => {
+    if (world && state && step.value === 'briefing' && film.value === null && room.value === null) world.setMode('overview');
+  }, 2600);
 }
 
 /** Player pressed "Start the week" on the forecast. */
@@ -1012,6 +1127,10 @@ function enterEvent(): void {
     hush();
   }
   publish();
+  // The first solar storm on a world gets its film; the first card explains choices.
+  if (event.id === 'solar_storm') eventFilm('storm');
+  else if (event.id === 'eclipse') eventFilm('eclipse');
+  else taskFilm('event');
 }
 
 export function chooseEvent(optionId: OptionId): void {
@@ -1058,6 +1177,7 @@ function goPlan(): void {
   if (state.config.tutorial && state.week === 1 && !planTouched) say('lumi.t1.plan', undefined, 'happy');
   else advise();
   publish();
+  taskFilm('plan');
 }
 
 /** Lumi looks at the plan and says the most useful thing about it. */
@@ -1126,6 +1246,7 @@ export function confirmPlan(): void {
     if (state.config.tutorial && once('evaIntro')) say('lumi.t2.eva', undefined, 'happy');
     else hush();
     publish();
+    taskFilm('walk');
   } else {
     void runNight();
   }
@@ -1137,6 +1258,7 @@ export function beginWalk(): void {
   const level = state.config.difficulty;
   step.value = 'eva';
   stepsThisWalk = 0;
+  sampleStreak = 0;
   evaHud.value = null;
   if (world.site === 'mars') world.setClock(0.47);
   world.startEva({
@@ -1166,11 +1288,20 @@ function onEvaEvent(event: EvaEvent, value = 0): void {
   if (!world || !state) return;
   const moon = state.config.site === 'moon';
   switch (event) {
-    case 'sample':
+    case 'sample': {
       audio.play('collect', value);
       pickup({ kind: 'sample', key: `pickup.sample.${value}`, value, unit: 'science' });
+      // Quick hands: three or more samples in a row get a cheer.
+      const now = performance.now();
+      sampleStreak = now - lastSampleAt < 7000 ? sampleStreak + 1 : 1;
+      lastSampleAt = now;
+      if (sampleStreak >= 3) {
+        notify('eva.streak', { n: sampleStreak }, 'good', 1.8);
+        audio.play('star', Math.min(3, sampleStreak - 2));
+      }
       if (value >= 6 && once('farSample')) say('lumi.eva.far', undefined, 'think', 5);
       break;
+    }
     case 'chore':
       audio.play('chore');
       pickup({ kind: 'chore', key: `pickup.chore.${state.config.site}`, value: moon ? 6 : 0, unit: 'air' });
@@ -1208,6 +1339,7 @@ function onEvaEvent(event: EvaEvent, value = 0): void {
     case 'alert':
       world.setCrewOutside(false);
       audio.setAlarm(true);
+      world.shake(0.45);
       world.setMood('alert');
       say(isBuilt(state, 'bunker') ? 'lumi.eva.alertBunker' : 'lumi.eva.alert', undefined, 'alert', 5);
       state.now.evaAlerted = true; // saved: closing the game does not cancel the storm
@@ -1268,6 +1400,16 @@ export function finishWalk(): void {
   void runNight();
 }
 
+/** Ends the first half of the night early (the week is worked out at once). */
+let hurryNight: (() => void) | null = null;
+
+/** The player taps during the night: the clock hurries and the report comes at once. */
+export function skipNight(): void {
+  if (step.value !== 'night' || !world) return;
+  world.hurryClock();
+  hurryNight?.();
+}
+
 /** The week runs: the Sun crosses the sky, the meters move, the log is written. */
 async function runNight(): Promise<void> {
   if (!world || !state) return;
@@ -1288,9 +1430,11 @@ async function runNight(): Promise<void> {
   const from = world.getClock();
   // Mars: one full sol stands for the week. Moon: the Sun moves a week along the horizon.
   const to = site === 'mars' ? from + 1 : from + (7 * 12.19074912) / 360;
-  const seconds = settings.value.lessMotion ? 2.4 : 4.8;
+  const seconds = settings.value.lessMotion ? 2.4 : 3.6;
   const clock = world.runClock(to, seconds);
-  await wait(seconds * 0.5);
+  // A tap skips the rest of the night (see skipNight).
+  await Promise.race([wait(seconds * 0.5), new Promise<void>((resolve) => (hurryNight = resolve))]);
+  hurryNight = null;
   if (state !== s) return; // the player left the mission meanwhile
 
   const record = resolveWeek(s);
@@ -1324,6 +1468,10 @@ async function runNight(): Promise<void> {
     audio.play(rough ? 'bad' : 'good');
   }
   publish();
+  // A first new building or a first harvest gets its film; otherwise the report gets explained once.
+  if (record.built) eventFilm('built');
+  else if (record.harvested) eventFilm('harvest');
+  else taskFilm('night');
 }
 
 export function goNextWeek(): void {
@@ -1374,6 +1522,13 @@ function finishMission(): void {
   mission.value = structuredClone(s);
   clearMissionSave();
 
+  // The ending film (the lander flies home), then the review. Creative mode has no ending.
+  if (!creative && playFilm(won ? 'win' : 'lose', () => showDebrief(won))) return;
+  showDebrief(won);
+}
+
+function showDebrief(won: boolean): void {
+  if (!world) return;
   screen.value = 'debrief';
   hush();
   audio.setAlarm(false);
@@ -1386,6 +1541,7 @@ function finishMission(): void {
 }
 
 export function quitMission(): void {
+  stopFilm();
   world?.eva.abort();
   state = null;
   mission.value = null;
@@ -1395,6 +1551,7 @@ export function quitMission(): void {
 
 /** Leave to the menu but keep the mission saved. */
 export function leaveToMenu(): void {
+  stopFilm();
   // A walk ends first. What was collected counts; during a storm alert the storm counts too.
   if (state && step.value === 'eva') world?.eva.leave();
   state = null;

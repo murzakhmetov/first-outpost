@@ -7,6 +7,7 @@ import { dataInfo } from '../game/data';
 import { continueMission, getWorld, goTitle, openPanel, openSetup, previewSite, startDateFor, startMission } from '../game/director';
 import { hasSave, notify, profile, updateProfile } from '../game/store';
 import type { SetupChoice } from '../game/store';
+import { crewAvailable, openCrewLobby } from '../net/crew';
 import { LANGS, fmtDate, fmtDelay, fmtRange, lang, setLang, t } from '../i18n';
 import { addDays, marsGeometry } from '../sim/ephemeris';
 import { FEATURED_WINDOWS } from '../sim/sites';
@@ -66,6 +67,11 @@ export function Title(): JSX.Element {
           <Btn kind={hasSave.value ? 'soft' : 'primary'} icon="rocket" wide autoFocus={!hasSave.value} onClick={openSetup}>
             {t('menu.play')}
           </Btn>
+          {crewAvailable() && (
+            <Btn icon="earth" wide onClick={openCrewLobby}>
+              {t('crew.open')}
+            </Btn>
+          )}
           <Btn icon="book" wide onClick={() => openPanel('codex')}>
             {t('menu.codex')}
             {CODEX.length > 0 && <em class="count">{found}/{CODEX.length}</em>}

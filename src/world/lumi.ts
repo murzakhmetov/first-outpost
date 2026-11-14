@@ -4,7 +4,7 @@
  */
 import * as THREE from 'three';
 import { shape } from './build';
-import { addOutline, glow, outlineMaterial, toon } from './materials';
+import { GLOBALS, addOutline, glow, outlineMaterial, toon } from './materials';
 import { model } from './models';
 import { dotTexture } from './textures';
 
@@ -34,6 +34,7 @@ export class Lumi {
   private readonly ring: THREE.Mesh;
   private readonly ringMaterial: THREE.MeshBasicMaterial;
   private readonly glowSprite: THREE.Sprite;
+  private readonly bulbGlow: THREE.Sprite;
   private readonly ownMaterials: THREE.Material[] = [];
   private readonly velocity = new THREE.Vector3();
   private readonly spot = new THREE.Vector3(2, 2.6, 2);
@@ -48,7 +49,8 @@ export class Lumi {
   constructor(withOutline = true, withLight = false) {
     // The shell is a Blender model with its colours and soft shadows baked in.
     const paint = toon({ color: '#ffffff', rim: 0.7, rimWidth: 0.5, vertexColors: true, lift: 0.22 });
-    const face = toon({ color: '#1b2146', rim: 0.5, spec: 1.2, vertexColors: true });
+    // The screen lights itself a little (blue glow), so the face reads in shade and at night.
+    const face = toon({ color: '#1b2146', rim: 0.5, spec: 1.2, vertexColors: true, emissive: '#16347a', emissiveIntensity: 0.75 });
     const hover = glow('#ffd9a0', 2.2);
     this.ownMaterials.push(hover);
     const shell = model('lumi', (name, mesh) => {
@@ -95,7 +97,21 @@ export class Lumi {
     this.glowSprite.scale.setScalar(1.7);
     this.glowSprite.userData.noOutline = true;
     this.group.add(this.glowSprite);
-    this.ownMaterials.push(this.eyeMaterial, this.bulbMaterial, ringMaterial, spriteMaterial);
+    // A little glow round the antenna light that pulses; it turns red and quick when Lumi is alarmed.
+    const bulbSprite = new THREE.SpriteMaterial({
+      map: dotTexture(),
+      color: '#ffd166',
+      transparent: true,
+      opacity: 0.6,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    this.bulbGlow = new THREE.Sprite(bulbSprite);
+    this.bulbGlow.scale.setScalar(0.3);
+    this.bulbGlow.position.y = 0.49;
+    this.bulbGlow.userData.noOutline = true;
+    this.group.add(this.bulbGlow);
+    this.ownMaterials.push(this.eyeMaterial, this.bulbMaterial, ringMaterial, spriteMaterial, bulbSprite);
 
     if (withOutline) {
       const hull = outlineMaterial('#2b2440', 0.8);
@@ -165,6 +181,14 @@ export class Lumi {
     this.eyeMaterial.color.lerp(this.tmpColor.copy(this.moodColor).multiplyScalar(2.6), Math.min(1, dt * 6));
     const flash = this.mood === 'alert' ? 0.6 + 0.4 * Math.sin(t * 10) : 1;
     this.bulbMaterial.color.copy(this.mood === 'alert' ? this.tmpColor.set('#ff5a3d') : this.tmpColor.set('#ffd166')).multiplyScalar(3 * flash);
+
+    const pulse = this.mood === 'alert' ? 0.65 + 0.35 * Math.sin(t * 10) : 0.7 + 0.3 * Math.sin(t * 2.4);
+    // The antenna glow is part of the high and ultra look; the lower levels keep their draw call.
+    this.bulbGlow.visible = GLOBALS.anime.value > 0.5;
+    const bulbSprite = this.bulbGlow.material as THREE.SpriteMaterial;
+    bulbSprite.color.copy(this.bulbMaterial.color).multiplyScalar(0.33);
+    bulbSprite.opacity = (0.35 + 0.35 * night) * pulse * this.bright;
+    this.bulbGlow.scale.setScalar(0.26 + 0.1 * pulse);
 
     this.ring.rotation.x = Math.PI / 2 + Math.sin(t * 0.9) * 0.35;
     this.ring.rotation.y = t * 1.4;

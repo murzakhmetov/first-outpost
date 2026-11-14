@@ -1,0 +1,54 @@
+{
+  "model": "eleven_v4_turbo",
+  "fallbackModel": "eleven_turbo_v2_5",
+  "models": {
+    "eleven_v4_turbo": { "creditsPerChar": 0.5 },
+    "eleven_turbo_v2_5": { "creditsPerChar": 0.5 }
+  },
+  "outputFormat": "mp3_44100_64",
+  "speakers": {
+    "lumi": {
+      "name": "Jessica: playful, bright, warm",
+      "voiceId": "cgSgspJ2msm6clMCkdW9",
+      "settings": { "stability": 0.38, "similarity_boost": 0.8, "style": 0.45, "use_speaker_boost": true }
+    },
+    "mc": {
+      "name": "Daniel: steady broadcaster",
+      "voiceId": "onwK4e9ZLuTAKqWW03F9",
+      "settings": { "stability": 0.6, "similarity_boost": 0.8, "style": 0.15, "use_speaker_boost": true }
+    },
+    "caption": {
+      "name": "George: warm storyteller",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "settings": { "stability": 0.55, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": true }
+    }
+  },
+  "lumiPriority": [
+    "lumi.welcome.",
+    "lumi.t1.",
+    "lumi.plan.",
+    "lumi.t2.",
+    "lumi.t3.",
+    "lumi.t4.",
+    "lumi.storm.",
+    "lumi.eva.start",
+    "lumi.report.",
+    "lumi.night.",
+    "lumi.dark",
+    "lumi.dust",
+    "lumi.built.",
+    "lumi.build.",
+    "lumi.eva.",
+    "lumi.tool.",
+    "lumi.room.",
+    "lumi.won.",
+    "lumi.creative.",
+    "lumi.outpost.",
+    "lumi.sunset.",
+    "lumi.earth.",
+    "lumi.aurora",
+    "lumi.specks",
+    "lumi.find.",
+    "lumi.look."
+  ]
+}

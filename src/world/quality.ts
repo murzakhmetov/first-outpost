@@ -37,6 +37,16 @@ export interface QualityOptions {
   skyDetail: boolean;
   /** Let the game lower the picture size when the frame rate drops. */
   dynamicResolution: boolean;
+  /** Contact shadows in corners and under objects (half-size picture). 0 = off, else the number of samples. */
+  ao: number;
+  /** Sun light shafts through dust and haze. 0 = off, else the number of samples along each ray. */
+  shafts: number;
+  /** Per-world colour grade and the soft anime glow on highlights. */
+  grade: boolean;
+  /** Film look for cutscenes: depth of field and colour fringes. */
+  cinematic: boolean;
+  /** Moons, Earth "star", shooting stars, sun glare and softer clouds in the sky. */
+  skyFancy: boolean;
 }
 
 export const QUALITY: Record<QualityTier, QualityOptions> = {
@@ -58,6 +68,11 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     pointLights: false,
     skyDetail: false,
     dynamicResolution: true,
+    ao: 0,
+    shafts: 0,
+    grade: false,
+    cinematic: false,
+    skyFancy: false,
   },
   medium: {
     tier: 'medium',
@@ -77,6 +92,11 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     pointLights: false,
     skyDetail: true,
     dynamicResolution: true,
+    ao: 0,
+    shafts: 0,
+    grade: false,
+    cinematic: false,
+    skyFancy: false,
   },
   high: {
     tier: 'high',
@@ -96,6 +116,11 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     pointLights: true,
     skyDetail: true,
     dynamicResolution: true,
+    ao: 8,
+    shafts: 20,
+    grade: true,
+    cinematic: true,
+    skyFancy: true,
   },
   ultra: {
     tier: 'ultra',
@@ -114,7 +139,12 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     rocks: 1.4,
     pointLights: true,
     skyDetail: true,
-    dynamicResolution: false,
+    dynamicResolution: true,
+    ao: 14,
+    shafts: 32,
+    grade: true,
+    cinematic: true,
+    skyFancy: true,
   },
 };
 
@@ -144,15 +174,24 @@ export function guessTier(): QualityTier {
   const software = /swiftshader|llvmpipe|software|basic render/i.test(gpu);
   if (software) return 'low';
   const strongGpu = /rtx|radeon rx|geforce gtx 1[06-9]|gtx 16|apple m\d|arc\b/i.test(gpu);
-  const weakGpu = /intel.*(hd|uhd) graphics (?![67])|mali-[gt]?[1-5]\d\b|adreno \(?(tm\))? ?[1-5]\d\d|powervr/i.test(gpu);
+  // Ultra by itself only for clearly strong desktop cards: RTX 3070 / 4070 / 5070 and up, RX 6700 / 7700 and up,
+  // M-series Pro, Max and Ultra. Dynamic resolution and the Auto step-down catch a card that is weaker than it looks.
+  const topGpu = /rtx ?(?:30|40|50)[789]0|radeon rx ?(?:6[789]|7[789])00|apple m\d (?:pro|max|ultra)/i.test(gpu);
+  const weakGpu =/intel.*(hd|uhd) graphics (?![67])|mali-[gt]?[1-5]\d\b|adreno \(?(tm\))? ?[1-5]\d\d|powervr/i.test(gpu);
 
   if (mobile) {
     if (cores >= 8 && memory >= 6 && !weakGpu) return 'medium';
     return 'low';
   }
   if (weakGpu || cores <= 2 || memory <= 2) return 'low';
+  if (topGpu && cores >= 8 && memory >= 8 && !laptopGpu(gpu)) return 'ultra';
   if (strongGpu && cores >= 8) return 'high';
   return 'medium';
+}
+
+/** Laptop cards share power and heat with the rest of the machine, so Auto keeps them one level lower. */
+function laptopGpu(gpu: string): boolean {
+  return /laptop|max-q|mobile|rx ?\d{4}[ms]\b/i.test(gpu);
 }
 
 /** One step down or up, used by the automatic tuner. */

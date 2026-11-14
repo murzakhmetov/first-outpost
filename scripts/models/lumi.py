@@ -19,6 +19,8 @@ def _solid():
     # Face: a dark glass screen set into the front, with a gold frame.
     parts.append(sphere("screen", 0.255, (0, -0.13, 0.012), scale=(1.0, 0.66, 0.74), material="screen", segments=28, rings=16))
     parts.append(torus("frame", 0.2, 0.017, (0, -0.232, 0.012), rot=(90, 0, 0), scale=(1.2, 1.0, 0.88), material="trim", segments=36, sides=8))
+    # A thin ring of light round the screen frame, so the face glows from its edge.
+    parts.append(torus("frame_light", 0.222, 0.0042, (0, -0.2405, 0.012), rot=(90, 0, 0), scale=(1.2, 1.0, 0.88), material="glow_warm", segments=36, sides=6))
 
     # Lantern cap with a carrying ring, and the antenna stalk.
     parts.append(lathe("cap", [(0.215, 0.205), (0.2, 0.245), (0.15, 0.285), (0.08, 0.31), (0.0, 0.317)], material="trim", segments=28, cap_bottom=False, cap_top=False))

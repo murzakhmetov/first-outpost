@@ -11,14 +11,16 @@ import {
   confirmEvent,
   confirmPlan,
   continueBriefing,
+  explainTask,
   finishWalk,
   getWorld,
   goNextWeek,
   recallWalk,
+  skipNight,
   skipWalk,
   useSafePlan,
 } from '../game/director';
-import { earthAnswer, evaHud, evaResult, eventResult, lastRecord, mission, settings, step, room } from '../game/store';
+import { earthAnswer, evaHud, evaResult, eventResult, lastRecord, mission, panel, settings, step, room } from '../game/store';
 import { delayText, earthText, eventView, flareUrl, linkLabel, optionLabel, resultText, stormDataUrl, stormLine, sunLine } from '../game/view';
 import { fmtDelay, num, signed, t } from '../i18n';
 import { FINDS, FIND_SCIENCE, foundIn } from '../sim/finds';
@@ -27,7 +29,9 @@ import { buildingDef, robotIdle, underConstruction } from '../sim/outpost';
 import { CROP_WEEKS, DIFFICULTY, EVA_AIR_PER_SECOND, FARM_GROW, GLOBAL_DUST_STORM_2018 } from '../sim/sites';
 import type { MissionState, ModuleId, WeekEnv } from '../sim/types';
 import { MAX_LEVEL, MODULES } from '../sim/types';
+import type { TaskId } from '../game/films';
 import { Btn, FxChips, Rich, SpeakBtn } from './common';
+import { CrewDock } from './CrewDock';
 import { DiscoveryBanner, Hud, LumiBubble, Markers, PickupFeed } from './Hud';
 import { Joystick } from './Joystick';
 import { InteractPrompt } from './Prompt';
@@ -35,6 +39,19 @@ import { Icon } from './icons';
 import type { IconName } from './icons';
 
 const MODULE_ICON: Record<ModuleId, IconName> = { life: 'life', farm: 'plant', lab: 'lab', shield: 'shield' };
+/** The task film that explains each machine of the plan. */
+const MODULE_TASK: Record<ModuleId, TaskId> = { life: 'air', farm: 'food', lab: 'lab', shield: 'shield' };
+
+/** "Why?": replays the film that says what this task is and why it matters. */
+function WhyBtn({ task, compact = false }: { task: TaskId; compact?: boolean }): JSX.Element {
+  const label = `${t('film.why')} ${t(`film.task.${task}.title`)}`;
+  return (
+    <button type="button" class={`why-btn ${compact ? 'is-compact' : ''}`} onClick={() => explainTask(task)} aria-label={label} title={label}>
+      <Icon name="help" size={14} />
+      {!compact && t('film.why')}
+    </button>
+  );
+}
 
 function Link({ href, children }: { href: string; children: string }): JSX.Element {
   return (
@@ -63,6 +80,7 @@ function Briefing({ m }: { m: MissionState }): JSX.Element {
     <section class="dock card briefing" aria-label={t('brief.title', { n: m.week })}>
       <h2>
         <Icon name="calendar" /> {t('brief.title', { n: m.week })}
+        <WhyBtn task="forecast" />
       </h2>
 
       <div class="rows">
@@ -174,6 +192,7 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
         </span>
         {view.title}
         <SpeakBtn text={`${view.title}. ${view.body}`} />
+        <WhyBtn task="event" />
       </h2>
       <p class="event-body">
         <Rich text={view.body} />
@@ -225,6 +244,7 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
               </span>
             </button>
           )}
+          {!answer && !env.conjunction && <WhyBtn task="earth" />}
           {env.conjunction && <p class="sub">{t('earth.blackout')}</p>}
           {view.hint && !showHint && (
             <button type="button" class="ask" onClick={() => setShowHint(true)}>
@@ -356,6 +376,7 @@ function PlanPanel({ m }: { m: MissionState }): JSX.Element {
     <section class="dock card plan" aria-label={t('plan.title')}>
       <h2>
         <Icon name="power" /> {t('plan.title')}
+        <WhyBtn task="plan" />
       </h2>
       <p class="plan-have">
         <b>{t('plan.have', { n: total })}</b>
@@ -400,11 +421,14 @@ function PlanPanel({ m }: { m: MissionState }): JSX.Element {
           const canAdd = level < max && outcome.leftover > 0 && !finished;
           return (
             <div key={module} class={`module module-${module} ${level === 0 ? 'is-off' : ''}`}>
+              <i key={`pulse-${level}`} class="module-pulse" aria-hidden="true" />
               <span class="module-icon">
                 <Icon name={MODULE_ICON[module]} size={24} />
               </span>
               <div class="module-text">
-                <b>{t(`mod.${module}.name`)}</b>
+                <b>
+                  {t(`mod.${module}.name`)} <WhyBtn task={MODULE_TASK[module]} compact />
+                </b>
                 <small>
                   <Rich text={t(`mod.${module}.what`)} />
                 </small>
@@ -475,6 +499,7 @@ function EvaIntro({ m }: { m: MissionState }): JSX.Element {
     <section class="dock card eva-intro" aria-label={t('eva.title')}>
       <h2>
         <Icon name="walk" /> {t('eva.title')}
+        <WhyBtn task="walk" />
       </h2>
       <p class="event-body">{t('eva.body')}</p>
       <ul class="facts">
@@ -836,17 +861,79 @@ function EvaResultCard({ m }: { m: MissionState }): JSX.Element | null {
 // Night and report
 // ---------------------------------------------------------------------------
 
+const SKIP_KEYS = ['Space', 'Enter', 'NumpadEnter'];
+
+/**
+ * After a key skipped the night, the same key held down must not also press the buttons that
+ * come next ("Next week" gets the focus when the report opens). Its repeats are dropped until it
+ * is let go (or the window loses focus, or 5 seconds pass).
+ */
+function swallowHeldKey(code: string): void {
+  let timer = 0;
+  const onDown = (event: KeyboardEvent): void => {
+    if (event.code !== code) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+  const onUp = (event: KeyboardEvent): void => {
+    if (event.code !== code) return;
+    event.preventDefault();
+    stop();
+  };
+  const stop = (): void => {
+    window.clearTimeout(timer);
+    window.removeEventListener('keydown', onDown, true);
+    window.removeEventListener('keyup', onUp, true);
+    window.removeEventListener('blur', stop);
+  };
+  window.addEventListener('keydown', onDown, true);
+  window.addEventListener('keyup', onUp, true);
+  window.addEventListener('blur', stop);
+  timer = window.setTimeout(stop, 5000);
+}
+
 function Night({ m }: { m: MissionState }): JSX.Element {
+  // Space, Enter or a tap skips the rest of the night.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent): void => {
+      if (!SKIP_KEYS.includes(event.code)) return;
+      // Only a plain press on the game itself: not a held key, not a shortcut, not while a menu is
+      // open, and not when a button or a field has the focus (the key belongs to it then).
+      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented) return;
+      if (panel.value !== 'none') return;
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (target && target !== document.body && target.closest('button, a, input, select, textarea, [role="button"], [role="dialog"], [contenteditable="true"]')) return;
+      event.preventDefault();
+      skipNight();
+      swallowHeldKey(event.code);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+  // The night button itself, when it has the focus: skip here, and keep the held key away from what comes next.
+  const onButtonKey = (event: KeyboardEvent): void => {
+    if (!SKIP_KEYS.includes(event.code)) return;
+    event.preventDefault();
+    if (event.repeat) return;
+    skipNight();
+    swallowHeldKey(event.code);
+  };
   return (
-    <div class="night" role="status">
-      <b>{t('night.title', { n: m.week })}</b>
-      <small>{t(m.config.site === 'mars' ? 'night.sols' : 'night.days')}</small>
-      <span class="night-dots" aria-hidden="true">
-        {Array.from({ length: 7 }, (_, index) => (
-          <i key={index} style={{ animationDelay: `${index * 0.5}s` }} />
-        ))}
-      </span>
-    </div>
+    <>
+      <p class="sr-only" role="status">
+        {t('night.title', { n: m.week })} {t(m.config.site === 'mars' ? 'night.sols' : 'night.days')}
+      </p>
+      <button type="button" class="night" onClick={skipNight} onKeyDown={onButtonKey} aria-label={t('night.skip')}>
+        <b>{t('night.title', { n: m.week })}</b>
+        <small>{t(m.config.site === 'mars' ? 'night.sols' : 'night.days')}</small>
+        <span class="night-dots" aria-hidden="true">
+          {Array.from({ length: 7 }, (_, index) => (
+            <i key={index} style={{ animationDelay: `${index * 0.5}s` }} />
+          ))}
+        </span>
+        <em class="night-skip">{t('night.skip')}</em>
+      </button>
+    </>
   );
 }
 
@@ -887,6 +974,7 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
     <section class="dock card report" aria-label={t('report.title', { n: record.week })}>
       <h2>
         <Icon name="check" /> {t('report.title', { n: record.week })}
+        <WhyBtn task="night" />
       </h2>
 
       <div class="report-rows">
@@ -1044,6 +1132,7 @@ export function Game(): JSX.Element | null {
       </div>
       <DiscoveryBanner />
       <PickupFeed />
+      <CrewDock />
       {current === 'plan' && <Markers m={m} />}
     </div>
   );

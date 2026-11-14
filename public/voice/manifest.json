@@ -1,0 +1,1313 @@
+{
+ "version": 1,
+ "lines": {
+  "en:film.built.1": {
+   "file": "a9fb71ae3bd5.mp3",
+   "hash": "a9fb71ae3bd5",
+   "chars": 77,
+   "speaker": "lumi"
+  },
+  "en:film.conjunction.1": {
+   "file": "6a34690b709c.mp3",
+   "hash": "6a34690b709c",
+   "chars": 54,
+   "speaker": "caption"
+  },
+  "en:film.conjunction.2": {
+   "file": "fb57a218467a.mp3",
+   "hash": "fb57a218467a",
+   "chars": 109,
+   "speaker": "mc"
+  },
+  "en:film.dust.1": {
+   "file": "cb953064726f.mp3",
+   "hash": "cb953064726f",
+   "chars": 73,
+   "speaker": "caption"
+  },
+  "en:film.dust.2": {
+   "file": "6de0f7d05bef.mp3",
+   "hash": "6de0f7d05bef",
+   "chars": 106,
+   "speaker": "lumi"
+  },
+  "en:film.eclipse.1": {
+   "file": "fd8931baea02.mp3",
+   "hash": "fd8931baea02",
+   "chars": 84,
+   "speaker": "caption"
+  },
+  "en:film.eclipse.2": {
+   "file": "abd2513e2406.mp3",
+   "hash": "abd2513e2406",
+   "chars": 116,
+   "speaker": "lumi"
+  },
+  "en:film.harvest.1": {
+   "file": "9bb26f93df5b.mp3",
+   "hash": "9bb26f93df5b",
+   "chars": 53,
+   "speaker": "lumi"
+  },
+  "en:film.harvest.2": {
+   "file": "8195634350b1.mp3",
+   "hash": "8195634350b1",
+   "chars": 75,
+   "speaker": "lumi"
+  },
+  "en:film.lose.1": {
+   "file": "936f22e87358.mp3",
+   "hash": "936f22e87358",
+   "chars": 94,
+   "speaker": "lumi"
+  },
+  "en:film.lose.2": {
+   "file": "927342b23496.mp3",
+   "hash": "927342b23496",
+   "chars": 92,
+   "speaker": "mc"
+  },
+  "en:film.storm.1": {
+   "file": "012daedde304.mp3",
+   "hash": "012daedde304",
+   "chars": 79,
+   "speaker": "caption"
+  },
+  "en:film.storm.2.mars": {
+   "file": "8e5f9b3b9f16.mp3",
+   "hash": "8e5f9b3b9f16",
+   "chars": 127,
+   "speaker": "mc"
+  },
+  "en:film.storm.2.moon": {
+   "file": "a0acb86d61ec.mp3",
+   "hash": "a0acb86d61ec",
+   "chars": 108,
+   "speaker": "mc"
+  },
+  "en:film.storm.3.mars": {
+   "file": "b772dd090f5b.mp3",
+   "hash": "b772dd090f5b",
+   "chars": 105,
+   "speaker": "lumi"
+  },
+  "en:film.storm.3.moon": {
+   "file": "74487a5c8d6c.mp3",
+   "hash": "74487a5c8d6c",
+   "chars": 106,
+   "speaker": "lumi"
+  },
+  "en:film.task.air.say": {
+   "file": "15b998f09682.mp3",
+   "hash": "15b998f09682",
+   "chars": 93,
+   "speaker": "lumi"
+  },
+  "en:film.task.earth.say.mars": {
+   "file": "55e35b2437d1.mp3",
+   "hash": "55e35b2437d1",
+   "chars": 118,
+   "speaker": "lumi"
+  },
+  "en:film.task.earth.say.moon": {
+   "file": "4273235189ef.mp3",
+   "hash": "4273235189ef",
+   "chars": 118,
+   "speaker": "lumi"
+  },
+  "en:film.task.event.say": {
+   "file": "8439d0b00da1.mp3",
+   "hash": "8439d0b00da1",
+   "chars": 96,
+   "speaker": "lumi"
+  },
+  "en:film.task.food.say": {
+   "file": "46445a594bcd.mp3",
+   "hash": "46445a594bcd",
+   "chars": 85,
+   "speaker": "lumi"
+  },
+  "en:film.task.forecast.say": {
+   "file": "88a3c4a2a331.mp3",
+   "hash": "88a3c4a2a331",
+   "chars": 128,
+   "speaker": "lumi"
+  },
+  "en:film.task.lab.say": {
+   "file": "bf425faaed84.mp3",
+   "hash": "bf425faaed84",
+   "chars": 108,
+   "speaker": "lumi"
+  },
+  "en:film.task.night.say": {
+   "file": "9f9b7bffee12.mp3",
+   "hash": "9f9b7bffee12",
+   "chars": 107,
+   "speaker": "lumi"
+  },
+  "en:film.task.shield.say": {
+   "file": "baba62f8a68e.mp3",
+   "hash": "baba62f8a68e",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "en:film.task.walk.say": {
+   "file": "f239cd961c59.mp3",
+   "hash": "f239cd961c59",
+   "chars": 116,
+   "speaker": "lumi"
+  },
+  "en:film.tour.start": {
+   "file": "0153634de501.mp3",
+   "hash": "0153634de501",
+   "chars": 80,
+   "speaker": "lumi"
+  },
+  "en:film.win.1": {
+   "file": "057a0b0f1fa6.mp3",
+   "hash": "057a0b0f1fa6",
+   "chars": 58,
+   "speaker": "lumi"
+  },
+  "en:film.win.2.mars": {
+   "file": "f28cb356ca84.mp3",
+   "hash": "f28cb356ca84",
+   "chars": 95,
+   "speaker": "mc"
+  },
+  "en:film.win.2.moon": {
+   "file": "950d16a2808b.mp3",
+   "hash": "950d16a2808b",
+   "chars": 99,
+   "speaker": "mc"
+  },
+  "en:lumi.build.ordered": {
+   "file": "66ebfdc8ec94.mp3",
+   "hash": "66ebfdc8ec94",
+   "chars": 94,
+   "speaker": "lumi"
+  },
+  "en:lumi.built.bunker": {
+   "file": "636fc9e39492.mp3",
+   "hash": "636fc9e39492",
+   "chars": 67,
+   "speaker": "lumi"
+  },
+  "en:lumi.built.garden": {
+   "file": "2f5fb5ed7df5.mp3",
+   "hash": "2f5fb5ed7df5",
+   "chars": 61,
+   "speaker": "lumi"
+  },
+  "en:lumi.built.observatory": {
+   "file": "7005ab56ed18.mp3",
+   "hash": "7005ab56ed18",
+   "chars": 102,
+   "speaker": "lumi"
+  },
+  "en:lumi.built.oxygen": {
+   "file": "d609356c3e4f.mp3",
+   "hash": "d609356c3e4f",
+   "chars": 86,
+   "speaker": "lumi"
+  },
+  "en:lumi.built.solar_array": {
+   "file": "f3d238aa1752.mp3",
+   "hash": "f3d238aa1752",
+   "chars": 67,
+   "speaker": "lumi"
+  },
+  "en:lumi.built.workshop": {
+   "file": "0eba6077974a.mp3",
+   "hash": "0eba6077974a",
+   "chars": 98,
+   "speaker": "lumi"
+  },
+  "en:lumi.dark": {
+   "file": "df77e8b38d52.mp3",
+   "hash": "df77e8b38d52",
+   "chars": 87,
+   "speaker": "lumi"
+  },
+  "en:lumi.dust": {
+   "file": "8f7ed0d7f5e0.mp3",
+   "hash": "8f7ed0d7f5e0",
+   "chars": 80,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.alert": {
+   "file": "ce0f59fd56b0.mp3",
+   "hash": "ce0f59fd56b0",
+   "chars": 40,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.alertBunker": {
+   "file": "232ffc23885f.mp3",
+   "hash": "232ffc23885f",
+   "chars": 80,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.dustDevil": {
+   "file": "e3ed26e5df7e.mp3",
+   "hash": "e3ed26e5df7e",
+   "chars": 201,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.far": {
+   "file": "d82a9beed8f1.mp3",
+   "hash": "d82a9beed8f1",
+   "chars": 59,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.footprints.mars": {
+   "file": "5cf45842f364.mp3",
+   "hash": "5cf45842f364",
+   "chars": 78,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.footprints.moon": {
+   "file": "a4bc8c38c12c.mp3",
+   "hash": "a4bc8c38c12c",
+   "chars": 109,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.metal.mars": {
+   "file": "abcdb415fdf0.mp3",
+   "hash": "abcdb415fdf0",
+   "chars": 97,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.metal.moon": {
+   "file": "8cc921797a25.mp3",
+   "hash": "8cc921797a25",
+   "chars": 83,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.moonJump": {
+   "file": "230a2a7c3118.mp3",
+   "hash": "230a2a7c3118",
+   "chars": 43,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.noSound.moon": {
+   "file": "a6b224201c61.mp3",
+   "hash": "a6b224201c61",
+   "chars": 68,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.regolith": {
+   "file": "9eba776fcf9e.mp3",
+   "hash": "9eba776fcf9e",
+   "chars": 104,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.rover": {
+   "file": "2601299fdca1.mp3",
+   "hash": "2601299fdca1",
+   "chars": 186,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.roverEmpty": {
+   "file": "d01adc5eb5f3.mp3",
+   "hash": "d01adc5eb5f3",
+   "chars": 106,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.roverTouch": {
+   "file": "dfa40e7c79b6.mp3",
+   "hash": "dfa40e7c79b6",
+   "chars": 197,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.sound.mars": {
+   "file": "bbc4d6f95ab5.mp3",
+   "hash": "bbc4d6f95ab5",
+   "chars": 57,
+   "speaker": "lumi"
+  },
+  "en:lumi.eva.start": {
+   "file": "f18c5cb1bb20.mp3",
+   "hash": "f18c5cb1bb20",
+   "chars": 84,
+   "speaker": "lumi"
+  },
+  "en:lumi.night.mars": {
+   "file": "84ef9a79c729.mp3",
+   "hash": "84ef9a79c729",
+   "chars": 64,
+   "speaker": "lumi"
+  },
+  "en:lumi.night.moon": {
+   "file": "c5cfcbfd9beb.mp3",
+   "hash": "c5cfcbfd9beb",
+   "chars": 105,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.airLow": {
+   "file": "55904a10a5ff.mp3",
+   "hash": "55904a10a5ff",
+   "chars": 38,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.airOut": {
+   "file": "8f04603f707b.mp3",
+   "hash": "8f04603f707b",
+   "chars": 72,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.darkAhead": {
+   "file": "813f8971ec23.mp3",
+   "hash": "813f8971ec23",
+   "chars": 51,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.doseHigh": {
+   "file": "e5eef484411c.mp3",
+   "hash": "e5eef484411c",
+   "chars": 66,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.farmOff": {
+   "file": "97b9f681c9f4.mp3",
+   "hash": "97b9f681c9f4",
+   "chars": 57,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.foodLow": {
+   "file": "e2d229861de8.mp3",
+   "hash": "e2d229861de8",
+   "chars": 47,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.good": {
+   "file": "3c2fe7b1a90e.mp3",
+   "hash": "3c2fe7b1a90e",
+   "chars": 45,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.noScience": {
+   "file": "7a6860fe6f80.mp3",
+   "hash": "7a6860fe6f80",
+   "chars": 57,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.over": {
+   "file": "12e0b9849d12.mp3",
+   "hash": "12e0b9849d12",
+   "chars": 60,
+   "speaker": "lumi"
+  },
+  "en:lumi.plan.waste": {
+   "file": "5310d092e9fb.mp3",
+   "hash": "5310d092e9fb",
+   "chars": 44,
+   "speaker": "lumi"
+  },
+  "en:lumi.report.bad": {
+   "file": "dbb6d6a0826d.mp3",
+   "hash": "dbb6d6a0826d",
+   "chars": 44,
+   "speaker": "lumi"
+  },
+  "en:lumi.report.good": {
+   "file": "120a9176fd08.mp3",
+   "hash": "120a9176fd08",
+   "chars": 32,
+   "speaker": "lumi"
+  },
+  "en:lumi.report.slow": {
+   "file": "dacfd6bdd2d1.mp3",
+   "hash": "dacfd6bdd2d1",
+   "chars": 73,
+   "speaker": "lumi"
+  },
+  "en:lumi.report.storm": {
+   "file": "1f276189c3bb.mp3",
+   "hash": "1f276189c3bb",
+   "chars": 55,
+   "speaker": "lumi"
+  },
+  "en:lumi.storm.mars": {
+   "file": "c054710dd2ea.mp3",
+   "hash": "c054710dd2ea",
+   "chars": 105,
+   "speaker": "lumi"
+  },
+  "en:lumi.storm.moon": {
+   "file": "b74398053f9d.mp3",
+   "hash": "b74398053f9d",
+   "chars": 85,
+   "speaker": "lumi"
+  },
+  "en:lumi.t1.go": {
+   "file": "6f9691d3c374.mp3",
+   "hash": "6f9691d3c374",
+   "chars": 43,
+   "speaker": "lumi"
+  },
+  "en:lumi.t1.plan": {
+   "file": "c6bd9b574bc3.mp3",
+   "hash": "c6bd9b574bc3",
+   "chars": 81,
+   "speaker": "lumi"
+  },
+  "en:lumi.t2.eva": {
+   "file": "31f99a8048e6.mp3",
+   "hash": "31f99a8048e6",
+   "chars": 79,
+   "speaker": "lumi"
+  },
+  "en:lumi.t2.farm": {
+   "file": "0882a078eed5.mp3",
+   "hash": "0882a078eed5",
+   "chars": 77,
+   "speaker": "lumi"
+  },
+  "en:lumi.t3.event": {
+   "file": "6b92bd81a9fe.mp3",
+   "hash": "6b92bd81a9fe",
+   "chars": 46,
+   "speaker": "lumi"
+  },
+  "en:lumi.t3.shield": {
+   "file": "33ec7f6ed80b.mp3",
+   "hash": "33ec7f6ed80b",
+   "chars": 91,
+   "speaker": "lumi"
+  },
+  "en:lumi.t4.battery": {
+   "file": "fe20c51b6969.mp3",
+   "hash": "fe20c51b6969",
+   "chars": 71,
+   "speaker": "lumi"
+  },
+  "en:lumi.t4.earth": {
+   "file": "c3d716e8615a.mp3",
+   "hash": "c3d716e8615a",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "en:lumi.tool.battery": {
+   "file": "91c4e2578c19.mp3",
+   "hash": "91c4e2578c19",
+   "chars": 55,
+   "speaker": "lumi"
+  },
+  "en:lumi.tool.boots": {
+   "file": "74d9ebdecb2c.mp3",
+   "hash": "74d9ebdecb2c",
+   "chars": 52,
+   "speaker": "lumi"
+  },
+  "en:lumi.tool.drill": {
+   "file": "9e643acd80b6.mp3",
+   "hash": "9e643acd80b6",
+   "chars": 131,
+   "speaker": "lumi"
+  },
+  "en:lumi.tool.scanner": {
+   "file": "004908e2b4d3.mp3",
+   "hash": "004908e2b4d3",
+   "chars": 65,
+   "speaker": "lumi"
+  },
+  "en:lumi.tool.tank": {
+   "file": "e3983c5a914b.mp3",
+   "hash": "e3983c5a914b",
+   "chars": 118,
+   "speaker": "lumi"
+  },
+  "en:lumi.tool.vest": {
+   "file": "b5c1d34ba649.mp3",
+   "hash": "b5c1d34ba649",
+   "chars": 128,
+   "speaker": "lumi"
+  },
+  "en:lumi.welcome.mars": {
+   "file": "8c678c33afad.mp3",
+   "hash": "8c678c33afad",
+   "chars": 59,
+   "speaker": "lumi"
+  },
+  "en:lumi.welcome.moon": {
+   "file": "8f7cd378ccfe.mp3",
+   "hash": "8f7cd378ccfe",
+   "chars": 63,
+   "speaker": "lumi"
+  },
+  "en:lumi.won.bunker": {
+   "file": "61f5e1058cbc.mp3",
+   "hash": "61f5e1058cbc",
+   "chars": 12,
+   "speaker": "lumi"
+  },
+  "en:lumi.won.workshop": {
+   "file": "61f5e1058cbc.mp3",
+   "hash": "61f5e1058cbc",
+   "chars": 12,
+   "speaker": "lumi"
+  },
+  "en:story.mars.1": {
+   "file": "01c6c05b05ff.mp3",
+   "hash": "01c6c05b05ff",
+   "chars": 33,
+   "speaker": "caption"
+  },
+  "en:story.mars.2": {
+   "file": "76f9a73f09bf.mp3",
+   "hash": "76f9a73f09bf",
+   "chars": 85,
+   "speaker": "mc"
+  },
+  "en:story.mars.3": {
+   "file": "7ffba378ba9f.mp3",
+   "hash": "7ffba378ba9f",
+   "chars": 88,
+   "speaker": "mc"
+  },
+  "en:story.mars.4": {
+   "file": "7b785fcf7230.mp3",
+   "hash": "7b785fcf7230",
+   "chars": 91,
+   "speaker": "mc"
+  },
+  "en:story.mars.5": {
+   "file": "f416c49ed405.mp3",
+   "hash": "f416c49ed405",
+   "chars": 88,
+   "speaker": "mc"
+  },
+  "en:story.mars.6": {
+   "file": "5cb0a88ffd39.mp3",
+   "hash": "5cb0a88ffd39",
+   "chars": 76,
+   "speaker": "lumi"
+  },
+  "en:story.mars.7": {
+   "file": "f268aebd4069.mp3",
+   "hash": "f268aebd4069",
+   "chars": 117,
+   "speaker": "lumi"
+  },
+  "en:story.mars.8": {
+   "file": "2abd32601a20.mp3",
+   "hash": "2abd32601a20",
+   "chars": 116,
+   "speaker": "lumi"
+  },
+  "en:story.mars.9": {
+   "file": "af9df532e6c6.mp3",
+   "hash": "af9df532e6c6",
+   "chars": 129,
+   "speaker": "mc"
+  },
+  "en:story.moon.1": {
+   "file": "8731abd0c48b.mp3",
+   "hash": "8731abd0c48b",
+   "chars": 55,
+   "speaker": "caption"
+  },
+  "en:story.moon.2": {
+   "file": "d33c26d68783.mp3",
+   "hash": "d33c26d68783",
+   "chars": 83,
+   "speaker": "mc"
+  },
+  "en:story.moon.3": {
+   "file": "d7c698b0429f.mp3",
+   "hash": "d7c698b0429f",
+   "chars": 92,
+   "speaker": "mc"
+  },
+  "en:story.moon.4": {
+   "file": "7b785fcf7230.mp3",
+   "hash": "7b785fcf7230",
+   "chars": 91,
+   "speaker": "mc"
+  },
+  "en:story.moon.5": {
+   "file": "9f32a895e60f.mp3",
+   "hash": "9f32a895e60f",
+   "chars": 92,
+   "speaker": "mc"
+  },
+  "en:story.moon.6": {
+   "file": "5cb0a88ffd39.mp3",
+   "hash": "5cb0a88ffd39",
+   "chars": 76,
+   "speaker": "lumi"
+  },
+  "en:story.moon.7": {
+   "file": "f268aebd4069.mp3",
+   "hash": "f268aebd4069",
+   "chars": 117,
+   "speaker": "lumi"
+  },
+  "en:story.moon.8": {
+   "file": "5308e4740eda.mp3",
+   "hash": "5308e4740eda",
+   "chars": 131,
+   "speaker": "lumi"
+  },
+  "en:story.moon.9": {
+   "file": "becd4500de1b.mp3",
+   "hash": "becd4500de1b",
+   "chars": 109,
+   "speaker": "mc"
+  },
+  "ru:film.built.1": {
+   "file": "6253bea6a07a.mp3",
+   "hash": "6253bea6a07a",
+   "chars": 68,
+   "speaker": "lumi"
+  },
+  "ru:film.conjunction.1": {
+   "file": "24f43a09416d.mp3",
+   "hash": "24f43a09416d",
+   "chars": 57,
+   "speaker": "caption"
+  },
+  "ru:film.conjunction.2": {
+   "file": "a1c2e556a25c.mp3",
+   "hash": "a1c2e556a25c",
+   "chars": 129,
+   "speaker": "mc"
+  },
+  "ru:film.dust.1": {
+   "file": "11d614e08921.mp3",
+   "hash": "11d614e08921",
+   "chars": 64,
+   "speaker": "caption"
+  },
+  "ru:film.dust.2": {
+   "file": "85fbe211c7e6.mp3",
+   "hash": "85fbe211c7e6",
+   "chars": 103,
+   "speaker": "lumi"
+  },
+  "ru:film.eclipse.1": {
+   "file": "ac8d8b5cf2e9.mp3",
+   "hash": "ac8d8b5cf2e9",
+   "chars": 75,
+   "speaker": "caption"
+  },
+  "ru:film.eclipse.2": {
+   "file": "4cfd1c0e29a4.mp3",
+   "hash": "4cfd1c0e29a4",
+   "chars": 136,
+   "speaker": "lumi"
+  },
+  "ru:film.harvest.1": {
+   "file": "6754d82c6316.mp3",
+   "hash": "6754d82c6316",
+   "chars": 45,
+   "speaker": "lumi"
+  },
+  "ru:film.harvest.2": {
+   "file": "d645a961c8e2.mp3",
+   "hash": "d645a961c8e2",
+   "chars": 52,
+   "speaker": "lumi"
+  },
+  "ru:film.lose.1": {
+   "file": "8d34feb9f0d2.mp3",
+   "hash": "8d34feb9f0d2",
+   "chars": 100,
+   "speaker": "lumi"
+  },
+  "ru:film.lose.2": {
+   "file": "7e3bac571707.mp3",
+   "hash": "7e3bac571707",
+   "chars": 92,
+   "speaker": "mc"
+  },
+  "ru:film.storm.1": {
+   "file": "6801ca68517e.mp3",
+   "hash": "6801ca68517e",
+   "chars": 65,
+   "speaker": "caption"
+  },
+  "ru:film.storm.2.mars": {
+   "file": "9dc72815b43b.mp3",
+   "hash": "9dc72815b43b",
+   "chars": 131,
+   "speaker": "mc"
+  },
+  "ru:film.storm.2.moon": {
+   "file": "39634d09c1c1.mp3",
+   "hash": "39634d09c1c1",
+   "chars": 107,
+   "speaker": "mc"
+  },
+  "ru:film.storm.3.mars": {
+   "file": "162dfa2d9650.mp3",
+   "hash": "162dfa2d9650",
+   "chars": 110,
+   "speaker": "lumi"
+  },
+  "ru:film.storm.3.moon": {
+   "file": "bbae32d15f8e.mp3",
+   "hash": "bbae32d15f8e",
+   "chars": 114,
+   "speaker": "lumi"
+  },
+  "ru:film.task.air.say": {
+   "file": "ffde8faa61d6.mp3",
+   "hash": "ffde8faa61d6",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "ru:film.task.earth.say.mars": {
+   "file": "26a516b06f59.mp3",
+   "hash": "26a516b06f59",
+   "chars": 123,
+   "speaker": "lumi"
+  },
+  "ru:film.task.earth.say.moon": {
+   "file": "79de58fafc47.mp3",
+   "hash": "79de58fafc47",
+   "chars": 112,
+   "speaker": "lumi"
+  },
+  "ru:film.task.event.say": {
+   "file": "6df716312f3d.mp3",
+   "hash": "6df716312f3d",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "ru:film.task.food.say": {
+   "file": "983e4c184b3b.mp3",
+   "hash": "983e4c184b3b",
+   "chars": 88,
+   "speaker": "lumi"
+  },
+  "ru:film.task.forecast.say": {
+   "file": "2653cfc43b59.mp3",
+   "hash": "2653cfc43b59",
+   "chars": 129,
+   "speaker": "lumi"
+  },
+  "ru:film.task.lab.say": {
+   "file": "dbdb6e8cb5aa.mp3",
+   "hash": "dbdb6e8cb5aa",
+   "chars": 115,
+   "speaker": "lumi"
+  },
+  "ru:film.task.night.say": {
+   "file": "40e709e36853.mp3",
+   "hash": "40e709e36853",
+   "chars": 116,
+   "speaker": "lumi"
+  },
+  "ru:film.task.shield.say": {
+   "file": "686cad9080bf.mp3",
+   "hash": "686cad9080bf",
+   "chars": 94,
+   "speaker": "lumi"
+  },
+  "ru:film.task.walk.say": {
+   "file": "b9a6b38bc0c3.mp3",
+   "hash": "b9a6b38bc0c3",
+   "chars": 115,
+   "speaker": "lumi"
+  },
+  "ru:film.tour.start": {
+   "file": "52c6ae2f95ca.mp3",
+   "hash": "52c6ae2f95ca",
+   "chars": 79,
+   "speaker": "lumi"
+  },
+  "ru:film.win.1": {
+   "file": "0cf04cd4a0fa.mp3",
+   "hash": "0cf04cd4a0fa",
+   "chars": 55,
+   "speaker": "lumi"
+  },
+  "ru:film.win.2.mars": {
+   "file": "4b6c073d2fd3.mp3",
+   "hash": "4b6c073d2fd3",
+   "chars": 95,
+   "speaker": "mc"
+  },
+  "ru:film.win.2.moon": {
+   "file": "d0025c199e69.mp3",
+   "hash": "d0025c199e69",
+   "chars": 94,
+   "speaker": "mc"
+  },
+  "ru:lumi.build.ordered": {
+   "file": "d1e313c3337b.mp3",
+   "hash": "d1e313c3337b",
+   "chars": 85,
+   "speaker": "lumi"
+  },
+  "ru:lumi.built.bunker": {
+   "file": "b98bfa2abf4d.mp3",
+   "hash": "b98bfa2abf4d",
+   "chars": 64,
+   "speaker": "lumi"
+  },
+  "ru:lumi.built.garden": {
+   "file": "7678d861ed59.mp3",
+   "hash": "7678d861ed59",
+   "chars": 58,
+   "speaker": "lumi"
+  },
+  "ru:lumi.built.observatory": {
+   "file": "c3fc7ebcf7ef.mp3",
+   "hash": "c3fc7ebcf7ef",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "ru:lumi.built.oxygen": {
+   "file": "315cff4b5fad.mp3",
+   "hash": "315cff4b5fad",
+   "chars": 106,
+   "speaker": "lumi"
+  },
+  "ru:lumi.built.solar_array": {
+   "file": "832926aadc92.mp3",
+   "hash": "832926aadc92",
+   "chars": 78,
+   "speaker": "lumi"
+  },
+  "ru:lumi.built.workshop": {
+   "file": "48e8588a7763.mp3",
+   "hash": "48e8588a7763",
+   "chars": 100,
+   "speaker": "lumi"
+  },
+  "ru:lumi.dark": {
+   "file": "7086abb85478.mp3",
+   "hash": "7086abb85478",
+   "chars": 98,
+   "speaker": "lumi"
+  },
+  "ru:lumi.dust": {
+   "file": "d3f477e627fe.mp3",
+   "hash": "d3f477e627fe",
+   "chars": 88,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.alert": {
+   "file": "7b2472e15eb7.mp3",
+   "hash": "7b2472e15eb7",
+   "chars": 46,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.alertBunker": {
+   "file": "ad3da2313699.mp3",
+   "hash": "ad3da2313699",
+   "chars": 67,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.dustDevil": {
+   "file": "019172340dd8.mp3",
+   "hash": "019172340dd8",
+   "chars": 191,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.far": {
+   "file": "4306643474cc.mp3",
+   "hash": "4306643474cc",
+   "chars": 52,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.footprints.mars": {
+   "file": "3e662aebe5bb.mp3",
+   "hash": "3e662aebe5bb",
+   "chars": 64,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.footprints.moon": {
+   "file": "c3d0930441a2.mp3",
+   "hash": "c3d0930441a2",
+   "chars": 98,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.metal.mars": {
+   "file": "c8cc8d0cb7f2.mp3",
+   "hash": "c8cc8d0cb7f2",
+   "chars": 110,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.metal.moon": {
+   "file": "dc1d59b9615c.mp3",
+   "hash": "dc1d59b9615c",
+   "chars": 96,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.moonJump": {
+   "file": "960038efa242.mp3",
+   "hash": "960038efa242",
+   "chars": 53,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.noSound.moon": {
+   "file": "184195a4b581.mp3",
+   "hash": "184195a4b581",
+   "chars": 70,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.regolith": {
+   "file": "c0c943787229.mp3",
+   "hash": "c0c943787229",
+   "chars": 113,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.rover": {
+   "file": "bdb28b2ea23d.mp3",
+   "hash": "bdb28b2ea23d",
+   "chars": 190,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.roverEmpty": {
+   "file": "5b084630b6b2.mp3",
+   "hash": "5b084630b6b2",
+   "chars": 80,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.roverTouch": {
+   "file": "72ed1f7b5dca.mp3",
+   "hash": "72ed1f7b5dca",
+   "chars": 203,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.sound.mars": {
+   "file": "6a8ba1b678fc.mp3",
+   "hash": "6a8ba1b678fc",
+   "chars": 56,
+   "speaker": "lumi"
+  },
+  "ru:lumi.eva.start": {
+   "file": "208ac8c87e38.mp3",
+   "hash": "208ac8c87e38",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "ru:lumi.night.mars": {
+   "file": "b5cc53468664.mp3",
+   "hash": "b5cc53468664",
+   "chars": 64,
+   "speaker": "lumi"
+  },
+  "ru:lumi.night.moon": {
+   "file": "3e6b2d573781.mp3",
+   "hash": "3e6b2d573781",
+   "chars": 119,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.airLow": {
+   "file": "80152c933679.mp3",
+   "hash": "80152c933679",
+   "chars": 40,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.airOut": {
+   "file": "6cf64f623612.mp3",
+   "hash": "6cf64f623612",
+   "chars": 85,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.darkAhead": {
+   "file": "17beb17a7140.mp3",
+   "hash": "17beb17a7140",
+   "chars": 64,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.doseHigh": {
+   "file": "9784dcdcb63c.mp3",
+   "hash": "9784dcdcb63c",
+   "chars": 65,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.farmOff": {
+   "file": "723c103c7498.mp3",
+   "hash": "723c103c7498",
+   "chars": 62,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.foodLow": {
+   "file": "ac000bb3d685.mp3",
+   "hash": "ac000bb3d685",
+   "chars": 47,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.good": {
+   "file": "36e72fb2aa37.mp3",
+   "hash": "36e72fb2aa37",
+   "chars": 45,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.noScience": {
+   "file": "f7662cce3760.mp3",
+   "hash": "f7662cce3760",
+   "chars": 75,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.over": {
+   "file": "b547b8e556fc.mp3",
+   "hash": "b547b8e556fc",
+   "chars": 61,
+   "speaker": "lumi"
+  },
+  "ru:lumi.plan.waste": {
+   "file": "98f29475cba9.mp3",
+   "hash": "98f29475cba9",
+   "chars": 47,
+   "speaker": "lumi"
+  },
+  "ru:lumi.report.bad": {
+   "file": "402e9055f51f.mp3",
+   "hash": "402e9055f51f",
+   "chars": 44,
+   "speaker": "lumi"
+  },
+  "ru:lumi.report.good": {
+   "file": "16daab620c0e.mp3",
+   "hash": "16daab620c0e",
+   "chars": 38,
+   "speaker": "lumi"
+  },
+  "ru:lumi.report.slow": {
+   "file": "1296bb6ac14a.mp3",
+   "hash": "1296bb6ac14a",
+   "chars": 59,
+   "speaker": "lumi"
+  },
+  "ru:lumi.report.storm": {
+   "file": "491b327e7652.mp3",
+   "hash": "491b327e7652",
+   "chars": 49,
+   "speaker": "lumi"
+  },
+  "ru:lumi.storm.mars": {
+   "file": "1be61b1ffa44.mp3",
+   "hash": "1be61b1ffa44",
+   "chars": 132,
+   "speaker": "lumi"
+  },
+  "ru:lumi.storm.moon": {
+   "file": "2cd60d65dd12.mp3",
+   "hash": "2cd60d65dd12",
+   "chars": 82,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t1.go": {
+   "file": "9979a0dd48ab.mp3",
+   "hash": "9979a0dd48ab",
+   "chars": 40,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t1.plan": {
+   "file": "f77614b8e3c3.mp3",
+   "hash": "f77614b8e3c3",
+   "chars": 96,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t2.eva": {
+   "file": "f90136db3fab.mp3",
+   "hash": "f90136db3fab",
+   "chars": 78,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t2.farm": {
+   "file": "1ac1e1e8ac03.mp3",
+   "hash": "1ac1e1e8ac03",
+   "chars": 93,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t3.event": {
+   "file": "6a8486752366.mp3",
+   "hash": "6a8486752366",
+   "chars": 67,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t3.shield": {
+   "file": "e5ebd772cd95.mp3",
+   "hash": "e5ebd772cd95",
+   "chars": 108,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t4.battery": {
+   "file": "0d3c4732e397.mp3",
+   "hash": "0d3c4732e397",
+   "chars": 82,
+   "speaker": "lumi"
+  },
+  "ru:lumi.t4.earth": {
+   "file": "1f4258c81171.mp3",
+   "hash": "1f4258c81171",
+   "chars": 93,
+   "speaker": "lumi"
+  },
+  "ru:lumi.tool.battery": {
+   "file": "125c91bfdb82.mp3",
+   "hash": "125c91bfdb82",
+   "chars": 53,
+   "speaker": "lumi"
+  },
+  "ru:lumi.tool.boots": {
+   "file": "590d021f09ab.mp3",
+   "hash": "590d021f09ab",
+   "chars": 79,
+   "speaker": "lumi"
+  },
+  "ru:lumi.tool.drill": {
+   "file": "b2b04a1ba808.mp3",
+   "hash": "b2b04a1ba808",
+   "chars": 111,
+   "speaker": "lumi"
+  },
+  "ru:lumi.tool.scanner": {
+   "file": "069e0c1a1c14.mp3",
+   "hash": "069e0c1a1c14",
+   "chars": 53,
+   "speaker": "lumi"
+  },
+  "ru:lumi.tool.tank": {
+   "file": "8a68a298f366.mp3",
+   "hash": "8a68a298f366",
+   "chars": 133,
+   "speaker": "lumi"
+  },
+  "ru:lumi.tool.vest": {
+   "file": "b7b974319de0.mp3",
+   "hash": "b7b974319de0",
+   "chars": 123,
+   "speaker": "lumi"
+  },
+  "ru:lumi.welcome.mars": {
+   "file": "f34609ff4ca4.mp3",
+   "hash": "f34609ff4ca4",
+   "chars": 69,
+   "speaker": "lumi"
+  },
+  "ru:lumi.welcome.moon": {
+   "file": "80e1ff1632c3.mp3",
+   "hash": "80e1ff1632c3",
+   "chars": 69,
+   "speaker": "lumi"
+  },
+  "ru:lumi.won.bunker": {
+   "file": "bfa2e3a275ef.mp3",
+   "hash": "bfa2e3a275ef",
+   "chars": 19,
+   "speaker": "lumi"
+  },
+  "ru:lumi.won.workshop": {
+   "file": "bfa2e3a275ef.mp3",
+   "hash": "bfa2e3a275ef",
+   "chars": 19,
+   "speaker": "lumi"
+  },
+  "ru:story.mars.1": {
+   "file": "ec4d49564edd.mp3",
+   "hash": "ec4d49564edd",
+   "chars": 37,
+   "speaker": "caption"
+  },
+  "ru:story.mars.2": {
+   "file": "af8c6219c412.mp3",
+   "hash": "af8c6219c412",
+   "chars": 81,
+   "speaker": "mc"
+  },
+  "ru:story.mars.3": {
+   "file": "0894b7dec1b7.mp3",
+   "hash": "0894b7dec1b7",
+   "chars": 105,
+   "speaker": "mc"
+  },
+  "ru:story.mars.4": {
+   "file": "fb20e0365fa4.mp3",
+   "hash": "fb20e0365fa4",
+   "chars": 97,
+   "speaker": "mc"
+  },
+  "ru:story.mars.5": {
+   "file": "485b56f3f572.mp3",
+   "hash": "485b56f3f572",
+   "chars": 88,
+   "speaker": "mc"
+  },
+  "ru:story.mars.6": {
+   "file": "54bb80e95100.mp3",
+   "hash": "54bb80e95100",
+   "chars": 61,
+   "speaker": "lumi"
+  },
+  "ru:story.mars.7": {
+   "file": "5b6241a51e9f.mp3",
+   "hash": "5b6241a51e9f",
+   "chars": 113,
+   "speaker": "lumi"
+  },
+  "ru:story.mars.8": {
+   "file": "60645ea56da5.mp3",
+   "hash": "60645ea56da5",
+   "chars": 95,
+   "speaker": "lumi"
+  },
+  "ru:story.mars.9": {
+   "file": "942ac62b5688.mp3",
+   "hash": "942ac62b5688",
+   "chars": 98,
+   "speaker": "mc"
+  },
+  "ru:story.moon.1": {
+   "file": "7b28374c8ef3.mp3",
+   "hash": "7b28374c8ef3",
+   "chars": 49,
+   "speaker": "caption"
+  },
+  "ru:story.moon.2": {
+   "file": "218946ee5b47.mp3",
+   "hash": "218946ee5b47",
+   "chars": 83,
+   "speaker": "mc"
+  },
+  "ru:story.moon.3": {
+   "file": "6742bafb3369.mp3",
+   "hash": "6742bafb3369",
+   "chars": 105,
+   "speaker": "mc"
+  },
+  "ru:story.moon.4": {
+   "file": "fb20e0365fa4.mp3",
+   "hash": "fb20e0365fa4",
+   "chars": 97,
+   "speaker": "mc"
+  },
+  "ru:story.moon.5": {
+   "file": "3de7ce842387.mp3",
+   "hash": "3de7ce842387",
+   "chars": 87,
+   "speaker": "mc"
+  },
+  "ru:story.moon.6": {
+   "file": "54bb80e95100.mp3",
+   "hash": "54bb80e95100",
+   "chars": 61,
+   "speaker": "lumi"
+  },
+  "ru:story.moon.7": {
+   "file": "5b6241a51e9f.mp3",
+   "hash": "5b6241a51e9f",
+   "chars": 113,
+   "speaker": "lumi"
+  },
+  "ru:story.moon.8": {
+   "file": "e402884f5482.mp3",
+   "hash": "e402884f5482",
+   "chars": 114,
+   "speaker": "lumi"
+  },
+  "ru:story.moon.9": {
+   "file": "cc22ed962f57.mp3",
+   "hash": "cc22ed962f57",
+   "chars": 85,
+   "speaker": "mc"
+  }
+ }
+}

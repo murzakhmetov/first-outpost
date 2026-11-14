@@ -30,7 +30,7 @@ export const SUIT_COLORS = ['#ff8a3d', '#39c2f0', '#ff5fa2', '#8f7bff', '#4fd98a
 /** The clear helmet bubble: nearly invisible in the middle, sky-coloured at the edge, with two drawn highlights. */
 function bubbleMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
-    uniforms: { uSky: GLOBALS.skyColor, uTint: { value: new THREE.Color('#dff3ff') } },
+    uniforms: { uSky: GLOBALS.skyColor, uAnime: GLOBALS.anime, uTint: { value: new THREE.Color('#dff3ff') } },
     vertexShader: /* glsl */ `
       varying vec3 vNormal;
       varying vec3 vView;
@@ -43,18 +43,26 @@ function bubbleMaterial(): THREE.ShaderMaterial {
     fragmentShader: /* glsl */ `
       uniform vec3 uSky;
       uniform vec3 uTint;
+      uniform float uAnime;
       varying vec3 vNormal;
       varying vec3 vView;
       void main() {
         vec3 n = normalize( vNormal );
         vec3 v = normalize( vView );
         float fresnel = pow( 1.0 - clamp( dot( n, v ), 0.0, 1.0 ), 2.6 );
+        // The glass mirrors the sky (high and ultra): ground below, horizon in the middle, zenith above.
+        vec3 mirror = reflect( -v, n );
+        float up = dot( mirror, normalize( ( viewMatrix * vec4( 0.0, 1.0, 0.0, 0.0 ) ).xyz ) );
+        vec3 env = mix( uSky * vec3( 0.38, 0.3, 0.27 ), mix( uSky, uSky * vec3( 0.7, 0.82, 1.15 ), smoothstep( 0.0, 0.85, up ) ), smoothstep( -0.25, 0.08, up ) );
+        vec3 sky = mix( uSky, env, uAnime );
         // Highlights that stay at the upper left of the glass, the way an animator draws them.
         vec2 a = ( n.xy - vec2( -0.5, 0.56 ) ) * vec2( 1.0, 2.1 );
         vec2 b = ( n.xy - vec2( -0.3, 0.75 ) ) * vec2( 1.0, 1.8 );
         float glint = ( 1.0 - smoothstep( 0.012, 0.02, dot( a, a ) ) ) + ( 1.0 - smoothstep( 0.002, 0.004, dot( b, b ) ) );
-        vec3 color = mix( uTint * 0.6, uSky * 1.25, fresnel ) + vec3( 1.0, 0.98, 0.94 ) * glint * 1.5;
-        float alpha = clamp( 0.035 + fresnel * 0.72 + glint * 0.8, 0.0, 1.0 );
+        vec3 color = mix( uTint * 0.6, sky * 1.25, fresnel ) + vec3( 1.0, 0.98, 0.94 ) * glint * 1.5;
+        // A soft sky-coloured sheen across the whole visor, a little stronger when the Sun is out.
+        color += sky * 0.12 * uAnime * ( 1.0 - fresnel );
+        float alpha = clamp( 0.035 + fresnel * 0.72 + glint * 0.8 + 0.05 * uAnime, 0.0, 1.0 );
         gl_FragColor = vec4( color, alpha );
       }`,
     transparent: true,
@@ -101,10 +109,10 @@ export class Astronaut {
 
   constructor(suitColor: string = SUIT_COLORS[0], withOutline = true) {
     // Colours and soft shadows are baked into the model; the suit colour stays changeable.
-    const paint = toon({ color: '#ffffff', rim: 0.55, rimWidth: 0.46, bandSoft: 0.03, vertexColors: true, lift: 0.2 });
+    const paint = toon({ color: '#ffffff', rim: 0.55, rimWidth: 0.46, bandSoft: 0.03, vertexColors: true, lift: 0.2, glint: 0.28 });
     const skin = toon({ color: '#ffdcc8', rim: 0.18, bandEdge: -0.3, bandSoft: 0.22, vertexColors: true, lift: 0.34 });
     const hair = toon({ color: '#3d315e', rim: 0.6, rimWidth: 0.5, spec: 0.3, vertexColors: true, lift: 0.2 });
-    const shaded = toon({ color: '#ffffff', rim: 0.55, vertexColors: true, lift: 0.2 });
+    const shaded = toon({ color: '#ffffff', rim: 0.55, vertexColors: true, lift: 0.2, glint: 0.22 });
     this.accent = new THREE.MeshToonMaterial({ color: suitColor, vertexColors: true });
     this.accent.onBeforeCompile = shaded.onBeforeCompile;
     this.accent.customProgramCacheKey = () => 'toon-c';

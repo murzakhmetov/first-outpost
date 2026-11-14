@@ -34,6 +34,10 @@ uniform float uAurora;
 uniform float uTime;
 uniform float uStarSpin;
 uniform float uAirless;
+uniform float uLessMotion;
+uniform float uGlare;
+uniform vec4 uPhobos;
+uniform vec4 uDeimos;
 varying vec3 vDir;
 
 float hash13( vec3 p3 ) {
@@ -78,8 +82,32 @@ vec3 starLayer( vec3 d, float scale, float density ) {
   return tint * glow * glow * twinkle * ( 0.7 + 3.4 * hash13( cell + 7.7 ) );
 }
 
+#ifdef SKY_FANCY
+// A small lit rock in the sky (Phobos, Deimos): a round disc with a day side, a night side and a few dents.
+vec4 rockMoon( vec3 d, vec4 body, float seed, vec3 albedo ) {
+  float c = dot( d, body.xyz );
+  if ( c < 0.99 ) return vec4( 0.0 );
+  vec3 up = abs( body.y ) > 0.9 ? vec3( 1.0, 0.0, 0.0 ) : vec3( 0.0, 1.0, 0.0 );
+  vec3 t1 = normalize( cross( up, body.xyz ) );
+  vec3 t2 = cross( body.xyz, t1 );
+  vec2 p = vec2( dot( d, t1 ), dot( d, t2 ) ) / body.w;
+  p.x *= 0.86; // Phobos is a lumpy potato, longer than it is tall
+  float r = length( p );
+  if ( r > 1.15 ) return vec4( 0.0 );
+  float edge = 1.0 - smoothstep( 0.9, 1.0, r );
+  vec3 n = vec3( p, sqrt( max( 0.0, 1.0 - r * r ) ) );
+  vec3 s = vec3( dot( uSunDir, t1 ), dot( uSunDir, t2 ), -dot( uSunDir, body.xyz ) );
+  float lit = smoothstep( -0.05, 0.18, dot( n, s ) );
+  float dents = noise2( p * 3.2 + seed );
+  float crater = smoothstep( 0.2, 0.0, abs( length( p - vec2( 0.42, 0.18 ) ) - 0.3 ) ) * 0.35;
+  vec3 col = albedo * ( 0.5 + 0.9 * dents - crater ) * ( 0.04 + 1.15 * lit );
+  return vec4( col, edge );
+}
+#endif
+
 void main() {
   vec3 d = normalize( vDir );
+  float moonCover = 0.0; // how much a moon hides the stars behind it
   float h = d.y;
 
   // Sky gradient.
@@ -95,6 +123,28 @@ void main() {
   float angle = acos( clamp( sunDot, -1.0, 1.0 ) );
   float disc = 1.0 - smoothstep( uSunSize * 0.86, uSunSize, angle );
   color += uSunColor * disc * ( 1.0 - uDust * 0.9 );
+  #ifdef SKY_FANCY
+  {
+    // Glare as a lens would show it: a hot core, a soft bloom and faint spokes that breathe a little.
+    vec3 sa = abs( uSunDir.y ) > 0.9 ? vec3( 1.0, 0.0, 0.0 ) : vec3( 0.0, 1.0, 0.0 );
+    vec3 st1 = normalize( cross( sa, uSunDir ) );
+    vec3 st2 = cross( uSunDir, st1 );
+    float around = atan( dot( d, st2 ), dot( d, st1 ) );
+    float spokes = pow( abs( cos( around * 3.0 + 0.4 ) ), 18.0 ) + pow( abs( cos( around * 5.0 + 1.1 ) ), 30.0 ) * 0.6;
+    float breath = 1.0 + 0.12 * sin( uTime * 0.4 ) * ( 1.0 - uLessMotion );
+    float aboveSun = smoothstep( -0.04, 0.05, uSunDir.y );
+    float glare = pow( near, 360.0 ) * 1.6 + pow( near, 26.0 ) * 0.1 + spokes * pow( near, 140.0 ) * 0.5 * breath;
+    color += mix( uSunColor, uGlowColor, 0.5 ) * 0.09 * glare * uGlare * aboveSun * ( 1.0 - uDust );
+    if ( uAirless < 0.5 ) {
+      float horizon = smoothstep( -0.02, 0.03, h );
+      vec4 phobos = rockMoon( d, uPhobos, 3.0, vec3( 0.46, 0.4, 0.36 ) );
+      vec4 deimos = rockMoon( d, uDeimos, 11.0, vec3( 0.5, 0.45, 0.4 ) );
+      color = mix( color, phobos.rgb, phobos.a * horizon );
+      color = mix( color, deimos.rgb, deimos.a * horizon );
+      moonCover = max( phobos.a, deimos.a ) * horizon;
+    }
+  }
+  #endif
 
   // Stars turn slowly around the pole.
   if ( uStars > 0.01 ) {
@@ -102,6 +152,28 @@ void main() {
     float s = sin( uStarSpin );
     vec3 sd = vec3( d.x * c - d.z * s, d.y, d.x * s + d.z * c );
     vec3 stars = starLayer( sd, 46.0, 0.09 ) + starLayer( sd, 95.0, 0.07 ) * 0.7;
+    #ifdef SKY_FANCY
+    if ( uAirless < 0.5 ) {
+      // Earth seen from Mars: the brightest blue-white star of the night.
+      float ea = acos( clamp( dot( sd, normalize( vec3( 0.52, 0.46, -0.72 ) ) ), -1.0, 1.0 ) );
+      float pulse = 0.9 + 0.1 * sin( uTime * 1.3 ) * ( 1.0 - uLessMotion );
+      stars += vec3( 0.62, 0.82, 1.0 ) * ( smoothstep( 0.0042, 0.0, ea ) * 5.0 + 0.0035 / ( ea + 0.0035 ) * 0.28 ) * pulse;
+      // Now and then a meteor burns up over the dunes: one slot every few seconds, most of them empty.
+      float slot = floor( uTime / 7.0 );
+      float life = uTime - slot * 7.0;
+      if ( hash12( vec2( slot, 3.1 ) ) < 0.34 && life < 1.0 && uLessMotion < 0.5 ) {
+        vec3 p0 = normalize( vec3( hash12( vec2( slot, 7.7 ) ) * 2.0 - 1.0, 0.4 + 0.5 * hash12( vec2( slot, 1.3 ) ), hash12( vec2( slot, 9.9 ) ) * 2.0 - 1.0 ) );
+        vec3 w = normalize( cross( p0, normalize( vec3( hash12( vec2( slot, 4.4 ) ) - 0.5, hash12( vec2( slot, 5.5 ) ) - 0.5, hash12( vec2( slot, 6.6 ) ) - 0.5 ) ) ) );
+        float along = atan( dot( d, w ), dot( d, p0 ) );
+        float across = dot( d, cross( p0, w ) );
+        float head = life * 0.4;
+        float tail = ( along - ( head - 0.13 ) ) / 0.13;
+        if ( dot( d, p0 ) > 0.0 && tail > 0.0 && tail < 1.0 ) {
+          stars += vec3( 1.0, 0.94, 0.82 ) * tail * tail * exp( -across * across / ( 2.0 * 0.0006 * 0.0006 ) ) * sin( life * 3.14159 ) * 4.0;
+        }
+      }
+    }
+    #endif
     #ifdef SKY_DETAIL
     // The Milky Way: a soft, cloudy band.
     vec3 galaxyAxis = normalize( vec3( 0.35, 0.55, 0.76 ) );
@@ -110,18 +182,35 @@ void main() {
     stars += vec3( 0.45, 0.5, 0.75 ) * band * ( 0.25 + 0.75 * cloud ) * 0.5;
     stars += starLayer( sd, 170.0, 0.12 ) * band * 0.8;
     #endif
-    float mask = mix( smoothstep( -0.04, 0.16, h ), step( -0.02, h ), uAirless ) * ( 1.0 - disc ) * ( 1.0 - smoothstep( 0.9, 0.999, sunDot ) );
+    float mask = mix( smoothstep( -0.04, 0.16, h ), step( -0.02, h ), uAirless ) * ( 1.0 - disc ) * ( 1.0 - smoothstep( 0.9, 0.999, sunDot ) ) * ( 1.0 - moonCover );
     color += stars * uStars * mask;
   }
 
   #ifdef SKY_DETAIL
   // Thin, high ice clouds (Mars has them).
   if ( uClouds > 0.01 ) {
-    vec2 uv = d.xz / ( h + 0.24 ) * 0.78 + vec2( uTime * 0.004, 0.0 );
+    #ifdef SKY_FANCY
+    float ct = uTime * ( 1.0 - uLessMotion );
+    #else
+    float ct = uTime;
+    #endif
+    vec2 uv = d.xz / ( h + 0.24 ) * 0.78 + vec2( ct * 0.004, 0.0 );
+    #ifdef SKY_FANCY
+    float body = fbm2( uv * vec2( 0.8, 2.3 ) + fbm2( uv * 0.6 + ct * 0.006 ) * 1.6 );
+    #else
     float body = fbm2( uv * vec2( 0.8, 2.3 ) + fbm2( uv * 0.6 ) * 1.6 );
+    #endif
     float shape = body + fbm2( uv * vec2( 3.0, 6.5 ) + 4.0 ) * 0.16;
     // Painted the way an animator would: a clean edge, a sunlit core, a cooler rim.
+    #ifdef SKY_FANCY
+    float cover = smoothstep( 0.5, 0.66, shape ) * smoothstep( 0.03, 0.26, h ) * uClouds;
+    // Thin streaks of ice high above the thicker clouds, drifting slowly.
+    float wisp = fbm2( vec2( uv.x * 0.35 + ct * 0.006, uv.y * 3.2 ) + fbm2( uv * 1.1 + ct * 0.01 ) * 1.4 );
+    float cirrus = smoothstep( 0.52, 0.82, wisp ) * smoothstep( 0.02, 0.35, h ) * uClouds * 0.5;
+    color = mix( color, uCloudColor * 1.02 + uGlowColor * pow( near, 6.0 ) * 0.6, cirrus * 0.55 );
+    #else
     float cover = smoothstep( 0.55, 0.62, shape ) * smoothstep( 0.03, 0.26, h ) * uClouds;
+    #endif
     float core = smoothstep( 0.62, 0.8, shape );
     vec3 rim = mix( uCloudColor, uHorizon, 0.5 ) * 0.94;
     vec3 lit = mix( rim, uCloudColor * 1.06, core ) + uGlowColor * pow( near, 6.0 ) * 0.9;
@@ -223,8 +312,13 @@ export class Sky {
   readonly material: THREE.ShaderMaterial;
   readonly earth: THREE.Mesh | null;
   private readonly earthMaterial: THREE.ShaderMaterial | null = null;
+  private readonly sunSize: number;
+  private readonly mars: boolean;
+  private readonly moonDir = new THREE.Vector3();
 
   constructor(options: { detail: boolean; withEarth: boolean; sunSize: number }) {
+    this.sunSize = options.sunSize;
+    this.mars = !options.withEarth;
     this.material = new THREE.ShaderMaterial({
       vertexShader: SKY_VERT,
       fragmentShader: SKY_FRAG,
@@ -249,6 +343,10 @@ export class Sky {
         uTime: { value: 0 },
         uStarSpin: { value: 0 },
         uAirless: { value: options.withEarth ? 1 : 0 },
+        uLessMotion: { value: 0 },
+        uGlare: { value: 0 },
+        uPhobos: { value: new THREE.Vector4(0, 1, 0, 0.015) },
+        uDeimos: { value: new THREE.Vector4(0, 1, 0, 0.0025) },
       },
       side: THREE.BackSide,
       depthWrite: false,
@@ -282,11 +380,46 @@ export class Sky {
   /** Where Earth hangs in the lunar sky (it barely moves, as seen from the Moon). */
   static readonly EARTH_DIR = new THREE.Vector3(-0.42, 0.2, -0.88).normalize();
 
+  /**
+   * Extra sky for high and ultra: the moons of Mars, Earth as a star, meteors, a sun glare and softer clouds.
+   * Switched with a shader define, so it can change while the game runs.
+   */
+  setFancy(on: boolean): void {
+    const has = 'SKY_FANCY' in this.material.defines;
+    if (on === has) return;
+    if (on) this.material.defines.SKY_FANCY = '';
+    else delete this.material.defines.SKY_FANCY;
+    this.material.uniforms.uGlare.value = on ? 1 : 0;
+    this.material.needsUpdate = true;
+  }
+
+  /** Calmer sky: no meteors, still clouds, no breathing glare. */
+  set lessMotion(value: boolean) {
+    this.material.uniforms.uLessMotion.value = value ? 1 : 0;
+  }
+
+  /**
+   * Phobos and Deimos cross the Martian sky from west to east: Phobos in about 90 seconds of game time, Deimos in a few minutes.
+   * Their sizes next to the Sun are real (Phobos about 0.57 of its width, Deimos about 0.1); the game's Sun is drawn larger than real, so they scale with it.
+   */
+  private moveMoons(time: number): void {
+    const u = this.material.uniforms;
+    const phobos = u.uPhobos.value as THREE.Vector4;
+    const a = (time * 0.035 + 1.1) % (Math.PI * 2);
+    this.moonDir.set(-Math.cos(a), 0.92 * Math.sin(a), 0.36).normalize();
+    phobos.set(this.moonDir.x, this.moonDir.y, this.moonDir.z, this.sunSize * 0.57);
+    const deimos = u.uDeimos.value as THREE.Vector4;
+    const b = (time * 0.006 + 2.3) % (Math.PI * 2);
+    this.moonDir.set(-Math.cos(b), 0.86 * Math.sin(b), -0.22).normalize();
+    deimos.set(this.moonDir.x, this.moonDir.y, this.moonDir.z, this.sunSize * 0.095);
+  }
+
   update(camera: THREE.Camera, time: number, sunDir: THREE.Vector3): void {
     this.mesh.position.copy(camera.position);
     const u = this.material.uniforms;
     u.uTime.value = time;
     u.uSunDir.value.copy(sunDir);
+    if (this.mars && 'SKY_FANCY' in this.material.defines) this.moveMoons(time);
     if (this.earth && this.earthMaterial) {
       this.earth.position.copy(camera.position).addScaledVector(Sky.EARTH_DIR, 1500);
       this.earth.rotation.y = 1.2 + time * 0.004;

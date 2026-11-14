@@ -70,11 +70,15 @@ export class FakeWorld {
   startEva(config: unknown) { this.mode = 'eva'; this.eva.active = true; this.calls.push('startEva'); this.evaConfig = config; }
   enterRoom(room: string) { this.interior.active = true; this.calls.push('enterRoom:' + room); }
   leaveRoom() { if (!this.interior.active) return; this.interior.active = false; this.calls.push('leaveRoom'); }
+  startCinema(landing: boolean) { this.calls.push('startCinema:' + landing); }
+  shake(amount: number) { this.calls.push('shake:' + amount); }
   cinematic(shot: string) { this.calls.push('cinematic:' + shot); }
   endCinematic() { this.calls.push('endCinematic'); }
   stats() { return { fps: 60, calls: 0, triangles: 0, scale: 1 }; }
   setClock(value: number) { this.clock = this.clockGoal = value; this.clockSpeed = 0; const done = this.clockDone; this.clockDone = null; done?.(); }
   getClock() { return this.clock; }
+  /** Same as World.hurryClock. */
+  hurryClock(seconds = 0.35) { if (this.clockDone && this.clockSpeed !== 0) this.clockSpeed = (this.clockGoal - this.clock) / Math.max(0.01, seconds); }
   /** Same as World.runClock (world.ts:583-594). */
   runClock(to: number, seconds: number): Promise<void> {
     return new Promise((resolve) => {

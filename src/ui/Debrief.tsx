@@ -16,6 +16,7 @@ import { starTargets } from '../sim/mission';
 import { DIFFICULTY } from '../sim/sites';
 import type { MissionState } from '../sim/types';
 import { Btn, Stars } from './common';
+import { CrewResults } from './CrewResults';
 import { Icon } from './icons';
 import type { IconName } from './icons';
 
@@ -184,6 +185,8 @@ export function Debrief(): JSX.Element | null {
               </div>
             </>
           )}
+
+          <CrewResults />
 
           <h3>{t('end.chart')}</h3>
           <Chart m={m} />

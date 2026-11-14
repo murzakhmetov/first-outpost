@@ -581,7 +581,7 @@ export function LumiBubble(): JSX.Element | null {
         </p>
       </div>
       <div class="lumi-tools">
-        <SpeakBtn text={text} />
+        <SpeakBtn text={text} voiceKey={line.key} />
         <button type="button" class="lumi-close" aria-label={t('common.close')} onClick={() => setHidden(line.id)}>
           <Icon name="close" size={14} />
         </button>

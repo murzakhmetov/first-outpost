@@ -4,7 +4,8 @@
 import type { ComponentChildren, JSX } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { audio, canSpeak, speak, stopSpeaking } from '../game/audio';
-import { settings } from '../game/store';
+import { cutscene, settings } from '../game/store';
+import { hasLine, loadManifest, playLine, stopLine } from '../game/voice';
 import { has, lang, num, signed, t } from '../i18n';
 import type { Effects } from '../sim/types';
 import { Icon } from './icons';
@@ -98,19 +99,35 @@ export function IconBtn({ icon, label, onClick, active }: { icon: IconName; labe
   );
 }
 
-/** Reads a text aloud with the device's voice, for children who are still learning to read. */
-export function SpeakBtn({ text }: { text: string }): JSX.Element | null {
+/**
+ * Reads a text aloud, for children who are still learning to read. With a `voiceKey` (the text key) and the
+ * voices setting on, the recorded line is played when the build has one (see game/voice.ts); otherwise the
+ * device's own voice reads it.
+ * `auto` false: the owner plays the line by itself (the film player); `onPlay` replaces the button's action then.
+ */
+export function SpeakBtn({ text, voiceKey, auto = true, onPlay }: { text: string; voiceKey?: string; auto?: boolean; onPlay?: () => void }): JSX.Element | null {
   const [on, setOn] = useState(false);
   const byHand = useRef(false);
+  const useFile = !!voiceKey && settings.value.voice;
+  useEffect(() => {
+    if (useFile) void loadManifest();
+  }, [useFile]);
+  const filed = useFile && hasLine(voiceKey as string, lang.value);
   // Only a text the child asked for stops when its card closes; an automatic reading is left to finish.
   useEffect(() => () => {
-    if (byHand.current) stopSpeaking();
+    if (byHand.current) {
+      stopSpeaking();
+      if (voiceKey) stopLine();
+    }
   }, []);
   useEffect(() => {
     // With "read aloud" switched on, new texts are spoken by themselves, one after the other.
-    if (settings.value.speak && text) speak(text, lang.value, true);
+    if (!auto || !settings.value.speak || !text) return;
+    if (!useFile) speak(text, lang.value, true);
+    // A film plays its own lines: a bubble must not cut them off.
+    else if (!cutscene.value) void playLine(voiceKey as string, lang.value, { text, fallback: true, queue: true });
   }, [text]);
-  if (!canSpeak(lang.value)) return null;
+  if (!canSpeak(lang.value) && !filed) return null;
   return (
     <button
       type="button"
@@ -118,9 +135,19 @@ export function SpeakBtn({ text }: { text: string }): JSX.Element | null {
       aria-label={t(on ? 'common.stopReading' : 'common.readAloud')}
       title={t(on ? 'common.stopReading' : 'common.readAloud')}
       onClick={() => {
+        if (onPlay && filed) {
+          onPlay();
+          return;
+        }
         byHand.current = !on;
-        if (on) stopSpeaking();
-        else speak(text, lang.value);
+        if (on) {
+          stopSpeaking();
+          if (useFile) stopLine();
+        } else if (useFile) void playLine(voiceKey as string, lang.value, { text, fallback: true }).then(() => setOn(false));
+        else {
+          stopLine(); // a recorded line and the device's voice must not talk at once
+          speak(text, lang.value);
+        }
         setOn(!on);
         if (!on) window.setTimeout(() => setOn(false), Math.min(20000, 600 + text.length * 70));
       }}

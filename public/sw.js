@@ -7,6 +7,9 @@ const BUILD = '__BUILD__';
 const FILES = /*__FILES__*/ [];
 const PREFIX = 'first-outpost-';
 const CACHE = PREFIX + BUILD;
+// The voice-over files (voice/<hash>.mp3) are named by their content, so one copy serves every build: they are
+// saved on demand, first-come, in a cache of their own that new builds leave alone.
+const VOICE_CACHE = PREFIX + 'voice';
 // Each address has one version, so a saved copy fits whatever headers the request has.
 const ANY = { ignoreVary: true };
 
@@ -30,7 +33,7 @@ self.addEventListener('activate', (event) => {
       .keys()
       .then((names) =>
         Promise.all(
-          names.filter((name) => name.startsWith(PREFIX) && name !== CACHE).map((name) => caches.delete(name)),
+          names.filter((name) => name.startsWith(PREFIX) && name !== CACHE && name !== VOICE_CACHE).map((name) => caches.delete(name)),
         ),
       )
       .then(() => self.clients.claim()),
@@ -57,8 +60,25 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return; // NASA requests always go to the network
   if (url.pathname.endsWith('/sw.js')) return; // never keep an old copy of this file
 
-  // Pages and the daily data file: newest first, saved copy when offline.
-  const fresh = request.mode === 'navigate' || url.pathname.endsWith('spaceweather-latest.json');
+  // A voice file: saved copy first, then the network (and saved for next time). Never a partial (206) answer.
+  if (url.pathname.includes('/voice/') && url.pathname.endsWith('.mp3')) {
+    event.respondWith(
+      caches.open(VOICE_CACHE).then((cache) =>
+        cache.match(request, ANY).then(
+          (hit) =>
+            hit ||
+            fetch(request).then((response) => {
+              if (response.ok && response.status === 200) cache.put(request, response.clone());
+              return response;
+            }),
+        ),
+      ),
+    );
+    return;
+  }
+
+  // Pages, the daily data file and the voice list (it changes without a new build): newest first, saved copy when offline.
+  const fresh = request.mode === 'navigate' || url.pathname.endsWith('spaceweather-latest.json') || url.pathname.endsWith('/voice/manifest.json');
   if (fresh) {
     const network = fetch(request).then((response) => {
       if (response.ok) {
@@ -72,9 +92,14 @@ self.addEventListener('fetch', (event) => {
       return response;
     });
     network.catch(() => undefined); // a late failure after the saved copy was used is fine
-    const saved = () => caches.match(request, { ignoreSearch: true, ignoreVary: true }).then((hit) => hit || caches.match('./', ANY));
+    // The voice list never falls back to the start page: with no saved copy it is an empty list.
+    const isList = url.pathname.endsWith('/voice/manifest.json');
+    const saved = () =>
+      caches
+        .match(request, { ignoreSearch: true, ignoreVary: true })
+        .then((hit) => hit || (isList ? new Response('{"version":1,"lines":{}}', { headers: { 'content-type': 'application/json' } }) : caches.match('./', ANY)));
     // A network that answers slowly (weak Wi-Fi) should not keep a child waiting: after 4 s, use the saved copy.
-    const slow = new Promise((resolve) => setTimeout(() => resolve('slow'), 4000));
+    const slow = isList ? new Promise(() => undefined) : new Promise((resolve) => setTimeout(() => resolve('slow'), 4000));
     event.respondWith(
       Promise.race([network, slow]).then(
         (first) => (first === 'slow' ? saved().then((hit) => hit || network) : first),

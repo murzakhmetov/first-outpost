@@ -35,6 +35,8 @@ The fact sheets used to check the numbers, with a quote from each source, are in
 | Cosmic rays over the solar cycle | about 0.21 mGy per day near solar maximum, about 0.32 mGy per day at the 2019–2020 minimum | RAD review: [Guo et al. 2021](https://link.springer.com/article/10.1007/s00159-021-00136-5) |
 | Biggest storm measured on Mars | 8,100 micrograys on 20 May 2024, "equivalent to 30 chest X-rays" | [NASA/JPL, 10 June 2024](https://www.jpl.nasa.gov/news/nasa-watches-mars-light-up-during-epic-solar-storm) |
 | Dose on the Moon's surface | 1,369 microsieverts per day (early 2019, solar minimum) | Chang'E-4 lander, [Zhang et al. 2020, _Science Advances_](https://pmc.ncbi.nlm.nih.gov/articles/PMC7518862/). This is not a NASA measurement |
+| Radiation on Mars, quiet day and storm peak | about 4.7 µGy per hour (median, 1–7 April 2024); 304 µGy per hour at 06:15 UTC on 20 May 2024, about 64 times more | Curiosity RAD in NASA OSDR [RadLab](https://visualization.osdr.nasa.gov/radlab/gui/data-api/) (instrument MSL-RAD-Surface); the queries are in `docs/sources/facts-radlab.json` (RL1, RL2) |
+| Radiation inside the Space Station | about 4.5 µGy per hour (DOSTEL medians, 10–12 May 2024) | NASA OSDR RadLab, ISS DOSTEL (RL3). The highest readings that day came before the storm reached Earth (most likely the South Atlantic Anomaly), so the game does not use them |
 | NASA career limit | 600 mSv | [NASA-STD-3001 Vol. 1 Rev. C](https://standards.nasa.gov/sites/default/files/standards/NASA/C//nasa-std-3001-vol-1-rev-c-signature.pdf) |
 | August 1972 storm | a moonwalker might have absorbed 400 rem | NASA Science, "Sickening Solar Flares" (2005), reprinted in [NASA's STEREO science guide](https://www.nasa.gov/wp-content/uploads/2015/03/139023main_stereo_science_guide.pdf); [archived copy of the original](https://web.archive.org/web/20160101235659/http://science.nasa.gov/science-news/science-at-nasa/2005/27jan_solarflares) |
 
@@ -63,6 +65,7 @@ The fact sheets used to check the numbers, with a quote from each source, are in
 | Eclipse card (Moon) | Real dates of total lunar eclipses 2010–2026; Blue Ghost photographed one from the Moon on 14 March 2025 | [NASA](https://www.nasa.gov/blogs/missions/2025/03/14/nasa-science-data-received-blue-ghost-captures-eclipse-from-moon/) |
 | Radio delay | 3 to 22 minutes to Mars, about 1.3 seconds to the Moon | [NASA Science](https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/) |
 | Gravity when walking and jumping | Mars 3.71 m/s², Moon 1.62 m/s² | NASA planetary fact sheets |
+| Why the crew grows food (films) | Astronaut menus have 1,900 to 3,200 calories a day; the Space Station gets fresh food every few months; crews on the Moon or Mars will have to grow their own | [Canadian Space Agency](https://www.asc-csa.gc.ca/eng/sciences/food-production/growing-healthy-food-in-space-and-remote-areas.asp) (CSA1) |
 
 Every decision card ends with "A true story" and a link to its source. All 66 Science log cards list their sources.
 
@@ -133,3 +136,22 @@ node scripts/fetch-images.ts         # NASA photos for the Science log -> public
 ```
 
 Node 22.18 or newer runs these TypeScript files directly. Raw answers are cached in `data/raw/` so a second run only downloads what is new.
+
+## 8. The films: every task explained with a real fact
+
+The opening film walks through every task of a week (the forecast, sharing the energy, air, food, the lab, the shield, walks, choices and the week's report): what it is and why it matters. Each task also has its own short film with a card ("Why?" buttons on every step) that ends with one real fact and its source. Event films show the first solar storm, the first dust storm, a lunar eclipse seen from the Moon (Blue Ghost photographed one on 14 March 2025, see section 5), Mars solar conjunction (the Sun blocks the radio, see section 4), the first harvest, the first new building and the end of the mission. All of them are archived facts, checked on 14 November 2026; none is presented as live.
+
+| Card | Fact (Mars / Moon) | Fact sheet |
+| --- | --- | --- |
+| Space forecast | the storms are real DONKI events on their real dates | R18 |
+| Sharing the energy | InSight stopped after dust covered its panels / panels at the lunar pole stand upright (VSAT) | E5 / O7 |
+| Air | MOXIE made 122 g of oxygen from Mars air / moon dust is about 45% oxygen by mass | E6 / O1 |
+| Food | 1,900–3,200 calories a day; crews far from Earth must grow food | CSA1 |
+| Science | NASA's Open Science Data Repository keeps space-biology results open to everyone | 2026 challenge resources (OSDR) |
+| Radiation shield | 4.7 → 304 µGy per hour on Mars, 20 May 2024 / about 4.5 µGy per hour on the Space Station | RL1–RL3 |
+| Walking outside | wind cleaned Spirit's and Opportunity's panels / Apollo 17's orange soil | E5 / D6 |
+| Choices | Orion's crew builds a storm shelter from storage bags in about an hour | R12 |
+| Asking Earth | radio delay 3–22 minutes to Mars, about 1.3 seconds to the Moon | section 4 |
+| The week runs | a sol lasts 24 h 39 min / high points near Shackleton crater are sunlit most of the year, none all the time | E3 / E14 |
+
+The texts are in `src/i18n/films.ts`; the film data is in `src/game/films.ts`.

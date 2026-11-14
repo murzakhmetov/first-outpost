@@ -20,6 +20,8 @@ export const GLOBALS = {
   dustColor: { value: new THREE.Color(0.75, 0.5, 0.35) },
   /** 0 = day, 1 = night: lamps and windows glow by this amount. */
   night: { value: 0 },
+  /** 1 on high and ultra: the anime look of characters (sharper shadow edge, rim tinted by the sky, glints) and brighter lights at night. */
+  anime: { value: 0 },
 };
 
 /** Fog values that three.js fills in for custom shaders that opt into fog. */
@@ -51,6 +53,8 @@ export interface ToonOptions {
   opacity?: number;
   /** Share of its own colour a surface keeps in full shadow (characters: about 0.2). */
   lift?: number;
+  /** A small hard glint of the Sun on high and ultra (suits). */
+  glint?: number;
 }
 
 const toonCache = new Map<string, THREE.MeshToonMaterial>();
@@ -80,12 +84,16 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
   const bandSoft = options.bandSoft ?? 0.035;
   const dusty = !!options.dusty;
   const lift = options.lift ?? 0;
+  const glint = options.glint ?? 0;
 
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uBand = { value: new THREE.Vector2(bandEdge, bandSoft) };
     shader.uniforms.uRim = { value: new THREE.Vector2(rimWidth, rim) };
     shader.uniforms.uSpec = { value: spec };
     shader.uniforms.uLift = { value: lift };
+    shader.uniforms.uGlint = { value: glint };
+    shader.uniforms.uAnime = GLOBALS.anime;
+    shader.uniforms.uSky = GLOBALS.skyColor;
     shader.uniforms.uRimColor = GLOBALS.rimColor;
     shader.uniforms.uSunDirView = GLOBALS.sunDirView;
     shader.uniforms.uDust = GLOBALS.dust;
@@ -99,14 +107,19 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
         uniform vec2 uRim;
         uniform float uSpec;
         uniform float uLift;
+        uniform float uGlint;
+        uniform float uAnime;
+        uniform vec3 uSky;
         uniform vec3 uRimColor;
         uniform vec3 uSunDirView;
         uniform float uDust;
         uniform vec3 uDustColor;
         vec3 getGradientIrradiance( vec3 normal, vec3 lightDirection ) {
           float dotNL = dot( normal, lightDirection );
-          float lit = smoothstep( uBand.x - uBand.y, uBand.x + uBand.y, dotNL );
-          float bright = smoothstep( uBand.x + 0.45 - uBand.y, uBand.x + 0.45 + uBand.y, dotNL );
+          // Characters (they keep some of their colour in shadow) get a crisper light/shadow edge on high and ultra.
+          float soft = uBand.y * mix( 1.0, 0.38, uAnime * step( 0.001, uLift ) );
+          float lit = smoothstep( uBand.x - soft, uBand.x + soft, dotNL );
+          float bright = smoothstep( uBand.x + 0.45 - soft, uBand.x + 0.45 + soft, dotNL );
           return vec3( lit * 0.84 + bright * 0.16 );
         }`,
       )
@@ -124,12 +137,15 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
           float facing = saturate( dot( viewDir, normal ) );
           float sunSide = saturate( dot( normal, uSunDirView ) * 0.6 + 0.4 );
           float rimBand = smoothstep( 1.0 - uRim.x, 1.0 - uRim.x * 0.45, 1.0 - facing );
-          outgoingLight += uRimColor * rimBand * uRim.y * sunSide;
+          // The rim picks up the colour of the sky it is seen against.
+          vec3 rimTone = mix( uRimColor, uSky * 1.5 + uRimColor * 0.35, 0.45 * uAnime );
+          outgoingLight += rimTone * rimBand * uRim.y * sunSide;
           outgoingLight += diffuseColor.rgb * uLift;
-          if ( uSpec > 0.0 ) {
+          float shine = uSpec + uGlint * uAnime;
+          if ( shine > 0.0 ) {
             vec3 halfDir = normalize( uSunDirView + viewDir );
             float highlight = smoothstep( 0.982, 0.994, dot( normal, halfDir ) );
-            outgoingLight += uRimColor * highlight * uSpec;
+            outgoingLight += uRimColor * highlight * shine;
           }
         }
         #include <opaque_fragment>`,
@@ -145,6 +161,15 @@ export function glow(color: THREE.ColorRepresentation, intensity = 2): THREE.Mes
   const material = new THREE.MeshBasicMaterial({ color });
   material.color.multiplyScalar(intensity);
   material.toneMapped = false;
+  // On high and ultra, small lights and screens shine brighter in the dark so they read (and bloom) at night.
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uNight = GLOBALS.night;
+    shader.uniforms.uAnime = GLOBALS.anime;
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nuniform float uNight;\nuniform float uAnime;')
+      .replace('#include <opaque_fragment>', 'outgoingLight *= 1.0 + 0.9 * uNight * uAnime;\n#include <opaque_fragment>');
+  };
+  material.customProgramCacheKey = () => 'glow-n';
   return material;
 }
 
@@ -227,6 +252,7 @@ export function glass(
       uGlow: options.glow ?? { value: 0 },
       uGlowColor: { value: new THREE.Color(options.glowColor ?? 0xff66cc) },
       uNight: GLOBALS.night,
+      uAnime: GLOBALS.anime,
     },
     vertexShader: /* glsl */ `
       varying vec3 vNormal;
@@ -249,6 +275,7 @@ export function glass(
       uniform float uEdge;
       uniform float uGlow;
       uniform float uNight;
+      uniform float uAnime;
       varying vec3 vNormal;
       varying vec3 vView;
       #include <common>
@@ -260,7 +287,14 @@ export function glass(
         float fresnel = pow( 1.0 - saturate( dot( n, v ) ), 2.2 );
         vec3 halfDir = normalize( uSunDirView + v );
         float glint = smoothstep( 0.985, 0.996, dot( n, halfDir ) );
-        vec3 color = mix( uTint * 0.55, uSky * 1.15, fresnel ) + vec3( 1.0, 0.97, 0.9 ) * glint * 2.5;
+        // A fake reflection of the sky: the glass mirrors a gradient from the ground, over the horizon, to the zenith.
+        vec3 mirror = reflect( -v, n );
+        float up = dot( mirror, normalize( ( viewMatrix * vec4( 0.0, 1.0, 0.0, 0.0 ) ).xyz ) );
+        vec3 zenith = uSky * vec3( 0.7, 0.82, 1.15 );
+        vec3 ground = uSky * vec3( 0.38, 0.3, 0.27 );
+        vec3 env = mix( ground, mix( uSky, zenith, smoothstep( 0.0, 0.85, up ) ), smoothstep( -0.25, 0.08, up ) );
+        vec3 reflected = mix( uSky, env, uAnime );
+        vec3 color = mix( uTint * 0.55, reflected * 1.15, fresnel ) + vec3( 1.0, 0.97, 0.9 ) * glint * 2.5;
         color += uGlowColor * uGlow * ( 0.25 + 0.55 * uNight ) * ( 1.0 - fresnel * 0.5 );
         float alpha = mix( uOpacity, uEdge, fresnel ) + glint + uGlow * 0.08;
         gl_FragColor = vec4( color, saturate( alpha ) );

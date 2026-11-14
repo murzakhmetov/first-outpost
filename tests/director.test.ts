@@ -51,11 +51,14 @@ vi.mock('../src/game/data.ts', async () => {
 });
 
 import * as director from '../src/game/director';
-import { fading, mission, placing, profile, room, roomGame, screen, step, updateProfile } from '../src/game/store';
+import { FILMS } from '../src/game/films';
+import { film, fading, lumiLine, mission, placing, profile, room, roomGame, screen, step, updateProfile } from '../src/game/store';
 import { roomRewardTaken } from '../src/sim/outpost';
 import { EVENTS, optionBlock } from '../src/sim/events';
 
 const CHOICE = { site: 'mars' as const, difficulty: 'cadet' as const, weeks: 6, sunMode: 'featured' as const, windowId: 'may2024', tutorial: false };
+/** Every film's remembered name, on both worlds. */
+const ALL_FILMS_SEEN = Object.keys(FILMS).flatMap((id) => [id, `${id}@mars`, `${id}@moon`]);
 
 async function frames(seconds: number): Promise<void> {
   // ~10 frames a second, like requestAnimationFrame driving World.update
@@ -70,7 +73,8 @@ describe('director state machine', () => {
     vi.useFakeTimers();
     if (!h.world) await director.boot({} as HTMLCanvasElement);
     director.quitMission();
-    updateProfile({ introSeen: ['mars', 'moon'] });
+    // These tests are about the steps of the week: every film counts as seen, so none starts by itself.
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN });
     void director.startMission(CHOICE);
     await frames(1);
     expect(step.value).toBe('briefing');
@@ -207,5 +211,133 @@ describe('director state machine', () => {
     expect(profile.value.missions).toBe(missions);
     expect(profile.value.best).toEqual(best);
     expect(profile.value.badges).toEqual(badges);
+  });
+});
+
+describe('films', () => {
+  beforeEach(async () => {
+    vi.useFakeTimers();
+    if (!h.world) await director.boot({} as HTMLCanvasElement);
+    director.quitMission();
+  });
+
+  /** Plays the week's steps until `done` says stop; films that start are watched to the end. */
+  async function playUntil(done: () => boolean, onFilm?: (id: string) => void): Promise<void> {
+    let guard = 120;
+    while (!done() && guard-- > 0) {
+      if (film.value) {
+        onFilm?.(film.value);
+        director.finishFilm();
+      } else if (step.value === 'briefing') director.continueBriefing();
+      else if (step.value === 'event') {
+        const state = mission.value!;
+        const event = EVENTS[state.now.eventId!];
+        director.chooseEvent(event.options.find((option) => !optionBlock(option, state))!.id);
+      } else if (step.value === 'eventResult') director.confirmEvent();
+      else if (step.value === 'plan') director.confirmPlan();
+      else if (step.value === 'evaIntro') director.skipWalk();
+      else if (step.value === 'report') director.goNextWeek();
+      await frames(2);
+    }
+  }
+
+  it('a task film plays the first time its task comes up, then the step goes on as before', async () => {
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN.filter((key) => key !== 'task.plan') });
+    void director.startMission(CHOICE);
+    await frames(1);
+    expect(film.value).toBe(null);
+    await playUntil(() => step.value === 'plan' || film.value !== null);
+    expect(step.value).toBe('plan');
+    expect(film.value).toBe('task.plan');
+    director.finishFilm();
+    expect(film.value).toBe(null);
+    expect(step.value).toBe('plan');
+    expect(profile.value.filmsSeen).toContain('task.plan');
+    // The next week's plan comes without a film.
+    const week = mission.value!.week;
+    await playUntil(() => mission.value!.week > week && step.value === 'plan');
+    expect(step.value).toBe('plan');
+    expect(film.value).toBe(null);
+  });
+
+  it('"Why?" replays a task film between steps and leaves the step as it was', async () => {
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN });
+    void director.startMission(CHOICE);
+    await frames(1);
+    await playUntil(() => step.value === 'plan');
+    director.explainTask('shield');
+    expect(film.value).toBe('task.shield');
+    director.finishFilm();
+    expect(film.value).toBe(null);
+    expect(step.value).toBe('plan');
+  });
+
+  it('the ending film plays before the review, and the review opens when it is over', async () => {
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN });
+    void director.startMission({ ...CHOICE, weeks: 6 });
+    await frames(1);
+    const seen: string[] = [];
+    await playUntil(() => screen.value === 'debrief', (id) => seen.push(id));
+    expect(screen.value).toBe('debrief');
+    expect(seen.some((id) => id === 'win' || id === 'lose')).toBe(true);
+  });
+
+  it('a tap skips the night: the report comes at once', async () => {
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN });
+    void director.startMission(CHOICE);
+    await frames(1);
+    await playUntil(() => step.value === 'plan');
+    director.confirmPlan();
+    if (step.value === 'evaIntro') director.skipWalk();
+    expect(step.value).toBe('night');
+    director.skipNight();
+    await frames(1);
+    expect(step.value).toBe('report');
+  });
+
+  it('a film cannot start during a walk, and leaving the mission stops a film', async () => {
+    updateProfile({ introSeen: [], filmsSeen: [] });
+    void director.startMission(CHOICE);
+    await frames(1);
+    expect(film.value).toBe('intro');
+    director.quitMission();
+    expect(film.value).toBe(null);
+  });
+
+  it("Lumi's line for the step comes back after a film that started by itself", async () => {
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN.filter((key) => key !== 'task.plan') });
+    void director.startMission({ ...CHOICE, tutorial: true });
+    await frames(1);
+    await playUntil(() => step.value === 'plan' || film.value !== null);
+    expect(film.value).toBe('task.plan');
+    // Quiet while the film plays...
+    expect(lumiLine.value).toBe(null);
+    director.finishFilm();
+    // ...and the tutorial's line for the plan is back afterwards.
+    expect(lumiLine.value?.key).toBe('lumi.t1.plan');
+  });
+
+  it('a mission closed during its last night opens the review on Continue, with no film left hanging', async () => {
+    updateProfile({ introSeen: ['mars', 'moon'], filmsSeen: ALL_FILMS_SEEN });
+    void director.startMission({ ...CHOICE, weeks: 6 });
+    await frames(1);
+    // Play to the last night and copy the save once the mission is over but before the review opens.
+    let saved: string | null = null;
+    for (let guard = 0; guard < 600 && !saved && screen.value !== 'debrief'; guard++) {
+      if (step.value !== 'night') await playUntil(() => step.value === 'night' || screen.value === 'debrief');
+      else if (mission.value?.end) saved = localStorage.getItem('fo.mission');
+      else await frames(0.1);
+    }
+    expect(saved).not.toBeNull();
+    await playUntil(() => screen.value === 'debrief');
+    // The game is closed and opened again: the title screen, and Continue.
+    director.goTitle();
+    localStorage.setItem('fo.mission', saved!);
+    step.value = 'briefing';
+    const resumed = director.continueMission();
+    await frames(2);
+    await resumed;
+    expect(screen.value).toBe('debrief');
+    expect(film.value).toBe(null);
   });
 });

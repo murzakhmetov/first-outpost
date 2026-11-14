@@ -10,6 +10,7 @@ import './mobile.css';
 import type { JSX } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { cancelPrint } from '../game/director';
+import { crewLobbyOpen } from '../net/crew';
 import { cutscene, fading, notify, panel, printing, screen } from '../game/store';
 import { Debrief } from './Debrief';
 import { Game } from './Game';
@@ -18,6 +19,7 @@ import { RoomScreen } from './Rooms';
 import { PlacementBar } from './Placement';
 import { useLoaded } from './lazy';
 import { Cutscene } from './Cutscene';
+import { CrewLobby } from './CrewLobby';
 import { ToastView } from './Hud';
 import { AboutPanel, CodexPanel, HelpPanel, PausePanel, SettingsPanel } from './Panels';
 import { Setup, Title } from './Title';
@@ -54,8 +56,9 @@ export function App(): JSX.Element {
   }, [open]);
   return (
     <>
-      {current === 'title' && <Title />}
+      {current === 'title' && !crewLobbyOpen.value && <Title />}
       {current === 'setup' && <Setup />}
+      {current === 'title' && crewLobbyOpen.value && <CrewLobby />}
       {current === 'game' && !cutscene.value && <Game />}
       {current === 'game' && cutscene.value && <Cutscene />}
       {current === 'game' && <RoomScreen />}

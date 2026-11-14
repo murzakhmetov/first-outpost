@@ -1,0 +1,67 @@
+[
+  {
+    "id": "RL1",
+    "status": "verified",
+    "claim": "On quiet days in early April 2024, Curiosity's RAD measured about 4.7 microgray per hour on the surface of Mars (absorbed dose rate).",
+    "values": [
+      { "label": "MSL-RAD-Surface, 1-7 April 2024, median absorbed dose rate", "value": 4.73, "unit": "uGy/h" },
+      { "label": "same period, lowest and highest reading", "value": "4.06 - 6.90", "unit": "uGy/h" },
+      { "label": "same period, number of readings", "value": 536, "unit": "readings" }
+    ],
+    "source": {
+      "name": "NASA OSDR RadLab (Radiation Dosimetry Database), instrument MSL-RAD-Surface",
+      "url": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/",
+      "query": "https://visualization.osdr.nasa.gov/radlab/api?trajectory=Mars%20surface&absorbed_dose_rate&timestamp%3E=2024-04-01&timestamp%3C2024-04-08&format=json"
+    },
+    "retrieved": "2026-11-14",
+    "used_in": ["film.task.shield.fact.mars", "film.storm.2.mars"]
+  },
+  {
+    "id": "RL2",
+    "status": "verified",
+    "claim": "During the solar storm of May 2024, Curiosity's RAD measured a peak absorbed dose rate of about 304 microgray per hour on Mars, at 06:15 UTC on 20 May 2024: about 64 times the quiet April value.",
+    "values": [
+      { "label": "MSL-RAD-Surface, 15-25 May 2024, highest absorbed dose rate", "value": 303.99, "unit": "uGy/h" },
+      { "label": "time of the highest reading (UTC)", "value": "2024-05-20T06:15:19", "unit": "" },
+      { "label": "same period, median absorbed dose rate", "value": 4.55, "unit": "uGy/h" },
+      { "label": "peak divided by the RL1 median (304 / 4.73)", "value": 64.3, "unit": "times" }
+    ],
+    "source": {
+      "name": "NASA OSDR RadLab (Radiation Dosimetry Database), instrument MSL-RAD-Surface",
+      "url": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/",
+      "query": "https://visualization.osdr.nasa.gov/radlab/api?trajectory=Mars%20surface&absorbed_dose_rate&timestamp%3E=2024-05-15&timestamp%3C2024-05-25&format=json"
+    },
+    "agrees_with": "NASA/JPL, 10 June 2024: RAD measured 8,100 micrograys on 20 May 2024 (a daily total; see facts-radiation.json and docs/NASA_DATA.md section 3).",
+    "retrieved": "2026-11-14",
+    "used_in": ["film.task.shield.fact.mars", "film.storm.2.mars"]
+  },
+  {
+    "id": "RL3",
+    "status": "verified",
+    "claim": "On the International Space Station, the DOSTEL dosimeters read about 4.5 microgray per hour (median) on 10-12 May 2024.",
+    "values": [
+      { "label": "ISS DosTel1, 10-12 May 2024, median absorbed dose rate", "value": 4.59, "unit": "uGy/h" },
+      { "label": "ISS DosTel2, 10-12 May 2024, median absorbed dose rate", "value": 4.35, "unit": "uGy/h" },
+      { "label": "readings (DosTel1 / DosTel2)", "value": "2867 / 2723", "unit": "readings" }
+    ],
+    "caution": "The highest ISS readings in this window (527 and 391 uGy/h at about 11:27 UTC on 10 May 2024) come before the storm reached Earth that evening; they are most likely a pass through the South Atlantic Anomaly. The game uses only the medians.",
+    "source": {
+      "name": "NASA OSDR RadLab (Radiation Dosimetry Database), ISS DOSTEL",
+      "url": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/",
+      "query": "https://visualization.osdr.nasa.gov/radlab/api?spacecraft=ISS&absorbed_dose_rate&timestamp%3E=2024-05-10&timestamp%3C2024-05-13&format=json"
+    },
+    "retrieved": "2026-11-14",
+    "used_in": ["film.task.shield.fact.moon"]
+  },
+  {
+    "id": "CSA1",
+    "status": "verified",
+    "claim": "Astronauts' menus contain between 1,900 and 3,200 calories a day. The ISS receives fresh food every few months; farther from Earth (Moon, Mars), crews will need to grow their own food.",
+    "source": {
+      "name": "Canadian Space Agency, Growing healthy food in space and in remote areas (date modified 2026-07-24)",
+      "url": "https://www.asc-csa.gc.ca/eng/sciences/food-production/growing-healthy-food-in-space-and-remote-areas.asp"
+    },
+    "retrieved": "2026-11-14",
+    "used_in": ["film.task.food.fact.mars", "film.task.food.fact.moon"]
+  }
+]
