@@ -369,13 +369,13 @@ describe('intents', () => {
     for (const from of ['a b', 'x<y>', 'hi!', '__proto__ ', 'é', 'a'.repeat(17)]) expect(parseIntent({ ...ok, from }), from).toBeNull();
   });
 
-  it('build, craft and room wins carry the stage they were sent in', () => {
+  it('build, craft and room wins are not tied to the stage they were sent in (any daytime stage), only to the week', () => {
     const crew = new Crew(config(2), 2);
     crew.goTo('plan');
-    expect(crew.send('s1', { k: 'build', id: 'bunker' }, { s: 'briefing' })).toBe('stale');
-    expect(crew.send('s1', { k: 'craft', tool: 'vest', neat: true }, { s: 'walk' })).toBe('stale');
-    expect(crew.send('s1', { k: 'room', room: 'lab', game: 'spectro' }, { s: 'event' })).toBe('stale');
-    expect(crew.send('s1', { k: 'build', id: 'bunker' }, { s: 'plan' })).not.toBe('stale');
+    expect(crew.send('s1', { k: 'build', id: 'bunker' }, { s: 'briefing' })).not.toBe('stale');
+    expect(crew.send('s1', { k: 'craft', tool: 'vest', neat: true }, { s: 'walk' })).not.toBe('stale');
+    expect(crew.send('s1', { k: 'room', room: 'lab', game: 'spectro' }, { s: 'event' })).not.toBe('stale');
+    expect(crew.send('s1', { k: 'build', id: 'bunker' }, { w: crew.co.mission.week + 1 })).toBe('stale');
   });
 
   it('parseIntent survives random junk', () => {

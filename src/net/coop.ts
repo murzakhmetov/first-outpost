@@ -45,6 +45,8 @@ export const COOP_NET = {
   tickMs: 100,
   /** The host sends the last state again after this long without sending one. */
   heartbeatMs: 4000,
+  /** This many old snapshots in a row, over two heartbeats, and the guest follows the commander's numbers again. */
+  behindCount: 3,
   /** The least time between two `st` (the receiving room takes 12 in 2 s). */
   stMinMs: 200,
   /** A guest sends an intent that is not acknowledged again after this long, then after 2x, 3x, 4x (the most). */
@@ -354,6 +356,8 @@ export class CoopGuest extends Session {
   private lastSync = -Infinity;
   private hostAway: number | null = null;
   private wasQuiet = false;
+  /** A run of snapshots that are all older than the one held (see `take`). */
+  private behind: { since: number; last: number; count: number } | null = null;
 
   constructor(
     room: CrewRoom,
@@ -405,6 +409,8 @@ export class CoopGuest extends Session {
     }
     if (this.queue.length >= COOP_NET.queueMax) return null;
     const intent = { from: this.me, n: this.counter + 1, w: this.meta.week, s: this.meta.stage, ...body } as Intent;
+    // A Ready on the plan says which plan it was made on, so the commander can refuse it after the plan changed.
+    if (intent.k === 'ready' && intent.on && intent.s === 'plan' && !intent.a) intent.a = { ...this.mission.alloc };
     // Only what the host's reader accepts goes into the queue (one it refuses would never be acknowledged).
     if (parseIntent(JSON.parse(JSON.stringify(encodeIntent(intent)))) === null) return null;
     this.counter++;
@@ -426,8 +432,19 @@ export class CoopGuest extends Session {
   private take(meta: CoopMeta, live: Parameters<typeof adoptLive>[1]): void {
     if (meta.rev < this.rev) {
       this.stats.old++;
-      return;
+      // A reordered or late snapshot is a single old one. When only old ones keep coming, in order, for a while, the
+      // revision we hold was not the commander's (a forged number far ahead would freeze this child's screen for good).
+      const now = this.clock.now();
+      const run = this.behind;
+      if (!run || meta.rev < run.last) this.behind = { since: now, last: meta.rev, count: 1 };
+      else {
+        run.last = meta.rev;
+        run.count++;
+      }
+      const held = this.behind!;
+      if (held.count < COOP_NET.behindCount || now - held.since < COOP_NET.heartbeatMs * 2) return;
     }
+    this.behind = null;
     if (!meta.seats.includes(this.me)) {
       // The host no longer counts us in (it let us go after a silence).
       this.detach('removed');
