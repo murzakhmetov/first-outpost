@@ -395,6 +395,7 @@ void main() {
   vec2 q = (vUv - 0.5) * vec2(1.0, 0.92);
   c *= mix(1.0, smoothstep(0.92 - 0.12 * uCine, 0.28, length(q)), clamp(uVignette + 0.3 * uCine, 0.0, 1.0));
 
+  #ifndef FINISH_LATER
   // Charged particles hitting the camera during a radiation storm. Real rover cameras show this "snow".
   if (uSpecks > 0.001) {
     vec2 cell = floor(gl_FragCoord.xy / 2.0);
@@ -403,8 +404,111 @@ void main() {
     float streak = step(1.0 - 0.0012 * uSpecks, hash12(vec2(cell.x * 0.07 + tick, floor(cell.y / 9.0))));
     c += vec3(0.9, 0.95, 1.0) * (speck + streak * 0.7);
   }
+  #endif
 
   c = mix(c, uFade.rgb, uFade.a);
+  #ifndef FINISH_LATER
+  c += (hash12(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;
+  #endif
+  gl_FragColor = vec4(c, 1.0);
+}`;
+
+// FXAA 3.11 (quality, 12 steps) on the finished sRGB picture. The film specks and the dither are
+// applied here, after the smoothing, so FXAA does not blur them (the final pass skips them: FINISH_LATER).
+const FXAA_FRAG = /* glsl */ `
+precision highp float;
+uniform sampler2D tMap;
+uniform vec2 uTexel;
+uniform float uTime;
+uniform float uSpecks;
+uniform float uFadeA;
+varying vec2 vUv;
+
+float hash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+float lumaAt(vec2 uv) {
+  return dot(texture2D(tMap, uv).rgb, vec3(0.299, 0.587, 0.114));
+}
+
+void main() {
+  vec2 uv = vUv;
+  vec2 tx = uTexel;
+  vec3 rgbM = texture2D(tMap, uv).rgb;
+  float lM = dot(rgbM, vec3(0.299, 0.587, 0.114));
+  float lN = lumaAt(uv + vec2(0.0, tx.y));
+  float lS = lumaAt(uv - vec2(0.0, tx.y));
+  float lE = lumaAt(uv + vec2(tx.x, 0.0));
+  float lW = lumaAt(uv - vec2(tx.x, 0.0));
+  float lMax = max(max(lN, lS), max(max(lE, lW), lM));
+  float lMin = min(min(lN, lS), min(min(lE, lW), lM));
+  float range = lMax - lMin;
+  vec3 c = rgbM;
+  if (range >= max(0.0312, lMax * 0.125)) {
+    float lNW = lumaAt(uv + vec2(-tx.x, tx.y));
+    float lNE = lumaAt(uv + vec2(tx.x, tx.y));
+    float lSW = lumaAt(uv + vec2(-tx.x, -tx.y));
+    float lSE = lumaAt(uv + vec2(tx.x, -tx.y));
+    float edgeV = abs(lNW + lSW - 2.0 * lW) + 2.0 * abs(lN + lS - 2.0 * lM) + abs(lNE + lSE - 2.0 * lE);
+    float edgeH = abs(lNW + lNE - 2.0 * lN) + 2.0 * abs(lW + lE - 2.0 * lM) + abs(lSW + lSE - 2.0 * lS);
+    bool horz = edgeH >= edgeV;
+    float l1 = horz ? lS : lW;
+    float l2 = horz ? lN : lE;
+    float g1 = l1 - lM;
+    float g2 = l2 - lM;
+    bool steep1 = abs(g1) >= abs(g2);
+    float gradScaled = 0.25 * max(abs(g1), abs(g2));
+    float stepLen = horz ? tx.y : tx.x;
+    float lAvg;
+    if (steep1) { stepLen = -stepLen; lAvg = 0.5 * (l1 + lM); } else { lAvg = 0.5 * (l2 + lM); }
+    vec2 cur = uv;
+    if (horz) cur.y += stepLen * 0.5; else cur.x += stepLen * 0.5;
+    vec2 off = horz ? vec2(tx.x, 0.0) : vec2(0.0, tx.y);
+    vec2 uv1 = cur - off;
+    vec2 uv2 = cur + off;
+    float e1 = lumaAt(uv1) - lAvg;
+    float e2 = lumaAt(uv2) - lAvg;
+    bool r1 = abs(e1) >= gradScaled;
+    bool r2 = abs(e2) >= gradScaled;
+    if (!r1) uv1 -= off;
+    if (!r2) uv2 += off;
+    for (int i = 2; i < 12; i++) {
+      if (r1 && r2) break;
+      float q = i < 5 ? 1.0 : (i < 6 ? 1.5 : (i < 10 ? 2.0 : (i < 11 ? 4.0 : 8.0)));
+      if (!r1) { e1 = lumaAt(uv1) - lAvg; r1 = abs(e1) >= gradScaled; }
+      if (!r2) { e2 = lumaAt(uv2) - lAvg; r2 = abs(e2) >= gradScaled; }
+      if (!r1) uv1 -= off * q;
+      if (!r2) uv2 += off * q;
+    }
+    float d1 = horz ? uv.x - uv1.x : uv.y - uv1.y;
+    float d2 = horz ? uv2.x - uv.x : uv2.y - uv.y;
+    bool dir1 = d1 < d2;
+    float dMin = min(d1, d2);
+    float thick = d1 + d2;
+    float pixOff = -dMin / thick + 0.5;
+    bool centerSmaller = lM < lAvg;
+    bool good = ((dir1 ? e1 : e2) < 0.0) != centerSmaller;
+    float fin = good ? pixOff : 0.0;
+    float lAverage = (1.0 / 12.0) * (2.0 * (lN + lS + lE + lW) + (lNW + lSW) + (lNE + lSE));
+    float sp1 = clamp(abs(lAverage - lM) / range, 0.0, 1.0);
+    float sp2 = (-2.0 * sp1 + 3.0) * sp1 * sp1;
+    fin = max(fin, sp2 * sp2 * 0.5);
+    vec2 fuv = uv;
+    if (horz) fuv.y += fin * stepLen; else fuv.x += fin * stepLen;
+    c = texture2D(tMap, fuv).rgb;
+  }
+
+  if (uSpecks > 0.001) {
+    vec2 cell = floor(gl_FragCoord.xy / 2.0);
+    float tick = floor(uTime * 24.0);
+    float speck = step(1.0 - 0.006 * uSpecks, hash12(cell + tick * 17.13));
+    float streak = step(1.0 - 0.0012 * uSpecks, hash12(vec2(cell.x * 0.07 + tick, floor(cell.y / 9.0))));
+    // The final pass mixed the fade over the specks; the same result from here.
+    c += vec3(0.9, 0.95, 1.0) * (speck + streak * 0.7) * (1.0 - uFadeA);
+  }
   c += (hash12(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;
   gl_FragColor = vec4(c, 1.0);
 }`;
@@ -501,6 +605,8 @@ export class PostFX {
   private down!: THREE.ShaderMaterial;
   private up!: THREE.ShaderMaterial;
   private final!: THREE.ShaderMaterial;
+  private fxaa: THREE.ShaderMaterial | null = null;
+  private fxaaTarget: THREE.WebGLRenderTarget | null = null;
   private ao: THREE.ShaderMaterial | null = null;
   private aoBlur: THREE.ShaderMaterial | null = null;
   private shafts: THREE.ShaderMaterial | null = null;
@@ -723,6 +829,24 @@ export class PostFX {
       });
     }
     this.setDefine(this.final, 'USE_CINEMA', useCinema ? '' : null);
+    this.resizeFxaa(w, h);
+  }
+
+  /** The image the final pass draws into before FXAA (high and ultra only). */
+  private resizeFxaa(w: number, h: number): void {
+    this.fxaaTarget?.dispose();
+    this.fxaaTarget = null;
+    if (!this.quality.fxaa || !this.hdrSupported) return;
+    // Half float: the picture must not be quantized to 8 bit before the FXAA pass adds the dither.
+    this.fxaaTarget = makeTarget(w, h, THREE.HalfFloatType);
+    this.fxaa ??= fullscreenMaterial(FXAA_FRAG, {
+      tMap: { value: null },
+      uTexel: { value: new THREE.Vector2() },
+      uTime: { value: 0 },
+      uSpecks: { value: 0 },
+      uFadeA: { value: 0 },
+    });
+    this.fxaa.uniforms.uTexel.value.set(1 / w, 1 / h);
   }
 
   private pass(material: THREE.ShaderMaterial, target: THREE.WebGLRenderTarget | null): void {
@@ -864,7 +988,19 @@ export class PostFX {
     u.uGradeShadow.value.copy(this.look.shadow);
     u.uGradeHigh.value.copy(this.look.high);
     u.uGlow.value = this.indoor ? this.look.glow * 0.6 : this.look.glow;
-    this.pass(this.final, null);
+    const fxaaOn = this.fxaaTarget !== null && this.fxaa !== null && flag('G9');
+    this.setDefine(this.final, 'FINISH_LATER', fxaaOn ? '' : null);
+    if (fxaaOn) {
+      this.pass(this.final, this.fxaaTarget);
+      const f = this.fxaa!.uniforms;
+      f.tMap.value = this.fxaaTarget!.texture;
+      f.uTime.value = u.uTime.value;
+      f.uSpecks.value = this.specks;
+      f.uFadeA.value = u.uFade.value.w;
+      this.pass(this.fxaa!, null);
+    } else {
+      this.pass(this.final, null);
+    }
   }
 
   dispose(): void {
@@ -876,6 +1012,8 @@ export class PostFX {
     this.down.dispose();
     this.up.dispose();
     this.final.dispose();
+    this.fxaaTarget?.dispose();
+    this.fxaa?.dispose();
     this.ao?.dispose();
     this.aoBlur?.dispose();
     this.shafts?.dispose();
