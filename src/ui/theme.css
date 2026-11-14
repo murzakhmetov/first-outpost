@@ -66,7 +66,7 @@
   --good: #7ad79a;
   --bad: #ff8f84;
   --warn: #f2c15e;
-  --link: #a9c8ff;
+  --link: var(--gold-lt);
   --focus: var(--gold-lt);
   --cream: var(--ivory);
   --cream-ink: var(--slate);
@@ -107,7 +107,7 @@
   --dose: #b8467a;
   --science: var(--sys-lab);
   --shield: var(--sys-robot);
-  --link: var(--blue-text);
+  --link: var(--gold-dk);
   --focus: var(--gold-dk);
   color: var(--slate);
 }
@@ -948,6 +948,8 @@
 .setup,
 .debrief {
   display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   background: rgba(29, 35, 51, 0.55);
 }
@@ -955,6 +957,7 @@
 .sheet {
   width: min(1040px, 100%);
   max-height: 100%;
+  min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   animation: rise 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) both;
@@ -1108,12 +1111,6 @@
 
 /* ----- Rover ----------------------------------------------------------------------- */
 
-.prompt-drive {
-  bottom: 30%;
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
 /* The button to get in sits above the row of round buttons. */
 .round-drive {
   position: absolute;
@@ -1163,9 +1160,6 @@
     bottom: 120px;
   }
 
-  .prompt-drive {
-    bottom: 36%;
-  }
 }
 
 @media (max-height: 520px) and (min-aspect-ratio: 4/5) {
@@ -1186,21 +1180,6 @@
 
 @media (max-height: 520px) and (min-aspect-ratio: 4/5) {
 
-}
-
-/* ----- Discovery banner ------------------------------------------------------- */
-
-.codex-finds {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-left: 10px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  color: var(--gold);
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 /* ----- Title screen -------------------------------------------------------------------------------
@@ -1317,8 +1296,9 @@
   margin: 2px 0 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.5rem, 8vw, 3.125rem);
+  font-size: clamp(1.5rem, 8vw, 2.6rem);
   line-height: 1.2;
+  padding-inline: 10px;
   letter-spacing: 0.01em;
   color: var(--ivory);
   text-align: center;

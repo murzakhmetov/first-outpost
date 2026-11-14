@@ -38,7 +38,7 @@
     inset 0 0 0 5px rgba(18, 21, 40, 0.9),
     inset 0 0 0 6px rgba(242, 196, 109, 0.18),
     0 24px 60px rgba(0, 0, 0, 0.55);
-  color: var(--gi-cream, #ece5d8);
+  color: var(--ivory);
   overflow: auto;
   animation: print-rise 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
@@ -64,7 +64,7 @@
   height: 42px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #4a5275, #262b45);
-  color: var(--gi-gold, #f2c46d);
+  color: var(--gold-lt);
   box-shadow: 0 0 0 2px rgba(242, 196, 109, 0.55), 0 0 14px rgba(242, 196, 109, 0.25);
 }
 
@@ -76,7 +76,7 @@
 }
 
 .print-titles small {
-  color: var(--gi-gold, #f2c46d);
+  color: var(--gold-lt);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -99,7 +99,7 @@
   border: 0;
   border-radius: 50%;
   background: rgba(236, 229, 216, 0.12);
-  color: var(--gi-cream, #ece5d8);
+  color: var(--ivory);
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
 }
@@ -443,7 +443,7 @@
 
 .print-flash.is-miss {
   background: rgba(236, 229, 216, 0.95);
-  color: var(--gi-ink, #3b4255);
+  color: var(--slate);
 }
 
 @keyframes print-pop {
@@ -569,17 +569,17 @@
 }
 
 .print-dots i.is-laid {
-  background: var(--gi-cream, #ece5d8);
+  background: var(--ivory);
 }
 
 .print-dots i.is-perfect {
-  background: var(--gi-gold, #f2c46d);
+  background: var(--gold-lt);
   box-shadow: 0 0 8px rgba(242, 196, 109, 0.8);
   animation: print-dot 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.6) both;
 }
 
 .print-dots i.is-now {
-  box-shadow: 0 0 0 2px var(--gi-gold, #f2c46d);
+  box-shadow: 0 0 0 2px var(--gold-lt);
   animation: print-glow 0.7s ease-in-out infinite alternate;
 }
 
@@ -607,8 +607,7 @@
 .print-done {
   font-family: 'Prata', 'Nunito Variable', serif;
   font-size: 1.5rem;
-  color: var(--gi-gold, #f2c46d);
-  text-shadow: 0 0 16px rgba(242, 196, 109, 0.5);
+  color: var(--gold-lt);
 }
 
 .print-result .mg-stars3 {

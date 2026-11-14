@@ -1682,3 +1682,96 @@
     animation: none;
   }
 }
+
+/* ----- Use-button prompts, right of the middle ------------------------------------------ */
+
+.gi-prompts {
+  position: absolute;
+  left: calc(50% + 64px);
+  top: 50%;
+  z-index: 8;
+  display: grid;
+  gap: 6px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.gi-prompt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 250px;
+  min-height: 46px;
+  padding: 5px 20px 5px 6px;
+  border: 1px solid var(--gold-orn);
+  border-radius: var(--r-md);
+  background: var(--ivory);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--ivory-rule), var(--shadow);
+  color: var(--slate);
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.98rem;
+  text-align: left;
+  pointer-events: auto;
+  cursor: pointer;
+  animation: gi-prompt-in 0.22s ease both;
+}
+
+.gi-key {
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-width: 34px;
+  height: 34px;
+  border-radius: var(--r-sm);
+  font: inherit;
+  font-weight: 900;
+  color: var(--on-navy);
+  background: var(--navy);
+}
+
+.gi-prompt-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--gold-dk);
+  background: var(--ivory-hi);
+  border: 2px solid var(--gold-orn);
+}
+
+.gi-prompt.tone-done {
+  opacity: 0.85;
+}
+
+@keyframes gi-prompt-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+/* The place name gives way to a game opened straight after coming in. */
+.room3d.is-playing .discovery-room {
+  display: none;
+}
+
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  .gi-prompts {
+    left: 50%;
+    top: auto;
+    bottom: 200px;
+    transform: translateX(-50%);
+  }
+
+  .gi-prompt {
+    min-width: 220px;
+  }
+}
+
+.less-motion .gi-prompt {
+  animation: none;
+}

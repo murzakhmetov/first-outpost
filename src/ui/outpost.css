@@ -1,269 +1,1070 @@
-/* First Outpost — growing the outpost: the Outpost button, the build / workshop /
-   rooms menu, and the room screen with its drawn interior. Loaded after theme.css. */
+/* First Outpost — the full-screen menus (Outpost: build, workshop, rooms, decor; and Pause), the
+   placement bar, and the room screen with its drawn interior. Ivory sheet, gold double line,
+   diamond corners. Loaded after theme.css. */
 
 :root {
   --regolith: #d9b48a;
   --metal: #9fd8ff;
   --build: #7fe0ff;
+  /* One small mark per kind of item (never how rare it is). */
+  --kind-building: var(--gold-orn);
+  --kind-tool: var(--sys-lab);
+  --kind-room: var(--sys-life);
+  --kind-decor: var(--sys-green);
 }
 
-/* ----- Materials ------------------------------------------------------------ */
+/* ----- The sheet ---------------------------------------------------------------------
+   A navy scrim (box-shadow) and an ivory sheet with the double gold line. */
 
-.stock {
+.gi-screen {
+  position: fixed;
+  inset: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  z-index: 45;
+  box-sizing: border-box;
+  /* #ui lets clicks through to the 3D view; a full-screen menu must catch them. */
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: auto;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 14px 22px 20px;
+  color: var(--slate);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), 0 0 0 100vmax rgba(29, 35, 51, 0.97);
+  animation: fade-in 0.25s ease both;
+}
+
+.gi-screen::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  pointer-events: none;
+  background:
+    var(--diamond) left top / 14px 14px no-repeat,
+    var(--diamond) right top / 14px 14px no-repeat,
+    var(--diamond) left bottom / 14px 14px no-repeat,
+    var(--diamond) right bottom / 14px 14px no-repeat;
+}
+
+.gi-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 58px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gold-orn);
+}
+
+.gi-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--slate);
+  white-space: nowrap;
+}
+
+/* A leading icon sits in a navy medallion with a gold ring. */
+.gi-title > svg {
+  box-sizing: content-box;
+  padding: 7px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold-lt);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
+}
+
+.gi-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.gi-tabs button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  font: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--slate);
+  background: var(--ivory-hi);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.gi-tabs button svg {
+  color: var(--gold-dk);
+}
+
+.gi-tabs button:hover {
+  background: var(--ivory-line);
+}
+
+.gi-tabs button.is-on {
+  color: var(--on-navy);
+  background: var(--navy);
+}
+
+.gi-tabs button.is-on svg {
+  color: var(--gold-lt);
+}
+
+.gi-wallet {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.gi-coin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px 0 4px;
+  border-radius: 999px;
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  color: var(--slate);
   font-weight: 900;
+}
+
+.gi-coin b {
   font-variant-numeric: tabular-nums;
 }
 
-.stock-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  line-height: 1;
+.gi-coin .item-art {
+  box-sizing: border-box;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--ivory-line);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
-.stock-regolith {
-  color: var(--regolith);
-}
-
-.stock-metal {
-  color: var(--metal);
-}
-
-.stock-item.is-short {
-  color: var(--bad);
-}
-
-/* ----- The Outpost button in the top bar -------------------------------------- */
-
-.outpost-btn-icon {
+.gi-close {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  color: var(--cream-ink);
-  background: radial-gradient(circle at 35% 30%, #fffaf0, #e9d39c 70%, #c9a45c);
-  box-shadow: inset 0 -2px 0 rgba(120, 90, 40, 0.3);
-}
-
-/* ----- The Outpost menu --------------------------------------------------------- */
-
-.outpost-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.outpost-top .intro {
-  margin: 0 0 12px;
-  max-width: 60ch;
-}
-
-.outpost-stock {
-  display: grid;
-  justify-items: end;
-  gap: 4px;
   flex: none;
-  padding: 7px 12px;
-  border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
+  width: 46px;
+  height: 46px;
+  margin-left: auto;
+  border-radius: var(--r-sm);
+  color: var(--slate);
+  background: var(--ivory);
+  box-shadow: var(--ring);
+  cursor: pointer;
 }
 
-.outpost-stock small {
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
+.gi-close:hover {
+  background: var(--ivory-hi);
 }
 
-.outpost-stock .stock {
-  font-size: 1.1rem;
+.gi-tabs + .gi-wallet,
+.gi-tabs ~ .gi-close {
+  margin-left: 0;
 }
 
-.ocards {
+.gi-intro {
+  margin: 12px 0 14px;
+  color: var(--muted);
+  max-width: 80ch;
+}
+
+.gi-body {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) min(400px, 38vw);
+  gap: 24px;
+  min-height: 0;
 }
 
-.ocard {
-  --accent: var(--gold);
+/* ----- Item slots ---------------------------------------------------------------------- */
+
+.gi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 168px));
+  align-content: start;
+  gap: 16px;
+  padding: 6px;
+  overflow: auto;
+}
+
+.gi-slot {
   position: relative;
   display: grid;
-  align-content: start;
-  gap: 8px;
-  padding: 12px 13px 12px 15px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  aspect-ratio: 0.82;
+  padding: 0;
+  border: 1px solid var(--gold-edge);
   border-radius: var(--r-md);
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--line);
   overflow: hidden;
+  font: inherit;
+  cursor: pointer;
+  background: var(--ivory-hi);
+  color: var(--slate);
+  box-shadow: inset 0 0 0 3px var(--ivory-hi), inset 0 0 0 4px var(--ivory-rule);
+  transition: background 0.15s ease;
 }
 
-.ocard::before {
+.gi-slot:hover {
+  background: var(--ivory-line);
+}
+
+.gi-slot.is-on {
+  background: var(--ivory-line);
+  border-color: var(--gold-dk);
+  box-shadow: inset 0 0 0 3px var(--ivory-line), inset 0 0 0 4px var(--gold-dk), var(--ring);
+}
+
+.gi-slot-art {
+  display: grid;
+  place-items: center;
+  margin: 8px 8px 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--slate);
+}
+
+.gi-slot-art .item-art {
+  width: 100%;
+  height: 100%;
+  max-width: 132px;
+  object-fit: contain;
+}
+
+/* A small diamond in the corner marks the kind of item. */
+.gi-slot::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--accent);
-  box-shadow: 0 0 14px var(--accent);
+  right: 8px;
+  top: 8px;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  background: var(--kind, var(--gold-orn));
+  border: 1px solid var(--gold-dk);
+  transform: rotate(45deg);
 }
 
-.ocard.is-done {
-  background: linear-gradient(165deg, rgba(111, 230, 164, 0.12), rgba(255, 255, 255, 0.03));
+.gi-slot.r5 {
+  --kind: var(--kind-building);
 }
 
-.ocard.is-busy {
-  border-color: rgba(127, 224, 255, 0.45);
+.gi-slot.r4 {
+  --kind: var(--kind-tool);
 }
 
-.ocard.is-locked {
-  opacity: 0.62;
+.gi-slot.r3 {
+  --kind: var(--kind-room);
 }
 
-.ocard-tool {
-  --accent: var(--metal);
+.gi-slot.r2 {
+  --kind: var(--kind-decor);
 }
 
-.ocard-room {
-  --accent: #c9a8ff;
+.gi-slot-name {
+  padding: 4px 8px 10px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
 }
 
-.ocard-head {
+.gi-badge {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--ivory-hi);
+  background: var(--navy);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
+}
+
+.gi-badge.is-done {
+  background: var(--green-text);
+}
+
+.gi-badge.is-busy {
+  background: var(--blue-text);
+}
+
+.gi-badge.is-locked {
+  background: var(--muted);
+}
+
+/* "Ready to collect": a red dot with an ivory ring. */
+.gi-badge.is-ready {
+  left: auto;
+  right: 24px;
+  min-width: 12px;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  background: var(--red-fill);
+  box-shadow: 0 0 0 2px var(--ivory-hi);
+}
+
+/* ----- The detail card ----------------------------------------------------------------- */
+
+.gi-detail {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--ivory-hi);
+  color: var(--slate);
+  box-shadow: inset 0 0 0 3px var(--ivory-hi), inset 0 0 0 4px var(--gold-edge);
+  animation: gi-detail-in 0.25s ease both;
+}
+
+@keyframes gi-detail-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}
+
+.gi-detail-head {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 150px;
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--ivory-rule);
 }
 
-.ocard-head b {
-  display: block;
+.gi-detail-title {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gi-detail-title b {
   font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--ink);
-  line-height: 1.15;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
-.ocard-icon {
+.gi-detail-title small {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--gold-dk);
+}
+
+.gi-detail-art {
   display: grid;
   place-items: center;
   flex: none;
-  width: 44px;
-  height: 44px;
+  box-sizing: border-box;
+  width: 132px;
+  height: 132px;
   border-radius: 50%;
-  color: #141830;
-  background: radial-gradient(circle at 35% 30%, #ffffff, var(--accent) 75%);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.16), 0 4px 14px rgba(0, 0, 0, 0.35);
+  background: var(--ivory-line);
+  box-shadow: 0 0 0 2px var(--ivory-hi), 0 0 0 3.5px var(--gold-orn);
 }
 
-.ocard.is-locked .ocard-icon {
-  background: rgba(255, 255, 255, 0.14);
-  color: var(--ink-dim);
+.gi-detail-art .item-art {
+  width: 116px;
+  height: 116px;
+  object-fit: contain;
 }
 
-.ocard-effect {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--accent);
-}
-
-.ocard-what {
-  margin: 0;
-  font-size: 0.86rem;
-  line-height: 1.4;
-  color: var(--ink-dim);
-}
-
-.ocard-state {
+.gi-detail-body {
   display: grid;
-  gap: 5px;
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--build);
+  align-content: start;
+  gap: 10px;
+  padding: 14px 20px;
+  overflow: auto;
 }
 
-.ocard-state.is-good {
+.gi-effect {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  border: 1px solid var(--ivory-rule);
+  font-weight: 800;
+}
+
+.gi-desc {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.gi-cost,
+.gi-games {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gi-cost li,
+.gi-games li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  border: 1px solid var(--ivory-line);
+  font-weight: 700;
+}
+
+.gi-cost li b,
+.gi-games li b {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.gi-cost li.is-short,
+.gi-cost li.is-short b {
+  color: var(--red);
+}
+
+.gi-cost-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ivory-hi);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
+}
+
+.gi-games li.is-done {
+  color: var(--green-text);
+}
+
+.gi-games li.is-locked,
+.gi-games li.is-spent {
+  color: var(--muted);
+}
+
+.gi-note {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--good);
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.gi-warn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--amber);
+}
+
+.gi-state {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  font-weight: 800;
+  color: var(--blue-text);
+}
+
+.gi-state.is-good {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green-text);
 }
 
 .ocard-bar {
   display: block;
-  height: 8px;
+  height: 10px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--ivory-line);
+  border: 1px solid var(--gold-orn);
   overflow: hidden;
 }
 
 .ocard-bar i {
   display: block;
   height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #4fb8ff, var(--build));
-  box-shadow: 0 0 10px var(--build);
+  background: var(--sys-life);
   transition: width 0.4s ease;
 }
 
-.ocard-foot {
+.gi-detail-foot {
+  padding: 12px 20px 20px;
+  border-top: 1px solid var(--ivory-rule);
+}
+
+.gi-actions {
+  display: grid;
+  gap: 8px;
+}
+
+/* ----- The pause menu --------------------------------------------------------------------- */
+
+.pause-screen {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-width: 1120px;
+}
+
+.pause-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  align-self: center;
+  width: 100%;
+  padding: 20px 0;
+  overflow: auto;
+}
+
+.pause-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 26px 20px 22px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  box-shadow: inset 0 0 0 3px var(--ivory-hi), inset 0 0 0 4px var(--gold-edge);
+  text-align: center;
+}
+
+.pause-avatar {
+  display: grid;
+  place-items: center;
+  width: 108px;
+  height: 108px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--suit);
+  box-shadow: 0 0 0 3px var(--ivory-hi), 0 0 0 5px var(--gold-orn);
+}
+
+.pause-card b {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+.pause-card small {
+  color: var(--gold-dk);
+  font-weight: 800;
+  font-size: 0.9375rem;
+}
+
+.pause-stats {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pause-stats li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
-  margin-top: auto;
-}
-
-.ocard-cost {
-  display: grid;
-  gap: 3px;
-}
-
-.ocard-cost small {
-  font-size: 0.75rem;
-  color: var(--ink-faint);
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  border: 1px solid var(--ivory-line);
   font-weight: 700;
 }
 
-.ocard-cost small.is-good {
-  color: var(--good);
+.pause-stats li svg {
+  color: var(--gold-dk);
+}
+
+.pause-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.pause-item {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  min-height: 136px;
+  padding: 14px 8px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  box-shadow: inset 0 0 0 3px var(--ivory-hi), inset 0 0 0 4px var(--gold-edge);
+  font: inherit;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.pause-ring {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  color: var(--gold-lt);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn);
+}
+
+.pause-item:hover {
+  background: var(--ivory-line);
+}
+
+/* "Back to the mission" is the primary tile: gold, like the primary button. */
+.pause-item.is-main {
+  background: var(--gold-lt);
+  color: var(--navy);
+  box-shadow: inset 0 0 0 3px var(--gold-lt), inset 0 0 0 4px var(--gold-edge);
+}
+
+.pause-item.is-main:hover {
+  background: var(--gold-hi);
+  box-shadow: inset 0 0 0 3px var(--gold-hi), inset 0 0 0 4px var(--gold-edge);
+}
+
+.pause-foot {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--ivory-rule);
+}
+
+.pause-foot .confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pause-foot .confirm p {
+  margin: 0;
   font-weight: 800;
 }
 
-.ocard-foot .btn {
-  min-height: 40px;
-  padding-inline: 16px;
+.pause-foot .btn {
+  align-self: center;
+  min-height: 44px;
 }
 
-.ocard-note {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--warn);
+/* ----- The placement bar (creative mode) ------------------------------------------------------ */
+
+.placement {
+  position: fixed;
+  left: 50%;
+  top: calc(max(12px, env(safe-area-inset-top)) + 86px);
+  z-index: 34;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 24px);
+  padding: 10px 12px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  transform: translateX(-50%);
+  background: var(--ivory);
+  color: var(--slate);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
+  animation: rise 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
-.olocked {
+/* The spot is blocked: a red line and the text beside it say so. */
+.placement.is-blocked {
+  border-color: var(--red);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--red), var(--shadow);
+}
+
+.placement.is-blocked .placement-text small {
+  color: var(--red);
+}
+
+.placement-icon {
   display: grid;
-  justify-items: center;
-  gap: 8px;
-  padding: 34px 16px;
-  text-align: center;
-  color: var(--ink-dim);
-  border-radius: var(--r-md);
-  border: 1px dashed var(--line-strong);
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--gold-lt);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn);
 }
 
-.olocked p {
-  margin: 0;
-  max-width: 40ch;
+.placement-text {
+  display: grid;
+  min-width: 0;
+}
+
+.placement-text b {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.placement-text small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.placement .btn {
+  min-height: 44px;
+}
+
+/* While placing, the step card makes room. */
+body:has(.placement) .dock {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* ----- Phones --------------------------------------------------------------------------- */
+
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  .gi-screen {
+    inset: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom))
+      max(6px, env(safe-area-inset-left));
+    overflow: auto;
+    grid-template-rows: auto auto auto;
+    padding: 10px 12px 14px;
+  }
+
+  .gi-top {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .gi-title {
+    font-size: 1.2rem;
+  }
+
+  .gi-tabs {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+    gap: 4px;
+  }
+
+  .gi-tabs button {
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 6px;
+    gap: 5px;
+    font-size: 0.8125rem;
+    line-height: 1.1;
+  }
+
+  .gi-wallet {
+    margin-left: auto;
+  }
+
+  .gi-coin {
+    padding: 0 12px 0 4px;
+  }
+
+  .gi-intro {
+    font-size: 0.9375rem;
+  }
+
+  .gi-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .gi-slot-name {
+    font-size: 0.75rem;
+    white-space: normal;
+    padding: 2px 4px 8px;
+  }
+
+  .gi-slot-art {
+    margin: 6px 6px 0;
+  }
+
+  .gi-detail {
+    grid-template-rows: auto auto auto;
+    overflow: visible;
+  }
+
+  .gi-detail-head {
+    min-height: 120px;
+  }
+
+  .gi-detail-body {
+    overflow: visible;
+  }
+
+  .gi-detail-art {
+    width: 104px;
+    height: 104px;
+  }
+
+  .gi-detail-art .item-art {
+    width: 90px;
+    height: 90px;
+  }
+
+  .pause-screen {
+    grid-template-rows: auto auto auto;
+  }
+
+  .pause-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 12px 0;
+    align-self: start;
+    overflow: visible;
+  }
+
+  .pause-card {
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    text-align: left;
+    column-gap: 14px;
+    padding: 14px;
+  }
+
+  .pause-avatar {
+    grid-row: span 2;
+    width: 72px;
+    height: 72px;
+    margin: 0;
+  }
+
+  .pause-stats {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    font-size: 0.8125rem;
+  }
+
+  .pause-stats li {
+    padding: 6px 8px;
+  }
+
+  .pause-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pause-item {
+    min-height: 112px;
+  }
+
+  .pause-ring {
+    width: 54px;
+    height: 54px;
+  }
+
+  .placement {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .placement-text {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ----- Phones on their side: the whole menu scrolls as one page --------------------------
+   The slots and the detail card are taller than the short screen. */
+
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .gi-screen {
+    inset: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom))
+      max(6px, env(safe-area-inset-left));
+    overflow: auto;
+    grid-template-rows: auto auto auto;
+    padding: 8px 16px 12px;
+  }
+
+  .gi-top {
+    min-height: 44px;
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  .gi-title {
+    font-size: 1.15rem;
+    gap: 8px;
+  }
+
+  .gi-tabs {
+    gap: 4px;
+  }
+
+  .gi-tabs button {
+    padding: 0 10px;
+    gap: 5px;
+    font-size: 0.875rem;
+  }
+
+  .gi-intro {
+    margin: 8px 0;
+  }
+
+  .gi-body {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 36vw);
+    min-height: auto;
+    align-items: start;
+    gap: 14px;
+  }
+
+  .gi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .gi-slot {
+    aspect-ratio: 0.9;
+  }
+
+  .gi-slot-name {
+    font-size: 0.75rem;
+    padding: 2px 4px 6px;
+  }
+
+  .gi-detail {
+    position: sticky;
+    top: 0;
+    grid-template-rows: auto auto auto;
+  }
+
+  .gi-detail-head {
+    min-height: 90px;
+    padding: 12px 14px 8px;
+  }
+
+  .gi-detail-art {
+    width: 76px;
+    height: 76px;
+  }
+
+  .gi-detail-art .item-art {
+    width: 66px;
+    height: 66px;
+  }
+
+  .gi-detail-body {
+    padding: 10px 14px;
+  }
+
+  .gi-detail-foot {
+    padding: 10px 14px 14px;
+  }
+
+  .pause-screen {
+    grid-template-rows: auto auto auto;
+  }
+
+  .pause-body {
+    align-self: start;
+    grid-template-columns: minmax(170px, 210px) minmax(0, 1fr);
+    gap: 18px;
+    padding: 10px 0;
+    overflow: visible;
+  }
+
+  .pause-card {
+    gap: 4px;
+    padding: 12px 10px;
+  }
+
+  .pause-avatar {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 2px;
+  }
+
+  .pause-avatar svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pause-card b {
+    font-size: 1.05rem;
+  }
+
+  .pause-stats {
+    margin-top: 6px;
+    gap: 4px;
+    font-size: 0.8125rem;
+  }
+
+  .pause-stats li {
+    padding: 4px 8px;
+  }
+
+  .pause-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 8px;
+  }
+
+  .pause-item {
+    gap: 5px;
+    min-height: 96px;
+    padding: 6px 2px;
+    font-size: 0.8125rem;
+  }
+
+  .pause-ring {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pause-ring svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .pause-foot {
+    padding-top: 6px;
+  }
 }
 
 /* ----- The report: the robot's row --------------------------------------------- */
@@ -301,12 +1102,10 @@
   align-items: center;
   gap: 12px;
   padding: 7px 8px 7px 7px;
-  border-radius: 99px;
-  background: linear-gradient(172deg, rgba(40, 47, 78, 0.86), rgba(16, 19, 38, 0.9));
-  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 
 .room-title {
@@ -316,10 +1115,8 @@
 }
 
 .room-title small {
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--ink-faint);
 }
 
@@ -369,73 +1166,9 @@
   bottom: auto;
 }
 
-/* What the use button does here. */
-.station-prompt {
-  position: absolute;
-  left: 50%;
-  bottom: 23%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 9px 20px 9px 10px;
-  border-radius: 99px;
-  background: rgba(12, 15, 40, 0.86);
-  border: 1.5px solid var(--gold);
-  color: var(--gold);
-  font-weight: 800;
-  white-space: nowrap;
-  pointer-events: none !important;
-  box-shadow: 0 0 22px rgba(255, 209, 102, 0.25);
-  animation: prompt-in 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-}
-
-.station-prompt kbd {
-  display: grid;
-  place-items: center;
-  min-width: 30px;
-  height: 30px;
-  padding: 0 6px;
-  border-radius: 8px;
-  font: inherit;
-  font-weight: 900;
-  color: var(--cream-ink);
-  background: linear-gradient(180deg, #fbf5e7, #e3d4ad);
-  box-shadow: inset 0 -3px 0 rgba(120, 90, 40, 0.3);
-}
-
-.station-prompt.kind-exit {
-  border-color: #7dffb0;
-  color: #b9ffd6;
-  box-shadow: 0 0 22px rgba(125, 255, 176, 0.25);
-}
-
-.station-prompt.kind-look {
-  border-color: #7fe0ff;
-  color: #c9f3ff;
-  box-shadow: 0 0 22px rgba(127, 224, 255, 0.25);
-}
-
-.station-prompt.kind-printer {
-  border-color: #ffb347;
-  color: #ffd9a8;
-}
-
-.station-prompt.is-done {
-  border-color: var(--good);
-  color: var(--good);
-}
-
-@keyframes prompt-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(8px) scale(0.94);
-  }
-}
-
-.room-buttons .round-big.is-ready {
-  background: rgba(255, 209, 102, 0.42) !important;
-  box-shadow: 0 0 24px rgba(255, 209, 102, 0.45);
+.room-buttons .round.round-big.is-ready {
+  background: var(--gold-edge);
+  border-color: var(--gold-hi);
 }
 
 /* The small game, over a dimmed room: each game is its own panel. */
@@ -473,7 +1206,7 @@
   gap: 10px;
   padding: 12px 14px 14px;
   border-radius: var(--r-lg);
-  background: linear-gradient(172deg, rgba(40, 47, 78, 0.94), rgba(16, 19, 38, 0.96));
+  background: var(--navy);
   border: 1px solid var(--line);
   outline: 1px solid rgba(236, 222, 190, 0.13);
   outline-offset: -6px;
@@ -643,20 +1376,14 @@
   opacity: 0.35;
 }
 
-.prompt-door {
-  border-color: #7fe0ff;
-  color: #c9f3ff;
-  box-shadow: 0 0 20px rgba(127, 224, 255, 0.3);
+.round.round-dig {
+  background: var(--navy-2);
+  border-color: var(--gold-hi);
 }
 
-.round-dig {
-  background: var(--navy-2) !important;
-  border-color: #e8c08a !important;
-}
-
-.round-door {
-  background: var(--navy-2) !important;
-  border-color: #7fe0ff !important;
+.round.round-door {
+  background: var(--navy-2);
+  border-color: var(--gold-lt);
 }
 
 .eva-chip-materials {
@@ -664,9 +1391,8 @@
 }
 
 /* The place name when the cadet walks into a room. */
-.discovery-room {
+.discovery.discovery-room {
   top: 18%;
-  pointer-events: none !important;
 }
 
 /* Metal: keep the marker inside the wandering zone. */
@@ -694,10 +1420,6 @@
   color: var(--ink-faint);
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.2);
-}
-
-.gi-games li.is-spent {
-  color: var(--gi-ink-soft);
 }
 
 /* The room game is still arriving (slow connection). */

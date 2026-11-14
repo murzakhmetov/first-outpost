@@ -1,150 +1,118 @@
-/* Science log cards: a picture on top (a NASA photo, or the topic's emblem on a starry
-   ground in the topic's colours), the title below. Hidden cards are dark with a lock. */
+/* First Outpost — the Science log: topic tabs, the cards (a NASA photo or a drawn scene on top, the
+   title below on ivory, a gold medallion for the topic) and the card page with its numbers and sources.
+   Hidden cards are grey with a lock. Loaded with the panels. */
+
+.intro {
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+
+.codex-finds {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  padding: 2px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  background: var(--ivory-hi);
+  color: var(--gold-dk);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ----- Topic tabs ------------------------------------------------------------------------- */
+
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.topics button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 4px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  transition: background 0.15s ease;
+}
+
+.topics button svg {
+  color: var(--gold-dk);
+}
+
+.topics button:hover {
+  background: var(--ivory-line);
+}
+
+.topics button.is-on {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+.topics button.is-on svg {
+  color: var(--gold-lt);
+}
+
+/* ----- Cards ------------------------------------------------------------------------------ */
 
 .codex-grid {
-  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)) !important;
-  gap: 12px !important;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
 }
 
 .codex-card {
   --topic-a: #3a5a9e;
-  --topic-b: #6fa8ff;
-  --topic-glow: rgba(111, 168, 255, 0.55);
-  gap: 0 !important;
-  padding: 0 !important;
-  min-height: 0 !important;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  padding: 0;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(36, 40, 72, 0.96), rgba(24, 27, 50, 0.96)) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+  text-align: left;
+  color: var(--slate);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 3px var(--ivory-hi), inset 0 0 0 4px var(--ivory-rule);
+  transition: background 0.15s ease;
 }
 
 .codex-card.is-found:hover {
-  border-color: var(--gold) !important;
-  box-shadow: 0 0 0 2px rgba(242, 196, 109, 0.35), 0 10px 22px rgba(0, 0, 0, 0.35);
+  background: var(--ivory-line);
 }
 
-.topic-worlds { --topic-a: #8a3d2a; --topic-b: #e2804d; --topic-glow: rgba(255, 150, 90, 0.55); }
-.topic-power { --topic-a: #8a6a1c; --topic-b: #f2c46d; --topic-glow: rgba(255, 214, 120, 0.6); }
-.topic-air { --topic-a: #1f5f86; --topic-b: #6fd6ff; --topic-glow: rgba(110, 220, 255, 0.55); }
-.topic-food { --topic-a: #26704a; --topic-b: #7fe0a0; --topic-glow: rgba(120, 240, 160, 0.5); }
-.topic-radiation { --topic-a: #6a2f7e; --topic-b: #e07ad9; --topic-glow: rgba(240, 130, 230, 0.5); }
-.topic-sun { --topic-a: #9a4a1a; --topic-b: #ffb347; --topic-glow: rgba(255, 180, 80, 0.6); }
-.topic-radio { --topic-a: #2b4a8a; --topic-b: #8fb0ff; --topic-glow: rgba(150, 180, 255, 0.55); }
-.topic-people { --topic-a: #7a3a52; --topic-b: #ff9ab8; --topic-glow: rgba(255, 150, 190, 0.5); }
-.topic-data { --topic-a: #285e6e; --topic-b: #79e0d0; --topic-glow: rgba(120, 230, 210, 0.5); }
+.topic-worlds { --topic-a: #8a3d2a; }
+.topic-power { --topic-a: #8a6a1c; }
+.topic-air { --topic-a: #1f5f86; }
+.topic-food { --topic-a: #26704a; }
+.topic-radiation { --topic-a: #6a2f7e; }
+.topic-sun { --topic-a: #9a4a1a; }
+.topic-radio { --topic-a: #2b4a8a; }
+.topic-people { --topic-a: #7a3a52; }
+.topic-data { --topic-a: #285e6e; }
 
 .codex-cover {
   position: relative;
   display: grid;
   place-items: center;
-  height: 96px;
+  height: 100px;
+  margin: 4px 4px 0;
   overflow: hidden;
-  background:
-    radial-gradient(1.2px 1.2px at 18% 28%, rgba(255, 255, 255, 0.9), transparent 60%),
-    radial-gradient(1px 1px at 72% 18%, rgba(255, 255, 255, 0.8), transparent 60%),
-    radial-gradient(1.4px 1.4px at 84% 62%, rgba(255, 255, 255, 0.7), transparent 60%),
-    radial-gradient(1px 1px at 34% 74%, rgba(255, 255, 255, 0.6), transparent 60%),
-    radial-gradient(1px 1px at 58% 44%, rgba(255, 255, 255, 0.5), transparent 60%),
-    radial-gradient(ellipse at 50% 120%, var(--topic-b), transparent 70%),
-    linear-gradient(160deg, var(--topic-a), #1a1d38 85%);
+  border-radius: 2px;
+  background: var(--navy-2);
 }
 
-.codex-cover::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0;
-  height: 30px;
-  background: linear-gradient(180deg, transparent, rgba(24, 27, 50, 0.9));
-  pointer-events: none;
-}
-
-.codex-cover img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.codex-card.has-photo:hover .codex-cover img {
-  transform: scale(1.06);
-}
-
-.codex-emblem {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  color: #fff;
-  background: radial-gradient(circle at 35% 30%, var(--topic-b), var(--topic-a));
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.28), 0 0 26px var(--topic-glow);
-}
-
-.codex-emblem svg {
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
-}
-
-.codex-text {
-  display: grid;
-  gap: 3px;
-  padding: 8px 12px 12px;
-}
-
-.codex-text b {
-  line-height: 1.2;
-}
-
-.codex-text small {
-  color: var(--ink-dim);
-  font-size: 0.75rem;
-}
-
-/* Hidden cards: the colours drain away, a lock waits in a dark disc. */
-.codex-card.is-locked {
-  opacity: 1 !important;
-}
-
-.codex-card.is-locked .codex-cover {
-  filter: grayscale(1) brightness(0.45);
-}
-
-.codex-card.is-locked .codex-emblem {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
-  filter: none;
-}
-
-.codex-card.is-locked .codex-text b {
-  color: var(--ink-dim);
-}
-
-.codex-card.is-locked .codex-text small {
-  color: var(--ink-faint);
-}
-
-.codex-card .new {
-  z-index: 2;
-}
-
-@media (max-width: 560px) {
-  .codex-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-  }
-
-  .codex-cover {
-    height: 78px;
-  }
-}
-
-/* Drawn scenes fill the cover; the topic's sign becomes a small badge in the corner. */
+.codex-cover img,
 .codex-cover .topic-scene {
   position: absolute;
   inset: 0;
@@ -152,15 +120,219 @@
   height: 100%;
 }
 
+.codex-cover img {
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.codex-card.has-photo:hover .codex-cover img {
+  transform: scale(1.05);
+}
+
+/* The topic's sign: a navy medallion with a gold ring, in the corner of a found card. */
+.codex-emblem {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: var(--gold-lt);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn);
+}
+
 .codex-card.is-found .codex-emblem {
   position: absolute;
   left: 8px;
   top: 8px;
-  width: 28px;
-  height: 28px;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+  width: 30px;
+  height: 30px;
 }
 
-.codex-card.is-locked .codex-emblem {
-  background: rgba(10, 12, 28, 0.6);
+.codex-text {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding: 8px 14px 14px;
+}
+
+.codex-text b {
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.codex-text small {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
+/* Hidden cards: the picture drains away, a lock waits in the medallion. */
+.codex-card.is-locked {
+  background: var(--ivory);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--ivory-line);
+}
+
+.codex-card.is-locked .codex-cover {
+  background: var(--muted);
+}
+
+.codex-card.is-locked .codex-cover .topic-scene {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+.codex-card.is-locked .codex-text b {
+  color: var(--muted);
+}
+
+.new {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  font-style: normal;
+  font-size: 0.8125rem;
+  font-weight: 900;
+  padding: 1px 8px;
+  border-radius: var(--r-sm);
+  background: var(--red-fill);
+  color: #fff;
+}
+
+/* ----- A card's page ---------------------------------------------------------------------- */
+
+.card-detail {
+  display: grid;
+  gap: 12px;
+}
+
+.back-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--gold-dk);
+  font-weight: 800;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  background: var(--navy);
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  max-height: 46vh;
+  object-fit: cover;
+}
+
+.photo figcaption {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  color: var(--slate);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.detail-body {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.numbers div {
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--ivory-rule);
+}
+
+.numbers dt {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.numbers dd {
+  margin: 2px 0 0;
+  font-weight: 900;
+  font-size: 1.0625rem;
+}
+
+.sources {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.sources li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 12px;
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
+}
+
+.sources li::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gold-orn);
+  transform: rotate(45deg);
+}
+
+@media (max-width: 560px) {
+  .codex-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .codex-cover {
+    height: 78px;
+  }
+
+  .codex-text {
+    padding: 6px 10px 12px;
+  }
+
+  .codex-finds {
+    margin: 6px 0 0;
+  }
 }
