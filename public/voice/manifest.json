@@ -1,6 +1,636 @@
 {
  "version": 1,
  "lines": {
+  "en:ev.antenna.ra": {
+   "file": "9a53ea43426d.mp3",
+   "hash": "9a53ea43426d",
+   "chars": 34,
+   "speaker": "caption"
+  },
+  "en:ev.antenna.rb": {
+   "file": "42d359ea2fad.mp3",
+   "hash": "42d359ea2fad",
+   "chars": 35,
+   "speaker": "caption"
+  },
+  "en:ev.antenna.story": {
+   "file": "e5144dbeb497.mp3",
+   "hash": "e5144dbeb497",
+   "chars": 160,
+   "speaker": "caption"
+  },
+  "en:ev.antenna.title": {
+   "file": "c11cfd0fce16.mp3",
+   "hash": "c11cfd0fce16",
+   "chars": 26,
+   "speaker": "caption"
+  },
+  "en:ev.battery_hot.ra": {
+   "file": "37975c421787.mp3",
+   "hash": "37975c421787",
+   "chars": 59,
+   "speaker": "caption"
+  },
+  "en:ev.battery_hot.rb": {
+   "file": "8ac34466d9a6.mp3",
+   "hash": "8ac34466d9a6",
+   "chars": 32,
+   "speaker": "caption"
+  },
+  "en:ev.battery_hot.story": {
+   "file": "f15e87f6c662.mp3",
+   "hash": "f15e87f6c662",
+   "chars": 197,
+   "speaker": "caption"
+  },
+  "en:ev.battery_hot.title": {
+   "file": "ceecb6bf4401.mp3",
+   "hash": "ceecb6bf4401",
+   "chars": 24,
+   "speaker": "caption"
+  },
+  "en:ev.cold_snap.body.mars": {
+   "file": "31a2341aa1db.mp3",
+   "hash": "31a2341aa1db",
+   "chars": 117,
+   "speaker": "caption"
+  },
+  "en:ev.cold_snap.ra": {
+   "file": "2e3d0d764d8b.mp3",
+   "hash": "2e3d0d764d8b",
+   "chars": 47,
+   "speaker": "caption"
+  },
+  "en:ev.cold_snap.rb": {
+   "file": "be577c8c5894.mp3",
+   "hash": "be577c8c5894",
+   "chars": 22,
+   "speaker": "caption"
+  },
+  "en:ev.cold_snap.rc": {
+   "file": "55dd0bb4c7b6.mp3",
+   "hash": "55dd0bb4c7b6",
+   "chars": 59,
+   "speaker": "caption"
+  },
+  "en:ev.cold_snap.story": {
+   "file": "6796d58a55c6.mp3",
+   "hash": "6796d58a55c6",
+   "chars": 182,
+   "speaker": "caption"
+  },
+  "en:ev.cold_snap.title": {
+   "file": "d81bb8a31426.mp3",
+   "hash": "d81bb8a31426",
+   "chars": 18,
+   "speaker": "caption"
+  },
+  "en:ev.dust_devil.ra": {
+   "file": "6669d2d86df4.mp3",
+   "hash": "6669d2d86df4",
+   "chars": 29,
+   "speaker": "caption"
+  },
+  "en:ev.dust_devil.story": {
+   "file": "7a71bf6f8c24.mp3",
+   "hash": "7a71bf6f8c24",
+   "chars": 207,
+   "speaker": "caption"
+  },
+  "en:ev.dust_devil.title": {
+   "file": "78faf9264ddb.mp3",
+   "hash": "78faf9264ddb",
+   "chars": 17,
+   "speaker": "caption"
+  },
+  "en:ev.dust_warning.ra": {
+   "file": "0e146a555cf3.mp3",
+   "hash": "0e146a555cf3",
+   "chars": 63,
+   "speaker": "caption"
+  },
+  "en:ev.dust_warning.rb": {
+   "file": "0e4a4fc1184a.mp3",
+   "hash": "0e4a4fc1184a",
+   "chars": 58,
+   "speaker": "caption"
+  },
+  "en:ev.dust_warning.rc": {
+   "file": "af1832ff7365.mp3",
+   "hash": "af1832ff7365",
+   "chars": 44,
+   "speaker": "caption"
+  },
+  "en:ev.dust_warning.story": {
+   "file": "cd88423efb8b.mp3",
+   "hash": "cd88423efb8b",
+   "chars": 233,
+   "speaker": "caption"
+  },
+  "en:ev.dust_warning.title": {
+   "file": "bea82c4b83ee.mp3",
+   "hash": "bea82c4b83ee",
+   "chars": 22,
+   "speaker": "caption"
+  },
+  "en:ev.eclipse.ra": {
+   "file": "0c0cb532d2ac.mp3",
+   "hash": "0c0cb532d2ac",
+   "chars": 44,
+   "speaker": "caption"
+  },
+  "en:ev.eclipse.rb": {
+   "file": "6ca9e7b1894e.mp3",
+   "hash": "6ca9e7b1894e",
+   "chars": 52,
+   "speaker": "caption"
+  },
+  "en:ev.eclipse.story": {
+   "file": "4bc96dde1c5d.mp3",
+   "hash": "4bc96dde1c5d",
+   "chars": 113,
+   "speaker": "caption"
+  },
+  "en:ev.eclipse.title": {
+   "file": "6ab3050154ea.mp3",
+   "hash": "6ab3050154ea",
+   "chars": 20,
+   "speaker": "caption"
+  },
+  "en:ev.far_rock.ra": {
+   "file": "395732fe9159.mp3",
+   "hash": "395732fe9159",
+   "chars": 79,
+   "speaker": "caption"
+  },
+  "en:ev.far_rock.rb": {
+   "file": "faffdcb319dd.mp3",
+   "hash": "faffdcb319dd",
+   "chars": 45,
+   "speaker": "caption"
+  },
+  "en:ev.far_rock.rc": {
+   "file": "21eef693b07d.mp3",
+   "hash": "21eef693b07d",
+   "chars": 34,
+   "speaker": "caption"
+  },
+  "en:ev.far_rock.story": {
+   "file": "dc4d3b7a6eeb.mp3",
+   "hash": "dc4d3b7a6eeb",
+   "chars": 151,
+   "speaker": "caption"
+  },
+  "en:ev.far_rock.title": {
+   "file": "67525c6bd348.mp3",
+   "hash": "67525c6bd348",
+   "chars": 24,
+   "speaker": "caption"
+  },
+  "en:ev.ice_found.ra": {
+   "file": "7eb38afc8025.mp3",
+   "hash": "7eb38afc8025",
+   "chars": 60,
+   "speaker": "caption"
+  },
+  "en:ev.ice_found.rb": {
+   "file": "7017e92d865a.mp3",
+   "hash": "7017e92d865a",
+   "chars": 30,
+   "speaker": "caption"
+  },
+  "en:ev.ice_found.rc": {
+   "file": "ec64d58a8ff9.mp3",
+   "hash": "ec64d58a8ff9",
+   "chars": 52,
+   "speaker": "caption"
+  },
+  "en:ev.ice_found.story": {
+   "file": "b0f45bc7dbc8.mp3",
+   "hash": "b0f45bc7dbc8",
+   "chars": 164,
+   "speaker": "caption"
+  },
+  "en:ev.ice_found.title": {
+   "file": "eef25ed01990.mp3",
+   "hash": "eef25ed01990",
+   "chars": 22,
+   "speaker": "caption"
+  },
+  "en:ev.leak.body": {
+   "file": "76132e7e7ce8.mp3",
+   "hash": "76132e7e7ce8",
+   "chars": 82,
+   "speaker": "caption"
+  },
+  "en:ev.leak.ra": {
+   "file": "e4943408fe31.mp3",
+   "hash": "e4943408fe31",
+   "chars": 51,
+   "speaker": "caption"
+  },
+  "en:ev.leak.rb": {
+   "file": "cc82e78dda33.mp3",
+   "hash": "cc82e78dda33",
+   "chars": 44,
+   "speaker": "caption"
+  },
+  "en:ev.leak.story": {
+   "file": "64d426eeaad2.mp3",
+   "hash": "64d426eeaad2",
+   "chars": 183,
+   "speaker": "caption"
+  },
+  "en:ev.leak.title": {
+   "file": "9c405fd57fcd.mp3",
+   "hash": "9c405fd57fcd",
+   "chars": 15,
+   "speaker": "caption"
+  },
+  "en:ev.micrometeoroid.ra": {
+   "file": "430f600d06f3.mp3",
+   "hash": "430f600d06f3",
+   "chars": 59,
+   "speaker": "caption"
+  },
+  "en:ev.micrometeoroid.rb": {
+   "file": "13699d1ecd48.mp3",
+   "hash": "13699d1ecd48",
+   "chars": 47,
+   "speaker": "caption"
+  },
+  "en:ev.micrometeoroid.story": {
+   "file": "2b3d60907a04.mp3",
+   "hash": "2b3d60907a04",
+   "chars": 243,
+   "speaker": "caption"
+  },
+  "en:ev.micrometeoroid.title": {
+   "file": "65e4fef0e0e8.mp3",
+   "hash": "65e4fef0e0e8",
+   "chars": 21,
+   "speaker": "caption"
+  },
+  "en:ev.moxie.ra": {
+   "file": "339adfeebd28.mp3",
+   "hash": "339adfeebd28",
+   "chars": 50,
+   "speaker": "caption"
+  },
+  "en:ev.moxie.rb": {
+   "file": "148da9785550.mp3",
+   "hash": "148da9785550",
+   "chars": 50,
+   "speaker": "caption"
+  },
+  "en:ev.moxie.rc": {
+   "file": "3b0f020cf3cc.mp3",
+   "hash": "3b0f020cf3cc",
+   "chars": 29,
+   "speaker": "caption"
+  },
+  "en:ev.moxie.story": {
+   "file": "fedcb12cb448.mp3",
+   "hash": "fedcb12cb448",
+   "chars": 179,
+   "speaker": "caption"
+  },
+  "en:ev.moxie.title": {
+   "file": "6b965fa846ad.mp3",
+   "hash": "6b965fa846ad",
+   "chars": 23,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.body": {
+   "file": "aef9f023be52.mp3",
+   "hash": "aef9f023be52",
+   "chars": 77,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.ra.mars": {
+   "file": "4b7c14cf4753.mp3",
+   "hash": "4b7c14cf4753",
+   "chars": 123,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.ra.marsNear": {
+   "file": "f3616cbefb24.mp3",
+   "hash": "f3616cbefb24",
+   "chars": 123,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.ra.moon": {
+   "file": "7a5d1e9867bd.mp3",
+   "hash": "7a5d1e9867bd",
+   "chars": 84,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.rb": {
+   "file": "6fc892f45fc1.mp3",
+   "hash": "6fc892f45fc1",
+   "chars": 72,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.rc": {
+   "file": "2bc30d82f495.mp3",
+   "hash": "2bc30d82f495",
+   "chars": 35,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.story": {
+   "file": "f410f6943f7e.mp3",
+   "hash": "f410f6943f7e",
+   "chars": 233,
+   "speaker": "caption"
+  },
+  "en:ev.plants_sick.title": {
+   "file": "feaa651bfaf7.mp3",
+   "hash": "feaa651bfaf7",
+   "chars": 20,
+   "speaker": "caption"
+  },
+  "en:ev.quake.body": {
+   "file": "757b5529ada7.mp3",
+   "hash": "757b5529ada7",
+   "chars": 70,
+   "speaker": "caption"
+  },
+  "en:ev.quake.ra": {
+   "file": "35ec454fac39.mp3",
+   "hash": "35ec454fac39",
+   "chars": 61,
+   "speaker": "caption"
+  },
+  "en:ev.quake.rb": {
+   "file": "4e1080885aeb.mp3",
+   "hash": "4e1080885aeb",
+   "chars": 52,
+   "speaker": "caption"
+  },
+  "en:ev.quake.story.mars": {
+   "file": "d493d15b8752.mp3",
+   "hash": "d493d15b8752",
+   "chars": 153,
+   "speaker": "caption"
+  },
+  "en:ev.quake.story.moon": {
+   "file": "b29ae505e3e2.mp3",
+   "hash": "b29ae505e3e2",
+   "chars": 152,
+   "speaker": "caption"
+  },
+  "en:ev.quake.title.mars": {
+   "file": "70ffaa707db0.mp3",
+   "hash": "70ffaa707db0",
+   "chars": 10,
+   "speaker": "caption"
+  },
+  "en:ev.quake.title.moon": {
+   "file": "958b71019e56.mp3",
+   "hash": "958b71019e56",
+   "chars": 10,
+   "speaker": "caption"
+  },
+  "en:ev.ration.body.mars": {
+   "file": "99f8ce79e627.mp3",
+   "hash": "99f8ce79e627",
+   "chars": 120,
+   "speaker": "caption"
+  },
+  "en:ev.ration.body.moon": {
+   "file": "5a0b36764772.mp3",
+   "hash": "5a0b36764772",
+   "chars": 71,
+   "speaker": "caption"
+  },
+  "en:ev.ration.ra": {
+   "file": "bfaee6467d01.mp3",
+   "hash": "bfaee6467d01",
+   "chars": 70,
+   "speaker": "caption"
+  },
+  "en:ev.ration.rb": {
+   "file": "172c9475e700.mp3",
+   "hash": "172c9475e700",
+   "chars": 43,
+   "speaker": "caption"
+  },
+  "en:ev.ration.story": {
+   "file": "578fe264ef9b.mp3",
+   "hash": "578fe264ef9b",
+   "chars": 135,
+   "speaker": "caption"
+  },
+  "en:ev.ration.title": {
+   "file": "56661d4da615.mp3",
+   "hash": "56661d4da615",
+   "chars": 19,
+   "speaker": "caption"
+  },
+  "en:ev.resupply.ra": {
+   "file": "0c2182175895.mp3",
+   "hash": "0c2182175895",
+   "chars": 41,
+   "speaker": "caption"
+  },
+  "en:ev.resupply.rb": {
+   "file": "86a001936729.mp3",
+   "hash": "86a001936729",
+   "chars": 31,
+   "speaker": "caption"
+  },
+  "en:ev.resupply.rc": {
+   "file": "90e6fe52367e.mp3",
+   "hash": "90e6fe52367e",
+   "chars": 44,
+   "speaker": "caption"
+  },
+  "en:ev.resupply.story": {
+   "file": "9f60ffce7940.mp3",
+   "hash": "9f60ffce7940",
+   "chars": 188,
+   "speaker": "caption"
+  },
+  "en:ev.resupply.title": {
+   "file": "d4e5f886488a.mp3",
+   "hash": "d4e5f886488a",
+   "chars": 23,
+   "speaker": "caption"
+  },
+  "en:ev.school_call.ra.mars": {
+   "file": "8bba602493be.mp3",
+   "hash": "8bba602493be",
+   "chars": 79,
+   "speaker": "caption"
+  },
+  "en:ev.school_call.ra.moon": {
+   "file": "88bf4a795c46.mp3",
+   "hash": "88bf4a795c46",
+   "chars": 86,
+   "speaker": "caption"
+  },
+  "en:ev.school_call.rb": {
+   "file": "36e768437374.mp3",
+   "hash": "36e768437374",
+   "chars": 18,
+   "speaker": "caption"
+  },
+  "en:ev.school_call.story": {
+   "file": "0605f6d7757c.mp3",
+   "hash": "0605f6d7757c",
+   "chars": 183,
+   "speaker": "caption"
+  },
+  "en:ev.school_call.title": {
+   "file": "0293a590c96f.mp3",
+   "hash": "0293a590c96f",
+   "chars": 27,
+   "speaker": "caption"
+  },
+  "en:ev.scrubber.body": {
+   "file": "715c72e1ad82.mp3",
+   "hash": "715c72e1ad82",
+   "chars": 117,
+   "speaker": "caption"
+  },
+  "en:ev.scrubber.ra": {
+   "file": "e214d019582f.mp3",
+   "hash": "e214d019582f",
+   "chars": 49,
+   "speaker": "caption"
+  },
+  "en:ev.scrubber.rb": {
+   "file": "a6d213b752b7.mp3",
+   "hash": "a6d213b752b7",
+   "chars": 56,
+   "speaker": "caption"
+  },
+  "en:ev.scrubber.rc": {
+   "file": "e066f81effc2.mp3",
+   "hash": "e066f81effc2",
+   "chars": 47,
+   "speaker": "caption"
+  },
+  "en:ev.scrubber.story": {
+   "file": "3d1e5d6a394f.mp3",
+   "hash": "3d1e5d6a394f",
+   "chars": 274,
+   "speaker": "caption"
+  },
+  "en:ev.scrubber.title": {
+   "file": "d3b761823eeb.mp3",
+   "hash": "d3b761823eeb",
+   "chars": 26,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.body.cme": {
+   "file": "fa67d1730330.mp3",
+   "hash": "fa67d1730330",
+   "chars": 135,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.body.moon": {
+   "file": "88e1fd9698fb.mp3",
+   "hash": "88e1fd9698fb",
+   "chars": 147,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.body.rad": {
+   "file": "ea78369a82d4.mp3",
+   "hash": "ea78369a82d4",
+   "chars": 93,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.ra": {
+   "file": "0238304b423b.mp3",
+   "hash": "0238304b423b",
+   "chars": 108,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.rb": {
+   "file": "bf00bedc7227.mp3",
+   "hash": "bf00bedc7227",
+   "chars": 55,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.rc": {
+   "file": "01ae547a6071.mp3",
+   "hash": "01ae547a6071",
+   "chars": 75,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.story": {
+   "file": "cd9114c5af2b.mp3",
+   "hash": "cd9114c5af2b",
+   "chars": 195,
+   "speaker": "caption"
+  },
+  "en:ev.solar_storm.title": {
+   "file": "6c2e07c622b0.mp3",
+   "hash": "6c2e07c622b0",
+   "chars": 12,
+   "speaker": "caption"
+  },
+  "en:ev.tired_crew.ra": {
+   "file": "1dd3b8c47648.mp3",
+   "hash": "1dd3b8c47648",
+   "chars": 70,
+   "speaker": "caption"
+  },
+  "en:ev.tired_crew.rb": {
+   "file": "32655d59ceca.mp3",
+   "hash": "32655d59ceca",
+   "chars": 41,
+   "speaker": "caption"
+  },
+  "en:ev.tired_crew.story": {
+   "file": "b905351e573a.mp3",
+   "hash": "b905351e573a",
+   "chars": 167,
+   "speaker": "caption"
+  },
+  "en:ev.tired_crew.title": {
+   "file": "15514925c3ea.mp3",
+   "hash": "15514925c3ea",
+   "chars": 20,
+   "speaker": "caption"
+  },
+  "en:ev.water_pump.body": {
+   "file": "f8e46452a0ca.mp3",
+   "hash": "f8e46452a0ca",
+   "chars": 78,
+   "speaker": "caption"
+  },
+  "en:ev.water_pump.ra": {
+   "file": "4d1e06612fb8.mp3",
+   "hash": "4d1e06612fb8",
+   "chars": 46,
+   "speaker": "caption"
+  },
+  "en:ev.water_pump.rb": {
+   "file": "38ad9e5fc9fe.mp3",
+   "hash": "38ad9e5fc9fe",
+   "chars": 58,
+   "speaker": "caption"
+  },
+  "en:ev.water_pump.story": {
+   "file": "97ac88832d54.mp3",
+   "hash": "97ac88832d54",
+   "chars": 115,
+   "speaker": "caption"
+  },
+  "en:ev.water_pump.title": {
+   "file": "2ee25d85b661.mp3",
+   "hash": "2ee25d85b661",
+   "chars": 27,
+   "speaker": "caption"
+  },
+  "en:eva.edge": {
+   "file": "fd3d8274ce64.mp3",
+   "hash": "fd3d8274ce64",
+   "chars": 51,
+   "speaker": "lumi"
+  },
   "en:film.built.1": {
    "file": "a9fb71ae3bd5.mp3",
    "hash": "a9fb71ae3bd5",
@@ -990,6 +1620,636 @@
    "hash": "becd4500de1b",
    "chars": 109,
    "speaker": "mc"
+  },
+  "ru:ev.antenna.ra": {
+   "file": "ae0339bf65f6.mp3",
+   "hash": "ae0339bf65f6",
+   "chars": 37,
+   "speaker": "caption"
+  },
+  "ru:ev.antenna.rb": {
+   "file": "e71ec7002ec2.mp3",
+   "hash": "e71ec7002ec2",
+   "chars": 37,
+   "speaker": "caption"
+  },
+  "ru:ev.antenna.story": {
+   "file": "7c9ccda76d8d.mp3",
+   "hash": "7c9ccda76d8d",
+   "chars": 214,
+   "speaker": "caption"
+  },
+  "ru:ev.antenna.title": {
+   "file": "005ecf894f78.mp3",
+   "hash": "005ecf894f78",
+   "chars": 23,
+   "speaker": "caption"
+  },
+  "ru:ev.battery_hot.ra": {
+   "file": "315c4427730a.mp3",
+   "hash": "315c4427730a",
+   "chars": 57,
+   "speaker": "caption"
+  },
+  "ru:ev.battery_hot.rb": {
+   "file": "7bdabe9f038c.mp3",
+   "hash": "7bdabe9f038c",
+   "chars": 47,
+   "speaker": "caption"
+  },
+  "ru:ev.battery_hot.story": {
+   "file": "f635c2410802.mp3",
+   "hash": "f635c2410802",
+   "chars": 230,
+   "speaker": "caption"
+  },
+  "ru:ev.battery_hot.title": {
+   "file": "55d0f96adc7c.mp3",
+   "hash": "55d0f96adc7c",
+   "chars": 21,
+   "speaker": "caption"
+  },
+  "ru:ev.cold_snap.body.mars": {
+   "file": "f06bcbb15844.mp3",
+   "hash": "f06bcbb15844",
+   "chars": 132,
+   "speaker": "caption"
+  },
+  "ru:ev.cold_snap.ra": {
+   "file": "787b2487b334.mp3",
+   "hash": "787b2487b334",
+   "chars": 52,
+   "speaker": "caption"
+  },
+  "ru:ev.cold_snap.rb": {
+   "file": "2191c9502ff3.mp3",
+   "hash": "2191c9502ff3",
+   "chars": 24,
+   "speaker": "caption"
+  },
+  "ru:ev.cold_snap.rc": {
+   "file": "e8e5e69f6d66.mp3",
+   "hash": "e8e5e69f6d66",
+   "chars": 51,
+   "speaker": "caption"
+  },
+  "ru:ev.cold_snap.story": {
+   "file": "3a1a8b233dff.mp3",
+   "hash": "3a1a8b233dff",
+   "chars": 190,
+   "speaker": "caption"
+  },
+  "ru:ev.cold_snap.title": {
+   "file": "deb1a4ba141b.mp3",
+   "hash": "deb1a4ba141b",
+   "chars": 20,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_devil.ra": {
+   "file": "a687987c1970.mp3",
+   "hash": "a687987c1970",
+   "chars": 34,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_devil.story": {
+   "file": "7c1fa6d7519f.mp3",
+   "hash": "7c1fa6d7519f",
+   "chars": 205,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_devil.title": {
+   "file": "0b5784fb9d57.mp3",
+   "hash": "0b5784fb9d57",
+   "chars": 13,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_warning.ra": {
+   "file": "16512383a004.mp3",
+   "hash": "16512383a004",
+   "chars": 72,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_warning.rb": {
+   "file": "e780d7e7cf61.mp3",
+   "hash": "e780d7e7cf61",
+   "chars": 51,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_warning.rc": {
+   "file": "5bc05d80a24c.mp3",
+   "hash": "5bc05d80a24c",
+   "chars": 48,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_warning.story": {
+   "file": "5fcb74404d8e.mp3",
+   "hash": "5fcb74404d8e",
+   "chars": 260,
+   "speaker": "caption"
+  },
+  "ru:ev.dust_warning.title": {
+   "file": "4b5cd93356b5.mp3",
+   "hash": "4b5cd93356b5",
+   "chars": 25,
+   "speaker": "caption"
+  },
+  "ru:ev.eclipse.ra": {
+   "file": "f17c6094c678.mp3",
+   "hash": "f17c6094c678",
+   "chars": 37,
+   "speaker": "caption"
+  },
+  "ru:ev.eclipse.rb": {
+   "file": "2bc48bc436c5.mp3",
+   "hash": "2bc48bc436c5",
+   "chars": 54,
+   "speaker": "caption"
+  },
+  "ru:ev.eclipse.story": {
+   "file": "cc8e03d68acb.mp3",
+   "hash": "cc8e03d68acb",
+   "chars": 118,
+   "speaker": "caption"
+  },
+  "ru:ev.eclipse.title": {
+   "file": "7758bde935bf.mp3",
+   "hash": "7758bde935bf",
+   "chars": 20,
+   "speaker": "caption"
+  },
+  "ru:ev.far_rock.ra": {
+   "file": "2eae086cf156.mp3",
+   "hash": "2eae086cf156",
+   "chars": 90,
+   "speaker": "caption"
+  },
+  "ru:ev.far_rock.rb": {
+   "file": "67e2103a6f5e.mp3",
+   "hash": "67e2103a6f5e",
+   "chars": 50,
+   "speaker": "caption"
+  },
+  "ru:ev.far_rock.rc": {
+   "file": "e13f72259eb2.mp3",
+   "hash": "e13f72259eb2",
+   "chars": 34,
+   "speaker": "caption"
+  },
+  "ru:ev.far_rock.story": {
+   "file": "8ffb170e4730.mp3",
+   "hash": "8ffb170e4730",
+   "chars": 174,
+   "speaker": "caption"
+  },
+  "ru:ev.far_rock.title": {
+   "file": "d80bdb5b5a7b.mp3",
+   "hash": "d80bdb5b5a7b",
+   "chars": 22,
+   "speaker": "caption"
+  },
+  "ru:ev.ice_found.ra": {
+   "file": "6263295edcfa.mp3",
+   "hash": "6263295edcfa",
+   "chars": 65,
+   "speaker": "caption"
+  },
+  "ru:ev.ice_found.rb": {
+   "file": "ddd6499456c1.mp3",
+   "hash": "ddd6499456c1",
+   "chars": 39,
+   "speaker": "caption"
+  },
+  "ru:ev.ice_found.rc": {
+   "file": "68eff19e491b.mp3",
+   "hash": "68eff19e491b",
+   "chars": 44,
+   "speaker": "caption"
+  },
+  "ru:ev.ice_found.story": {
+   "file": "38800ef8cf79.mp3",
+   "hash": "38800ef8cf79",
+   "chars": 168,
+   "speaker": "caption"
+  },
+  "ru:ev.ice_found.title": {
+   "file": "4afc5ee07295.mp3",
+   "hash": "4afc5ee07295",
+   "chars": 20,
+   "speaker": "caption"
+  },
+  "ru:ev.leak.body": {
+   "file": "bbfacdcc54ed.mp3",
+   "hash": "bbfacdcc54ed",
+   "chars": 70,
+   "speaker": "caption"
+  },
+  "ru:ev.leak.ra": {
+   "file": "b5adfed40bfc.mp3",
+   "hash": "b5adfed40bfc",
+   "chars": 49,
+   "speaker": "caption"
+  },
+  "ru:ev.leak.rb": {
+   "file": "ce15183fc311.mp3",
+   "hash": "ce15183fc311",
+   "chars": 55,
+   "speaker": "caption"
+  },
+  "ru:ev.leak.story": {
+   "file": "29316f8ca2be.mp3",
+   "hash": "29316f8ca2be",
+   "chars": 196,
+   "speaker": "caption"
+  },
+  "ru:ev.leak.title": {
+   "file": "2ccecb0ec935.mp3",
+   "hash": "2ccecb0ec935",
+   "chars": 24,
+   "speaker": "caption"
+  },
+  "ru:ev.micrometeoroid.ra": {
+   "file": "895c1abfcfde.mp3",
+   "hash": "895c1abfcfde",
+   "chars": 56,
+   "speaker": "caption"
+  },
+  "ru:ev.micrometeoroid.rb": {
+   "file": "c1edc5af6520.mp3",
+   "hash": "c1edc5af6520",
+   "chars": 60,
+   "speaker": "caption"
+  },
+  "ru:ev.micrometeoroid.story": {
+   "file": "9454ea95e231.mp3",
+   "hash": "9454ea95e231",
+   "chars": 264,
+   "speaker": "caption"
+  },
+  "ru:ev.micrometeoroid.title": {
+   "file": "346432a7a19a.mp3",
+   "hash": "346432a7a19a",
+   "chars": 25,
+   "speaker": "caption"
+  },
+  "ru:ev.moxie.ra": {
+   "file": "2544fea34505.mp3",
+   "hash": "2544fea34505",
+   "chars": 60,
+   "speaker": "caption"
+  },
+  "ru:ev.moxie.rb": {
+   "file": "d9781648f978.mp3",
+   "hash": "d9781648f978",
+   "chars": 40,
+   "speaker": "caption"
+  },
+  "ru:ev.moxie.rc": {
+   "file": "2a6d1cd8faa0.mp3",
+   "hash": "2a6d1cd8faa0",
+   "chars": 24,
+   "speaker": "caption"
+  },
+  "ru:ev.moxie.story": {
+   "file": "351a2090657f.mp3",
+   "hash": "351a2090657f",
+   "chars": 181,
+   "speaker": "caption"
+  },
+  "ru:ev.moxie.title": {
+   "file": "20745fbb2ecc.mp3",
+   "hash": "20745fbb2ecc",
+   "chars": 32,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.body": {
+   "file": "cd0f21dc3047.mp3",
+   "hash": "cd0f21dc3047",
+   "chars": 86,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.ra.mars": {
+   "file": "08ea0157be55.mp3",
+   "hash": "08ea0157be55",
+   "chars": 112,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.ra.marsNear": {
+   "file": "695a9980d433.mp3",
+   "hash": "695a9980d433",
+   "chars": 129,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.ra.moon": {
+   "file": "b8b1dbbcf2f9.mp3",
+   "hash": "b8b1dbbcf2f9",
+   "chars": 108,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.rb": {
+   "file": "6c942e2a464e.mp3",
+   "hash": "6c942e2a464e",
+   "chars": 94,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.rc": {
+   "file": "7659213a4e71.mp3",
+   "hash": "7659213a4e71",
+   "chars": 44,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.story": {
+   "file": "6bee0fb05dcf.mp3",
+   "hash": "6bee0fb05dcf",
+   "chars": 225,
+   "speaker": "caption"
+  },
+  "ru:ev.plants_sick.title": {
+   "file": "6a81ef03c951.mp3",
+   "hash": "6a81ef03c951",
+   "chars": 22,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.body": {
+   "file": "5acbd67c0ce3.mp3",
+   "hash": "5acbd67c0ce3",
+   "chars": 66,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.ra": {
+   "file": "37e985d2db88.mp3",
+   "hash": "37e985d2db88",
+   "chars": 74,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.rb": {
+   "file": "fcfa61d7ce62.mp3",
+   "hash": "fcfa61d7ce62",
+   "chars": 71,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.story.mars": {
+   "file": "935cc186ea39.mp3",
+   "hash": "935cc186ea39",
+   "chars": 183,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.story.moon": {
+   "file": "6fd1043fe964.mp3",
+   "hash": "6fd1043fe964",
+   "chars": 164,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.title.mars": {
+   "file": "9d9be5a191a0.mp3",
+   "hash": "9d9be5a191a0",
+   "chars": 14,
+   "speaker": "caption"
+  },
+  "ru:ev.quake.title.moon": {
+   "file": "f4a81b9234af.mp3",
+   "hash": "f4a81b9234af",
+   "chars": 13,
+   "speaker": "caption"
+  },
+  "ru:ev.ration.body.mars": {
+   "file": "1c7a946c3cb3.mp3",
+   "hash": "1c7a946c3cb3",
+   "chars": 140,
+   "speaker": "caption"
+  },
+  "ru:ev.ration.body.moon": {
+   "file": "26b390722302.mp3",
+   "hash": "26b390722302",
+   "chars": 87,
+   "speaker": "caption"
+  },
+  "ru:ev.ration.ra": {
+   "file": "a8452e29a9bc.mp3",
+   "hash": "a8452e29a9bc",
+   "chars": 79,
+   "speaker": "caption"
+  },
+  "ru:ev.ration.rb": {
+   "file": "bdb6a3dd405c.mp3",
+   "hash": "bdb6a3dd405c",
+   "chars": 46,
+   "speaker": "caption"
+  },
+  "ru:ev.ration.story": {
+   "file": "9a74179ff27f.mp3",
+   "hash": "9a74179ff27f",
+   "chars": 129,
+   "speaker": "caption"
+  },
+  "ru:ev.ration.title": {
+   "file": "2595d3efb785.mp3",
+   "hash": "2595d3efb785",
+   "chars": 17,
+   "speaker": "caption"
+  },
+  "ru:ev.resupply.ra": {
+   "file": "eba61cd14c33.mp3",
+   "hash": "eba61cd14c33",
+   "chars": 42,
+   "speaker": "caption"
+  },
+  "ru:ev.resupply.rb": {
+   "file": "20a7c4bd2178.mp3",
+   "hash": "20a7c4bd2178",
+   "chars": 32,
+   "speaker": "caption"
+  },
+  "ru:ev.resupply.rc": {
+   "file": "f028e5115f8f.mp3",
+   "hash": "f028e5115f8f",
+   "chars": 46,
+   "speaker": "caption"
+  },
+  "ru:ev.resupply.story": {
+   "file": "756966feace7.mp3",
+   "hash": "756966feace7",
+   "chars": 201,
+   "speaker": "caption"
+  },
+  "ru:ev.resupply.title": {
+   "file": "e664b870c0f6.mp3",
+   "hash": "e664b870c0f6",
+   "chars": 32,
+   "speaker": "caption"
+  },
+  "ru:ev.school_call.ra.mars": {
+   "file": "c349bc221eaf.mp3",
+   "hash": "c349bc221eaf",
+   "chars": 79,
+   "speaker": "caption"
+  },
+  "ru:ev.school_call.ra.moon": {
+   "file": "df8aa3e7045c.mp3",
+   "hash": "df8aa3e7045c",
+   "chars": 80,
+   "speaker": "caption"
+  },
+  "ru:ev.school_call.rb": {
+   "file": "e152c041d1c0.mp3",
+   "hash": "e152c041d1c0",
+   "chars": 34,
+   "speaker": "caption"
+  },
+  "ru:ev.school_call.story": {
+   "file": "7068d1774264.mp3",
+   "hash": "7068d1774264",
+   "chars": 191,
+   "speaker": "caption"
+  },
+  "ru:ev.school_call.title": {
+   "file": "61b054db1658.mp3",
+   "hash": "61b054db1658",
+   "chars": 25,
+   "speaker": "caption"
+  },
+  "ru:ev.scrubber.body": {
+   "file": "c44ff1497446.mp3",
+   "hash": "c44ff1497446",
+   "chars": 109,
+   "speaker": "caption"
+  },
+  "ru:ev.scrubber.ra": {
+   "file": "3a97f5230581.mp3",
+   "hash": "3a97f5230581",
+   "chars": 57,
+   "speaker": "caption"
+  },
+  "ru:ev.scrubber.rb": {
+   "file": "c7529901c47c.mp3",
+   "hash": "c7529901c47c",
+   "chars": 58,
+   "speaker": "caption"
+  },
+  "ru:ev.scrubber.rc": {
+   "file": "471234f596e0.mp3",
+   "hash": "471234f596e0",
+   "chars": 55,
+   "speaker": "caption"
+  },
+  "ru:ev.scrubber.story": {
+   "file": "d8757a791a33.mp3",
+   "hash": "d8757a791a33",
+   "chars": 327,
+   "speaker": "caption"
+  },
+  "ru:ev.scrubber.title": {
+   "file": "829dbcf55fd9.mp3",
+   "hash": "829dbcf55fd9",
+   "chars": 26,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.body.cme": {
+   "file": "e3a952c691a3.mp3",
+   "hash": "e3a952c691a3",
+   "chars": 130,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.body.moon": {
+   "file": "a4d073cd8a12.mp3",
+   "hash": "a4d073cd8a12",
+   "chars": 141,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.body.rad": {
+   "file": "f48aeb83ca29.mp3",
+   "hash": "f48aeb83ca29",
+   "chars": 105,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.ra": {
+   "file": "9f541629fd61.mp3",
+   "hash": "9f541629fd61",
+   "chars": 92,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.rb": {
+   "file": "4ba9e1494495.mp3",
+   "hash": "4ba9e1494495",
+   "chars": 55,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.rc": {
+   "file": "b02e6803d363.mp3",
+   "hash": "b02e6803d363",
+   "chars": 60,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.story": {
+   "file": "fe90806a9b17.mp3",
+   "hash": "fe90806a9b17",
+   "chars": 241,
+   "speaker": "caption"
+  },
+  "ru:ev.solar_storm.title": {
+   "file": "f9798741010c.mp3",
+   "hash": "f9798741010c",
+   "chars": 15,
+   "speaker": "caption"
+  },
+  "ru:ev.tired_crew.ra": {
+   "file": "d288b4c21bf5.mp3",
+   "hash": "d288b4c21bf5",
+   "chars": 76,
+   "speaker": "caption"
+  },
+  "ru:ev.tired_crew.rb": {
+   "file": "6b8d2d4f3667.mp3",
+   "hash": "6b8d2d4f3667",
+   "chars": 38,
+   "speaker": "caption"
+  },
+  "ru:ev.tired_crew.story": {
+   "file": "350420feb054.mp3",
+   "hash": "350420feb054",
+   "chars": 187,
+   "speaker": "caption"
+  },
+  "ru:ev.tired_crew.title": {
+   "file": "583ece961d43.mp3",
+   "hash": "583ece961d43",
+   "chars": 21,
+   "speaker": "caption"
+  },
+  "ru:ev.water_pump.body": {
+   "file": "9d754ae4e9c8.mp3",
+   "hash": "9d754ae4e9c8",
+   "chars": 92,
+   "speaker": "caption"
+  },
+  "ru:ev.water_pump.ra": {
+   "file": "1d524b6a5a04.mp3",
+   "hash": "1d524b6a5a04",
+   "chars": 50,
+   "speaker": "caption"
+  },
+  "ru:ev.water_pump.rb": {
+   "file": "3f836ccfb55d.mp3",
+   "hash": "3f836ccfb55d",
+   "chars": 86,
+   "speaker": "caption"
+  },
+  "ru:ev.water_pump.story": {
+   "file": "12d79763c011.mp3",
+   "hash": "12d79763c011",
+   "chars": 113,
+   "speaker": "caption"
+  },
+  "ru:ev.water_pump.title": {
+   "file": "68c630dcbe33.mp3",
+   "hash": "68c630dcbe33",
+   "chars": 21,
+   "speaker": "caption"
+  },
+  "ru:eva.edge": {
+   "file": "b3c2bc95f322.mp3",
+   "hash": "b3c2bc95f322",
+   "chars": 46,
+   "speaker": "lumi"
   },
   "ru:film.built.1": {
    "file": "6253bea6a07a.mp3",
