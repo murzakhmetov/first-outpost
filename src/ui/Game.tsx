@@ -899,7 +899,8 @@ function Night({ m }: { m: MissionState }): JSX.Element {
       if (!SKIP_KEYS.includes(event.code)) return;
       // Only a plain press on the game itself: not a held key, not a shortcut, not while a menu is
       // open, and not when a button or a field has the focus (the key belongs to it then).
-      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented) return;
+      // (No defaultPrevented check: the world's own input already prevents Space, the jump key.)
+      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (panel.value !== 'none') return;
       const target = event.target instanceof HTMLElement ? event.target : null;
       if (target && target !== document.body && target.closest('button, a, input, select, textarea, [role="button"], [role="dialog"], [contenteditable="true"]')) return;
