@@ -106,12 +106,12 @@ export function IconBtn({ icon, label, onClick, active }: { icon: IconName; labe
  * the device's own voice, as it was before.
  * `auto` false: the owner plays the line by itself (the film player); `onPlay` replaces the button's action then.
  */
-export function SpeakBtn({ text, voiceKey, auto = true, onPlay }: { text: string; voiceKey?: string | string[]; auto?: boolean; onPlay?: () => void }): JSX.Element | null {
+export function SpeakBtn({ text, voiceKey, parts, auto = true, onPlay }: { text: string; voiceKey?: string | string[]; parts?: string[]; auto?: boolean; onPlay?: () => void }): JSX.Element | null {
   const [on, setOn] = useState(false);
   const byHand = useRef(false);
   const keys = voiceKey === undefined ? [] : Array.isArray(voiceKey) ? voiceKey : [voiceKey];
   const keyId = keys.join('|');
-  const useFile = keys.length > 0 && settings.value.voice;
+  const useFile = keys.length > 0 && settings.value.voice; // the Voices setting
   // Sound at 0: nothing would play, so the list of voices is not downloaded either.
   const audible = settings.value.volume > 0;
   useEffect(() => {
@@ -128,11 +128,11 @@ export function SpeakBtn({ text, voiceKey, auto = true, onPlay }: { text: string
   useEffect(() => {
     // With "read aloud" switched on, new texts are spoken by themselves, one after the other.
     if (!auto || !settings.value.speak || !text) return;
-    if (!useFile) speak(text, lang.value, true);
-    // A film plays its own lines: a bubble must not cut them off.
-    else if (!cutscene.value) void playLines(keys, lang.value, { text, fallback: true, queue: true });
+    if (!keys.length) speak(text, lang.value, true);
+    // A film plays its own lines: a bubble must not cut them off. A line that is already talking goes on.
+    else if (!cutscene.value && !isTalking(keyId)) void playLines(keys, lang.value, { text, parts, voices: useFile, fallback: true, queue: true });
   }, [text, keyId]);
-  if (!canSpeak(lang.value) && !filed) return null;
+  if (!canSpeak(lang.value) && !(filed && audible)) return null;
   return (
     <button
       type="button"
@@ -150,7 +150,7 @@ export function SpeakBtn({ text, voiceKey, auto = true, onPlay }: { text: string
         if (talking) {
           stopSpeaking();
           if (keys.length) stopLine();
-        } else if (useFile) void playLines(keys, lang.value, { text, fallback: true }).then(() => setOn(false));
+        } else if (keys.length) void playLines(keys, lang.value, { text, parts, voices: useFile, fallback: true }).then(() => setOn(false));
         else {
           stopLine(); // a recorded line and the device's voice must not talk at once
           speak(text, lang.value);

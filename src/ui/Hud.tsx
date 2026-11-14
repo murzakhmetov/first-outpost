@@ -578,17 +578,18 @@ function speakNewLine(line: NonNullable<typeof lumiLine.value>): void {
   seenLineId = line.id;
   const now = (hasFile: boolean): 'file' | 'speech' | 'none' =>
     decideAutoSpeak({ autoSpeak: settings.value.autoSpeak, voices: settings.value.voice, hasFile, inFilm: cutscene.value, volume: settings.value.volume });
-  // Nothing to do (the setting is off, a film plays, or the sound is off): nothing is downloaded either.
-  if (now(false) === 'none') return;
+  // Nothing to do (the setting is off, or a film plays): nothing is downloaded either.
+  if (decideAutoSpeak({ autoSpeak: settings.value.autoSpeak, voices: false, hasFile: false, inFilm: cutscene.value, volume: 0 }) === 'none') return;
   const text = lumiText(line);
   // The same line again (a hint on every tap of the plan) goes on as it is.
   if (isRepeat(line.key)) return;
   // The old bubble is gone: its voice stops, even when the new line is not spoken.
   stopAutoLine();
-  void (settings.value.voice ? loadManifest() : Promise.resolve({})).then(() => {
+  // With Voices off or Sound effects at 0 no recording can play, so the list of voices is not downloaded.
+  void (settings.value.voice && settings.value.volume > 0 ? loadManifest() : Promise.resolve({})).then(() => {
     // A newer line came while the list of voices was loading: that one speaks.
     if (lumiLine.peek()?.id !== line.id) return;
-    const what = now(settings.value.voice && hasLine(line.key, lang.value));
+    const what = now(hasLine(line.key, lang.value));
     if (what === 'none' || isRepeat(line.key)) return;
     // No voice of this device for the language and no file: nothing can sound, so the line is not marked as spoken.
     if (what === 'speech' && !canSpeak(lang.value)) return;

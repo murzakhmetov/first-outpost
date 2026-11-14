@@ -191,7 +191,7 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
           <Icon name={view.icon as IconName} size={26} />
         </span>
         {view.title}
-        <SpeakBtn text={`${view.title}. ${view.body}`} voiceKey={cardVoiceKeys(m, view.id)} />
+        <SpeakBtn text={`${view.title}. ${view.body}`} parts={[view.title, view.body]} voiceKey={cardVoiceKeys(m, view.id)} />
         <WhyBtn task="event" />
       </h2>
       <p class="event-body">
@@ -298,7 +298,7 @@ function EventResult({ m }: { m: MissionState }): JSX.Element | null {
     <section class="dock card event-result" aria-label={t('ev.resultTitle')}>
       <h2>
         <Icon name="check" /> {t('ev.resultTitle')}
-        <SpeakBtn text={`${text} ${view.story}`} voiceKey={cardVoiceKeys(m, result.eventId, result.optionId)} />
+        <SpeakBtn text={`${text} ${view.story}`} parts={[text, view.story]} voiceKey={cardVoiceKeys(m, result.eventId, result.optionId)} />
       </h2>
       <p class="event-body">{text}</p>
       <FxChips fx={result.fx} />

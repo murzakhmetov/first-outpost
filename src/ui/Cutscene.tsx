@@ -103,7 +103,7 @@ function FilmPlayer({ id, m }: { id: FilmId; m: MissionState }): JSX.Element {
     if (atCard || !voiceOn) return undefined;
     let live = true;
     void prefetchLines(beats.slice(index + 1, index + 3).map((next) => beatKey(next, site)), lang.value);
-    void playLine(lineKey, lang.value, { text, fallback: settings.value.speak }).then((ended) => {
+    void playLine(lineKey, lang.value, { text, fallback: settings.value.speak, recordedOnly: true }).then((ended) => {
       if (live) setVoiceEnd({ id: voiceId, ended });
     });
     return () => {

@@ -13,18 +13,33 @@ How it works in the game (`src/game/voice.ts`):
   after the usual reading time). Tap, Space and Skip work as before.
 - Lumi speaks by itself (setting `Lumi speaks by itself`, on by default, see below).
 - The speaker buttons of the event card (title, then body) and of the result card (result, then story) play
-  the recorded lines one after another. `SpeakBtn` takes one voice key or a list of keys in reading order. If any
-  key of the list has no file, nothing recorded plays and the whole shown text is read by the device's voice, as
-  it was before.
-- A line with no file is read by the device's own voice only when "Read texts aloud" is on (or, for Lumi's
-  bubble, when `Lumi speaks by itself` is on), as before.
-- Setting `Voices` (on by default) switches the recorded voices off. Players can also turn off the
-  sound effects volume, which silences the recorded voices too (they use that volume); with it at 0 neither the
-  manifest nor a file is downloaded. A line that has a recording is never read by the device's voice instead:
-  if its file cannot be loaded or started it stays silent, and a card that has started (title played) does not
-  read its text again. Only texts with no recording are read by the device's voice, whatever the volume.
-- A speaker button stops its line when it is tapped while that line is being spoken (also a line that Lumi
-  began by itself). Closing Lumi's bubble, or a new line / hush / timeout replacing it, stops Lumi's own voice.
+  the recorded lines one after another. `SpeakBtn` takes one voice key or a list of keys in reading order, and
+  `parts`, the shown text of each key.
+- Setting `Voices` (on by default) switches the recorded voices off.
+- Films keep their own rule: a film line that has a recording plays it or stays silent (the device voice never
+  reads it); a film line with no file is read by the device voice when "Read texts aloud" is on.
+
+### One rule: when a recording plays and when the device voice reads
+
+The same rule holds for Lumi's bubble, the card speaker buttons and the read-aloud texts. It is the pure function
+`decide` in `src/game/voice.ts` (Lumi's bubble goes through `decideAutoSpeak`, which calls it), and `playLines`
+follows it:
+
+1. A **recording plays** when Voices is on, the line has a file, the file can be heard (the Sound effects slider is
+   above 0) and it loads.
+2. Otherwise the **device voice reads the shown text**, if the speaking setting for that text is on: `Lumi speaks
+   by itself` for Lumi's lines, `Read texts aloud` for the rest (a tap on a speaker button is always a request to
+   read). This covers: Voices off, a line with no file, the list of voices not loaded (or failed to load), Sound
+   effects at 0, and a file that fails to load or start. With the setting off the line stays silent.
+3. **One voice per line**, never both and never twice. A card whose file fails part-way reads only the parts not
+   played yet with the device voice (the title was played, the body fails: only the body is read). A line that is
+   already playing is not started again, and a tap on the speaker while it talks stops it.
+4. With **Sound effects at 0 no manifest and no voice file is downloaded**: the recording could not be heard, so
+   the device voice reads at once.
+
+The "Sound effects" slider (`volume`) sets how loud the game sounds are, and the recorded voices count as game
+sounds. It is not a master volume: it does not mute the device voice.
+
 - Mission Control lines get a light radio filter. The music gets quieter while a line plays.
 
 ## Lumi speaks by itself
@@ -32,16 +47,16 @@ How it works in the game (`src/game/voice.ts`):
 Setting `Lumi speaks by itself` (`autoSpeak` in `Settings`, on by default; an old save gets the default when it
 is loaded). It sits in the settings panel next to "Voices". The decision is the small pure function
 `decideAutoSpeak` in `src/game/voice.ts` (inputs: the two settings, whether the line has a file, whether a film
-plays, the sound volume; output: `'file'`, `'speech'` or `'none'`).
+plays, the Sound effects volume; output: `'file'`, `'speech'` or `'none'`).
 
-- ON: every new line in Lumi's bubble is spoken at once. With "Voices" on and a file for the line, the recorded
-  file plays. Otherwise (Voices off, or a line with no file) the device's voice reads the shown text, so Lumi is
-  always heard. That includes the lines that show a name or a number: the device voice reads what is on screen,
+- ON: every new line in Lumi's bubble is spoken at once. With "Voices" on, a file for the line and Sound effects
+  above 0, the recorded file plays. Otherwise (Voices off, no file, Sound effects at 0, or a file that fails) the
+  device's voice reads the shown text, so Lumi is always heard. That includes the lines that show a name or a number: the device voice reads what is on screen,
   the recorded voice says the `voice.<key>` version.
-- OFF: nothing plays until the speaker button on the bubble is tapped.
+- OFF: nothing plays until the speaker button on the bubble is tapped. A tap while the line talks stops it (also a
+  line Lumi began by itself). Closing the bubble, or a new line / hush / timeout replacing it, stops Lumi's voice.
 - In both cases: never over a film (films speak for themselves); one line at a time and a new line stops the
-  old one; the same line is not spoken twice in a row within 12 seconds (a hint on every tap of the plan; a line that a film cut off is spoken again when it comes back); and with
-  the sound volume at 0 nothing is downloaded or spoken.
+  old one; the same line is not spoken twice in a row within 12 seconds (a hint on every tap of the plan; a line that a film cut off is spoken again when it comes back).
 - "Read texts aloud" keeps its meaning for the other texts (the cards, the panels). Lumi's bubble is handled by
   `Lumi speaks by itself` only, so the two settings never read a bubble twice.
 

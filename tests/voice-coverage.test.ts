@@ -310,9 +310,10 @@ describe('decideAutoSpeak', () => {
   it('never speaks over a film', () => {
     for (const voices of both) for (const hasFile of both) expect(decideAutoSpeak({ ...on, inFilm: true, voices, hasFile })).toBe('none');
   });
-  it('is silent, and downloads nothing, when the sound volume is 0', () => {
-    for (const voices of both) for (const hasFile of both) expect(decideAutoSpeak({ ...on, volume: 0, voices, hasFile })).toBe('none');
+  it('reads the text with the device voice when Sound effects is 0, whatever else is true', () => {
+    for (const voices of both) for (const hasFile of both) expect(decideAutoSpeak({ ...on, volume: 0, voices, hasFile })).toBe('speech');
     expect(decideAutoSpeak({ ...on, volume: 0.05 })).toBe('file');
+    expect(decideAutoSpeak({ ...on, volume: 0, autoSpeak: false })).toBe('none');
   });
   it('does not repeat the same line twice in a row, whatever numbers it shows', () => {
     forgetSpoken();
