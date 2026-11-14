@@ -23,6 +23,8 @@
       "settings": { "stability": 0.55, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": true }
     }
   },
+  "lumiExtra": ["eva.edge"],
+  "lumiSkip": {},
   "lumiPriority": [
     "lumi.welcome.",
     "lumi.t1.",
@@ -39,6 +41,7 @@
     "lumi.built.",
     "lumi.build.",
     "lumi.eva.",
+    "eva.edge",
     "lumi.tool.",
     "lumi.room.",
     "lumi.won.",

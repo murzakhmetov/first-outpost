@@ -20,7 +20,7 @@ import {
   useSafePlan,
 } from '../game/director';
 import { earthAnswer, evaHud, evaResult, eventResult, lastRecord, mission, panel, settings, step, room } from '../game/store';
-import { delayText, earthText, eventView, flareUrl, linkLabel, optionLabel, resultText, stormDataUrl, stormLine, sunLine } from '../game/view';
+import { cardVoiceKeys, delayText, earthText, eventView, flareUrl, linkLabel, optionLabel, resultText, stormDataUrl, stormLine, sunLine } from '../game/view';
 import { fmtDelay, num, signed, t } from '../i18n';
 import { FINDS, FIND_SCIENCE, foundIn } from '../sim/finds';
 import { computeWeek, currentEnv, evaStormChance, nextSolar } from '../sim/mission';
@@ -191,7 +191,7 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
           <Icon name={view.icon as IconName} size={26} />
         </span>
         {view.title}
-        <SpeakBtn text={`${view.title}. ${view.body}`} />
+        <SpeakBtn text={`${view.title}. ${view.body}`} voiceKey={cardVoiceKeys(m, view.id)} />
         <WhyBtn task="event" />
       </h2>
       <p class="event-body">
@@ -298,7 +298,7 @@ function EventResult({ m }: { m: MissionState }): JSX.Element | null {
     <section class="dock card event-result" aria-label={t('ev.resultTitle')}>
       <h2>
         <Icon name="check" /> {t('ev.resultTitle')}
-        <SpeakBtn text={`${text} ${view.story}`} />
+        <SpeakBtn text={`${text} ${view.story}`} voiceKey={cardVoiceKeys(m, result.eventId, result.optionId)} />
       </h2>
       <p class="event-body">{text}</p>
       <FxChips fx={result.fx} />

@@ -8,7 +8,7 @@
  * history): in Git Bash `read -rs ELEVENLABS_API_KEY && export ELEVENLABS_API_KEY`, in PowerShell
  * `$env:ELEVENLABS_API_KEY = Read-Host`. See docs/VOICE.md.
  *
- * Flags: --dry-run  --budget <credits> (default 9000)  --only films|lumi  --lang en|ru
+ * Flags: --dry-run  --budget <credits> (default 30000)  --only films|lumi|cards  --lang en|ru
  *        --model <id> (e.g. eleven_turbo_v2_5)  --prune (drop files no line uses)
  *
  * The key is read ONLY from the process environment. It is never written to a file or printed.
@@ -29,6 +29,7 @@ import {
   redact,
   requestSpeech,
   summarize,
+  summarizeCategories,
 } from './lib.ts';
 import type { Dicts, Lang, LineKind, Manifest, Plan, VoiceConfig } from './lib.ts';
 
@@ -79,12 +80,14 @@ function printPlan(plan: Plan, perChar: number, log: (text: string) => void, ver
   for (const row of summary.rows) log(`  ${pad(row.lang, 5)}${pad(row.speaker, 9)}${pad(row.lines, 7)}${pad(row.chars, 8)}${row.credits}`);
   log(`  ${pad('total', 14)}${pad(summary.lines, 7)}${pad(summary.chars, 8)}${summary.credits}  (unique texts sent: ${plan.jobs.length})`);
   log(`Budget ${plan.budget} credits for the whole voiced set: ${plan.cachedCredits} already made + ${plan.credits} new = ${plan.cachedCredits + plan.credits}.`);
-  const kinds: LineKind[] = ['films', 'lumi'];
-  for (const kind of kinds) {
-    const of = plan.lines.filter((line) => line.kind === kind);
-    const inCount = of.filter((line) => line.status !== 'over-budget' && !line.status.startsWith('skipped')).length;
-    log(`${kind}: ${inCount}/${of.length} lines in`);
+  log('Per category (planned lines, in priority order; a text shared by two keys counts once):');
+  log(`  ${pad('category', 16)}${pad('lines', 12)}${pad('chars', 8)}credits`);
+  for (const row of summarizeCategories(plan, perChar)) {
+    const name = row.part ? `  cards: ${row.part}` : row.kind;
+    log(`  ${pad(name, 16)}${pad(`${row.planned}/${row.total}`, 12)}${pad(row.chars, 8)}${row.credits}`);
   }
+  const whole = summarizeCategories(plan, perChar).filter((row) => !row.part);
+  log(`  ${pad('total', 16)}${pad(`${whole.reduce((sum, row) => sum + row.planned, 0)}/${whole.reduce((sum, row) => sum + row.total, 0)}`, 12)}${pad(whole.reduce((sum, row) => sum + row.chars, 0), 8)}${whole.reduce((sum, row) => sum + row.credits, 0)}`);
   const out = plan.lines.filter((line) => line.status === 'over-budget' || line.status.startsWith('skipped'));
   if (out.length) {
     // One row per key, with its languages.
@@ -108,7 +111,7 @@ export async function run(argv: string[], deps: RunDeps): Promise<RunResult> {
     args: argv,
     options: {
       'dry-run': { type: 'boolean', default: false },
-      budget: { type: 'string', default: '9000' },
+      budget: { type: 'string', default: '30000' },
       only: { type: 'string' },
       lang: { type: 'string' },
       model: { type: 'string' },
@@ -119,11 +122,11 @@ export async function run(argv: string[], deps: RunDeps): Promise<RunResult> {
   const { log, cfg } = deps;
   const budget = Number(values.budget);
   if (!Number.isFinite(budget) || budget < 0) {
-    log('--budget needs a number of credits, for example --budget 9000');
+    log('--budget needs a number of credits, for example --budget 30000');
     return { code: 2, generated: 0, failed: 0 };
   }
-  if (values.only !== undefined && values.only !== 'films' && values.only !== 'lumi') {
-    log('--only is films or lumi');
+  if (values.only !== undefined && values.only !== 'films' && values.only !== 'lumi' && values.only !== 'cards') {
+    log('--only is films, lumi or cards');
     return { code: 2, generated: 0, failed: 0 };
   }
   if (values.lang !== undefined && values.lang !== 'en' && values.lang !== 'ru') {

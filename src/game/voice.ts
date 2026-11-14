@@ -209,12 +209,32 @@ function fallbackSpeech(options: PlayOptions, lang: string): false {
   return false;
 }
 
+/** Plays one recorded segment to its end. `false` when it was stopped. */
+function playSegment(handle: { stop: () => void; done: Promise<unknown> }): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    const mine = {
+      stop: () => {
+        handle.stop();
+        resolve(false);
+      },
+      ended: handle.done,
+    };
+    current = mine;
+    void handle.done.then(() => {
+      if (current === mine) current = null;
+      resolve(true);
+    });
+  });
+}
+
 /**
- * Plays the line for a text key. Resolves `true` when a recorded line played to its end, and `false` when
- * there was no file, it could not be played, or it was stopped. Never rejects.
- * A new call stops the line that is playing.
+ * Plays the recorded lines of a list of text keys one after another (a card: its title, then its body).
+ * Only when EVERY key has a file does it play them; if any key has none (or a file cannot be loaded), nothing
+ * recorded plays and the whole shown text falls back exactly as for a single line (the device's voice when the
+ * caller asks for it). Resolves `true` when the last line played to its end, and `false` when there was no file,
+ * it could not be played, or it was stopped. Never rejects. A new call stops what is playing.
  */
-export async function playLine(key: string, lang: string, options: PlayOptions = {}): Promise<boolean> {
+export async function playLines(keys: string[], lang: string, options: PlayOptions = {}): Promise<boolean> {
   const id = ++token;
   // A line that comes while another plays waits for it when asked to (`queue`), else it replaces it.
   const waitFor = options.queue ? current : null;
@@ -230,32 +250,113 @@ export async function playLine(key: string, lang: string, options: PlayOptions =
       await waitFor.ended;
       if (id !== token) return false;
     }
-    const entry = findEntry(lines, lang, key);
+    const entries = keys.map((key) => findEntry(lines, lang, key));
+    const whole = entries.length > 0 && entries.every((entry): entry is VoiceEntry => entry !== null);
     // With the sound volume at 0 the file would be silent: it is not downloaded (the device's voice may still read it).
-    if (decide(entry, options) === 'file' && entry && audio.voiceAudible) {
-      const buffer = await loadBuffer(entry);
-      if (id !== token) return false;
-      const handle = buffer ? audio.playVoice(buffer, entry.speaker === 'mc') : null;
-      if (handle) {
-        stopSpeaking(); // the device's voice and a recorded line must not talk at once
-        return await new Promise<boolean>((resolve) => {
-          const mine = {
-            stop: () => {
-              handle.stop();
-              resolve(false);
-            },
-            ended: handle.done,
-          };
-          current = mine;
-          void handle.done.then(() => {
-            if (current === mine) current = null;
-            resolve(true);
-          });
-        });
+    if (whole && decide(entries[0], options) === 'file' && audio.voiceAudible) {
+      const buffers: AudioBuffer[] = [];
+      for (const entry of entries as VoiceEntry[]) {
+        const buffer = await loadBuffer(entry);
+        if (id !== token) return false;
+        if (!buffer) break;
+        buffers.push(buffer);
+      }
+      if (buffers.length === entries.length) {
+        let complete = true;
+        for (let index = 0; index < buffers.length; index++) {
+          const entry = entries[index] as VoiceEntry;
+          const handle = audio.playVoice(buffers[index], entry.speaker === 'mc');
+          if (!handle) {
+            complete = false; // cannot start: the whole text falls back below (the device's voice when asked)
+            break;
+          }
+          stopSpeaking(); // the device's voice and a recorded line must not talk at once
+          if (!(await playSegment(handle))) return false;
+          if (id !== token) return false;
+        }
+        if (complete) return true;
       }
     }
   } catch {
     /* fall back below */
   }
   return id === token ? fallbackSpeech(options, lang) : false;
+}
+
+/** Plays the line for a text key (see playLines). */
+export function playLine(key: string, lang: string, options: PlayOptions = {}): Promise<boolean> {
+  return playLines([key], lang, options);
+}
+
+// ----- Lumi speaks by itself ------------------------------------------------------------------------
+
+export interface AutoSpeakInput {
+  /** The setting "Lumi speaks by itself". */
+  autoSpeak: boolean;
+  /** The setting "Voices" (recorded voices). */
+  voices: boolean;
+  /** The line has a recorded file. */
+  hasFile: boolean;
+  /** A film is playing: films speak for themselves. */
+  inFilm: boolean;
+  /** The sound volume setting, 0 to 1. */
+  volume: number;
+}
+
+/**
+ * What happens at once when a new line appears in Lumi's bubble: its recorded file, the device's voice reading
+ * the shown text (voices off, or a line with no file: Lumi is always heard), or nothing (the setting is off, a
+ * film is playing, or the sound is off: then nothing is downloaded or spoken).
+ */
+export function decideAutoSpeak(input: AutoSpeakInput): 'file' | 'speech' | 'none' {
+  if (!input.autoSpeak || input.inFilm || !(input.volume > 0)) return 'none';
+  return input.voices && input.hasFile ? 'file' : 'speech';
+}
+
+let lastAutoKey = '';
+let autoToken = -1;
+
+/**
+ * The same line is not spoken twice in a row (a hint that comes again on every tap of the plan, or a line that
+ * comes back after a film). The key decides, not the text: only the numbers in it change.
+ */
+export function isRepeat(key: string): boolean {
+  return lastAutoKey === key;
+}
+export function markSpoken(key: string): void {
+  lastAutoKey = key;
+}
+/** A new mission starts: the first line is spoken even if it is the one spoken last. */
+export function forgetSpoken(): void {
+  lastAutoKey = '';
+  autoToken = -1;
+}
+
+/**
+ * Speaks a new line of Lumi by itself: its file, or the shown text with the device's voice. A new line stops the
+ * old one. The line remembers that it is Lumi's own, so that a film can cut it off (see stopAutoLine).
+ */
+export function speakAutoLine(what: 'file' | 'speech', key: string, text: string, lang: string): void {
+  markSpoken(key);
+  if (what === 'file') {
+    void playLines([key], lang, { text, fallback: true });
+  } else {
+    stopLine();
+    try {
+      speak(text, lang);
+      spoke = true;
+    } catch {
+      /* no voice on this device */
+    }
+  }
+  autoToken = token;
+}
+
+/**
+ * A film starts: Lumi's own line stops, but only if nothing newer has started since (the first beat of the film
+ * may already be playing, and must not be cut).
+ */
+export function stopAutoLine(): void {
+  if (autoToken === token) stopLine();
+  autoToken = -1;
 }

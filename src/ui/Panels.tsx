@@ -239,6 +239,7 @@ export function SettingsPanel(): JSX.Element {
         />
         {canSpeak(lang.value) && <Toggle on={s.speak} onChange={(speak) => updateSettings({ speak })} label={t('set.speak')} hint={t('set.speakHint')} />}
         <Toggle on={s.voice} onChange={(voice) => updateSettings({ voice })} label={t('set.voice')} hint={t('set.voiceHint')} />
+        <Toggle on={s.autoSpeak} onChange={(autoSpeak) => updateSettings({ autoSpeak })} label={t('set.autoSpeak')} hint={t('set.autoSpeakHint')} />
         <Toggle on={s.lessMotion} onChange={(lessMotion) => updateSettings({ lessMotion })} label={t('set.motion')} hint={t('set.motionHint')} />
         <Toggle on={s.patterns} onChange={(patterns) => updateSettings({ patterns })} label={t('set.contrast')} hint={t('set.contrastHint')} />
 

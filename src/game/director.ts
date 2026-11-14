@@ -63,6 +63,7 @@ import { loadModels, modelDetail, onLateModel } from '../world/models';
 import { QUALITY, guessTier, shiftTier } from '../world/quality';
 import { World } from '../world/world';
 import { audio, stopSpeaking } from './audio';
+import { forgetSpoken } from './voice';
 import { SITE_CARDS, STARTER_CARDS, WINDOW_CARDS, cardById, unlockCards } from './codex';
 import { FILMS, seenKey } from './films';
 import type { EventFilmId, FilmId, TaskId } from './films';
@@ -436,6 +437,7 @@ export async function startMission(choice: SetupChoice, same?: { seed: number; s
   state = createMission(config, simData());
   cardsThisMission = [];
   saidOnce = new Set();
+  forgetSpoken();
   resetStepSignals();
   unlockMission(SITE_CARDS[choice.site]);
   if (config.windowId) unlockMission(WINDOW_CARDS[config.windowId] ?? []);
@@ -477,6 +479,7 @@ async function resumeSaved(saved: NonNullable<ReturnType<typeof loadMissionSave>
   bindWorld();
   cardsThisMission = [];
   saidOnce = new Set();
+  forgetSpoken();
   resetStepSignals();
   world.eva.abort();
   panel.value = 'none';
