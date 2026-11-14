@@ -4,16 +4,21 @@
  */
 import './crew.css';
 import type { JSX } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { signal } from '@preact/signals';
+import { useEffect, useRef } from 'preact/hooks';
 import { getWorld } from '../game/director';
 import { num, t } from '../i18n';
 import { crewBubbles, crewCooling, crewToasts, crewView, react } from '../net/crew';
 import { TAG_RANGE, doingOf } from '../net/follow';
-import { CREW_SUITS, REACTIONS, REACTION_ICON, doseShare } from '../net/protocol';
+import { CREW_SUITS, REACTIONS, doseShare } from '../net/protocol';
+import type { ReactionId } from '../net/protocol';
 import type { Player } from '../net/room';
 import type { ScreenPoint } from '../world/world';
 import { Icon } from './icons';
 import type { IconName } from './icons';
+
+/** The pictures for the stickers (the protocol's own emoji are not drawn). */
+const REACTION_PIC: Record<ReactionId, IconName> = { great: 'check', hooray: 'star', shield: 'shield', plants: 'plant', power: 'power', wow: 'eye', thanks: 'badge', oops: 'warn' };
 
 const DOING_ICON: Record<'plan' | 'outside' | 'report', IconName> = { plan: 'calendar', outside: 'walk', report: 'book' };
 
@@ -62,7 +67,7 @@ function FriendTags({ players }: { players: Player[] }): JSX.Element {
             >
               {bubble && (
                 <span key={bubble.key} class="crew-bubble">
-                  {bubble.icon} {t(`crew.r.${bubble.reaction}`)}
+                  <Icon name={REACTION_PIC[bubble.reaction]} size={15} /> {t(`crew.r.${bubble.reaction}`)}
                 </span>
               )}
               <span class="crew-tag3d-name" title={t('crew.tag', { name: t(`crew.name.${player.name}`), doing: t(`crew.doing.${doing}`) })}>
@@ -108,34 +113,47 @@ function Friend({ player }: { player: Player }): JSX.Element {
   );
 }
 
-export function CrewDock(): JSX.Element | null {
-  const [open, setOpen] = useState(false);
+/** The list of friends is open (the Friends button in the top row opens and closes it). */
+const dockOpen = signal(false);
+
+/** The Friends button in the row of round buttons at the top right. Only while a crew plays together. */
+export function CrewButton(): JSX.Element | null {
   const view = crewView.value;
   if (view.phase !== 'playing') return null;
+  const open = dockOpen.value;
+  const here = view.players.filter((player) => !player.me && player.here).length;
+  return (
+    <span class="with-dot">
+      <button
+        type="button"
+        class={`icon-btn ${open ? 'is-active' : ''}`}
+        aria-expanded={open}
+        aria-label={`${t('crew.dock')}${here ? `, ${here}` : ''}`}
+        title={open ? t('crew.dockHide') : t('crew.dockShow')}
+        onClick={() => {
+          dockOpen.value = !open;
+        }}
+      >
+        <Icon name="earth" size={22} />
+      </button>
+      {here > 0 && <i class="dot">{here}</i>}
+      {!view.online && <i class="dot dot-ready dot-left" aria-hidden="true" />}
+    </span>
+  );
+}
+
+export function CrewDock(): JSX.Element | null {
+  const view = crewView.value;
+  if (view.phase !== 'playing') return null;
+  const open = dockOpen.value;
   const friends = view.players.filter((player) => !player.me);
   const toasts = crewToasts.value;
   return (
     <>
-      <aside class={`crew-dock ${open ? 'is-open' : ''}`} aria-label={t('crew.dock')}>
-        <button
-          type="button"
-          class="crew-dock-toggle"
-          aria-expanded={open}
-          aria-label={open ? t('crew.dockHide') : t('crew.dockShow')}
-          title={open ? t('crew.dockHide') : t('crew.dockShow')}
-          onClick={() => setOpen(!open)}
-        >
-          <Icon name="earth" size={18} />
-          <span>{t('crew.dock')}</span>
-          <span class="crew-dots" aria-hidden="true">
-            {friends.map((player) => (
-              <i key={player.id} class={player.here ? '' : 'is-gone'} style={{ background: CREW_SUITS[player.suit] }} />
-            ))}
-          </span>
-          {!view.online && <Icon name="warn" size={14} />}
-        </button>
-        {open && (
+      {open && (
+        <aside class="crew-dock" aria-label={t('crew.dock')}>
           <div class="crew-dock-body">
+            <h2 class="crew-dock-head">{t('crew.dock')}</h2>
             {!view.online && <p class="crew-lost">{t('crew.lost')}</p>}
             <ul class="crew-friends">
               {friends.map((player) => (
@@ -145,19 +163,20 @@ export function CrewDock(): JSX.Element | null {
             <div class="crew-stickers" role="group" aria-label={t('crew.stickers')}>
               {REACTIONS.map((id) => (
                 <button key={id} type="button" class="crew-sticker" disabled={crewCooling.value} onClick={() => react(id)}>
-                  <span aria-hidden="true">{REACTION_ICON[id]}</span> {t(`crew.r.${id}`)}
+                  <Icon name={REACTION_PIC[id]} size={16} /> {t(`crew.r.${id}`)}
                 </button>
               ))}
             </div>
           </div>
-        )}
-      </aside>
+        </aside>
+      )}
       <FriendTags players={friends} />
       <div class="crew-toasts" role="status" aria-live="polite">
         {toasts.map((toast) => (
           <div key={toast.id} class="crew-toast">
             <span class="crew-dot" style={{ background: CREW_SUITS[toast.suit] }} aria-hidden="true" />
-            {t('crew.say', { name: t(`crew.name.${toast.name}`), icon: toast.icon, text: t(`crew.r.${toast.reaction}`) })}
+            <Icon name={REACTION_PIC[toast.reaction]} size={16} />
+            {t('crew.say', { name: t(`crew.name.${toast.name}`), icon: '', text: t(`crew.r.${toast.reaction}`) })}
           </div>
         ))}
       </div>

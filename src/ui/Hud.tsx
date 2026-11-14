@@ -15,7 +15,8 @@ import { AIRLOCK, BATTERY, FARM, HAB, LAB, PATHS, SOLAR } from '../world/base';
 import { LANDER } from '../world/props';
 import { WALK_RADIUS } from '../world/terrain';
 import type { MarkerId, ScreenPoint, World } from '../world/world';
-import { Bar, IconBtn, Rich, SpeakBtn } from './common';
+import { CrewButton } from './CrewDock';
+import { IconBtn, Rich, SpeakBtn } from './common';
 import { Icon, LumiFace } from './icons';
 import type { IconName } from './icons';
 
@@ -79,18 +80,19 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
   ctx.clip();
 
   const ground = ctx.createRadialGradient(half, half, half * 0.1, half, half, half);
+  // Parchment ground, as on an adventure map: warm sand for Mars, pale grey for the Moon.
   if (site === 'mars') {
-    ground.addColorStop(0, 'rgba(196, 112, 70, 0.92)');
-    ground.addColorStop(1, 'rgba(104, 48, 32, 0.92)');
+    ground.addColorStop(0, '#e8cda4');
+    ground.addColorStop(1, '#d6b287');
   } else {
-    ground.addColorStop(0, 'rgba(150, 154, 168, 0.92)');
-    ground.addColorStop(1, 'rgba(70, 74, 90, 0.92)');
+    ground.addColorStop(0, '#e4e6ec');
+    ground.addColorStop(1, '#c3c7d2');
   }
   ctx.fillStyle = ground;
   ctx.fillRect(0, 0, size, size);
 
   // Edge of the area that is safe to walk.
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+  ctx.strokeStyle = 'rgba(59, 66, 82, 0.4)';
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
@@ -99,7 +101,7 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
   ctx.setLineDash([]);
 
   // Walkways.
-  ctx.strokeStyle = 'rgba(255, 238, 206, 0.55)';
+  ctx.strokeStyle = 'rgba(138, 94, 54, 0.75)';
   ctx.lineWidth = Math.max(1.5, 2.4 * k);
   ctx.lineCap = 'round';
   for (const [ax, az, bx, bz] of PATHS) {
@@ -110,12 +112,12 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
   }
 
   // Landing pad and lander.
-  ctx.strokeStyle = 'rgba(255, 209, 102, 0.9)';
+  ctx.strokeStyle = '#7a5a18';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.arc(X(LANDER.x), Y(LANDER.z), 7.4 * k, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = '#f4f0e8';
+  ctx.fillStyle = '#f4eee2';
   ctx.beginPath();
   ctx.arc(X(LANDER.x), Y(LANDER.z), 2.4 * k, 0, Math.PI * 2);
   ctx.fill();
@@ -131,25 +133,25 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
   };
   ctx.beginPath();
   ctx.arc(X(HAB.x), Y(HAB.z), 6.6 * k, 0, Math.PI * 2);
-  ctx.fillStyle = '#eef8ff';
+  ctx.fillStyle = '#f4eee2';
   ctx.fill();
-  ctx.strokeStyle = '#5fd0ff';
+  ctx.strokeStyle = '#3b6fc4';
   ctx.lineWidth = 2;
   ctx.stroke();
-  building(HAB.x, HAB.z + 8, 3.2, 4, '#eef8ff', '#5fd0ff', 2);
-  building(FARM.x, FARM.z, 8.8, 13.4, '#d9ffe9', '#5fe39a');
-  building(LAB.x, LAB.z, 7.2, 13, '#efe6ff', '#b79cff');
-  building(BATTERY.x, BATTERY.z, 4.6, 4.6, '#fff0bf', '#ffd166');
+  building(HAB.x, HAB.z + 8, 3.2, 4, '#f4eee2', '#3b6fc4', 2);
+  building(FARM.x, FARM.z, 8.8, 13.4, '#f4eee2', '#2f8a4e');
+  building(LAB.x, LAB.z, 7.2, 13, '#f4eee2', '#7451c4');
+  building(BATTERY.x, BATTERY.z, 4.6, 4.6, '#e4c57e', '#7a5a18');
   for (const x of [-21, -15, -9]) {
-    for (const z of site === 'mars' ? [17.5, 23.5] : [20]) building(SOLAR.x + (x + 15), z, 4.4, 3.2, '#2d43a6', '#ffd166', 1.5);
+    for (const z of site === 'mars' ? [17.5, 23.5] : [20]) building(SOLAR.x + (x + 15), z, 4.4, 3.2, '#1d2333', '#c9a55c', 1.5);
   }
   // The rover, turned the way it faces. While it is driven, the arrow below stands for it.
   if (!world.rover.driving) {
     ctx.save();
     ctx.translate(X(world.rover.x), Y(world.rover.z));
     ctx.rotate(Math.PI - world.rover.heading);
-    ctx.fillStyle = '#f4f0e8';
-    ctx.strokeStyle = 'rgba(20, 16, 40, 0.8)';
+    ctx.fillStyle = '#f4eee2';
+    ctx.strokeStyle = 'rgba(29, 35, 51, 0.9)';
     ctx.lineWidth = 1.2;
     const half = Math.max(3, 2.1 * k);
     roundRect(ctx, -half * 0.62, -half, half * 1.24, half * 2, 2);
@@ -172,8 +174,8 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
   }
 
   // The airlock: where a walk starts and ends.
-  ctx.strokeStyle = '#7dffb0';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#2e7d4f';
+  ctx.lineWidth = 2.2;
   ctx.beginPath();
   ctx.arc(X(AIRLOCK.x), Y(AIRLOCK.z + 1.4), Math.max(3, 2.4 * k), 0, Math.PI * 2);
   ctx.stroke();
@@ -184,8 +186,8 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
       const dx = X(door.x);
       const dy = Y(door.z);
       if (Math.hypot(dx - half, dy - half) > half - 6) continue;
-      ctx.fillStyle = '#7fe0ff';
-      ctx.strokeStyle = 'rgba(20, 16, 40, 0.9)';
+      ctx.fillStyle = '#9ccaf5';
+      ctx.strokeStyle = 'rgba(29, 35, 51, 0.9)';
       ctx.lineWidth = 1.4;
       roundRect(ctx, dx - 3, dy - 4.5, 6, 9, 1.5);
       ctx.fill();
@@ -254,7 +256,7 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
     ctx.translate(px, py);
     ctx.rotate(-world.rig.yaw);
     const cone = ctx.createRadialGradient(0, 0, 2, 0, 0, half * 0.62);
-    cone.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
+    cone.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
     cone.addColorStop(1, 'rgba(255, 255, 255, 0)');
     ctx.fillStyle = cone;
     ctx.beginPath();
@@ -273,9 +275,9 @@ function paintMap(ctx: CanvasRenderingContext2D, size: number, world: World, sit
   ctx.lineTo(0, 3);
   ctx.lineTo(-5.6, 6);
   ctx.closePath();
-  ctx.fillStyle = '#ffffff';
-  ctx.strokeStyle = 'rgba(20, 16, 40, 0.95)';
-  ctx.lineWidth = 1.6;
+  ctx.fillStyle = '#b5452b';
+  ctx.strokeStyle = '#f4eee2';
+  ctx.lineWidth = 1.8;
   ctx.fill();
   ctx.stroke();
   ctx.restore();
@@ -335,35 +337,25 @@ function Quest({ m }: { m: MissionState }): JSX.Element {
   const hud = evaHud.value;
   if (step.value === 'eva' && hud) {
     const mars = m.config.site === 'mars';
-    const allFound = hud.samples >= hud.samplesTotal;
+    const rows: { key: string; done: boolean; extra: string; text: string }[] = [
+      { key: 'samples', done: hud.samples >= hud.samplesTotal, extra: '', text: t('quest.samples', { n: hud.samples, total: hud.samplesTotal }) },
+    ];
+    if (hud.choreAvailable) rows.push({ key: 'chore', done: hud.choreDone, extra: '', text: t(mars ? 'quest.choreMars' : 'quest.choreMoon') });
+    rows.push({ key: 'finds', done: hud.finds >= hud.findsTotal, extra: ' is-find', text: t('quest.finds', { n: hud.finds, total: hud.findsTotal }) });
+    if (hud.materials.regolith > 0 || hud.materials.metal > 0) rows.push({ key: 'materials', done: true, extra: '', text: t('quest.materials', { r: hud.materials.regolith, m: hud.materials.metal }) });
+    rows.push({ key: 'home', done: false, extra: ' is-home', text: t('quest.home', { n: Math.round(hud.home) }) });
+    // The first thing still to do is the current one; the way home is current when the rest is done.
+    const now = rows.findIndex((row) => !row.done);
     return (
       <div class="quest" role="status">
         <b class="quest-title">{t('quest.outside')}</b>
         <ul>
-          <li class={allFound ? 'is-done' : 'is-now'}>
-            <i />
-            <span>{t('quest.samples', { n: hud.samples, total: hud.samplesTotal })}</span>
-          </li>
-          {hud.choreAvailable && (
-            <li class={hud.choreDone ? 'is-done' : 'is-now'}>
+          {rows.map((row, index) => (
+            <li key={row.key} class={`${row.done ? 'is-done' : index === now ? 'is-now' : ''}${row.extra}`}>
               <i />
-              <span>{t(mars ? 'quest.choreMars' : 'quest.choreMoon')}</span>
+              <span>{row.text}</span>
             </li>
-          )}
-          <li class={hud.finds >= hud.findsTotal ? 'is-done' : 'is-now is-find'}>
-            <i />
-            <span>{t('quest.finds', { n: hud.finds, total: hud.findsTotal })}</span>
-          </li>
-          {(hud.materials.regolith > 0 || hud.materials.metal > 0) && (
-            <li class="is-done">
-              <i />
-              <span>{t('quest.materials', { r: hud.materials.regolith, m: hud.materials.metal })}</span>
-            </li>
-          )}
-          <li class="is-now is-home">
-            <i />
-            <span>{t('quest.home', { n: Math.round(hud.home) })}</span>
-          </li>
+          ))}
         </ul>
       </div>
     );
@@ -408,15 +400,17 @@ function FullscreenBtn(): JSX.Element | null {
   }, []);
   if (!document.documentElement.requestFullscreen) return null;
   return (
-    <IconBtn
-      icon={full ? 'shrink' : 'expand'}
-      label={t(full ? 'hud.fullscreenOff' : 'hud.fullscreen')}
-      onClick={() => {
-        audio.play('click');
-        if (document.fullscreenElement) void document.exitFullscreen();
-        else void document.documentElement.requestFullscreen().catch(() => undefined);
-      }}
-    />
+    <span class="hud-fs">
+      <IconBtn
+        icon={full ? 'shrink' : 'expand'}
+        label={t(full ? 'hud.fullscreenOff' : 'hud.fullscreen')}
+        onClick={() => {
+          audio.play('click');
+          if (document.fullscreenElement) void document.exitFullscreen();
+          else void document.documentElement.requestFullscreen().catch(() => undefined);
+        }}
+      />
+    </span>
   );
 }
 
@@ -436,7 +430,6 @@ export function Hud({ m }: { m: MissionState }): JSX.Element {
   }, []);
   const env = currentEnv(m);
   const targets = starTargets(m.config);
-  const startFood = Math.max(m.food, m.config.weeks * 0.75);
   const planning = step.value === 'plan';
   const battery = planning ? computeWeek(m).batteryAfter : m.battery;
   const doseShare = m.dose / m.doseLimit;
@@ -446,7 +439,7 @@ export function Hud({ m }: { m: MissionState }): JSX.Element {
   const stars = science >= targets.three ? 3 : science >= targets.two ? 2 : 1;
   const unread = profile.value.unlocked.filter((id) => !profile.value.read.includes(id)).length;
 
-  const meter = (id: MeterId, icon: IconName, value: string, bar: JSX.Element | null, danger = false): JSX.Element => (
+  const meter = (id: MeterId, icon: IconName, value: string, extra: JSX.Element | null, danger = false): JSX.Element => (
     <button
       type="button"
       class={`meter meter-${id} ${danger ? 'is-danger' : ''} ${tip === id ? 'is-open' : ''}`}
@@ -458,12 +451,12 @@ export function Hud({ m }: { m: MissionState }): JSX.Element {
       }}
     >
       <span class="meter-icon">
-        <Icon name={icon} size={18} />
+        <Icon name={icon} size={20} />
       </span>
       <span class="meter-main">
         <span class="meter-name">{t(`hud.${id}`)}</span>
         <b class="meter-value">{value}</b>
-        {bar}
+        {extra && <span class="meter-extra">{extra}</span>}
       </span>
     </button>
   );
@@ -475,7 +468,7 @@ export function Hud({ m }: { m: MissionState }): JSX.Element {
         <div class="hud-week">
           <b>
             {t('common.weekOf', { n: m.week, total: m.config.weeks })}
-            {m.config.creative && <span class="gi-creative">{t('creative.badge')}</span>}
+            {m.config.creative && <span class="week-tag">{t('creative.badge')}</span>}
           </b>
           <small>{fmtRange(env.dateFrom, env.dateTo)}</small>
         </div>
@@ -493,22 +486,16 @@ export function Hud({ m }: { m: MissionState }): JSX.Element {
             ))}
           </span>,
         )}
-        {meter('air', 'air', `${Math.round(m.air)}%`, <Bar value={m.air} max={100} tone="air" danger={m.air < 25} />, m.air < 25)}
-        {meter('food', 'food', t('hud.foodValue', { n: num(m.food, 1) }), <Bar value={m.food} max={startFood} tone="food" danger={m.food < 1.5} />, m.food < 1.5)}
-        {meter(
-          'dose',
-          'dose',
-          `${num(m.dose, 0)}/${m.doseLimit}`,
-          <Bar value={m.dose} max={m.doseLimit} tone="dose" danger={doseShare > 0.8} />,
-          doseShare > 0.8,
-        )}
+        {meter('air', 'air', `${Math.round(m.air)}%`, null, m.air < 25)}
+        {meter('food', 'food', t('hud.foodValue', { n: num(m.food, 1) }), null, m.food < 1.5)}
+        {meter('dose', 'dose', `${num(m.dose, 0)}/${m.doseLimit}`, null, doseShare > 0.8)}
         {meter(
           'science',
           'science',
           String(science),
           <span class="mini-stars" aria-hidden="true">
             {[1, 2, 3].map((index) => (
-              <Icon key={index} name="star" size={11} class={index <= stars ? 'lit' : 'dim'} />
+              <Icon key={index} name="star" size={14} class={index <= stars ? 'lit' : 'dim'} />
             ))}
           </span>,
         )}
@@ -523,6 +510,7 @@ export function Hud({ m }: { m: MissionState }): JSX.Element {
             {unread > 0 && <i class="dot">{unread}</i>}
           </span>
         )}
+        <CrewButton />
         <FullscreenBtn />
         <IconBtn icon="menu" label={t('hud.menu')} onClick={() => openPanel('pause')} />
       </div>
@@ -547,10 +535,10 @@ function OutpostBtn({ m }: { m: MissionState }): JSX.Element {
   const busy = step.value === 'night' || step.value === 'eva';
   const ready = !busy && BUILDINGS.some((def) => !buildBlock(m, def.id));
   return (
-    <span class={`with-dot gi-hud-btn ${ready ? 'is-ready' : ''}`}>
+    <span class={`with-dot hud-outpost ${ready ? 'is-ready' : ''}`}>
       <button
         type="button"
-        class="icon-btn gi-outpost"
+        class="icon-btn"
         disabled={busy}
         aria-label={t('hud.outpost')}
         title={`${t('hud.outpost')} · ${t('mat.regolith')} ${stockOf(m).regolith} · ${t('mat.metal')} ${stockOf(m).metal}`}
@@ -558,7 +546,7 @@ function OutpostBtn({ m }: { m: MissionState }): JSX.Element {
       >
         <Icon name="build" size={22} />
       </button>
-      {ready && <i class="gi-dot" />}
+      {ready && <i class="dot dot-ready" />}
     </span>
   );
 }
@@ -567,13 +555,34 @@ function OutpostBtn({ m }: { m: MissionState }): JSX.Element {
 export function LumiBubble(): JSX.Element | null {
   const line = lumiLine.value;
   const [hidden, setHidden] = useState(0);
-  if (!line || hidden === line.id) return null;
+  const band = useRef<HTMLElement>(null);
+  const shown = !!line && hidden !== line.id;
+  // The cards on the side stop above the band: tell the styles how tall it is.
+  useEffect(() => {
+    const element = band.current;
+    const root = document.documentElement;
+    if (!shown || !element) {
+      root.style.removeProperty('--lumi-h');
+      return;
+    }
+    const measure = (): void => root.style.setProperty('--lumi-h', `${element.offsetHeight}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--lumi-h');
+    };
+  }, [shown, line?.id]);
+  if (!line || !shown) return null;
   const name = profile.value.name.trim();
   // A missing name would leave ", !" behind: tidy that up.
   const text = t(line.key, { ...line.params, name }).replace(/,\s*!/, '!').replace(/\s+!/, '!');
   return (
-    <aside key={line.id} class={`lumi mood-${line.mood}`} aria-live="polite">
-      <LumiFace mood={line.mood} />
+    <aside key={line.id} ref={band} class={`lumi mood-${line.mood}`} aria-live="polite">
+      <span class="lumi-medal">
+        <LumiFace mood={line.mood} size={52} />
+      </span>
       <div class="lumi-text">
         <b>{t('lumi.name')}</b>
         <p>
@@ -581,9 +590,12 @@ export function LumiBubble(): JSX.Element | null {
         </p>
       </div>
       <div class="lumi-tools">
+        <svg class="lumi-next" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
         <SpeakBtn text={text} voiceKey={line.key} />
         <button type="button" class="lumi-close" aria-label={t('common.close')} onClick={() => setHidden(line.id)}>
-          <Icon name="close" size={14} />
+          <Icon name="close" size={20} />
         </button>
       </div>
     </aside>
@@ -645,7 +657,9 @@ export function Markers({ m }: { m: MissionState }): JSX.Element {
               if (marker.module) changeAlloc(marker.module, -1);
             }}
           >
-            <Icon name={marker.icon} size={20} />
+            <span class="marker-icon">
+              <Icon name={marker.icon} size={18} />
+            </span>
             {marker.module ? (
               <span class="marker-pips">
                 {Array.from({ length: max }, (_, index) => (

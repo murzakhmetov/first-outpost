@@ -78,7 +78,18 @@
 .dock,
 .glass,
 .tip,
-.term-pop {
+.term-pop,
+.hud-week,
+.quest,
+.meter,
+.meter-tip,
+.fps,
+.pickup,
+.discovery,
+.marker,
+.crew-dock-body,
+.crew-tag3d-name,
+.crew-bubble {
   --ink: var(--slate);
   --ink-dim: var(--muted);
   --ink-faint: var(--muted);
@@ -146,6 +157,11 @@
   border: 1px solid var(--gold-edge);
   border-radius: var(--r-sm);
   box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
+}
+
+/* The docked card stays pinned to the side of the stage (styles.css). */
+.dock {
+  position: absolute;
 }
 
 .card::before,
@@ -1072,211 +1088,6 @@
   grid-row: 2;
 }
 
-.hud {
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.hud-left {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas: 'map week' 'quest quest';
-  align-items: center;
-  gap: 8px 12px;
-  pointer-events: none;
-  isolation: isolate;
-}
-
-/* A soft shade behind the map and the quest list keeps the text readable over bright ground. */
-.hud-left::before {
-  content: '';
-  position: absolute;
-  inset: -40px -70px -50px -60px;
-  z-index: -1;
-  /* closest-side: the shade ends inside the box, so no edge shows on a bright sky. */
-  background: radial-gradient(closest-side, rgba(8, 10, 26, 0.62), rgba(8, 10, 26, 0.34) 55%, transparent 100%);
-  pointer-events: none;
-}
-
-.minimap {
-  grid-area: map;
-  position: relative;
-  width: 124px;
-  height: 124px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 0 0 5px rgba(14, 17, 34, 0.5), 0 10px 26px rgba(4, 6, 20, 0.5);
-}
-
-.minimap canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-}
-
-.minimap-north {
-  position: absolute;
-  top: -9px;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 20px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: var(--cream);
-  color: var(--cream-ink);
-  font-size: 0.6875rem;
-  font-weight: 900;
-  line-height: 18px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(4, 6, 20, 0.5);
-}
-
-.hud-week {
-  grid-area: week;
-  display: block;
-  padding: 0;
-  border-radius: 0;
-  background: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  text-shadow: var(--text-shadow);
-  line-height: 1.2;
-}
-
-.hud-week b {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  color: var(--gold);
-  letter-spacing: 0.01em;
-}
-
-.hud-week small {
-  display: block;
-  margin-top: 2px;
-  color: var(--ink);
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
-
-/* The week as a quest list. */
-.quest {
-  grid-area: quest;
-  display: grid;
-  gap: 5px;
-  text-shadow: var(--text-shadow);
-}
-
-.quest-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-display);
-  font-size: 0.9375rem;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-}
-
-.quest-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--line-strong), transparent);
-}
-
-.quest ul {
-  display: grid;
-  gap: 3px;
-}
-
-.quest li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: rgba(246, 241, 230, 0.62);
-  line-height: 1.25;
-}
-
-/* A small diamond: hollow for later, gold for now, a tick when done. */
-.quest li i {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  margin: 0 2px;
-  transform: rotate(45deg);
-  border: 1.5px solid currentColor;
-}
-
-.quest li.is-done {
-  color: rgba(160, 232, 190, 0.8);
-}
-
-.quest li.is-done i {
-  width: 5px;
-  height: 9px;
-  margin: 0 4px 2px 3px;
-  border-width: 0 2px 2px 0;
-}
-
-.quest li.is-now {
-  color: #ffffff;
-  font-size: 0.9375rem;
-  font-weight: 800;
-}
-
-.quest li.is-now i {
-  width: 10px;
-  height: 10px;
-  margin: 0 1px;
-  border-color: var(--gold);
-  background: var(--gold);
-  box-shadow: 0 0 10px rgba(236, 210, 151, 0.8);
-}
-
-.quest li.is-home i {
-  border-color: #7dffb0;
-  background: #7dffb0;
-  box-shadow: 0 0 10px rgba(125, 255, 176, 0.8);
-}
-
-/* Meters: lighter, so the world shows through. */
-.meter {
-  background: linear-gradient(180deg, rgba(22, 26, 48, 0.66), rgba(14, 17, 34, 0.8)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 6px 18px rgba(4, 6, 20, 0.35);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-.meter-name {
-  letter-spacing: 0.02em;
-}
-
-/* ----- Lumi speaks ----------------------------------------------------------- */
-
-.lumi {
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(24, 28, 50, 0.8), rgba(12, 14, 30, 0.92));
-  border: 1px solid var(--line);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.lumi-text b {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.05em;
-  color: var(--gold);
-  text-transform: none;
-}
-
-.lumi-text p {
-  color: var(--ink);
-}
-
 /* ----- Rover ----------------------------------------------------------------------- */
 
 .prompt-drive {
@@ -1290,8 +1101,8 @@
   position: absolute;
   right: 12px;
   bottom: 128px;
-  background: radial-gradient(circle at 50% 40%, rgba(236, 210, 151, 0.42), rgba(14, 17, 34, 0.7)) !important;
-  border-color: var(--gold) !important;
+  background: var(--navy-2) !important;
+  border-color: var(--gold-lt) !important;
 }
 
 .left-hand .round-drive {
@@ -1301,20 +1112,20 @@
 
 /* The key hint makes room for the battery bar. */
 .game.is-driving .eva-keys {
-  bottom: 74px;
+  bottom: 94px;
 }
 
 /* Battery above the suit air. */
 .suitbar.chargebar {
-  bottom: 40px;
+  bottom: 52px;
 }
 
 .suitbar.chargebar .suitbar-track i {
-  background: linear-gradient(90deg, #7fd8ff, #b6e8ff);
+  background: #7fd8ff;
 }
 
 .suitbar.chargebar.is-low .suitbar-track i {
-  background: linear-gradient(90deg, #ff7b86, #ffb36b);
+  background: #ff8f84;
 }
 
 .suitbar.chargebar b {
@@ -1323,11 +1134,11 @@
 
 @media (max-width: 760px), (max-aspect-ratio: 4/5) {
   .suitbar.chargebar {
-    bottom: 208px;
+    bottom: 220px;
   }
 
   .game.is-driving .eva-keys {
-    bottom: 246px;
+    bottom: 258px;
   }
 
   .round-drive {
@@ -1353,121 +1164,10 @@
   }
 }
 
-/* While driving, Lumi's bubble sits above the battery and suit bars. */
-.game.is-driving.step-eva .lumi {
-  bottom: 86px;
-}
-
 /* ----- Pickup list --------------------------------------------------------------- */
 
-.pickups {
-  position: fixed;
-  right: 18px;
-  top: 34%;
-  z-index: 30;
-  display: grid;
-  justify-items: end;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  pointer-events: none;
-}
-
-.pickup {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 230px;
-  max-width: min(340px, 70vw);
-  padding: 5px 14px 5px 6px;
-  border-radius: 6px 0 0 6px;
-  border-right: 3px solid var(--tint, var(--gold));
-  background: linear-gradient(90deg, rgba(14, 17, 34, 0.25), rgba(14, 17, 34, 0.82) 30%, rgba(14, 17, 34, 0.9));
-  color: var(--ink);
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-shadow: var(--text-shadow);
-  animation: pickup-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.15) both, pickup-out 0.45s ease-in 3.3s forwards;
-}
-
-.pickup-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  color: #fff;
-  background: radial-gradient(circle at 50% 45%, var(--tint, var(--gold)) 0%, rgba(14, 17, 34, 0.2) 72%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-}
-
-.pickup-name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.pickup-value {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  margin-left: auto;
-  padding-left: 8px;
-  color: var(--gold);
-  white-space: nowrap;
-}
-
-@keyframes pickup-in {
-  from {
-    opacity: 0;
-    transform: translateX(28px);
-  }
-}
-
-@keyframes pickup-out {
-  to {
-    opacity: 0;
-    transform: translateX(18px);
-  }
-}
-
-.less-motion .pickup {
-  animation: pickup-out 0.45s ease-in 3.3s forwards;
-}
-
-@media (max-width: 760px), (max-aspect-ratio: 4/5) {
-  .pickups {
-    right: 10px;
-    top: 44%;
-  }
-
-  .pickup {
-    min-width: 0;
-    font-size: 0.8125rem;
-  }
-}
-
 @media (max-height: 520px) and (min-aspect-ratio: 4/5) {
-  .pickups {
-    right: auto;
-    left: 12px;
-    top: 36%;
-    justify-items: start;
-  }
 
-  /* Room for three lines between the task list and the hint at the bottom. */
-  .pickup:nth-last-child(n + 4) {
-    display: none;
-  }
-
-  .pickup {
-    border-right: 0;
-    border-left: 3px solid var(--tint, var(--gold));
-    border-radius: 0 6px 6px 0;
-    background: linear-gradient(270deg, rgba(14, 17, 34, 0.25), rgba(14, 17, 34, 0.82) 30%, rgba(14, 17, 34, 0.9));
-  }
 }
 
 /* ----- Discovery banner ------------------------------------------------------- */
@@ -1485,110 +1185,36 @@
   white-space: nowrap;
 }
 
-
-.discovery {
-  position: fixed;
-  left: 50%;
-  top: 24%;
-  z-index: 40;
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  min-width: min(560px, 86vw);
-  padding: 14px 40px 16px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  text-align: center;
-  color: var(--ink);
-  background: radial-gradient(closest-side, rgba(18, 20, 40, 0.84), rgba(18, 20, 40, 0.6) 55%, rgba(18, 20, 40, 0) 100%);
-  animation: discovery-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2) both, discovery-out 0.5s ease-in 4.1s forwards;
-}
-
-.discovery::before,
-.discovery::after {
-  content: '';
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  height: 1.5px;
-  background: linear-gradient(90deg, transparent, var(--gold) 30%, #fff6d8 50%, var(--gold) 70%, transparent);
-  box-shadow: 0 0 10px rgba(236, 210, 151, 0.8);
-}
-
-.discovery::before {
-  top: 0;
-}
-
-.discovery::after {
-  bottom: 0;
-}
-
-.discovery-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gold);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  text-shadow: 0 0 12px rgba(236, 210, 151, 0.7);
-}
-
-.discovery-title {
-  font-family: var(--font-display);
-  font-size: clamp(24px, 4.2vw, 38px);
-  font-weight: 700;
-  line-height: 1.1;
-  color: #fff6e0;
-  text-shadow: 0 2px 4px rgba(6, 8, 24, 0.9), 0 0 22px rgba(255, 214, 140, 0.55);
-}
-
-.discovery-note {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--ink-dim);
-  text-shadow: var(--text-shadow);
-}
-
-@keyframes discovery-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.86);
-    letter-spacing: 0.04em;
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-}
-
-@keyframes discovery-out {
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-12px);
-  }
-}
-
-.less-motion .discovery {
-  animation: discovery-out 0.5s ease-in 4.1s forwards;
-}
-
-@media (max-width: 760px) {
-  .discovery {
-    top: 30%;
-    padding: 12px 22px 14px;
-  }
-}
-
 /* ----- The walk outside -------------------------------------------------------- */
 
 .eva-chip,
 .arrow {
-  background: rgba(14, 17, 34, 0.66);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: var(--ivory);
+  color: var(--slate);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--gold-orn);
+}
+
+.eva-chip {
+  padding: 5px 12px;
+}
+
+.eva-chip.good {
+  color: var(--green-text);
+}
+
+.eva-chip.bad {
+  color: var(--red);
+}
+
+.arrow b {
+  color: var(--slate);
+}
+
+.arrow-dial {
+  background: var(--navy);
+  color: var(--tone);
 }
 
 /* Suit air: one long bar at the bottom, like a health bar. */
@@ -1602,7 +1228,12 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 10px;
-  text-shadow: var(--text-shadow);
+  box-sizing: border-box;
+  padding: 5px 12px;
+  border: 1px solid var(--gold-orn);
+  border-radius: var(--r-md);
+  background: var(--navy);
+  color: var(--on-navy);
   pointer-events: none !important;
 }
 
@@ -1612,7 +1243,7 @@
   gap: 5px;
   font-size: 0.8125rem;
   font-weight: 800;
-  color: var(--ink);
+  color: var(--on-navy);
 }
 
 .suitbar-track {
@@ -1627,23 +1258,24 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #7df0a8, #b7f58c);
+  background: #7ad79a;
   transition: width 0.3s linear;
 }
 
 .suitbar.is-low .suitbar-track i {
-  background: linear-gradient(90deg, #ff7b86, #ffb36b);
+  background: #ff8f84;
 }
 
 /* Running: the bar turns amber, because the air is going faster. */
 .suitbar.is-run .suitbar-track i {
-  background: linear-gradient(90deg, #ffd27a, #ffb36b);
+  background: #ffc24d;
 }
 
 .round-run.is-on,
 .round-view.is-on {
-  border-color: #ffd27a !important;
-  background: radial-gradient(circle at 50% 40%, rgba(255, 210, 122, 0.4), rgba(14, 17, 34, 0.6)) !important;
+  border-color: var(--gold-hi) !important;
+  background: var(--navy-2) !important;
+  box-shadow: 0 0 0 2px var(--gold-hi);
 }
 
 .suitbar b {
@@ -1654,25 +1286,27 @@
 }
 
 .suitbar.is-low b {
-  color: var(--bad);
+  color: #ff9a8c;
 }
 
 .eva-keys {
-  bottom: 44px;
-  background: rgba(14, 17, 34, 0.6);
+  bottom: 56px;
+  background: var(--navy);
+  color: var(--on-navy);
+  border: 1px solid var(--gold-orn);
+  border-radius: var(--r-md);
 }
 
 .round {
-  background: rgba(14, 17, 34, 0.56) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.62) !important;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 8px 22px rgba(4, 6, 20, 0.4);
+  background: var(--navy) !important;
+  color: var(--on-navy);
+  border: 2px solid var(--gold-orn) !important;
+  box-shadow: 0 0 0 1px var(--navy), 0 3px 8px rgba(29, 35, 51, 0.35);
 }
 
 .round-big {
-  background: radial-gradient(circle at 50% 40%, rgba(236, 210, 151, 0.34), rgba(14, 17, 34, 0.6)) !important;
-  border-color: var(--gold) !important;
+  background: var(--navy-2) !important;
+  border-color: var(--gold-lt) !important;
 }
 
 /* ----- Title screen -------------------------------------------------------------------------------
@@ -1947,67 +1581,10 @@
   }
 }
 
-/* ----- Navy plates: parts of the game screen that are rebuilt with the game screen ---------------------- */
-
-.hud-week,
-.meter,
-.lumi {
-  background: var(--navy);
-  border: 1px solid var(--gold-edge);
-  box-shadow: var(--shadow);
-}
-
 /* ----- Wide screens: the map and quest list float at the top left --------------- */
 
 @media (min-width: 761px) and (min-aspect-ratio: 4/5) {
-  .hud {
-    min-height: 50px;
-    padding-left: 252px;
-  }
 
-  .hud-left {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 244px;
-  }
-
-  /* Lumi speaks at the bottom, in the middle of the free part of the screen. */
-  .lumi,
-  .game.step-eva .lumi,
-  .game.step-night .lumi {
-    top: auto;
-    left: calc((100% - min(440px, 46vw)) / 2);
-    bottom: 4px;
-    width: max-content;
-    max-width: min(560px, calc(100% - min(440px, 46vw) - 24px));
-    transform: translateX(-50%);
-    animation-name: talk-in;
-  }
-
-  .game.step-eva .lumi,
-  .game.step-night .lumi {
-    left: 50%;
-    bottom: 50px;
-    max-width: min(520px, 60vw);
-  }
-
-  .game.step-night .lumi {
-    bottom: 8px;
-  }
-}
-
-@keyframes talk-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(12px);
-  }
-}
-
-@media (min-width: 761px) and (max-width: 1080px) and (min-aspect-ratio: 4/5) {
-  .meter-name {
-    display: none;
-  }
 }
 
 /* Short, wide screens (a phone held sideways): a smaller map, only the current task. */
@@ -2016,43 +1593,7 @@
     grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .hud {
-    padding-left: 176px;
-    min-height: 40px;
-  }
-
-  .hud-left {
-    width: 170px;
-    gap: 4px 8px;
-  }
-
-  .minimap {
-    width: 72px;
-    height: 72px;
-  }
-
-  .hud-week b {
-    font-size: 0.9375rem;
-  }
-
-  .hud-week small {
-    display: block;
-    font-size: 0.6875rem;
-  }
-
-  .quest-title,
-  .quest li:not(.is-now) {
-    display: none;
-  }
-
-  .quest li.is-now {
-    font-size: 0.8125rem;
-  }
-
   /* The map's gold stars show the discoveries; the list keeps to the main tasks. */
-  .quest li.is-find {
-    display: none;
-  }
 
   .suitbar {
     bottom: 6px;
@@ -2061,7 +1602,7 @@
   /* Keep the hint clear of the round buttons on the right. */
   .eva-keys {
     left: 16px;
-    bottom: 40px;
+    bottom: 48px;
     transform: none;
     max-width: calc(100% - 380px);
   }
@@ -2070,76 +1611,8 @@
 /* ----- Upright phones ------------------------------------------------------------- */
 
 @media (max-width: 760px), (max-aspect-ratio: 4/5) {
-  /* Map and task on the left, buttons on the right, the meters in a row underneath. */
-  .hud {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: 'left buttons' 'meters meters';
-    align-items: start;
-    gap: 6px;
-  }
-
-  .hud-buttons {
-    grid-area: buttons;
-  }
-
-  .meters {
-    grid-area: meters;
-  }
-
   /* One line is enough on a small screen: the arrows and the map show the way home,
      and the map's gold stars show the discoveries. */
-  .quest li.is-home,
-  .quest li.is-find {
-    display: none;
-  }
-
-  .hud-left {
-    grid-area: left;
-    min-width: 0;
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas: 'map week' 'map quest';
-    gap: 0 10px;
-    align-items: center;
-  }
-
-  .minimap {
-    width: 66px;
-    height: 66px;
-    margin: 6px 0 0 4px;
-  }
-
-  .hud-week {
-    align-self: end;
-  }
-
-  .hud-week b {
-    font-size: 1rem;
-  }
-
-  .hud-week small {
-    display: inline;
-    margin-left: 6px;
-    font-size: 0.75rem;
-  }
-
-  .quest {
-    align-self: start;
-  }
-
-  .quest-title,
-  .quest li:not(.is-now) {
-    display: none;
-  }
-
-  .quest li.is-now {
-    font-size: 0.875rem;
-  }
-
-  .meters {
-    order: 3;
-    flex: 1 1 100%;
-  }
 
   .suitbar {
     width: min(300px, 70vw);
@@ -2147,6 +1620,6 @@
   }
 
   .eva-keys {
-    bottom: 206px;
+    bottom: 218px;
   }
 }

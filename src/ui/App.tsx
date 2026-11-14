@@ -4,6 +4,7 @@ import './styles.css';
 import './theme.css';
 import './outpost.css';
 import './gi.css';
+import './hud.css';
 import './mobile.css';
 import type { JSX } from 'preact';
 import { useEffect } from 'preact/hooks';

@@ -1,0 +1,1684 @@
+/* First Outpost — the in-game HUD in the ivory-and-gold style: the map, the week, the task list, the
+   five counters, the round buttons, Lumi's dialogue band, the labels over the buildings, the pickup list,
+   the discovery banner and the crew's name tags and stickers. The tokens and the base panel recipe are
+   in theme.css; this sheet loads after it. */
+
+/* ----- Shared plate: ivory, a gold line and a second gold line inside it ---------------------- */
+
+.hud-week,
+.quest,
+.meter,
+.meter-tip,
+.fps,
+.pickup,
+.discovery,
+.marker,
+.crew-dock-body,
+.crew-tag3d-name,
+.crew-bubble {
+  position: relative;
+  background: var(--ivory);
+  color: var(--slate);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--gold-edge), 0 0 0 1px rgba(29, 35, 51, 0.5);
+}
+
+.diamond-pip {
+  display: block;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg) scale(0.78);
+}
+
+/* ----- The header row ---------------------------------------------------------------------- */
+
+.hud {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 62px;
+  padding: 6px 0 0 312px;
+  pointer-events: none;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+/* The map, the week and the task list stand at the top left, over the 3D view. */
+.hud-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300px;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-areas: 'map week' 'quest quest';
+  align-items: center;
+  gap: 0;
+  pointer-events: none;
+}
+
+.hud-left > * {
+  pointer-events: auto;
+}
+
+.minimap {
+  grid-area: map;
+  position: relative;
+  z-index: 2;
+  width: 112px;
+  height: 112px;
+  margin: 4px 0 0 4px;
+  padding: 4px;
+  border-radius: 50%;
+  background: var(--ivory);
+  box-shadow: 0 0 0 2px var(--gold-edge), 0 0 0 5px var(--ivory), 0 0 0 6px var(--gold-edge), 0 0 0 7px rgba(29, 35, 51, 0.5);
+}
+
+.minimap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.minimap-north {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: 0 0 0 2px var(--gold-orn);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 22px;
+  text-align: center;
+}
+
+.hud-week {
+  grid-area: week;
+  z-index: 1;
+  margin-left: -56px;
+  min-width: 0;
+  padding: 8px 8px 8px 74px;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  line-height: 1.2;
+}
+
+.hud-week b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.0625rem;
+  color: var(--slate);
+  white-space: normal;
+}
+
+.hud-week small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: normal;
+}
+
+.week-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 7px;
+  border-radius: 3px;
+  background: var(--navy);
+  color: var(--gold-lt);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+/* ----- The task list (the week as a quest list) ------------------------------------------------ */
+
+.quest {
+  grid-area: quest;
+  margin: 22px 0 0 24px;
+  padding: 14px 16px 12px;
+  border-radius: var(--r-sm);
+  width: 262px;
+}
+
+.quest::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  pointer-events: none;
+  background:
+    var(--diamond) left top / 14px 14px no-repeat,
+    var(--diamond) right top / 14px 14px no-repeat,
+    var(--diamond) left bottom / 14px 14px no-repeat,
+    var(--diamond) right bottom / 14px 14px no-repeat;
+}
+
+.quest-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--slate);
+}
+
+/* A gold line with a diamond in the middle. */
+.quest-title::after {
+  content: '';
+  display: block;
+  height: 9px;
+  margin: 5px 0 6px;
+  background:
+    var(--diamond) center / 9px 9px no-repeat,
+    linear-gradient(var(--gold-edge), var(--gold-edge)) left center / calc(50% - 9px) 1px no-repeat,
+    linear-gradient(var(--gold-edge), var(--gold-edge)) right center / calc(50% - 9px) 1px no-repeat;
+}
+
+.quest ul {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quest ul::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 18px;
+  bottom: 18px;
+  width: 1px;
+  background: var(--gold-edge);
+}
+
+.quest li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.quest li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The diamond: hollow for later, a gold one with a tick when done, a gold core for now. */
+.quest li i {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2L22 12L12 22L2 12Z' fill='%23F4EEE2' stroke='%236B7180' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.quest li.is-done {
+  text-decoration: line-through;
+  text-decoration-color: var(--gold-edge);
+}
+
+.quest li.is-done i {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5L22.500 12L12 22.500L1.500 12Z' fill='%23C9A55C' stroke='%237A5A18' stroke-width='1.2' stroke-linejoin='round'/%3E%3Cpath d='M7.500 12.300l3 3 6-6.300' fill='none' stroke='%231D2333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.quest li.is-now {
+  min-height: 44px;
+  margin: 2px -4px;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  background: #ebddb4;
+  color: var(--slate);
+  font-weight: 800;
+}
+
+.quest li.is-now i {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1L23 12L12 23L1 12Z' fill='%23F4EEE2' stroke='%237A5A18' stroke-width='1.400' stroke-linejoin='round'/%3E%3Cpath d='M12 6L18 12L12 18L6 12Z' fill='%23C9A55C' stroke='%237A5A18' stroke-width='1.200' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.quest li.is-now::after {
+  content: '';
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 5l7 7-7 7' fill='none' stroke='black' stroke-width='2.400' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 5l7 7-7 7' fill='none' stroke='black' stroke-width='2.400' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ----- The five counters -------------------------------------------------------------------- */
+
+.meters {
+  container-type: inline-size;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 820px;
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.meter {
+  flex: 1 1 140px;
+  min-width: 132px;
+  max-width: 150px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 34px;
+  border-radius: var(--r-lg);
+  text-align: left;
+}
+
+.meter:hover {
+  background: var(--ivory-hi);
+}
+
+.meter.is-open {
+  border-color: var(--gold-dk);
+}
+
+/* The medallion: a navy disc with a gold ring, half out of the counter. */
+.meter-icon {
+  position: absolute;
+  left: -14px;
+  top: 7px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
+}
+
+.meter-main {
+  display: grid;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.meter-name {
+  color: var(--slate);
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meter-value {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.meter-extra {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.meter-extra .mini-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.meter-extra .mini-stars svg path {
+  stroke: var(--gold-dk);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.meter-extra .mini-stars .lit {
+  color: var(--gold-orn);
+}
+
+.meter-extra .mini-stars .dim {
+  color: var(--ivory-hi);
+}
+
+/* Battery cells: gold diamonds, hollow when empty. */
+.pips {
+  display: flex;
+  gap: 4px;
+}
+
+.pips i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg) scale(0.9);
+  border: 1px solid #6b7180;
+  background: transparent;
+}
+
+.pips i.is-on {
+  border-color: var(--gold-dk);
+  background: var(--gold-orn);
+}
+
+/* A counter in danger: a red line, a red number and an exclamation mark (not colour alone). */
+.meter.is-danger {
+  border-color: var(--red-fill);
+  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--red-fill), 0 0 0 1px rgba(29, 35, 51, 0.5);
+}
+
+.meter.is-danger .meter-value {
+  color: var(--red);
+}
+
+.meter.is-danger .meter-icon {
+  box-shadow: 0 0 0 2px var(--red-fill), 0 0 0 4px var(--ivory), 0 0 0 5px var(--red-fill);
+}
+
+.meter.is-danger::after {
+  content: '!';
+  position: absolute;
+  right: -6px;
+  top: -7px;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--red-fill);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 900;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* What a counter means: opens under the row of counters. */
+.meter-tip {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(460px, 94vw);
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  font-size: 0.9375rem;
+  animation: rise 0.2s ease both;
+}
+
+.meter-tip p {
+  margin: 0;
+}
+
+.tip-extra {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0 0 !important;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.tip-extra .lit {
+  color: var(--gold-dk);
+}
+
+/* ----- The round buttons at the top right ---------------------------------------------------- */
+
+.hud-buttons {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 4px 0 0;
+}
+
+.hud-buttons .icon-btn {
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 0 0 2px var(--gold-edge), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge), 0 0 0 6px rgba(29, 35, 51, 0.5);
+}
+
+.fps {
+  padding: 3px 9px;
+  border-radius: var(--r-sm);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.with-dot {
+  position: relative;
+  display: inline-grid;
+}
+
+/* A badge on a button: a red dot (something new to build) or a navy count (new entries). */
+.dot {
+  position: absolute;
+  top: -7px;
+  right: -8px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: 0 0 0 2px var(--gold-orn);
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 22px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.dot.dot-left {
+  right: auto;
+  left: -4px;
+}
+
+.dot.dot-ready {
+  top: -4px;
+  right: -4px;
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--red-fill);
+  box-shadow: 0 0 0 2px var(--ivory);
+}
+
+/* ----- The crew: Friends button, the list that opens from it, stickers ----------------------------- */
+
+.crew-dock {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  top: 78px;
+  z-index: 25;
+  width: min(320px, calc(100vw - 20px));
+  pointer-events: none;
+}
+
+.crew-dock-body {
+  pointer-events: auto;
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--r-sm);
+}
+
+.crew-dock-head {
+  margin: 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--gold-orn);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+
+.crew-friends {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.crew-friend {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.crew-dock .crew-dot,
+.crew-toast .crew-dot,
+.crew-tag3d-name i {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--navy);
+}
+
+.crew-toast .crew-dot {
+  box-shadow: 0 0 0 1.5px var(--on-navy);
+}
+
+.crew-friend .crew-dot {
+  margin-top: 5px;
+}
+
+.crew-friend.is-gone {
+  opacity: 0.55;
+}
+
+.crew-friend-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.crew-friend-main b {
+  font-size: 0.9375rem;
+}
+
+.crew-friend-main small {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.crew-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+
+.crew-numbers span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.crew-numbers .is-warn {
+  color: var(--red);
+  font-weight: 800;
+}
+
+.crew-dock .crew-lost {
+  margin: 0;
+  color: var(--red);
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.crew-stickers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.crew-sticker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 5px 10px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.crew-sticker:hover:not(:disabled) {
+  background: #ebddb4;
+}
+
+.crew-sticker:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* A friend's sticker or word shows as a small navy plate at the top of the screen. */
+.crew-toasts {
+  position: fixed;
+  left: 50%;
+  top: 92px;
+  z-index: 60;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.crew-toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: inset 0 0 0 2px var(--navy), inset 0 0 0 3px var(--gold-edge), var(--shadow);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  animation: crew-toast-in 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes crew-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+}
+
+/* Name tags over the friends' heads in the 3D view. */
+.crew-tags {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none !important;
+}
+
+.crew-tag3d {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  opacity: 0;
+  will-change: transform;
+  transition: opacity 0.2s ease;
+}
+
+.crew-tag3d-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px 3px 7px;
+  border-radius: var(--r-sm);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.crew-bubble {
+  padding: 5px 11px;
+  border-radius: var(--r-sm);
+  font-size: 0.875rem;
+  font-weight: 800;
+  white-space: nowrap;
+  animation: crew-toast-in 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+/* ----- Lumi: a story-dialogue band across the bottom ---------------------------------------- */
+
+.lumi {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 88px;
+  padding: 12px max(24px, calc((100% - 1000px) / 2)) max(12px, env(safe-area-inset-bottom));
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: 0 -1px 0 var(--gold-orn), 0 -4px 0 var(--navy), 0 -5px 0 var(--gold-orn);
+  animation: lumi-in 0.35s ease both;
+}
+
+@keyframes lumi-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.lumi-medal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--navy-2);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 5px var(--navy), 0 0 0 6px var(--gold-orn);
+}
+
+/* Lumi's face is also on the film cards: only the one in the medal is sized here. */
+.lumi-face {
+  flex: none;
+  animation: bob 3.2s ease-in-out infinite;
+}
+
+@keyframes bob {
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.lumi-medal .lumi-face {
+  display: block;
+  width: 52px;
+  height: 52px;
+}
+
+.lumi-text {
+  min-width: 0;
+}
+
+.lumi-text b {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--gold-lt);
+}
+
+.lumi-text b::before {
+  content: '';
+  flex: none;
+  width: 9px;
+  height: 9px;
+  background: var(--gold-lt);
+  transform: rotate(45deg) scale(0.78);
+}
+
+.lumi-text p {
+  margin: 0;
+  color: var(--on-navy);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.lumi-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lumi-next {
+  flex: none;
+  margin-right: 6px;
+  color: var(--gold-lt);
+  animation: lumi-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes lumi-bob {
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+/* Speaker and close buttons: navy squares with a gold line. */
+.lumi-tools .speak,
+.lumi-close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  border: 1.5px solid var(--gold-orn);
+  border-radius: var(--r-sm);
+  background: var(--navy-2);
+  color: var(--on-navy);
+  box-shadow: none;
+}
+
+.lumi-tools .speak:hover,
+.lumi-close:hover {
+  background: #36406a;
+}
+
+.lumi-tools .speak.is-on {
+  background: var(--gold-lt);
+  color: var(--navy);
+}
+
+#ui .lumi :focus-visible {
+  outline-color: var(--gold-lt);
+  box-shadow: none;
+}
+
+/* The card above makes room for the band. */
+.game:not(.step-eva):not(.step-night):not(.in-room):has(.lumi) .dock {
+  bottom: max(0px, calc(var(--lumi-h, 88px) + 12px - var(--pad)));
+  max-height: calc(100% - max(0px, calc(var(--lumi-h, 88px) + 12px - var(--pad))));
+}
+
+/* On a walk, at night and inside a building the band floats above the bars at the bottom. */
+.game.step-eva .lumi,
+.game.step-night .lumi,
+.game.in-room .lumi {
+  left: 50%;
+  right: auto;
+  bottom: 56px;
+  width: min(520px, calc(100% - 48px));
+  min-height: 0;
+  padding: 10px 16px;
+  gap: 14px;
+  transform: translateX(-50%);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 2px var(--navy), inset 0 0 0 3px var(--gold-edge), var(--shadow);
+  animation-name: lumi-float-in;
+}
+
+@keyframes lumi-float-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+}
+
+.game.step-night .lumi {
+  bottom: 8px;
+}
+
+/* On a walk it stands above the key hint and the suit-air bar. */
+.game.step-eva .lumi {
+  bottom: 104px;
+}
+
+.game.is-driving.step-eva .lumi {
+  bottom: 124px;
+}
+
+.game.step-eva .lumi .lumi-medal,
+.game.step-night .lumi .lumi-medal,
+.game.in-room .lumi .lumi-medal {
+  width: 52px;
+  height: 52px;
+}
+
+.game.step-eva .lumi-medal .lumi-face,
+.game.step-night .lumi-medal .lumi-face,
+.game.in-room .lumi-medal .lumi-face {
+  width: 42px;
+  height: 42px;
+}
+
+.game.step-eva .lumi .lumi-next,
+.game.step-night .lumi .lumi-next,
+.game.in-room .lumi .lumi-next {
+  display: none;
+}
+
+.game.step-eva .lumi-text p,
+.game.step-night .lumi-text p,
+.game.in-room .lumi-text p {
+  font-size: 1rem;
+}
+
+/* During a storm alert the alarm banner says it all. */
+.eva.is-alert ~ .lumi {
+  display: none;
+}
+
+/* ----- Labels over the buildings (the plan can be made by touching the outpost) -------------------- */
+
+.markers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none !important;
+}
+
+.marker {
+  --tone: var(--gold-orn);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: 56px;
+  min-height: 44px;
+  padding: 6px 10px 7px;
+  border-radius: var(--r-md);
+  will-change: transform;
+  transition: opacity 0.2s ease;
+}
+
+/* The little pointer towards the building. */
+.marker::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 11px;
+  height: 11px;
+  background: var(--ivory);
+  border-right: 1px solid var(--gold-edge);
+  border-bottom: 1px solid var(--gold-edge);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.marker-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: 0 0 0 2px var(--tone), 0 0 0 3.500px var(--ivory);
+}
+
+.marker-life {
+  --tone: var(--sys-life);
+}
+
+.marker-farm {
+  --tone: var(--sys-green);
+}
+
+.marker-lab {
+  --tone: var(--sys-lab);
+}
+
+.marker-shield {
+  --tone: var(--sys-robot);
+}
+
+.marker-power {
+  --tone: var(--gold-orn);
+  cursor: default;
+}
+
+.marker.is-off {
+  --tone: #6b7180;
+}
+
+.marker-pips {
+  display: flex;
+  gap: 4px;
+  padding: 2px 0;
+}
+
+.marker-pips i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg) scale(0.9);
+  border: 1px solid #6b7180;
+}
+
+.marker-pips i.is-on {
+  border-color: var(--navy);
+  background: var(--tone);
+}
+
+.marker b {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--gold-dk);
+}
+
+/* ----- The pickup list on walks ------------------------------------------------------------ */
+
+.pickups {
+  position: fixed;
+  right: 18px;
+  top: 34%;
+  z-index: 30;
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.pickup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 230px;
+  max-width: min(340px, 70vw);
+  padding: 5px 14px 5px 8px;
+  border-radius: var(--r-sm);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  animation: pickup-in 0.3s ease both, pickup-out 0.45s ease-in 3.3s forwards;
+}
+
+.pickup-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--on-navy);
+  box-shadow: 0 0 0 2px var(--tint, var(--gold-orn)), 0 0 0 3.500px var(--ivory);
+}
+
+.pickup-name {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pickup-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding-left: 8px;
+  color: var(--gold-dk);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@keyframes pickup-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes pickup-out {
+  to {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+.less-motion .pickup {
+  animation: pickup-out 0.45s ease-in 3.3s forwards;
+}
+
+/* ----- The discovery banner ----------------------------------------------------------------- */
+
+.discovery {
+  position: fixed;
+  left: 50%;
+  top: 30%;
+  z-index: 40;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: min(560px, 90vw);
+  padding: 16px 32px 18px;
+  border-radius: var(--r-sm);
+  transform: translateX(-50%);
+  pointer-events: none;
+  text-align: center;
+  animation: discovery-in 0.45s ease both, discovery-out 0.5s ease-in 4.1s forwards;
+}
+
+.discovery::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  pointer-events: none;
+  background:
+    var(--diamond) left top / 14px 14px no-repeat,
+    var(--diamond) right top / 14px 14px no-repeat,
+    var(--diamond) left bottom / 14px 14px no-repeat,
+    var(--diamond) right bottom / 14px 14px no-repeat;
+}
+
+.discovery-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold-dk);
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.discovery-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4.2vw, 2.125rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--slate);
+}
+
+.discovery-note {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.discovery-building .discovery-kicker {
+  color: var(--blue-text);
+}
+
+.discovery-room .discovery-kicker {
+  color: var(--blue-text);
+}
+
+@keyframes discovery-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes discovery-out {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+}
+
+.less-motion .discovery {
+  animation: discovery-out 0.5s ease-in 4.1s forwards;
+}
+
+/* ----- Narrow row of counters (small windows, phones, many buttons): a medallion and a number ------------------ */
+
+@container (max-width: 760px) {
+  .meter {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 120px;
+    min-height: 50px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 6px 4px;
+    margin-top: 14px;
+    text-align: center;
+  }
+
+  .meter-icon {
+    left: 50%;
+    top: -14px;
+    width: 30px;
+    height: 30px;
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 1.500px var(--gold-orn), 0 0 0 3px var(--ivory), 0 0 0 4px var(--gold-edge);
+  }
+
+  .meter.is-danger .meter-icon {
+    box-shadow: 0 0 0 1.500px var(--red-fill), 0 0 0 3px var(--ivory), 0 0 0 4px var(--red-fill);
+  }
+
+  .meter-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .meter-main {
+    justify-items: center;
+    width: 100%;
+    padding-top: 15px;
+  }
+
+  .meter-name {
+    display: none;
+  }
+
+  .meter-value {
+    font-size: min(1rem, 3.8cqw);
+    line-height: 1.2;
+  }
+
+  .meter-extra {
+    display: none;
+  }
+
+  .meter.is-danger::after {
+    right: -4px;
+    top: -4px;
+  }
+}
+
+/* ----- Short wide windows (a phone on its side) ------------------------------------------------------ */
+
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .hud {
+    min-height: 40px;
+    gap: 8px;
+    padding: 2px 0 0 208px;
+  }
+
+  .hud-left {
+    width: 202px;
+    grid-template-columns: 74px minmax(0, 1fr);
+  }
+
+  .minimap {
+    width: 74px;
+    height: 74px;
+    margin: 2px 0 0 4px;
+    padding: 3px;
+    box-shadow: 0 0 0 1.500px var(--gold-edge), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge), 0 0 0 6px rgba(29, 35, 51, 0.5);
+  }
+
+  .minimap-north {
+    width: 18px;
+    height: 18px;
+    font-size: 0.6875rem;
+    line-height: 18px;
+  }
+
+  .hud-week {
+    margin-left: -34px;
+    padding: 4px 4px 4px 40px;
+  }
+
+  .hud-week b {
+    font-size: 0.9375rem;
+  }
+
+  .hud-week small {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  .quest {
+    width: 190px;
+    margin: 12px 0 0 4px;
+    padding: 4px 6px;
+  }
+
+  .quest::before,
+  .quest-title,
+  .quest ul::before,
+  .quest li:not(.is-now) {
+    display: none;
+  }
+
+  .quest li.is-now {
+    min-height: 40px;
+    margin: 0;
+    padding: 0 6px;
+    border: 0;
+    background: none;
+    font-size: 0.8125rem;
+  }
+
+  .hud-buttons {
+    gap: 8px;
+    padding-top: 0;
+  }
+
+  .hud-buttons .icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .meter-tip {
+    top: calc(100% + 8px);
+  }
+}
+
+/* ----- Upright phones and narrow windows ----------------------------------------------------- */
+
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  /* The map and the week on the left, the buttons on the right, the counters in a row under them,
+     the task under the counters. */
+  .hud {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'map-week buttons' 'meters meters' 'quest quest';
+    align-items: start;
+    gap: 6px 6px;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .hud-left {
+    display: contents;
+  }
+
+  .minimap {
+    grid-area: map-week;
+    justify-self: start;
+    width: 64px;
+    height: 64px;
+    margin: 4px 0 0 4px;
+    padding: 3px;
+    box-shadow: 0 0 0 1.500px var(--gold-edge), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge), 0 0 0 6px rgba(29, 35, 51, 0.5);
+  }
+
+  .minimap-north {
+    top: -9px;
+    width: 18px;
+    height: 18px;
+    font-size: 0.6875rem;
+    line-height: 18px;
+  }
+
+  .hud-week {
+    grid-area: map-week;
+    align-self: center;
+    justify-self: stretch;
+    margin: 6px 0 0 38px;
+    padding: 5px 8px 5px 54px;
+    min-height: 54px;
+    z-index: 1;
+  }
+
+  .minimap {
+    z-index: 2;
+  }
+
+  .hud-week b {
+    font-size: 1rem;
+  }
+
+  .hud-week small {
+    font-size: 0.8125rem;
+    white-space: normal;
+  }
+
+  .hud-buttons {
+    grid-area: buttons;
+    display: grid;
+    grid-template-columns: repeat(2, 44px);
+    gap: 7px;
+    padding: 6px 6px 0 0;
+  }
+
+  .hud-buttons .icon-btn {
+    width: 44px;
+    height: 44px;
+    box-shadow: 0 0 0 1.500px var(--gold-edge), 0 0 0 3.500px var(--ivory), 0 0 0 4.500px var(--gold-edge), 0 0 0 5.500px rgba(29, 35, 51, 0.5);
+  }
+
+  .meters {
+    grid-area: meters;
+    width: 100%;
+    max-width: none;
+    margin: 2px 0 0;
+    padding: 0 4px;
+  }
+
+  .quest {
+    grid-area: quest;
+    width: auto;
+    margin: 4px 4px 0;
+    padding: 2px 8px;
+  }
+
+  .quest::before,
+  .quest-title,
+  .quest ul::before,
+  .quest li:not(.is-now) {
+    display: none;
+  }
+
+  .quest li.is-now {
+    min-height: 40px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 0.9375rem;
+  }
+
+  .meter-tip {
+    left: 50%;
+    top: calc(100% + 6px);
+  }
+
+  /* The band sits as a plate on top of the bottom sheet. */
+  .lumi {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--dock-h, 0px) + 8px);
+    gap: 10px;
+    min-height: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--gold-edge);
+    border-radius: var(--r-sm);
+    box-shadow: inset 0 0 0 2px var(--navy), inset 0 0 0 3px var(--gold-edge), var(--shadow);
+  }
+
+  .lumi-medal {
+    width: 46px;
+    height: 46px;
+    box-shadow: 0 0 0 1.500px var(--gold-orn), 0 0 0 3.500px var(--navy), 0 0 0 4.500px var(--gold-orn);
+  }
+
+  .lumi-medal .lumi-face {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* The name and the buttons share the first line; the words get the whole width. */
+  .lumi {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'medal name tools' 'text text text';
+    gap: 4px 10px;
+  }
+
+  .lumi-medal {
+    grid-area: medal;
+  }
+
+  .lumi-text {
+    display: contents;
+  }
+
+  .lumi-text b {
+    grid-area: name;
+    font-size: 1rem;
+  }
+
+  .lumi-text p {
+    grid-area: text;
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+
+  .lumi-tools {
+    grid-area: tools;
+  }
+
+  .lumi-next {
+    display: none;
+  }
+
+  .lumi-tools {
+    gap: 6px;
+  }
+
+  .game:not(.step-eva):not(.step-night):not(.in-room):has(.lumi) .dock {
+    bottom: 0;
+    max-height: min(64%, 560px);
+  }
+
+  .game.step-eva .lumi,
+  .game.step-night .lumi,
+  .game.in-room .lumi {
+    left: 0;
+    right: 0;
+    bottom: calc(var(--dock-h, 0px) + 8px);
+    width: auto;
+    transform: none;
+    animation-name: lumi-in;
+  }
+
+  .pickups {
+    right: 10px;
+    top: calc(100% - 288px);
+  }
+
+  /* Two lines fit between the banner and the bars at the bottom. */
+  .pickup:nth-last-child(n + 3) {
+    display: none;
+  }
+
+  .pickup {
+    min-width: 0;
+    font-size: 0.875rem;
+  }
+
+  .discovery {
+    top: 38%;
+    padding: 12px 22px 14px;
+  }
+
+  /* While Lumi talks, the banner goes up over the task list so the two never cover each other. */
+  .game:has(.lumi) .discovery {
+    top: 112px;
+    padding: 8px 18px 10px;
+  }
+
+  .game:has(.lumi) .discovery-note {
+    display: none;
+  }
+
+  .discovery-title {
+    font-size: clamp(1.375rem, 6vw, 1.75rem);
+  }
+
+  .crew-dock {
+    top: 112px;
+    right: 8px;
+  }
+
+  .crew-toasts {
+    top: 150px;
+  }
+
+  .toast {
+    top: 208px;
+  }
+}
+
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .pickups {
+    right: 12px;
+    left: auto;
+    top: 232px;
+    justify-items: end;
+  }
+
+  /* One line fits on the right, between the arrows and the round buttons. */
+  .pickup:nth-last-child(n + 2) {
+    display: none;
+  }
+
+  .pickup {
+    min-width: 0;
+    max-width: 230px;
+  }
+
+  .discovery {
+    top: 96px;
+    padding: 8px 28px 10px;
+  }
+
+  .discovery-note {
+    display: none;
+  }
+
+  .game.step-eva .lumi-text p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.875rem;
+  }
+
+  /* The band stands to the left of the card, so the card keeps its whole height. */
+  .game:not(.step-eva):not(.step-night):not(.in-room) .lumi {
+    right: calc(min(470px, 56vw) + var(--pad) + 4px);
+    padding: 6px 12px;
+    min-height: 0;
+  }
+
+  .lumi {
+    grid-template-areas: 'medal name tools' 'text text text';
+    gap: 2px 10px;
+  }
+
+  .lumi-medal {
+    grid-area: medal;
+    width: 44px;
+    height: 44px;
+  }
+
+  .lumi-medal .lumi-face {
+    width: 36px;
+    height: 36px;
+  }
+
+  .lumi-text {
+    display: contents;
+  }
+
+  .lumi-text b {
+    grid-area: name;
+    font-size: 1rem;
+  }
+
+  .lumi-text p {
+    grid-area: text;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+  }
+
+  .lumi-tools {
+    grid-area: tools;
+    gap: 6px;
+  }
+
+  .lumi-next {
+    display: none;
+  }
+
+  .game:not(.step-eva):not(.step-night):not(.in-room):has(.lumi) .dock {
+    bottom: 0;
+    max-height: 100%;
+  }
+
+  .crew-dock {
+    top: 56px;
+    right: 12px;
+  }
+
+  .crew-toasts {
+    top: 70px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crew-bubble,
+  .crew-toast,
+  .lumi-next {
+    animation: none;
+  }
+}

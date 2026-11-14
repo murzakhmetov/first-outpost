@@ -38,34 +38,6 @@
 
 /* ----- The Outpost button in the top bar -------------------------------------- */
 
-.outpost-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 46px;
-  padding: 4px 14px 4px 5px;
-  border-radius: 99px;
-  border: 1px solid var(--line-strong);
-  background: linear-gradient(180deg, rgba(48, 56, 92, 0.86), rgba(20, 24, 46, 0.9));
-  color: var(--ink);
-  box-shadow: 0 6px 18px rgba(4, 6, 20, 0.4);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.outpost-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: var(--gold);
-}
-
-.outpost-btn:disabled {
-  opacity: 0.55;
-  cursor: default;
-}
-
 .outpost-btn-icon {
   display: grid;
   place-items: center;
@@ -75,41 +47,6 @@
   color: var(--cream-ink);
   background: radial-gradient(circle at 35% 30%, #fffaf0, #e9d39c 70%, #c9a45c);
   box-shadow: inset 0 -2px 0 rgba(120, 90, 40, 0.3);
-}
-
-.outpost-btn-text {
-  display: grid;
-  justify-items: start;
-  gap: 2px;
-  font-size: 0.75rem;
-}
-
-.outpost-btn-text b {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  color: var(--gold);
-  line-height: 1;
-}
-
-.outpost-btn.is-ready {
-  border-color: var(--gold);
-  animation: outpost-glow 2.4s ease-in-out infinite;
-}
-
-.outpost-btn .dot {
-  background: var(--gold-deep);
-  color: #1d2033;
-}
-
-@keyframes outpost-glow {
-  50% {
-    box-shadow: 0 0 0 3px rgba(236, 210, 151, 0.22), 0 0 22px rgba(236, 210, 151, 0.45);
-  }
-}
-
-.less-motion .outpost-btn.is-ready {
-  animation: none;
 }
 
 /* ----- The Outpost menu --------------------------------------------------------- */
@@ -337,24 +274,6 @@
 
 .rrow.tone-build.is-good {
   background: rgba(127, 224, 255, 0.1);
-}
-
-/* ----- The new-building banner -------------------------------------------------- */
-
-.discovery-building .discovery-kicker {
-  color: var(--build);
-  text-shadow: 0 0 12px rgba(127, 224, 255, 0.7);
-}
-
-.discovery-building .discovery-title {
-  color: #eafcff;
-  text-shadow: 0 2px 4px rgba(6, 8, 24, 0.9), 0 0 22px rgba(127, 224, 255, 0.6);
-}
-
-.discovery-building::before,
-.discovery-building::after {
-  background: linear-gradient(90deg, transparent, var(--build) 30%, #ffffff 50%, var(--build) 70%, transparent);
-  box-shadow: 0 0 10px rgba(127, 224, 255, 0.8);
 }
 
 /* ----- Inside a building: the screen over the 3D room ------------------------------ */
@@ -631,20 +550,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* On a phone the button keeps only its icon and the numbers. */
-  .outpost-btn {
-    min-height: 42px;
-    padding: 3px 10px 3px 3px;
-  }
-
   /* Narrow screens: the icon alone; the numbers are in the Outpost menu. */
-  .outpost-btn-text {
-    display: none;
-  }
-
-  .outpost-btn {
-    padding: 3px;
-  }
 
   .outpost-btn-icon {
     width: 34px;
@@ -744,12 +650,12 @@
 }
 
 .round-dig {
-  background: radial-gradient(circle at 50% 40%, rgba(232, 192, 138, 0.5), rgba(14, 17, 34, 0.72)) !important;
+  background: var(--navy-2) !important;
   border-color: #e8c08a !important;
 }
 
 .round-door {
-  background: radial-gradient(circle at 50% 40%, rgba(127, 224, 255, 0.42), rgba(14, 17, 34, 0.72)) !important;
+  background: var(--navy-2) !important;
   border-color: #7fe0ff !important;
 }
 
@@ -761,11 +667,6 @@
 .discovery-room {
   top: 18%;
   pointer-events: none !important;
-}
-
-.discovery-room .discovery-kicker {
-  color: #c9f3ff;
-  text-shadow: 0 0 12px rgba(127, 224, 255, 0.7);
 }
 
 /* Metal: keep the marker inside the wandering zone. */

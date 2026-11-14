@@ -118,68 +118,6 @@
   display: none !important;
 }
 
-/* ----- Lumi: a dialogue band at the bottom ---------------------------------------------- */
-
-.lumi {
-  border: 0 !important;
-  border-radius: 18px !important;
-  background: linear-gradient(180deg, rgba(9, 11, 24, 0.25) 0%, rgba(9, 11, 24, 0.78) 30%, rgba(9, 11, 24, 0.9) 100%) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
-}
-
-.lumi-text b {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gi-gold) !important;
-  font-size: 1.04rem !important;
-  letter-spacing: 0.06em;
-}
-
-.lumi-text b::before,
-.lumi-text b::after {
-  content: '';
-  width: 22px;
-  height: 1.5px;
-  background: linear-gradient(90deg, transparent, var(--gi-gold));
-}
-
-.lumi-text b::after {
-  transform: scaleX(-1);
-}
-
-.lumi-text p {
-  color: var(--gi-cream) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-}
-
-/* ----- The round buttons at the top right ---------------------------------------------------- */
-
-.gi-hud-btn {
-  position: relative;
-}
-
-.gi-hud-btn .icon-btn:disabled {
-  opacity: 0.45;
-}
-
-.gi-dot {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: #ff5a4f;
-  box-shadow: 0 0 0 2px rgba(14, 17, 34, 0.9), 0 0 8px rgba(255, 90, 79, 0.8);
-  pointer-events: none;
-}
-
-.gi-hud-btn.is-ready .icon-btn {
-  border-color: var(--gi-gold) !important;
-  animation: outpost-glow 2.4s ease-in-out infinite;
-}
-
 /* ----- Full-screen menus ------------------------------------------------------------------------ */
 
 .gi-screen {
@@ -872,20 +810,6 @@
 .gi-actions {
   display: grid;
   gap: 8px;
-}
-
-.gi-creative {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 1px 9px;
-  border-radius: 999px;
-  font-family: var(--font-ui);
-  font-size: 0.7rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  vertical-align: middle;
-  color: #2f3a1c;
-  background: linear-gradient(90deg, #b9f27a, #6fe6a4);
 }
 
 .placement {

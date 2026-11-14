@@ -11,7 +11,7 @@
 @media (max-width: 600px) and (orientation: portrait) {
   /* ----- Top ------------------------------------------------------------------ */
   .game.step-eva .meters,
-  .game.step-eva .hud-buttons .gi-hud-btn {
+  .game.step-eva .hud-buttons .hud-outpost {
     display: none !important;
   }
 
@@ -71,7 +71,7 @@
     height: 34px;
   }
 
-  .game.step-eva .lumi-text {
+  .game.step-eva .lumi-text p {
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
@@ -90,13 +90,13 @@
   .game.step-eva .suitbar.chargebar {
     left: 12px !important;
     right: 12px !important;
-    bottom: 228px !important;
+    bottom: 238px !important;
     width: auto !important;
     transform: none !important;
   }
 
   .game.step-eva .eva-keys {
-    bottom: 292px !important;
+    bottom: 302px !important;
     font-size: 0.78rem;
   }
 
@@ -234,7 +234,7 @@
     height: 34px;
   }
 
-  .game.in-room .lumi-text {
+  .game.in-room .lumi-text p {
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
@@ -277,7 +277,7 @@
     height: 34px;
   }
 
-  .game.in-room .lumi-text {
+  .game.in-room .lumi-text p {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -322,7 +322,7 @@
   .game.step-eva .eva-keys {
     left: 160px !important;
     right: 350px !important;
-    bottom: 30px !important;
+    bottom: 46px !important;
     max-width: none !important;
     transform: none !important;
     white-space: normal;
@@ -333,7 +333,7 @@
   .game.step-eva .lumi {
     left: 160px !important;
     right: 350px !important;
-    bottom: 74px !important;
+    bottom: 112px !important;
     width: auto !important;
     max-width: none !important;
     transform: none !important;
@@ -352,6 +352,7 @@
   .game.step-eva .suitbar.chargebar {
     left: 160px !important;
     right: 350px !important;
+    bottom: 44px !important;
     width: auto !important;
     transform: none !important;
   }
@@ -364,39 +365,11 @@
 
   /* Driving: the battery bar sits on the suit air bar, so both move up a little. */
   .game.is-driving.step-eva .lumi {
-    bottom: 104px !important;
+    bottom: 140px !important;
   }
 
-  /* ----- Lumi beside the step card, never over it ----------------------------------------- */
-  /* The five meters share the top: each takes the room its number needs. */
-  .meters {
-    gap: 4px;
-  }
-
-  .meter {
-    flex: 1 1 auto;
-    gap: 5px;
-    padding: 3px 7px 3px 3px;
-  }
-
-  .meter-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .meter-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .meter-value {
-    font-size: 0.875rem;
-  }
-
-  /* (The step card is wider here than on big screens: min(470px, 56vw).) */
-  .game:not(.step-eva):not(.step-night):not(.in-room) .lumi {
-    left: calc((100% - min(470px, 56vw)) / 2);
-    max-width: calc(100% - min(470px, 56vw) - 24px);
+  .game.is-driving.step-eva .eva-keys {
+    bottom: 84px !important;
   }
 
   /* ----- The pause menu fits the short screen and scrolls if it must ----------------------- */
@@ -477,57 +450,15 @@
   }
 }
 
-/* ----- Upright phones: the week and its dates are never hidden under the round buttons ------ */
-@media (max-width: 600px) and (orientation: portrait) {
-  .game:not(.step-eva) .hud-buttons {
-    gap: 5px;
-  }
-
-  .game:not(.step-eva) .hud-buttons .icon-btn {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    min-height: 42px !important;
-  }
-
-  .game:not(.step-eva) .hud-buttons .icon-btn svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .game:not(.step-eva) .minimap {
-    width: 58px;
-    height: 58px;
-  }
-
-  .game:not(.step-eva) .hud-week small {
-    display: block;
-    margin-left: 0;
-    font-size: 0.68rem;
-    line-height: 1.15;
-    white-space: normal;
-  }
-}
-
-/* ----- Touch screens: captions under the round buttons and Lumi's close button are easy to read and hit. */
+/* ----- Touch screens: captions under the round buttons are easy to read. */
 @media (pointer: coarse) {
   .round small {
     font-size: 0.68rem !important;
-  }
-
-  .lumi-close {
-    width: 38px !important;
-    height: 38px !important;
   }
 }
 
 .touch .round small {
   font-size: 0.68rem !important;
-}
-
-.touch .lumi-close {
-  width: 38px !important;
-  height: 38px !important;
 }
 
 /* Upright phones: the 3D power markers only show the plan. The plan card has the + and − buttons, so

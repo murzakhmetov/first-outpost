@@ -251,268 +251,8 @@ html {
   gap: 8px;
 }
 
-.game > .hud {
-  grid-row: 1;
-}
-
-.game > .phases {
-  grid-row: 2;
-}
-
 .game > .stage {
   grid-row: 3;
-}
-
-.hud {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-  flex-wrap: wrap;
-  z-index: 5;
-}
-
-.hud-week {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 14px 6px 10px;
-  border-radius: 999px;
-  line-height: 1.15;
-}
-
-.hud-week b {
-  display: block;
-  font-size: 0.9375rem;
-  white-space: nowrap;
-}
-
-.hud-week small {
-  color: var(--ink-dim);
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.site-dot {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  flex: none;
-  box-shadow: inset -4px -3px 7px rgba(0, 0, 0, 0.45);
-}
-
-.site-dot.site-mars {
-  background: radial-gradient(circle at 34% 30%, #ffb27a, #d0633a 60%, #7a2f1c);
-}
-
-.site-dot.site-moon {
-  background: radial-gradient(circle at 34% 30%, #fff, #b9bdc9 60%, #5d6170);
-}
-
-.meters {
-  flex: 1 1 320px;
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  min-width: 0;
-}
-
-.meter {
-  flex: 1 1 0;
-  max-width: 168px;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 10px 5px 6px;
-  border-radius: 999px;
-  text-align: left;
-  transition: transform 0.12s ease;
-}
-
-.meter:hover {
-  transform: translateY(-1px);
-}
-
-.meter-icon {
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.meter-main {
-  min-width: 0;
-  flex: 1;
-  display: grid;
-  line-height: 1.1;
-}
-
-.meter-name {
-  font-size: 0.6875rem;
-  color: var(--ink-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.meter-value {
-  font-size: 0.9375rem;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-.meter-power .meter-icon {
-  color: var(--power);
-}
-
-.meter-air .meter-icon {
-  color: var(--air);
-}
-
-.meter-food .meter-icon {
-  color: var(--food);
-}
-
-.meter-dose .meter-icon {
-  color: var(--dose);
-}
-
-.meter-science .meter-icon {
-  color: var(--science);
-}
-
-.meter.is-danger {
-  border-color: var(--bad);
-  animation: danger-glow 1.1s ease-in-out infinite;
-}
-
-@keyframes danger-glow {
-  50% {
-    box-shadow: 0 0 0 4px rgba(255, 93, 108, 0.35), var(--shadow);
-  }
-}
-
-.pips {
-  display: flex;
-  gap: 3px;
-  margin-top: 3px;
-}
-
-.pips i {
-  flex: 1;
-  max-width: 14px;
-  height: 7px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.16);
-}
-
-.pips i.is-on {
-  background: var(--power);
-  box-shadow: 0 0 8px rgba(255, 209, 102, 0.6);
-}
-
-.mini-stars {
-  display: flex;
-  gap: 1px;
-  margin-top: 2px;
-}
-
-.hud-buttons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.fps {
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 3px 9px;
-  border-radius: 99px;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.with-dot {
-  position: relative;
-}
-
-.dot {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 99px;
-  background: var(--bad);
-  color: #fff;
-  font-size: 0.6875rem;
-  font-style: normal;
-  font-weight: 900;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-}
-
-.meter-tip {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(460px, 94vw);
-  padding: 12px 16px;
-  border-radius: var(--r-md);
-  background: #20275c;
-  border: 1px solid var(--line-strong);
-  box-shadow: var(--shadow);
-  font-size: 0.9375rem;
-  z-index: 20;
-  animation: rise 0.2s ease both;
-}
-
-.tip-extra {
-  margin-top: 6px !important;
-  color: var(--ink-dim);
-  font-size: 0.875rem;
-}
-
-.phases {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  pointer-events: none !important;
-}
-
-.phases li {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 10px;
-  border-radius: 99px;
-  font-size: 0.75rem;
-  color: var(--ink-faint);
-  background: rgba(12, 15, 40, 0.55);
-  white-space: nowrap;
-}
-
-.phases i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.phases li.is-done {
-  color: var(--good);
-}
-
-.phases li.is-now {
-  color: #2a1c05;
-  background: var(--gold);
-  font-weight: 900;
 }
 
 /* ----- Stage and docked cards ---------------------------------------------- */
@@ -595,19 +335,20 @@ html {
 .row {
   display: grid;
   grid-template-columns: 40px 1fr;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid transparent;
+  gap: 12px;
+  padding: 10px 6px;
   font-size: 0.9375rem;
 }
 
+.row + .row {
+  border-top: 1px solid var(--ivory-line);
+}
+
 .row b {
-  font-size: 0.8125rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--slate);
 }
 
 .row p + p,
@@ -615,13 +356,13 @@ html {
   margin-top: 3px;
 }
 
-.row-warn {
-  border-color: rgba(255, 193, 94, 0.5);
+.row-warn b,
+.row-alert b {
+  color: var(--gold-dk);
 }
 
-.row-alert {
-  border-color: rgba(255, 122, 184, 0.65);
-  background: rgba(255, 122, 184, 0.1);
+.row-alert b {
+  color: var(--red);
 }
 
 .row-icon {
@@ -630,7 +371,8 @@ html {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.09);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn);
 }
 
 .tone-power {
@@ -913,10 +655,12 @@ html {
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
-  padding: 8px 10px;
-  border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.06);
-  border-left: 5px solid var(--tone);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ivory-line);
+}
+
+.module:last-child {
+  border-bottom: 0;
 }
 
 .module-life {
@@ -936,18 +680,25 @@ html {
 }
 
 .module-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  margin-left: 7px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 18%, transparent);
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--tone), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
 }
 
 .module.is-off .module-icon {
-  color: var(--ink-faint);
-  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 2px var(--muted), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
+}
+
+.module-text b {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1rem;
 }
 
 .module-text {
@@ -979,12 +730,12 @@ html {
 
 .module-effect {
   font-size: 0.8125rem;
-  font-weight: 800;
-  color: var(--tone);
+  font-weight: 700;
+  color: var(--ink-dim);
 }
 
 .module.is-off .module-effect {
-  color: var(--bad);
+  color: var(--red);
 }
 
 .module-effect em {
@@ -1000,18 +751,19 @@ html {
 }
 
 .stepper button {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm);
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.13) !important;
-  border: 1.5px solid var(--line-strong) !important;
+  color: var(--slate);
+  background: var(--ivory-hi) !important;
+  border: 1.5px solid var(--gold-edge) !important;
   transition: transform 0.1s ease, background 0.15s ease;
 }
 
 .stepper button:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--tone) 40%, transparent) !important;
+  background: var(--gold-hi) !important;
 }
 
 .stepper button:active:not(:disabled) {
@@ -1020,26 +772,27 @@ html {
 
 .stepper button:disabled,
 .stepper button.is-blocked {
-  opacity: 0.35;
+  opacity: 0.42;
 }
 
 .level {
   display: flex;
-  gap: 3px;
+  gap: 7px;
+  padding: 0 3px;
 }
 
 .level i {
   width: 9px;
-  height: 22px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.14);
-  transition: background 0.2s ease, transform 0.2s cubic-bezier(0.2, 1.8, 0.4, 1);
+  height: 9px;
+  transform: rotate(45deg);
+  border: 1px solid var(--muted);
+  background: transparent;
+  transition: background 0.2s ease;
 }
 
 .level i.is-on {
   background: var(--tone);
-  box-shadow: 0 0 9px color-mix(in srgb, var(--tone) 70%, transparent);
-  transform: scaleY(1.12);
+  border-color: var(--navy);
 }
 
 .leftover {
@@ -1048,16 +801,20 @@ html {
 }
 
 .preview {
-  padding: 8px 12px;
-  border-radius: var(--r-md);
-  background: rgba(0, 0, 0, 0.22);
+  padding: 6px 0 2px;
+  border-top: 1px solid var(--gold-edge);
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 #ui .preview h3 {
   margin: 0;
-  font-size: 0.6875rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.9375rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--slate);
 }
 
 .preview-grid {
@@ -1173,36 +930,13 @@ html {
   gap: 4px;
   padding: 8px 12px;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.055);
-  border-left: 5px solid currentColor;
-}
-
-.rrow.tone-power {
-  border-left-color: var(--power);
-}
-
-.rrow.tone-air {
-  border-left-color: var(--air);
-}
-
-.rrow.tone-food {
-  border-left-color: var(--food);
-}
-
-.rrow.tone-dose {
-  border-left-color: var(--dose);
-}
-
-.rrow.tone-science {
-  border-left-color: var(--science);
-}
-
-.rrow.tone-shield {
-  border-left-color: var(--shield);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
 }
 
 .rrow.is-bad {
-  background: rgba(255, 93, 108, 0.13);
+  background: #f7e4df;
+  border-color: var(--red);
 }
 
 .rrow-head {
@@ -1281,155 +1015,6 @@ html {
 
 .notes li.warn {
   background: rgba(255, 193, 94, 0.14);
-}
-
-/* Lumi */
-
-.lumi {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  max-width: min(430px, calc(100% - min(440px, 46vw) - 16px));
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 10px;
-  align-items: start;
-  padding: 10px 12px;
-  border-radius: 22px 22px 22px 6px;
-  z-index: 6;
-  animation: lumi-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
-}
-
-@keyframes lumi-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.94);
-  }
-}
-
-.lumi-face {
-  flex: none;
-  animation: bob 3.2s ease-in-out infinite;
-}
-
-@keyframes bob {
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-.lumi-text b {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.lumi-text p {
-  font-size: 0.9375rem;
-}
-
-.lumi-tools {
-  display: grid;
-  gap: 4px;
-  justify-items: end;
-}
-
-.lumi-close {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid !important;
-  place-items: center;
-  color: var(--ink-faint) !important;
-}
-
-.mood-alert {
-  border-color: rgba(255, 171, 77, 0.7);
-}
-
-/* Building markers */
-
-.markers {
-  position: absolute;
-  inset: 0;
-  pointer-events: none !important;
-  overflow: hidden;
-}
-
-.marker {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: grid !important;
-  justify-items: center;
-  gap: 3px;
-  padding: 7px 9px 6px !important;
-  border-radius: 14px 14px 14px 14px;
-  background: rgba(16, 20, 52, 0.9) !important;
-  border: 2px solid var(--tone) !important;
-  color: var(--tone) !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-  will-change: transform;
-  transition: opacity 0.2s ease;
-}
-
-.marker::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -8px;
-  width: 12px;
-  height: 12px;
-  background: inherit;
-  border-right: 2px solid var(--tone);
-  border-bottom: 2px solid var(--tone);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-.marker-life {
-  --tone: var(--air);
-}
-
-.marker-farm {
-  --tone: var(--food);
-}
-
-.marker-lab {
-  --tone: var(--science);
-}
-
-.marker-shield {
-  --tone: var(--shield);
-}
-
-.marker-power {
-  --tone: var(--power);
-  cursor: default !important;
-}
-
-.marker.is-off {
-  --tone: #8b8ea8;
-}
-
-.marker-pips {
-  display: flex;
-  gap: 2px;
-}
-
-.marker-pips i {
-  width: 7px;
-  height: 7px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.marker-pips i.is-on {
-  background: var(--tone);
-}
-
-.marker b {
-  font-size: 0.75rem;
 }
 
 /* ----- Walk outside ------------------------------------------------------- */
@@ -1728,32 +1313,6 @@ html {
   right: auto;
   left: 12px;
   flex-direction: row-reverse;
-}
-
-.game.step-eva .lumi,
-.game.step-night .lumi {
-  top: 104px;
-  bottom: auto;
-  max-width: min(330px, 46vw);
-  padding: 7px 9px;
-}
-
-.game.step-night .lumi {
-  top: 0;
-}
-
-/* During a storm alert the alarm banner says it all. */
-.eva.is-alert ~ .lumi {
-  display: none;
-}
-
-.game.step-eva .lumi .lumi-face {
-  width: 38px;
-  height: 38px;
-}
-
-.game.step-eva .lumi p {
-  font-size: 0.8125rem;
 }
 
 /* ----- Debrief ------------------------------------------------------------ */
@@ -2244,8 +1803,6 @@ html {
   font-weight: 900;
 }
 
-/* ----- Small screens ------------------------------------------------------ */
-
 /* Phones held upright, and narrow windows: cards become a bottom sheet. */
 @media (max-width: 760px), (max-aspect-ratio: 4/5) {
   .dock {
@@ -2268,20 +1825,11 @@ html {
   }
 
   /* Lumi sits just above the bottom sheet, clear of the buildings. */
-  .lumi {
-    left: 0;
-    right: 0;
-    top: auto;
-    bottom: calc(var(--dock-h, 0px) + 8px);
-    max-width: none;
-    padding: 6px 9px;
-    border-radius: 18px;
-  }
 
   .module {
     grid-template-columns: 38px minmax(0, 1fr) auto;
     gap: 8px;
-    padding: 6px 8px;
+    padding: 6px 0;
   }
 
   .module-icon {
@@ -2310,8 +1858,8 @@ html {
   }
 
   .level i {
-    width: 7px;
-    height: 20px;
+    width: 8px;
+    height: 8px;
   }
 
   .card-foot .btn {
@@ -2330,50 +1878,6 @@ html {
     bottom: -12px;
   }
 
-  .lumi .lumi-face {
-    width: 40px;
-    height: 40px;
-  }
-
-  .lumi-text p {
-    font-size: 0.875rem;
-  }
-
-  .meters {
-    order: 3;
-    flex: 1 1 100%;
-  }
-
-  .hud-week {
-    flex: 1;
-  }
-
-  .meter {
-    padding: 4px 7px 4px 4px;
-    gap: 5px;
-  }
-
-  .meter-icon {
-    width: 28px;
-    height: 28px;
-  }
-
-  .meter-name {
-    display: none;
-  }
-
-  .meter-value {
-    font-size: 0.8125rem;
-  }
-
-  .phases li span {
-    display: none;
-  }
-
-  .phases li.is-now span {
-    display: inline;
-  }
-
   .setup-grid {
     grid-template-columns: 1fr;
   }
@@ -2382,50 +1886,7 @@ html {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .game.step-eva .lumi,
-  .game.step-night .lumi {
-    top: 104px;
-    bottom: auto;
-    max-width: none;
-  }
-
-  .game.step-night .lumi {
-    top: 0;
-  }
-
   /* Five meters must fit across a phone: stack icon over number. */
-  .meter {
-    flex-direction: column;
-    gap: 1px;
-    padding: 4px 2px 5px;
-    border-radius: 14px;
-    text-align: center;
-  }
-
-  .meter-icon {
-    width: 24px;
-    height: 24px;
-    background: none;
-  }
-
-  .meter-main {
-    width: 100%;
-    justify-items: center;
-  }
-
-  .meter-main .bar,
-  .meter-main .pips {
-    width: 78%;
-    margin-top: 2px;
-  }
-
-  .pips {
-    justify-content: center;
-  }
-
-  .meter-value {
-    font-size: 0.75rem;
-  }
 
   .chip-word {
     display: none;
@@ -2434,30 +1895,6 @@ html {
 
 /* Phones held sideways: little height, so everything gets tighter. */
 @media (max-height: 520px) and (min-aspect-ratio: 4/5) {
-  .hud {
-    flex-wrap: nowrap;
-  }
-
-  .meter-name {
-    display: none;
-  }
-
-  .meter {
-    padding: 3px 8px 3px 4px;
-  }
-
-  .meter-icon {
-    width: 28px;
-    height: 28px;
-  }
-
-  .hud-week small {
-    display: none;
-  }
-
-  .phases {
-    display: none;
-  }
 
   .game {
     grid-template-rows: auto 0 minmax(0, 1fr);
@@ -2533,13 +1970,12 @@ html {
   .module {
     grid-template-columns: 30px minmax(0, 1fr);
     gap: 2px 8px;
-    padding: 5px 8px;
+    padding: 5px 4px;
   }
 
   .module-icon {
     width: 30px;
     height: 30px;
-    border-radius: 10px;
   }
 
   .module-text b {
@@ -2566,14 +2002,13 @@ html {
   }
 
   .stepper button {
-    width: 38px;
-    height: 34px;
-    border-radius: 12px;
+    width: 44px;
+    height: 36px;
   }
 
   .level i {
-    width: 12px;
-    height: 16px;
+    width: 9px;
+    height: 9px;
   }
 
   .card-foot .btn {
@@ -2584,20 +2019,6 @@ html {
 
   .leftover {
     font-size: 0.75rem;
-  }
-
-  .lumi {
-    max-width: calc(100% - min(470px, 56vw) - 12px);
-    padding: 6px 8px;
-  }
-
-  .lumi .lumi-face {
-    width: 36px;
-    height: 36px;
-  }
-
-  .lumi-text p {
-    font-size: 0.8125rem;
   }
 
   .stick {
