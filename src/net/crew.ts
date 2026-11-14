@@ -4,17 +4,19 @@
  * to send our numbers, and calls startMission when the host starts. It never changes the game's
  * own files, and nothing here runs until a player opens crew mode.
  */
-import { effect, signal } from '@preact/signals';
+import { computed, effect, signal } from '@preact/signals';
 import { audio } from '../game/audio';
-import { getWorld, startMission } from '../game/director';
-import { mission, profile, screen, step, updateProfile } from '../game/store';
+import { getWorld, goNextWeek, startMission } from '../game/director';
+import { film, mission, panel, profile, room as insideRoom, screen, step, updateProfile } from '../game/store';
 import type { SetupChoice } from '../game/store';
 import { FEATURED_WINDOWS } from '../sim/sites';
 import { netConfig, transportKind } from './config';
-import { CREW_NAME_COUNT, REACTIONS, REACTION_ICON, REACTION_MIN_MS, newPlayerId, startDateOf, statusOf, suitIndex } from './protocol';
+import { PositionSender, assignSlots, friendMode, positionSample, whoIsBehind } from './follow';
+import { CREW_NAME_COUNT, CREW_SUITS, REACTIONS, REACTION_ICON, REACTION_MIN_MS, newPlayerId, startDateOf, statusOf, suitIndex } from './protocol';
 import type { CrewChoice, ReactionId, StartPayload } from './protocol';
 import { CrewRoom } from './room';
 import type { Player, RoomView } from './room';
+import type { FriendSpec } from '../world/friends';
 import { SupabaseTransport } from './supabase';
 import { LocalTransport } from './transport';
 import type { Transport } from './transport';
@@ -37,7 +39,28 @@ export interface CrewToast {
 }
 export const crewToasts = signal<CrewToast[]>([]);
 
+/** A sticker above a friend's head for a few seconds, by player id. */
+export interface CrewBubble {
+  key: number;
+  icon: string;
+  reaction: ReactionId;
+}
+export const crewBubbles = signal<Record<string, CrewBubble>>({});
+/** The report's "Next week" is waiting for friends who are still behind. */
+export const crewWaiting = signal(false);
+
+/** The friends who are still behind this week's report (race mode). Empty in solo play, or when we are offline. */
+export const crewBehind = computed<Player[]>(() => {
+  const view = crewView.value;
+  const m = mission.value;
+  if (view.phase !== 'playing' || !view.online || !m) return [];
+  return whoIsBehind({ week: m.week, step: 'report' }, view.players);
+});
+
 let room: CrewRoom | null = null;
+let friendsOn = false;
+let waitStop: (() => void) | null = null;
+const bubbleTimers = new Map<string, number>();
 let unsubscribe: (() => void) | null = null;
 let stopWatching: (() => void) | null = null;
 let toastId = 0;
@@ -69,9 +92,11 @@ function fresh(): CrewRoom {
   room = next;
   unsubscribe = next.subscribe((view) => {
     crewView.value = view;
+    syncFriends(view);
   });
   next.onStart = (start) => void runStart(start);
   next.onReaction = (player, reaction) => showReaction(player, reaction);
+  next.onPosition = (player, position) => getWorld()?.setFriendPosition(player.id, position);
   crewView.value = next.view;
   return next;
 }
@@ -98,6 +123,7 @@ export async function joinRoom(code: string): Promise<void> {
 
 /** Leave the room. The single-player game is never touched. */
 export function leaveRoom(): void {
+  endWait();
   stopWatching?.();
   stopWatching = null;
   unsubscribe?.();
@@ -106,6 +132,12 @@ export function leaveRoom(): void {
   room = null;
   crewView.value = IDLE;
   crewToasts.value = [];
+  for (const timer of bubbleTimers.values()) window.clearTimeout(timer);
+  bubbleTimers.clear();
+  crewBubbles.value = {};
+  friendsOn = false;
+  // The two NPC cadets come back.
+  getWorld()?.setFriends(null);
 }
 
 export function openCrewLobby(): void {
@@ -157,6 +189,84 @@ function showReaction(player: Player, reaction: ReactionId): void {
   window.setTimeout(() => {
     crewToasts.value = crewToasts.value.filter((toast) => toast.id !== id);
   }, 4000);
+  // The same sticker over the friend's head for 3 seconds.
+  window.clearTimeout(bubbleTimers.get(player.id));
+  crewBubbles.value = { ...crewBubbles.value, [player.id]: { key: id, icon: REACTION_ICON[reaction], reaction } };
+  bubbleTimers.set(
+    player.id,
+    window.setTimeout(() => {
+      bubbleTimers.delete(player.id);
+      const { [player.id]: _gone, ...rest } = crewBubbles.value;
+      crewBubbles.value = rest;
+    }, 3000),
+  );
+}
+
+// ----- Friends in the 3D world ----------------------------------------------------------
+
+/** Give the world the friends to draw (in a crew mission), in the suit colour and place each one has. */
+function syncFriends(view: RoomView): void {
+  if (!friendsOn || view.phase !== 'playing') return;
+  const others = view.players.filter((player) => !player.me);
+  // Alone in the room: the two helper cadets keep the outpost lived in, as in solo play.
+  if (!others.length) {
+    getWorld()?.setFriends(null);
+    return;
+  }
+  // Slots go by every friend in the room (also those who left), so nobody's place jumps when somebody goes.
+  const slots = assignSlots(others.map((player) => player.id));
+  const list: FriendSpec[] = others.map((player) => ({
+    id: player.id,
+    color: CREW_SUITS[player.suit] ?? CREW_SUITS[0],
+    mode: friendMode(player),
+    slot: slots.get(player.id) ?? 0,
+    step: player.status?.step ?? null,
+  }));
+  getWorld()?.setFriends(list);
+}
+
+// ----- Weeks go on together --------------------------------------------------------------
+
+function endWait(): void {
+  waitStop?.();
+  waitStop = null;
+  crewWaiting.value = false;
+}
+
+/**
+ * The report's "Next week". Solo play (and the last week) goes on at once. In a crew mission it waits for
+ * friends who are still behind, then goes on by itself; "Don't wait" goes on now.
+ */
+export function crewNextWeek(): void {
+  const m = mission.peek();
+  if (!m || waitStop || m.week >= m.config.weeks || crewBehind.peek().length === 0) {
+    if (!waitStop) goNextWeek();
+    return;
+  }
+  audio.play('click');
+  crewWaiting.value = true;
+  let fired = false;
+  waitStop = effect(() => {
+    if (step.value !== 'report' || screen.value !== 'game') {
+      queueMicrotask(endWait);
+      return;
+    }
+    // Nobody behind any more, and nothing open on top (a menu, a film, a building): go on, once.
+    if (crewBehind.value.length > 0 || panel.value !== 'none' || film.value !== null || insideRoom.value !== null) return;
+    if (fired) return;
+    fired = true;
+    queueMicrotask(() => {
+      endWait();
+      goNextWeek();
+    });
+  });
+}
+
+/** "Don't wait": go on to the next week now. */
+export function crewDontWait(): void {
+  if (!waitStop) return;
+  endWait();
+  goNextWeek();
 }
 
 // ----- The mission ---------------------------------------------------------------------
@@ -190,6 +300,8 @@ async function runStart(start: StartPayload): Promise<void> {
     creative: false,
   };
   const before = profile.value.setup;
+  friendsOn = true;
+  syncFriends(active.view);
   watchMission(start);
   try {
     await startMission(choice, { seed: start.seed, startDate: start.startDate });
@@ -203,7 +315,20 @@ async function runStart(start: StartPayload): Promise<void> {
 function watchMission(start: StartPayload): void {
   stopWatching?.();
   let seen = false;
-  stopWatching = effect(() => {
+  // Our walk, as numbers: at most 5 a second, only on a walk, only when it changed, and once a second so friends know we are here.
+  const sender = new PositionSender();
+  const timer = window.setInterval(() => {
+    const active = room;
+    const world = getWorld();
+    if (!active || active.view.phase !== 'playing' || !world || !world.ready) return;
+    const walking = step.peek() === 'eva' && world.eva.active && !world.interior.active;
+    const sample = walking
+      ? positionSample(world.eva.position.x, world.eva.position.z, world.eva.facing, world.eva.speed > 0.3, world.rover.driving)
+      : null;
+    const out = sender.next(Date.now(), sample);
+    if (out) active.sendPosition(out);
+  }, 100);
+  const stopEffect = effect(() => {
     const m = mission.value;
     const current = step.value;
     const where = screen.value;
@@ -221,4 +346,8 @@ function watchMission(start: StartPayload): void {
     if (m.end !== null && where === 'debrief') active.sendFinal(status);
     else if (seen) active.sendStatus(status);
   });
+  stopWatching = () => {
+    window.clearInterval(timer);
+    stopEffect();
+  };
 }

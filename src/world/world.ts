@@ -15,6 +15,8 @@ import type { BaseView, Collider, SpotId } from './base';
 import { disposeTree } from './build';
 import { CameraRig } from './cameraRig';
 import { Crew } from './crew';
+import { Friends } from './friends';
+import type { FriendSpec } from './friends';
 import { Daylight } from './daylight';
 import { DustDevils } from './devils';
 import { Engine } from './engine';
@@ -83,6 +85,9 @@ export class World {
   annex!: Annex;
   astronaut!: Astronaut;
   crew!: Crew;
+  /** Crew mode: the friends' astronauts (see src/net). */
+  friends!: Friends;
+  private friendList: readonly FriendSpec[] | null = null;
   lumi!: Lumi;
   eva!: Eva;
   /** The inside of a building, when the cadet is in one. */
@@ -168,6 +173,9 @@ export class World {
     // Fewer crew on slower devices: each cadet is a full model.
     this.crew = new Crew(quality.tier === 'low' ? 0 : quality.tier === 'medium' ? 1 : 2, quality.outlines, height, site === 'moon');
     this.crew.setOutside(this.crewOutside);
+    this.friends = new Friends(quality.outlines, height, site === 'moon');
+    this.crew.extraPoints = () => this.friends.points();
+    this.applyFriends();
     this.lumi = new Lumi(quality.outlines, quality.pointLights);
     this.lumi.setMood(this.mood);
     this.puffs = new Puffs(site);
@@ -209,6 +217,7 @@ export class World {
       this.placer.group,
       this.astronaut.group,
       this.crew.group,
+      this.friends.group,
       this.lumi.group,
       this.eva.group,
       this.puffs.group,
@@ -254,6 +263,7 @@ export class World {
     this.sky.dispose();
     this.astronaut.dispose();
     this.crew.dispose();
+    this.friends.dispose();
     this.lumi.dispose();
     this.eva.dispose();
     this.puffs.dispose();
@@ -829,7 +839,10 @@ export class World {
     this.annex.update(dt, time);
     this.placer.update(time);
     this.puffs.update(dt);
-    if (!this.paused && !this.cine) this.crew.update(dt);
+    if (!this.paused && !this.cine) {
+      this.crew.update(dt);
+      this.friends.update(dt);
+    }
     if (this.devils) {
       // Whirls start only on calm, sunny days: not at night and not in a dust storm.
       this.devils.update(dt, time, this.daylight.night < 0.3 && this.daylight.dust < 0.3);
@@ -888,6 +901,34 @@ export class World {
 
   start(): void {
     this.engine.start();
+  }
+
+  // ----- Crew mode (src/net): friends' astronauts ---------------------------------------------------
+
+  /** The friends to draw (a crew mission), or null for solo play: then the two NPC cadets are back. */
+  setFriends(list: readonly FriendSpec[] | null): void {
+    this.friendList = list;
+    if (this.ready) this.applyFriends();
+  }
+
+  private applyFriends(): void {
+    this.crew.npcs = this.friendList === null;
+    this.friends.sync(this.friendList ?? []);
+  }
+
+  /** A friend's position during a walk (game metres). */
+  setFriendPosition(id: string, position: { x: number; z: number; a: number; m: number }): void {
+    if (this.ready) this.friends.setPosition(id, position);
+  }
+
+  /** Where a friend's name tag belongs on the screen, and how far the friend is from what we look at (the walker, or the outpost), in metres. */
+  friendTag(id: string, out: ScreenPoint & { distance: number }): (ScreenPoint & { distance: number }) | null {
+    if (!this.ready) return null;
+    const head = this.friends.head(id, this.tmp2);
+    if (!head) return null;
+    this.project(head, out);
+    out.distance = Math.hypot(head.x - this.focus.x, head.z - this.focus.z);
+    return out;
   }
 
   dispose(): void {

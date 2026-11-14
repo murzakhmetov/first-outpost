@@ -63,6 +63,9 @@ export class FakeWorld {
   setMood() {}
   setQuality() {}
   setCrewOutside() {}
+  setFriends() {}
+  setFriendPosition() {}
+  friendTag() { return null; }
   setWeather() {}
   dustDevilAcrossPanels() {}
   setMode(mode: string) { this.mode = mode; this.calls.push('setMode:' + mode); }

@@ -614,7 +614,7 @@ export class CrewRoom {
     return true;
   }
 
-  /** Where this player walks (at most 6 times a second). */
+  /** Where this player walks (at most 5 times a second). */
   sendPosition(position: Position): boolean {
     if (this.phase !== 'playing') return false;
     const now = this.now();

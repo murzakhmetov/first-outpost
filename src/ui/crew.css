@@ -534,7 +534,68 @@
   }
 }
 
+/* ----- Name tags and stickers over the friends' heads, and the report's wait ------------- */
+
+.crew-tags {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none !important;
+  z-index: 5;
+}
+
+.crew-tag3d {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  opacity: 0;
+  will-change: transform;
+  transition: opacity 0.2s ease;
+}
+
+.crew-tag3d-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 6px;
+  border-radius: 999px;
+  background: rgba(16, 20, 52, 0.82);
+  border: 1px solid var(--line-strong);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.crew-tag3d-name i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+}
+
+.crew-bubble {
+  padding: 5px 11px;
+  border-radius: 14px;
+  background: #fff;
+  color: #1a1f4d;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  animation: crew-toast-in 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.crew-wait {
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+  color: var(--ink-dim);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .crew-bubble,
   .crew-toast {
     animation: none;
   }

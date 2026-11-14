@@ -14,7 +14,6 @@ import {
   explainTask,
   finishWalk,
   getWorld,
-  goNextWeek,
   recallWalk,
   skipNight,
   skipWalk,
@@ -32,6 +31,7 @@ import { MAX_LEVEL, MODULES } from '../sim/types';
 import type { TaskId } from '../game/films';
 import { Btn, FxChips, Rich, SpeakBtn } from './common';
 import { CrewDock } from './CrewDock';
+import { crewBehind, crewDontWait, crewNextWeek, crewWaiting } from '../net/crew';
 import { DiscoveryBanner, Hud, LumiBubble, Markers, PickupFeed } from './Hud';
 import { Joystick } from './Joystick';
 import { InteractPrompt } from './Prompt';
@@ -963,6 +963,8 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
   const airLimit = weekStart ? Math.min(0, Math.round((record.air - airBefore - airRows) * 10) / 10) : 0;
   const batteryBefore = weekStart?.battery ?? before?.battery ?? record.battery;
   const last = m.week >= m.config.weeks;
+  const waiting = crewWaiting.value;
+  const behind = crewBehind.value;
   const firstHarvest = record.harvested && m.harvests === 1;
   const doseTotal = p.doseGcr + p.doseStorm + p.doseEvent;
   const scienceTotal = record.science - (weekStart ? weekStart.science : before ? before.science : 0);
@@ -1074,9 +1076,20 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
       </ul>
 
       <footer class="card-foot">
-        <Btn kind="primary" iconRight="next" wide autoFocus onClick={goNextWeek}>
-          {t(last ? 'report.finish' : 'report.next')}
-        </Btn>
+        {waiting ? (
+          <>
+            <p class="crew-wait" role="status">
+              {t('crew.waitCrew', { names: behind.map((player) => t(`crew.name.${player.name}`)).join(', ') })}
+            </p>
+            <Btn kind="soft" wide onClick={crewDontWait}>
+              {t('crew.dontWait')}
+            </Btn>
+          </>
+        ) : (
+          <Btn kind="primary" iconRight="next" wide autoFocus onClick={crewNextWeek}>
+            {t(last ? 'report.finish' : 'report.next')}
+          </Btn>
+        )}
       </footer>
     </section>
   );

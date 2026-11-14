@@ -58,6 +58,10 @@ export class Crew {
   private readonly floaty: boolean;
   private outside = true;
   private shown = 1;
+  /** False in a crew mission: the friends' astronauts (world/friends.ts) take the place of the two NPC cadets. */
+  npcs = true;
+  /** More dots for the corner map (the friends). */
+  extraPoints: (() => { x: number; z: number; color: string }[]) | null = null;
 
   constructor(count: number, withOutline: boolean, height: (x: number, z: number) => number, floaty: boolean) {
     this.height = height;
@@ -78,14 +82,15 @@ export class Crew {
 
   /** Where the crew is right now, for the corner map. Empty while they are indoors. */
   points(): { x: number; z: number; color: string }[] {
-    if (this.shown < 0.5) return [];
-    return this.members.map((member) => ({ x: member.x, z: member.z, color: member.color }));
+    const friends = this.extraPoints?.() ?? [];
+    if (this.shown < 0.5 || !this.npcs) return friends;
+    return [...this.members.map((member) => ({ x: member.x, z: member.z, color: member.color })), ...friends];
   }
 
   update(dt: number): void {
     const target = this.outside ? 1 : 0;
     this.shown += (target - this.shown) * Math.min(1, dt * 4);
-    this.group.visible = this.shown > 0.02;
+    this.group.visible = this.shown > 0.02 && this.npcs;
     if (!this.group.visible) return;
 
     for (const member of this.members) {

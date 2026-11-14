@@ -15,7 +15,7 @@ export const crewEn: Record<string, string> = {
   'crew.p3': 'You get a fun crew name, like {name}.',
   'crew.p4': 'Rooms are private. A friend needs your 6-letter room code.',
   'crew.p5': 'Up to 4 players in a room.',
-  'crew.p6': 'Only game numbers travel: week, air, food, radiation, science, and your suit colour.',
+  'crew.p6': 'Only game numbers travel: week, air, food, radiation, science, your suit colour, and where you walk outside.',
   'crew.p7': 'No account. No ads. No tracking. Leave any time: your own game keeps working.',
   'crew.make': 'Make a room',
   'crew.joinTitle': 'Have a code?',
@@ -63,6 +63,12 @@ export const crewEn: Record<string, string> = {
   'crew.stickers': 'Send a sticker',
   'crew.say': '{name}: {icon} {text}',
   'crew.waitStatus': 'No news yet',
+  'crew.doing.plan': 'planning',
+  'crew.doing.outside': 'outside',
+  'crew.doing.report': 'reading the report',
+  'crew.tag': '{name}: {doing}',
+  'crew.waitCrew': 'Waiting for the crew: {names}',
+  'crew.dontWait': "Don't wait",
 
   // ----- Stickers
   'crew.r.great': 'Great',
@@ -123,7 +129,7 @@ export const crewRu: Record<string, string> = {
   'crew.p3': 'Ты получишь весёлое имя экипажа, например «{name}».',
   'crew.p4': 'Комнаты закрытые. Друг входит только по твоему коду из 6 знаков.',
   'crew.p5': 'В комнате до 4 игроков.',
-  'crew.p6': 'По сети идут только числа из игры: неделя, воздух, еда, радиация, наука и цвет скафандра.',
+  'crew.p6': 'По сети идут только числа из игры: неделя, воздух, еда, радиация, наука, цвет скафандра и место, где ты идёшь снаружи.',
   'crew.p7': 'Без аккаунта. Без рекламы. Без слежки. Выйти можно в любой момент: твоя игра работает как раньше.',
   'crew.make': 'Создать комнату',
   'crew.joinTitle': 'Есть код?',
@@ -171,6 +177,12 @@ export const crewRu: Record<string, string> = {
   'crew.stickers': 'Отправить наклейку',
   'crew.say': '{name}: {icon} {text}',
   'crew.waitStatus': 'Пока нет новостей',
+  'crew.doing.plan': 'планирует',
+  'crew.doing.outside': 'снаружи',
+  'crew.doing.report': 'читает отчёт',
+  'crew.tag': '{name}: {doing}',
+  'crew.waitCrew': 'Ждём экипаж: {names}',
+  'crew.dontWait': 'Не ждать',
 
   // ----- Stickers
   'crew.r.great': 'Отлично',

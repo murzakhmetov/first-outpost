@@ -43,7 +43,7 @@ export const MAX_MESSAGE_SIZE = 700;
 /** Sending limits. */
 export const STATUS_MIN_MS = 500;
 export const REACTION_MIN_MS = 1000;
-export const POSITION_MIN_MS = 1000 / 6;
+export const POSITION_MIN_MS = 200; // at most 5 a second
 
 export const STEPS: readonly Step[] = ['briefing', 'event', 'eventResult', 'plan', 'evaIntro', 'eva', 'evaResult', 'night', 'report'];
 const ENDS: readonly EndReason[] = ['complete', 'air', 'food', 'radiation'];
@@ -220,13 +220,13 @@ export interface StartPayload {
   startDate: string;
 }
 
-/** Where a friend is while walking outside (stretch: the "visitor" astronauts). */
+/** Where a friend is while walking outside, in game metres (sent only during a walk). */
 export interface Position {
   x: number;
   z: number;
   /** Heading, radians. */
   a: number;
-  /** Walking speed, 0 to 1. */
+  /** 0 standing, 1 walking, 2 driving the rover. */
   m: number;
 }
 
@@ -290,10 +290,14 @@ export function parseStatus(raw: unknown): Status | null {
 
 function parsePosition(raw: unknown): Position | null {
   if (!isRecord(raw)) return null;
-  const x = amount(raw.x, -500, 500);
-  const z = amount(raw.z, -500, 500);
-  const a = amount(raw.a, -10, 10);
-  const m = amount(raw.m, 0, 1);
+  const fine = (value: unknown, min: number, max: number): number | null => {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max) return null;
+    return Math.round(value * 100) / 100;
+  };
+  const x = fine(raw.x, -500, 500);
+  const z = fine(raw.z, -500, 500);
+  const a = fine(raw.a, -10, 10);
+  const m = int(raw.m, 0, 2);
   if (x === null || z === null || a === null || m === null) return null;
   return { x, z, a, m };
 }

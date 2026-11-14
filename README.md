@@ -13,7 +13,7 @@ A free game for ages 7–12. You command a small outpost on **Mars** or at the *
 - **The Sun in the game is the real Sun.** Every mission replays real dates from NASA's space-weather records (DONKI, 2010–2026). The solar storm of May 2024 arrives in the game on the day it arrived in real life, Mars forecasts show the temperatures Curiosity measured on those dates, and the radio delay to Earth comes from where the planets really were.
 - **Every week is a trade-off.** A few energy cells and four systems that want them: life support, the greenhouse, the lab and the radiation shield. There are never enough. The game shows what each choice did, and the final review says which choice caused what.
 - **Every task is explained: what to do and why.** The opening film lands the crew, then Lumi flies over the outpost and shows each task of a week (forecast, power plan, air, food, lab, shield, walk, events, night). The forecast, the event card, the power plan (and each of its four systems), the walk briefing and the weekly report have a **Why?** button that replays the task's short film and ends on a card: what to do, why it matters, and a true fact with its source. Big moments get their own film: a solar storm, a Mars dust storm, an eclipse seen from the Moon, the week the Sun blocks the radio to Mars, the first harvest, the first new building, the flight home.
-- **Play alone or with friends.** Crew mode is optional: up to four friends fly the very same mission (the same real Sun, the same cards), send preset stickers and compare their crews at the end. No chat, no typed names, no account.
+- **Play alone or with friends.** Crew mode is optional: up to four friends fly the very same mission (the same real Sun, the same cards), see each other's astronauts walk around the outpost (with a preset name tag), send preset stickers, wait for each other at the weekly report and compare their crews at the end. No chat, no typed names, no account.
 - **Made for 7–12.** Short sentences, science words that explain themselves on tap, recorded voices for the films and Lumi, read-aloud, three text sizes, colour-blind patterns, phone or computer. Lumi, the helper robot, speaks from rules and lines written for the game, not from an AI chatbot: it only says what the team wrote and checked. Its voice is synthetic speech reading those same lines.
 
 **For teachers:** [learning goals, a 40-minute lesson and questions for the class](docs/TEACHERS.md).
@@ -73,7 +73,7 @@ The finished site is in `dist/`. It is plain files: put them on any web host.
 6. **Weeks 3 and 4.** NASA's model shows a fast solar eruption heading for Mars (the card links to its DONKI record), and the next week brings the 20 May storm that Curiosity really measured. Shelter and lose work time, or keep working and take the dose?
 7. **Creative mode.** Back at the start, choose **Mode → Creative**: put buildings and decorations wherever you like (a see-through copy shows where; R turns it), and explore every room.
 8. **Finish.** The review shows a chart of the whole mission and says, in plain words, which choice caused what.
-9. **Play with friends.** On the title screen, **Play with friends → Make a room** gives a 6-letter code; a friend joins with it, everyone presses Ready, and the host starts. In the game, **Friends** shows each friend's week, air, food, radiation and science, and the review compares the crews. To try it on one computer, open two tabs at `/?crew=local` (they talk inside the browser, no internet needed).
+9. **Play with friends.** On the title screen, **Play with friends → Make a room** gives a 6-letter code; a friend joins with it, everyone presses Ready, and the host starts. In the game, **Friends** shows each friend's week, air, food, radiation and science; your friends' astronauts stand at the outpost (in their suit colours, with a name tag and a dot on the round map) and walk where the friend walks; a sticker pops up over a friend's head; **Next week** waits for friends who are still behind (**Don't wait** skips it); and the review compares the crews. To try it on one computer, open two tabs at `/?crew=local` (they talk inside the browser, no internet needed).
 
 ## How it teaches
 
@@ -89,7 +89,7 @@ The finished site is in `dist/`. It is plain files: put them on any web host.
 
 **Inside the buildings.** Every building except the solar array can be entered, in 3D: the living module, the greenhouse, the lab, the lander that brought the crew down, and the new buildings once they stand. The cadet walks around inside, Lumi floats along, and glowing rings mark what can be used: five small games that help the outpost once a week (connect the air pipes, care for the plants, find the elements in a rock's light, land the lander on its pad in real Mars or Moon gravity, and beam science data to Earth in time with the radio), the workshop's printer, and machines that tell a true story (the water recycler: 98% of the Space Station's water comes back). Each game shows its three star goals first, gets harder as the mission goes on, and ends with a true fact; a lost game can be tried again at once. The radio game shows how long the data really takes to reach Earth that week: about 1.3 seconds from the Moon, 3 to 22 minutes from Mars.
 
-Two more cadets work around the outpost. They go indoors at night and whenever the Sun is dangerous, as a real crew would.
+Two more cadets work around the outpost. They go indoors at night and whenever the Sun is dangerous, as a real crew would. In a crew mission your friends' astronauts take their place.
 
 The helper robot **Lumi** reads the plan and says the most useful thing about it ("With this plan the air drops by 11"). Lumi's "safe plan" keeps the crew alive but earns little science, so players must learn to adjust it.
 
@@ -135,6 +135,7 @@ Full list, links, numbers and what was simplified: **[docs/NASA_DATA.md](docs/NA
   - the films (every line and card exists in both languages on both worlds, a task film plays once and leaves its step as it was, Lumi's line comes back after a film, the ending film leads to the review, a skipped night);
   - the voice tools (the credit budget, the order of lines, the file cache, that the key is never written anywhere) and the voice player's fallbacks;
   - crew mode on an in-memory network: rooms, seats, the host's start, status and stickers, throttles, malformed, oversized and forged messages, a host who leaves, a lost connection, and that the same seed gives every friend exactly the same mission.
+  - live crew avatars: smoothing, stale friends, base slots, position sending (5 a second, only when changed, keepalive), who the next week waits for, positions through a room.
 
 ```
 src/sim      mission rules, events, real-data reducers, planet geometry (no graphics)
