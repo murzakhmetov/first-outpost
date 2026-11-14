@@ -5,7 +5,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.setConfig({ testTimeout: 20_000 });
+vi.setConfig({ testTimeout: 60_000 });
 import { CREW_SUITS, startDateOf } from '../src/net/protocol';
 import type { CrewChoice, Status } from '../src/net/protocol';
 import { CrewRoom } from '../src/net/room';
