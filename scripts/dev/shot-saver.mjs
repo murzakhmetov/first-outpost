@@ -1,6 +1,6 @@
 // Dev helper: receives PNG or JPEG pictures from the browser (window.gfxlab.shot) and saves them as files.
 // Usage: node scripts/dev/shot-saver.mjs [folder] [port]
-// Then POST the PNG bytes to http://localhost:5199/save?name=<name> (any origin is allowed).
+// Then POST the PNG bytes to http://localhost:5199/save?name=<name> (only pages on localhost or 127.0.0.1 are allowed; the server listens on 127.0.0.1 only).
 import { createServer } from 'node:http';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -10,15 +10,33 @@ const folder = resolve(process.argv[2] || DEFAULT_FOLDER);
 const port = Number(process.argv[3] || 5199);
 mkdirSync(folder, { recursive: true });
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
+const MAX_BYTES = 24 * 1024 * 1024;
+
+const BASE_CORS = {
+  Vary: 'Origin',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
   'Access-Control-Allow-Headers': '*',
   'Access-Control-Allow-Private-Network': 'true',
   'Access-Control-Max-Age': '600',
 };
 
+// Only pages served from this machine may talk to the saver (the browser also sends Origin on POST).
+function localOrigin(origin) {
+  try {
+    const host = new URL(origin).hostname;
+    return host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
+  } catch {
+    return false;
+  }
+}
+
 createServer((req, res) => {
+  const origin = req.headers.origin;
+  if (origin && !localOrigin(origin)) {
+    res.writeHead(403).end('local pages only');
+    return;
+  }
+  const CORS = { ...BASE_CORS, 'Access-Control-Allow-Origin': origin || 'http://localhost' };
   const url = new URL(req.url || '/', `http://localhost:${port}`);
   if (req.method === 'OPTIONS') {
     res.writeHead(204, CORS).end();
@@ -38,8 +56,18 @@ createServer((req, res) => {
     return;
   }
   const chunks = [];
-  req.on('data', (chunk) => chunks.push(chunk));
+  let size = 0;
+  let tooBig = false;
+  req.on('data', (chunk) => {
+    size += chunk.length;
+    if (size > MAX_BYTES) tooBig = true;
+    else chunks.push(chunk);
+  });
   req.on('end', () => {
+    if (tooBig) {
+      res.writeHead(413, CORS).end('too large');
+      return;
+    }
     try {
       const body = Buffer.concat(chunks);
       const png = body.length > 8 && body.readUInt32BE(0) === 0x89504e47;
@@ -57,4 +85,4 @@ createServer((req, res) => {
       res.writeHead(500, CORS).end(`error: ${String(error)}`);
     }
   });
-}).listen(port, () => console.log(`shot saver on http://localhost:${port}, folder ${folder}`));
+}).listen(port, '127.0.0.1', () => console.log(`shot saver on http://localhost:${port}, folder ${folder}`));

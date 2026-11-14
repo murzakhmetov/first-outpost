@@ -55,7 +55,7 @@ export interface QualityOptions {
   skyFancy: boolean;
   /** Fine relief on the ground: grain and an irregular light/shadow edge near the camera. */
   groundDetail: boolean;
-  /** FXAA on the finished picture (one extra full-screen pass and one 8-bit image). */
+  /** FXAA on the finished picture (one extra full-screen pass and one half-float image). */
   fxaa: boolean;
   /** Small stones scattered on bare ground (instances; 0 = none). */
   scatter: number;

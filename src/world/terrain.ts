@@ -332,6 +332,7 @@ export function buildTerrain(
     info,
     dispose() {
       geometry.dispose();
+      material.dispose();
       mountains.traverse((child) => {
         const m = child as THREE.Mesh;
         if (m.isMesh) {

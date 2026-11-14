@@ -242,11 +242,20 @@ void main() {
   float c = dot(dir, uSunDir);
   float g = 0.55;
   float phase = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * c, 1.5);
-  // Shadowed ground gets less haze than sunlit ground (its air column is the same, but the glow would lift
-  // the shadow and flatten the contrast); sky pixels are not dimmed.
-  float reach = d >= 0.99999 ? 1.0 : sunReach(target - dir * 0.3);
-  float amount = sum * stepLen * (1.0 / 100.0) * uDensity * (0.1 + 0.2 * phase) * mix(0.2, 1.0, reach * reach);
-  gl_FragColor = vec4(vec3(clamp(1.0 - exp(-amount), 0.0, 1.0)), 1.0);
+  // Shadowed ground gets less haze than sunlit ground (same air column, but the glow would lift the shadow and
+  // flatten the contrast); sky pixels are not dimmed. Four taps in shadow space soften the texel stairs.
+  float reach = 1.0;
+  if (d < 0.99999) {
+    vec3 q = target - dir * 0.3;
+    vec3 side = normalize(cross(dir, vec3(0.0, 1.0, 0.0)) + vec3(1e-4, 0.0, 0.0)) * 0.5;
+    reach = 0.25 * (sunReach(q + side) + sunReach(q - side) + sunReach(q + vec3(0.0, 0.5, 0.0)) + sunReach(q - vec3(0.0, 0.5, 0.0)));
+  }
+  // Optical depth along the ray, saturating softly; the haze stays a veil (never above about 0.22), so a far lit
+  // mesa gets a light warm lift and keeps its own colour instead of turning white.
+  float optical = sum * stepLen * uDensity * 0.004;
+  float phaseK = 0.35 + 0.65 * min(phase / 8.0, 1.0);
+  float amount = 0.45 * (1.0 - exp(-optical)) * phaseK * mix(0.3, 1.0, reach);
+  gl_FragColor = vec4(vec3(clamp(amount, 0.0, 1.0)), 1.0);
 }`;
 
 // Where the film camera focuses: the depth at the middle of the picture, followed slowly.

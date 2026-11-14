@@ -31,6 +31,12 @@ export const GLOBALS = {
       return flag('G8') ? 1 : 0;
     },
   },
+  /** Ground micro-relief (dev switch G2): 1 in production. Only read by the `ground-relief` program. */
+  relief: {
+    get value(): number {
+      return flag('G2') ? 1 : 0;
+    },
+  },
   /** Ambient colour of up-facing, down-facing and side-facing surfaces (neutral until a Daylight or room fills them). */
   ambSky: { value: new THREE.Color(0, 0, 0) },
   ambGround: { value: new THREE.Color(0, 0, 0) },
@@ -511,7 +517,7 @@ const GROUND_RELIEF = /* glsl */ `
   float reliefFade = 1.0 - smoothstep( 25.0, 110.0, reliefDist );
   // Flat-on views (grazing) would sparkle: scale the effect down towards the horizon.
   float reliefGraze = smoothstep( 0.1, 0.45, abs( dot( normal, vViewPosition ) ) / max( reliefDist, 0.001 ) );
-  float reliefAmount = reliefFade * reliefGraze;
+  float reliefAmount = reliefFade * reliefGraze * uReliefOn;
   if ( reliefAmount > 0.001 ) {
     // Two octaves of the ground noise (about 1.5 and 6 cycles per metre) read as a small height field.
     vec3 n1 = gNoiseD( vWorldPos.xz * 1.5 + 3.7 );
@@ -533,6 +539,7 @@ const GROUND_RELIEF = /* glsl */ `
 const GROUND_BOUNCE_PARS = /* glsl */ `
 #ifdef USE_RELIEF
 uniform float uAnime;
+uniform float uReliefOn;
 ${BOUNCE_UNIFORMS}
 ${BOUNCE_DELTA}
 #endif`;
@@ -568,6 +575,7 @@ export function ground(options: {
       .replace('#include <color_fragment>', GROUND_COLOR);
     if (options.relief) {
       shader.uniforms.uAnime = GLOBALS.anime;
+      shader.uniforms.uReliefOn = GLOBALS.relief;
       shader.uniforms.uBounce = GLOBALS.bounce;
       shader.uniforms.uAmbSky = GLOBALS.ambSky;
       shader.uniforms.uAmbGround = GLOBALS.ambGround;
