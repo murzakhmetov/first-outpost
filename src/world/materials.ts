@@ -37,6 +37,12 @@ export const GLOBALS = {
       return flag('G2') ? 1 : 0;
     },
   },
+  /** Ground macro variation and rock top light (dev switch G12): 1 in production. Also multiplied by `anime` for rocks. */
+  macro: {
+    get value(): number {
+      return flag('G12') ? 1 : 0;
+    },
+  },
   /** Ambient colour of up-facing, down-facing and side-facing surfaces (neutral until a Daylight or room fills them). */
   ambSky: { value: new THREE.Color(0, 0, 0) },
   ambGround: { value: new THREE.Color(0, 0, 0) },
@@ -95,9 +101,24 @@ export interface ToonOptions {
   lift?: number;
   /** A small hard glint of the Sun on high and ultra (suits). */
   glint?: number;
+  /** High and ultra: soft top light and a thin sun-side rim on large rocks (own shader program, dev switch G12). */
+  rockLight?: boolean;
 }
 
 const toonCache = new Map<string, THREE.MeshToonMaterial>();
+
+/** G12: rocks get a soft gradient from a lit top to a darker underside, and a thin warm rim on the sun side. Zero when uAnime or the switch is 0. */
+const ROCK_LIGHT = /* glsl */ `
+{
+  float rk = uAnime * uMacro;
+  vec3 rockUp = normalize( ( vec4( normal, 0.0 ) * viewMatrix ).xyz );
+  float top = smoothstep( -0.2, 0.95, rockUp.y );
+  vec3 viewDirR = normalize( vViewPosition );
+  float edge = 1.0 - saturate( dot( viewDirR, normal ) );
+  float sunFace = smoothstep( 0.1, 0.65, dot( normal, uSunDirView ) );
+  outgoingLight *= 1.0 + rk * ( top - 0.45 ) * 0.5;
+  outgoingLight += mix( uRimColor, vec3( 1.0, 0.8, 0.55 ) * length( uRimColor ) * 0.6, 0.5 ) * smoothstep( 0.62, 0.86, edge ) * sunFace * rk * 0.5;
+}`;
 
 export function toon(options: ToonOptions): THREE.MeshToonMaterial {
   const key = JSON.stringify({ ...options, map: options.map?.uuid ?? null });
@@ -125,6 +146,7 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
   const dusty = !!options.dusty;
   const lift = options.lift ?? 0;
   const glint = options.glint ?? 0;
+  const rockLight = !!options.rockLight;
 
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uBand = { value: new THREE.Vector2(bandEdge, bandSoft) };
@@ -143,11 +165,13 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
     shader.uniforms.uAmbGround = GLOBALS.ambGround;
     shader.uniforms.uAmbSide = GLOBALS.ambSide;
     shader.uniforms.uShadowTint = GLOBALS.shadowTint;
+    if (rockLight) shader.uniforms.uMacro = GLOBALS.macro;
 
     shader.fragmentShader = shader.fragmentShader
       .replace(
         '#include <gradientmap_pars_fragment>',
         /* glsl */ `
+        ${rockLight ? 'uniform float uMacro;' : ''}
         uniform vec2 uBand;
         uniform vec2 uRim;
         uniform float uSpec;
@@ -207,10 +231,11 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
             outgoingLight += uRimColor * highlight * shine;
           }
         }
+        ${rockLight ? ROCK_LIGHT : ''}
         #include <opaque_fragment>`,
       );
   };
-  material.customProgramCacheKey = () => `toon-${dusty ? 'd' : 'c'}`;
+  material.customProgramCacheKey = () => `toon-${dusty ? 'd' : 'c'}${rockLight ? 'r' : ''}`;
   toonCache.set(key, material);
   return material;
 }
@@ -461,6 +486,23 @@ float gNoise( vec2 p ) {
 float gFbm( vec2 p ) {
   return 0.5 * gNoise( p ) + 0.3 * gNoise( p * 2.1 + 7.0 ) + 0.2 * gNoise( p * 4.3 + 13.0 );
 }
+#ifdef USE_RELIEF
+// G12: macro variation. The sampling position is bent by two slow noises (up to about 4 m), so no row of blobs or ripples repeats in a straight line.
+uniform float uMacroOn;
+uniform vec3 uPatchA;
+uniform vec3 uPatchB;
+uniform vec3 uPatchC;
+#define G_MAC uMacroOn
+// Two octaves are enough for the slow patch noises (a third costs three more texture-free hashes per pixel on a wide ground).
+float gMac( vec2 p ) { return 0.62 * gNoise( p ) + 0.38 * gNoise( p * 2.3 + 7.0 ); }
+vec2 gWarp( vec2 p ) {
+  return vec2( gNoise( p * 0.11 + 31.0 ) - 0.5, gNoise( p * 0.11 + 57.0 ) - 0.5 ) * 8.0
+       + vec2( gNoise( p * 0.22 + 3.0 ) - 0.5 ) * 0.45;
+}
+#else
+#define G_MAC 0.0
+vec2 gWarp( vec2 p ) { return vec2( 0.0 ); }
+#endif
 vec3 getGradientIrradiance( vec3 normal, vec3 lightDirection ) {
   float dotNL = dot( normal, lightDirection );
   // A little wobble makes the shadow edge look painted by hand.
@@ -472,6 +514,42 @@ vec3 getGradientIrradiance( vec3 normal, vec3 lightDirection ) {
 
 const GROUND_COLOR = /* glsl */ `
 #include <color_fragment>
+#ifdef USE_RELIEF
+{
+  float viewDist = length( vViewPosition );
+  float near = 1.0 - smoothstep( 35.0, 130.0, viewDist );
+  float mac = G_MAC;
+  vec2 wp = vWorldPos.xz + gWarp( vWorldPos.xz ) * mac;
+  // Blobs and ripples seen flat-on to the ground squash into dashes: fade them out towards a grazing view (G12 only).
+  float flatOn = mix( 1.0, smoothstep( 0.14, 0.6, abs( dot( normalize( vNormal ), normalize( vViewPosition ) ) ) ), mac );
+  float patches = gFbm( vWorldPos.xz * 0.1 );
+  diffuseColor.rgb *= 0.82 + 0.36 * patches;
+  if ( mac > 0.0 ) {
+    // Painted colour patches from three slow noises: flat shapes with soft edges, as an artist would blot them in.
+    float big = gMac( wp * 0.011 + 21.0 );
+    float mid = gMac( wp * 0.028 + 5.0 );
+    float low = gMac( wp * 0.07 + 44.0 );
+    diffuseColor.rgb *= 1.0 + ( big - 0.5 ) * 0.2 + ( mid - 0.5 ) * 0.12;
+    diffuseColor.rgb = mix( diffuseColor.rgb, uPatchA, smoothstep( 0.56, 0.6, mid ) * 0.17 );
+    diffuseColor.rgb = mix( diffuseColor.rgb, uPatchB, smoothstep( 0.57, 0.61, big ) * 0.15 );
+    diffuseColor.rgb = mix( diffuseColor.rgb, uPatchC, smoothstep( 0.6, 0.64, low ) * smoothstep( 0.45, 0.55, mid ) * 0.14 );
+  }
+  // Long soft strokes, as if the ground were brushed on: drifts of lighter soil lying with the wind.
+  vec2 strokeAt = mix( vec2( vWorldPos.x * 0.045 + vWorldPos.z * 0.02, vWorldPos.z * 0.2 - vWorldPos.x * 0.05 ), wp * vec2( 0.05, 0.06 ) + 9.0, mac );
+  float stroke = gFbm( strokeAt );
+  diffuseColor.rgb = mix( diffuseColor.rgb, uLight, smoothstep( 0.5, 0.78, stroke ) * mix( 0.26, 0.12, mac ) );
+  float fine = gNoise( wp * 2.6 );
+  diffuseColor.rgb = mix( diffuseColor.rgb, uLight, smoothstep( 0.6, 0.95, fine ) * mix( 0.16, 0.09, mac ) * near * flatOn );
+  float pebbles = gNoise( wp * 10.0 );
+  diffuseColor.rgb = mix( diffuseColor.rgb, uSpeck, smoothstep( 0.84, 0.95, pebbles ) * 0.3 * near * flatOn );
+  if ( uRipple > 0.0 ) {
+    // Wind ripples in the sand.
+    float wave = sin( dot( wp, vec2( 0.82, 0.57 ) ) * 5.0 + gNoise( wp * 0.5 ) * 9.0 );
+    float rippleOn = mix( 1.0, 0.35 + 0.65 * smoothstep( 0.25, 0.65, gNoise( wp * 0.17 + 71.0 ) ), mac );
+    diffuseColor.rgb *= 1.0 + 0.09 * smoothstep( 0.5, 1.0, wave ) * near * smoothstep( 0.35, 0.7, patches ) * rippleOn;
+  }
+}
+#else
 {
   float viewDist = length( vViewPosition );
   float near = 1.0 - smoothstep( 35.0, 130.0, viewDist );
@@ -489,7 +567,8 @@ const GROUND_COLOR = /* glsl */ `
     float wave = sin( dot( vWorldPos.xz, vec2( 0.82, 0.57 ) ) * 5.0 + gNoise( vWorldPos.xz * 0.5 ) * 9.0 );
     diffuseColor.rgb *= 1.0 + 0.09 * smoothstep( 0.5, 1.0, wave ) * near * smoothstep( 0.35, 0.7, patches );
   }
-}`;
+}
+#endif`;
 
 
 // ---- Ground micro-relief (high and ultra only; compiled in by USE_RELIEF) ----
@@ -527,8 +606,9 @@ const GROUND_RELIEF = /* glsl */ `
     if ( uRipple > 0.0 ) {
       // The wind ripples of the colour term, as a small ridge too.
       vec2 rippleDir = vec2( 0.82, 0.57 );
-      float ripplePhase = dot( vWorldPos.xz, rippleDir ) * 5.0 + gNoise( vWorldPos.xz * 0.5 ) * 9.0;
-      float rippleMask = smoothstep( 0.35, 0.7, gFbm( vWorldPos.xz * 0.1 ) );
+      vec2 rp = vWorldPos.xz + gWarp( vWorldPos.xz ) * uMacroOn;
+      float ripplePhase = dot( rp, rippleDir ) * 5.0 + gNoise( rp * 0.5 ) * 9.0;
+      float rippleMask = smoothstep( 0.35, 0.7, gFbm( vWorldPos.xz * 0.1 ) ) * mix( 1.0, 0.35 + 0.65 * smoothstep( 0.25, 0.65, gNoise( rp * 0.17 + 71.0 ) ), uMacroOn );
       slope += rippleDir * ( cos( ripplePhase ) * 5.0 * 0.014 * rippleMask );
     }
     vec3 worldTilt = vec3( -slope.x, 0.0, -slope.y ) * reliefAmount;
@@ -561,6 +641,8 @@ export function ground(options: {
   ripples: boolean;
   /** High and ultra: fine normal relief near the camera (own shader program). */
   relief?: boolean;
+  /** Three painted patch colours of the macro variation (G12; high and ultra). */
+  patches?: [THREE.ColorRepresentation, THREE.ColorRepresentation, THREE.ColorRepresentation];
 }): THREE.MeshToonMaterial {
   const material = new THREE.MeshToonMaterial({ color: 0xffffff, vertexColors: true });
   material.onBeforeCompile = (shader) => {
@@ -577,6 +659,11 @@ export function ground(options: {
     if (options.relief) {
       shader.uniforms.uAnime = GLOBALS.anime;
       shader.uniforms.uReliefOn = GLOBALS.relief;
+      shader.uniforms.uMacroOn = GLOBALS.macro;
+      const patchColors = options.patches ?? ['#d19a52', '#e3b693', '#a4563a'];
+      shader.uniforms.uPatchA = { value: new THREE.Color(patchColors[0]) };
+      shader.uniforms.uPatchB = { value: new THREE.Color(patchColors[1]) };
+      shader.uniforms.uPatchC = { value: new THREE.Color(patchColors[2]) };
       shader.uniforms.uBounce = GLOBALS.bounce;
       shader.uniforms.uAmbSky = GLOBALS.ambSky;
       shader.uniforms.uAmbGround = GLOBALS.ambGround;

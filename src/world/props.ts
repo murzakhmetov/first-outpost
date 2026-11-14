@@ -47,7 +47,8 @@ export class Props {
     this.site = site;
     this.group.name = 'props';
     this.buildBlobs(softShadows);
-    this.buildRocks(height, rockFactor);
+    // High and ultra (the tiers with pebbles) also get the rock top light of G12.
+    this.buildRocks(height, rockFactor, scatter > 0);
     if (scatter > 0) this.buildPebbles(height, scatter);
     this.buildPathLights();
     this.buildLander();
@@ -102,7 +103,7 @@ export class Props {
     this.group.add(mesh);
   }
 
-  private buildRocks(height: (x: number, z: number) => number, factor: number): void {
+  private buildRocks(height: (x: number, z: number) => number, factor: number, rockLight: boolean): void {
     const random = mulberry32(this.site === 'mars' ? 8801 : 8802);
     const mars = this.site === 'mars';
     const palette = mars ? ['#7a4634', '#99583a', '#5c3a34', '#b0704a'] : ['#7d808a', '#9a9da6', '#5d6069', '#b4b7bf'];
@@ -112,7 +113,7 @@ export class Props {
 
     const total = Math.round(330 * factor);
     const perShape = Math.ceil(total / shapes.length);
-    const material = this.keep(toon({ color: '#ffffff', rim: 0.26, bandSoft: 0.05, vertexColors: true }));
+    const material = this.keep(toon({ color: '#ffffff', rim: 0.26, bandSoft: 0.05, vertexColors: true, rockLight }));
     this.rockMaterial = material;
     const matrix = new THREE.Matrix4();
     const quaternion = new THREE.Quaternion();

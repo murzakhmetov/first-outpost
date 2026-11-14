@@ -306,8 +306,8 @@ export function buildTerrain(
 
   const material = ground({
     ...(mars
-      ? { speck: '#56322a', light: '#f3c892', bandEdge: 0.02, bandSoft: 0.16, ripples: true }
-      : { speck: '#34373f', light: '#e6e8ee', bandEdge: 0.075, bandSoft: 0.06, ripples: false }),
+      ? { speck: '#56322a', light: '#f3c892', bandEdge: 0.02, bandSoft: 0.16, ripples: true, patches: ['#d19a52', '#e3b693', '#a4563a'] }
+      : { speck: '#34373f', light: '#e6e8ee', bandEdge: 0.075, bandSoft: 0.06, ripples: false, patches: ['#a39c88', '#aeb2bd', '#50535d'] }),
     relief: groundDetail,
   });
   const mesh = new THREE.Mesh(geometry, material);
