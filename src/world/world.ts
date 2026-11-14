@@ -193,6 +193,7 @@ export class World {
       shadowRadius: quality.shadowRadius,
       pointLights: quality.pointLights,
       outlines: quality.outlines,
+      roomLight: quality.interiorLight,
       suit: () => this.suitColor,
     });
     if (inside) Object.assign(this.interior, inside);

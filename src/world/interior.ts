@@ -28,6 +28,7 @@ import { flag } from './devflags';
 import { emblemTexture } from './textures';
 import { hasModel, modelPart } from './models';
 import type { PostFX } from './post';
+import { RoomLight } from './interiorLight';
 
 export type StationKind = 'exit' | 'game' | 'printer' | 'look';
 
@@ -1638,6 +1639,9 @@ export class Interior {
   private saved: RigState | null = null;
   private key: THREE.DirectionalLight | null = null;
   private readonly materials: THREE.Material[] = [];
+  /** G13: fake light (pools, gradient, shafts, contact shadows), high and ultra only. */
+  private fx: RoomLight | null = null;
+  private readonly wallMeshes: THREE.Mesh[] = [];
   private paints: Paints | null = null;
   private globe: THREE.Mesh | null = null;
   private mates: { figure: Astronaut; x: number; z: number; rot: number; heading: number; waved: number; mode: Emote }[] = [];
@@ -1647,7 +1651,7 @@ export class Interior {
     private readonly astronaut: Astronaut,
     private readonly lumi: Lumi,
     private readonly rig: CameraRig,
-    private readonly options: { shadows: boolean; shadowSize: number; shadowRadius?: number; pointLights: boolean; outlines: boolean; suit?: () => string },
+    private readonly options: { shadows: boolean; shadowSize: number; shadowRadius?: number; pointLights: boolean; outlines: boolean; roomLight?: boolean; suit?: () => string },
   ) {
     this.scene.add(this.root);
     this.scene.name = 'interior';
@@ -1669,6 +1673,7 @@ export class Interior {
     this.buildStations(plan, look.done);
     this.buildLights(plan);
     this.buildDecor(plan);
+    if (this.options.roomLight) this.buildRoomLight(plan);
     // Crewmates, each in a suit colour that is not the cadet's.
     const mine = this.options.suit?.() ?? '';
     const colours = SUIT_COLORS.filter((colour) => colour !== mine);
@@ -1833,6 +1838,10 @@ export class Interior {
     post.grade.bloom = grade.bloom;
     post.grade.vignette = grade.vignette;
     post.specks = 0;
+    if (this.fx) {
+      this.fx.group.visible = flag('G13');
+      this.fx.setCadet(this.position.x, this.position.y, this.position.z);
+    }
   }
 
   /** Where the cadet stands in the room (for tests). */
@@ -2065,6 +2074,7 @@ export class Interior {
       const wallMesh = new THREE.Mesh(wallGeo, wallInside);
       wallMesh.receiveShadow = true;
       group.add(wallMesh);
+      this.wallMeshes.push(wallMesh);
       if (shell.roof === 'glass') {
         const cap = new THREE.SphereGeometry(shell.r - 0.02, 64, 14, 0, Math.PI * 2, 0, cut);
         cap.scale(1, scaleY, 1);
@@ -2131,6 +2141,7 @@ export class Interior {
       const wallMesh = new THREE.Mesh(surface, wallToon);
       wallMesh.receiveShadow = true;
       group.add(wallMesh);
+      this.wallMeshes.push(wallMesh);
       if (hall.roof === 'glass') {
         // Glass panels between the ribs: the roof shows the sky.
         const roofProfile = profile.filter((point) => point.y >= hall.wall + hall.rise * 0.35);
@@ -2148,6 +2159,7 @@ export class Interior {
         if (end === 1) capMesh.rotation.y = Math.PI;
         capMesh.receiveShadow = true;
         group.add(capMesh);
+        this.wallMeshes.push(capMesh);
       }
       // Ribs across, skirting along the floor.
       const ribKit = new Kit();
@@ -2413,6 +2425,58 @@ export class Interior {
     }
   }
 
+  /** G13: floor pools under the lamps, wall gradient, window shafts and contact shadows. */
+  private buildRoomLight(plan: Plan): void {
+    const shell = plan.shell;
+    const tone = plan.tone;
+    const height = shell.kind === 'dome' ? shell.h : shell.wall + shell.rise;
+    const lampAt = (x: number, z: number): string => {
+      let best = tone.lamps[0]?.color ?? tone.key;
+      let near = Infinity;
+      for (const lamp of tone.lamps) {
+        const d = Math.hypot(lamp.x - x, lamp.z - z);
+        if (lamp.y > 2.4 && d < near) {
+          near = d;
+          best = lamp.color;
+        }
+      }
+      return best;
+    };
+    // One pool under every ceiling light, and under any high lamp that has none close by.
+    const pools: { x: number; z: number; r: number; color: string }[] = [];
+    for (const prop of plan.props) if (prop.name === 'ceiling_light') pools.push({ x: prop.x, z: prop.z, r: 3.2, color: lampAt(prop.x, prop.z) });
+    for (const lamp of tone.lamps) {
+      if (lamp.y <= 2.4 || pools.some((pool) => Math.hypot(pool.x - lamp.x, pool.z - lamp.z) < 1.4)) continue;
+      pools.push({ x: lamp.x, z: lamp.z, r: Math.min(3.2, 1.6 + lamp.reach * 0.12), color: lamp.color });
+    }
+    const windows = plan.windows.map((window) => ({
+      ...window,
+      out:
+        shell.kind === 'dome'
+          ? new THREE.Vector3(window.x / shell.r ** 2, window.y / shell.h ** 2, window.z / shell.r ** 2).normalize()
+          : new THREE.Vector3(0, 0, window.z < 0 ? -1 : 1),
+    }));
+    const props = plan.props.flatMap((placed) => {
+      const size = SIZE[placed.name];
+      if (!size || size.free || placed.y) return [];
+      return [{ x: placed.x, z: placed.z, rot: placed.rot, w: size.w, d: size.d, h: size.h, round: !!size.round }];
+    });
+    this.fx = new RoomLight({
+      height,
+      daylight: this.site === 'mars' ? '#ffc58a' : '#cfe0ff',
+      pools,
+      windows,
+      walls: this.wallMeshes,
+      props,
+      mates: (plan.mates ?? []).map((mate) => ({ x: mate.x, z: mate.z })),
+      wallDark: mix(tone.dark, '#3a2420', 0.6),
+      wallWarm: mix(tone.key, '#ffb070', 0.5),
+      shadow: mix(tone.dark, '#6a5a78', 0.55),
+    });
+    for (const material of this.fx.materials) this.own(material);
+    this.root.add(this.fx.group);
+  }
+
   private clearRoom(): void {
     for (const child of [...this.root.children]) {
       const light = child as THREE.Light;
@@ -2432,6 +2496,8 @@ export class Interior {
     this.materials.length = 0;
     this.stations = [];
     this.colliders = [];
+    this.fx = null;
+    this.wallMeshes.length = 0;
     this.plan = null;
     this.key = null;
     this.near = null;

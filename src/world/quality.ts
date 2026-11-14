@@ -59,6 +59,8 @@ export interface QualityOptions {
   fxaa: boolean;
   /** Small stones scattered on bare ground (instances; 0 = none). */
   scatter: number;
+  /** Rooms: floor light pools, wall gradient, window shafts and contact shadows (G13). */
+  interiorLight: boolean;
 }
 
 export const QUALITY: Record<QualityTier, QualityOptions> = {
@@ -91,6 +93,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     groundDetail: false,
     fxaa: false,
     scatter: 0,
+    interiorLight: false,
   },
   medium: {
     tier: 'medium',
@@ -121,6 +124,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     groundDetail: false,
     fxaa: false,
     scatter: 0,
+    interiorLight: false,
   },
   high: {
     tier: 'high',
@@ -151,6 +155,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     groundDetail: true,
     fxaa: true,
     scatter: 2000,
+    interiorLight: true,
   },
   ultra: {
     tier: 'ultra',
@@ -181,6 +186,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     groundDetail: true,
     fxaa: true,
     scatter: 6000,
+    interiorLight: true,
   },
 };
 

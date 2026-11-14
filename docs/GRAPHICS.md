@@ -27,6 +27,7 @@ the vignette stronger on every tier.
 | Ground micro-relief (`groundDetail`, G2) | no | no | yes | yes |
 | Pebble scatter (`scatter`, G5) | no | no | 2000 | 6000 |
 | Painted sky (G6), contact-shadow upsample (G7) | no | no | yes | yes |
+| Room light (G13: floor pools, wall gradient, window shafts, contact shadows) | no | no | yes | yes |
 | Models | `_low` | `_low` | full | full |
 | Dynamic resolution | yes | yes | yes | yes |
 
