@@ -5,6 +5,7 @@
  * a bright rim on the sunny side, and dark outlines on characters.
  */
 import * as THREE from 'three';
+import { flag } from './devflags';
 import { outlineGeometry } from './models';
 
 /** Values shared by every material, updated once per frame. */
@@ -24,6 +25,12 @@ export const GLOBALS = {
   anime: { value: 0 },
   /** Bounce light (dev switch G3): 1 in production. The effect is also multiplied by `anime`. */
   bounce: { value: 1 },
+  /** Window reflection streaks on glass and visors (dev switch G8): 1 in production. The effect is also multiplied by `anime`. */
+  streak: {
+    get value(): number {
+      return flag('G8') ? 1 : 0;
+    },
+  },
   /** Ambient colour of up-facing, down-facing and side-facing surfaces (neutral until a Daylight or room fills them). */
   ambSky: { value: new THREE.Color(0, 0, 0) },
   ambGround: { value: new THREE.Color(0, 0, 0) },
@@ -282,6 +289,29 @@ export function outlineMaterial(color: THREE.ColorRepresentation = 0x2a2140, wid
   });
 }
 
+/**
+ * The classic anime window reflection: one broad and one thin crisp white strip, placed from the view-space normal and the
+ * Sun's direction in camera space, so they slide when the camera orbits and sit on the Sun side. Soft ends, sharp long edges.
+ * Returns strip and halo, 0..1 each; the caller multiplies by `uAnime * uStreak`.
+ */
+export const STREAK_GLSL = /* glsl */ `
+vec2 animeStreak( vec3 n, vec3 sunV ) {
+  // Mostly a fixed up-and-right diagonal, tilted a little by the Sun's side, so the strips show on every glass shape.
+  // Returns the strip (x) and a darker blue pane tone around it (y), so a white strip still reads on a pale pane.
+  vec2 sd = normalize( sunV.xy + vec2( -0.2, 0.25 ) );
+  vec2 across = normalize( mix( vec2( 0.45, 0.89 ), sd, 0.3 ) );
+  vec2 along = vec2( -across.y, across.x );
+  float u = dot( n.xy, across );
+  float w = abs( dot( n.xy, along ) );
+  float fadeB = 1.0 - smoothstep( 0.8, 1.0, w );
+  float fadeT = 1.0 - smoothstep( 0.7, 0.95, w );
+  float broad = smoothstep( 0.33, 0.342, u ) * ( 1.0 - smoothstep( 0.40, 0.412, u ) ) * fadeB;
+  float thin = smoothstep( 0.46, 0.468, u ) * ( 1.0 - smoothstep( 0.485, 0.493, u ) ) * fadeT;
+  float halo = smoothstep( 0.16, 0.30, u ) * ( 1.0 - smoothstep( 0.50, 0.62, u ) ) * fadeB;
+  float strip = max( broad, thin );
+  return vec2( strip, halo * ( 1.0 - strip ) );
+}`;
+
 /** Glass with a bright edge and soft sky reflection (greenhouse, domes, visors). */
 export function glass(
   tint: THREE.ColorRepresentation,
@@ -299,6 +329,7 @@ export function glass(
       uGlowColor: { value: new THREE.Color(options.glowColor ?? 0xff66cc) },
       uNight: GLOBALS.night,
       uAnime: GLOBALS.anime,
+      uStreak: GLOBALS.streak,
     },
     vertexShader: /* glsl */ `
       varying vec3 vNormal;
@@ -322,10 +353,12 @@ export function glass(
       uniform float uGlow;
       uniform float uNight;
       uniform float uAnime;
+      uniform float uStreak;
       varying vec3 vNormal;
       varying vec3 vView;
       #include <common>
       #include <fog_pars_fragment>
+      ${STREAK_GLSL}
       void main() {
         vec3 n = normalize( vNormal );
         if ( !gl_FrontFacing ) n = -n;
@@ -343,7 +376,13 @@ export function glass(
         vec3 color = mix( uTint * 0.55, reflected * 1.15, fresnel ) + vec3( 1.0, 0.97, 0.9 ) * glint * 2.5;
         color += uGlowColor * uGlow * ( 0.25 + 0.55 * uNight ) * ( 1.0 - fresnel * 0.5 );
         float alpha = mix( uOpacity, uEdge, fresnel ) + glint + uGlow * 0.08;
-        gl_FragColor = vec4( color, saturate( alpha ) );
+        vec2 st = animeStreak( n, uSunDirView ) * uAnime * uStreak;
+        alpha = saturate( alpha );
+        color = mix( color, vec3( 0.06, 0.12, 0.3 ), st.y * 0.6 );
+        alpha += 0.3 * st.y * ( 1.0 - alpha );
+        color = mix( color, vec3( 1.8, 1.75, 1.7 ), st.x );
+        alpha += 0.6 * st.x * ( 1.0 - alpha );
+        gl_FragColor = vec4( color, alpha );
         #include <fog_fragment>
       }`,
     transparent: true,

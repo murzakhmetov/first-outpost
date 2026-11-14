@@ -65,6 +65,7 @@ rooms use 0.65, so their lights are about 1.6 times brighter). Lumi's antenna gl
 these tiers. These are uniforms, not shader variants, so
   the compiled programs are shared by every tier.
 - **Ground micro-relief** (`materials.ts` `ground({ relief: true })`, flag `groundDetail`, high and ultra). Own shader program (cache key `ground-relief`, define `USE_RELIEF`); low and medium keep the `ground` program unchanged. The normal is tilted by the analytic gradient of two noise octaves (about 1.5 and 6 cycles per metre) in world XZ, fading out between 25 m and 110 m and at grazing angles; on Mars the sand ripple term tilts the normal too. It breaks up the light/shadow band edge and gives grain at low sun. Cost at 1080p and 1440p: under 0.15 ms.
+- **Anime finish** (flag `G8`, high and ultra). Ink lines take their colour from the picture (local colour, darker and richer, a little toward the ink tone; define `USE_ANIME_INK` in the final pass, set when outlines and grade are on) and are about 1.5 px near, 1 px far, with the same five depth taps. Glass, the habitat dome and the helmet visor get one broad and one thin crisp white strip (`STREAK_GLSL` in `materials.ts`) placed from the view-space normal and the Sun direction, scaled by `uAnime * uStreak`. Cost under 0.2 ms.
 - **Colour grade outdoors.** `Daylight` now resets saturation, contrast, tint, bloom and vignette every
   frame outdoors, so a room's own grade cannot stay on after the cadet walks out.
 

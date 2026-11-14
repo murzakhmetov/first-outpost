@@ -231,6 +231,9 @@ uniform vec2 uTexel;
 uniform float uNear;
 uniform float uFar;
 uniform float uOutline;
+#ifdef USE_ANIME_INK
+uniform float uAnimeInk;
+#endif
 uniform float uCine;
 uniform sampler2D tAO;
 uniform float uAO;
@@ -359,15 +362,33 @@ void main() {
     // Ink lines where depth jumps. Raw depth is flat across any plane on screen,
     // so a simple Laplacian finds silhouettes without marking sloped surfaces.
     float d0 = texture2D(tDepth, vUv).x;
-    float dl = texture2D(tDepth, vUv - vec2(uTexel.x, 0.0)).x;
-    float dr = texture2D(tDepth, vUv + vec2(uTexel.x, 0.0)).x;
-    float du = texture2D(tDepth, vUv + vec2(0.0, uTexel.y)).x;
-    float dd = texture2D(tDepth, vUv - vec2(0.0, uTexel.y)).x;
+    vec2 tx = uTexel;
+    #ifdef USE_ANIME_INK
+    {
+      // About 1.5 pixels near the camera, 1 pixel far away.
+      float z0 = (uNear * uFar) / (uFar - d0 * (uFar - uNear));
+      tx *= mix(1.0, mix(1.5, 1.0, smoothstep(8.0, 70.0, z0)), uAnimeInk);
+    }
+    #endif
+    float dl = texture2D(tDepth, vUv - vec2(tx.x, 0.0)).x;
+    float dr = texture2D(tDepth, vUv + vec2(tx.x, 0.0)).x;
+    float du = texture2D(tDepth, vUv + vec2(0.0, tx.y)).x;
+    float dd = texture2D(tDepth, vUv - vec2(0.0, tx.y)).x;
     float nearest = min(d0, min(min(dl, dr), min(du, dd)));
     float z = (uNear * uFar) / (uFar - nearest * (uFar - uNear));
     float jump = abs(dl + dr + du + dd - 4.0 * d0) * z / uNear;
     float line = smoothstep(0.045, 0.11, jump) * (1.0 - smoothstep(55.0, 150.0, z));
-    c = mix(c, c * vec3(0.2, 0.16, 0.3), line * uOutline);
+    vec3 inkColor = c * vec3(0.2, 0.16, 0.3);
+    #ifdef USE_ANIME_INK
+    {
+      // The line takes its colour from the picture: the local colour, darker and richer, a little toward the ink tone.
+      float lum = dot(c, vec3(0.2126, 0.7152, 0.0722));
+      vec3 rich = max(mix(vec3(lum), c, 1.6), 0.0) * 0.3;
+      vec3 surf = mix(rich, vec3(0.2, 0.16, 0.3) * 0.55, 0.3);
+      inkColor = mix(inkColor, surf, uAnimeInk);
+    }
+    #endif
+    c = mix(c, inkColor, line * uOutline);
   }
   #endif
 
@@ -545,6 +566,7 @@ export class PostFX {
       uNear: { value: 0.25 },
       uFar: { value: 4000 },
       uOutline: { value: 0.8 },
+      uAnimeInk: { value: 1 },
       uCine: { value: 0 },
       tAO: { value: this.white },
       uAO: { value: 0.85 },
@@ -636,6 +658,7 @@ export class PostFX {
       this.sceneTarget.depthTexture = depth;
     }
     this.setDefine(this.final, 'USE_OUTLINE', q.outlines ? '' : null);
+    this.setDefine(this.final, 'USE_ANIME_INK', q.outlines && q.grade ? '' : null);
     this.final.uniforms.uTexel.value.set(1 / w, 1 / h);
 
     for (const target of [...this.bloomDown, ...this.bloomUp, ...this.aoTargets, ...this.blurTargets, ...this.focusTargets]) target.dispose();
@@ -827,6 +850,7 @@ export class PostFX {
     u.uNear.value = camera.near;
     u.uFar.value = camera.far;
     u.uOutline.value = this.outline;
+    u.uAnimeInk.value = flag('G8') ? 1 : 0;
     u.uBloom.value = this.grade.bloom;
     u.uExposure.value = this.grade.exposure;
     u.uSaturation.value = this.grade.saturation;
