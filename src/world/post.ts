@@ -8,6 +8,7 @@
 import * as THREE from 'three';
 import { GLOBALS } from './materials';
 import type { QualityOptions } from './quality';
+import { flag } from './devflags';
 
 const FULLSCREEN_VERT = /* glsl */ `
 varying vec2 vUv;
@@ -233,6 +234,8 @@ uniform float uOutline;
 uniform float uCine;
 uniform sampler2D tAO;
 uniform float uAO;
+uniform vec2 uAOTexel;
+uniform float uAOUp;
 uniform sampler2D tShafts;
 uniform vec3 uShaftColor;
 uniform vec3 uGradeShadow;
@@ -275,6 +278,29 @@ vec3 toSrgb(vec3 c) {
   return mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c));
 }
 
+#ifdef USE_AO
+// Half-size occlusion, enlarged with four taps that ignore texels lying on another surface (no grey halo).
+float aoUpsample() {
+  vec2 p = vUv / uAOTexel - 0.5;
+  vec2 i = floor(p);
+  vec2 f = p - i;
+  float zc = linZ(texture2D(tDepth, vUv).x);
+  float tol = zc * 0.03 + 0.02;
+  float sum = 0.0;
+  float wsum = 0.0;
+  for (int k = 0; k < 4; k++) {
+    vec2 o = vec2(float(k & 1), float(k >> 1));
+    vec2 uv = (i + o + 0.5) * uAOTexel;
+    float bw = (o.x > 0.5 ? f.x : 1.0 - f.x) * (o.y > 0.5 ? f.y : 1.0 - f.y);
+    float dz = (linZ(texture2D(tDepth, uv).x) - zc) / tol;
+    float w = bw * exp(-dz * dz);
+    sum += texture2D(tAO, uv).r * w;
+    wsum += w;
+  }
+  return wsum > 0.002 ? sum / wsum : texture2D(tAO, vUv).r;
+}
+#endif
+
 void main() {
   vec3 c = texture2D(tScene, vUv).rgb;
   #ifdef USE_CINEMA
@@ -291,7 +317,14 @@ void main() {
   }
   #endif
   #ifdef USE_AO
-  c *= mix(1.0, texture2D(tAO, vUv).r, uAO);
+  if (uAOUp > 0.5) {
+    // Outdoors the occluded part takes the world's shadow colour, pushed darker; indoors uGrade is 0, so it stays neutral.
+    float ao = aoUpsample();
+    vec3 tint = vec3(ao) * uGradeShadow * uGradeShadow;
+    c *= mix(vec3(1.0), mix(vec3(ao), tint, 0.35 * uGrade * (1.0 - ao)), uAO);
+  } else {
+    c *= mix(1.0, texture2D(tAO, vUv).r, uAO);
+  }
   #endif
   #ifdef USE_SHAFTS
   c += uShaftColor * texture2D(tShafts, vUv).r;
@@ -515,6 +548,8 @@ export class PostFX {
       uCine: { value: 0 },
       tAO: { value: this.white },
       uAO: { value: 0.85 },
+      uAOTexel: { value: new THREE.Vector2(1, 1) },
+      uAOUp: { value: 1 },
       tShafts: { value: this.black },
       uShaftColor: { value: new THREE.Color(1, 0.9, 0.7) },
       uGradeShadow: { value: new THREE.Color(1, 1, 1) },
@@ -710,8 +745,10 @@ export class PostFX {
       blur.uStep.value.set(0, 1 / a.height);
       this.pass(this.aoBlur, a);
       u.tAO.value = a.texture;
+      u.uAOTexel.value.set(1 / a.width, 1 / a.height);
     }
     u.uAO.value = this.aoStrength;
+    u.uAOUp.value = flag('G7') ? 1 : 0;
 
     // Light shafts from the Sun's place on the screen.
     let shaft = 0;
