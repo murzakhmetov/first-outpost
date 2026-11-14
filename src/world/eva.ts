@@ -133,6 +133,8 @@ export interface EvaHud {
 
 interface Marker {
   kind: 'sample' | 'chore' | 'find' | 'regolith' | 'metal';
+  /** Samples only: the place in the walk's six seeded samples (ring * 2 + the sample's number in its ring, 0-5). */
+  slot?: number;
   /** Digging: the use button was pressed once already (one try for the bonus). */
   tried?: boolean;
   /** Discoveries only: the id from sim/finds.ts. */
@@ -220,6 +222,8 @@ export class Eva {
   /** Science from discoveries (already counted by the game when made; shown on screen). */
   private findScience = 0;
   private samples = 0;
+  /** The slots (see Marker) of the samples picked up on this walk; the shared base merges them (sim/coop.ts). */
+  private picked: number[] = [];
   private choreDone = false;
   /** Discoveries made on this walk. */
   private finds: string[] = [];
@@ -553,6 +557,7 @@ export class Eva {
     this.science = 0;
     this.findScience = 0;
     this.samples = 0;
+    this.picked = [];
     this.choreDone = false;
     this.finds = [];
     this.emptyWarned = false;
@@ -595,6 +600,7 @@ export class Eva {
           // Found discoveries are no longer markers, but their rocks are still there.
           if (FINDS[config.site].some((find) => Math.hypot(find.x - x, find.z - z) < 12)) continue;
           this.addMarker('sample', x, z, SAMPLE_VALUES[ringIndex], SAMPLE_COLORS[ringIndex]);
+          this.markers[this.markers.length - 1].slot = ringIndex * 2 + n;
           break;
         }
       }
@@ -706,9 +712,10 @@ export class Eva {
     this.stopDriving();
     this.airlockRing.visible = false;
     this.airlockBeam.visible = false;
-    const result: EvaResult = {
+    const result: EvaResult & { picked: number[] } = {
       seconds: Math.round(this.elapsed),
       samples: this.samples,
+      picked: [...this.picked],
       science: this.science,
       chore: this.choreDone,
       finds: [...this.finds],
@@ -1167,6 +1174,7 @@ export class Eva {
           this.tmp.set(marker.x, this.height(marker.x, marker.z) + 1, marker.z);
           if (marker.kind === 'sample') {
             this.samples += 1;
+            if (marker.slot !== undefined) this.picked.push(marker.slot);
             this.science += marker.value;
             this.puffs.burst(this.tmp, SAMPLE_COLORS[SAMPLE_VALUES.indexOf(marker.value)] ?? '#ffffff');
             this.onEvent?.('sample', marker.value);
