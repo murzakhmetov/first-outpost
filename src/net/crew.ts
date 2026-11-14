@@ -6,14 +6,15 @@
  */
 import { computed, effect, signal } from '@preact/signals';
 import { audio } from '../game/audio';
-import { getWorld, goNextWeek, startMission } from '../game/director';
+import { coopDetach, getWorld, goNextWeek, startMission } from '../game/director';
 import { film, mission, panel, profile, room as insideRoom, screen, step, updateProfile } from '../game/store';
 import type { SetupChoice } from '../game/store';
 import { FEATURED_WINDOWS } from '../sim/sites';
 import { netConfig, transportKind } from './config';
+import { startCoopGuest, startCoopHost } from './coopglue';
 import { PositionSender, assignSlots, friendMode, positionSample, whoIsBehind } from './follow';
 import { CREW_NAME_COUNT, CREW_SUITS, REACTIONS, REACTION_ICON, REACTION_MIN_MS, newPlayerId, startDateOf, statusOf, suitIndex } from './protocol';
-import type { CrewChoice, ReactionId, StartPayload } from './protocol';
+import type { CrewChoice, GameMode, ReactionId, StartPayload } from './protocol';
 import { CrewRoom } from './room';
 import type { Player, RoomView } from './room';
 import type { FriendSpec } from '../world/friends';
@@ -49,16 +50,21 @@ export const crewBubbles = signal<Record<string, CrewBubble>>({});
 /** The report's "Next week" is waiting for friends who are still behind. */
 export const crewWaiting = signal(false);
 
-/** The friends who are still behind this week's report (race mode). Empty in solo play, or when we are offline. */
+/** How the running crew mission is played: "race" = each their own base, "coop" = one base together. */
+export const crewMode = signal<GameMode>('race');
+
+/** The friends who are still behind this week's report (race mode). Empty in solo play, in a shared base, or when we are offline. */
 export const crewBehind = computed<Player[]>(() => {
   const view = crewView.value;
   const m = mission.value;
-  if (view.phase !== 'playing' || !view.online || !m) return [];
+  if (view.phase !== 'playing' || !view.online || !m || crewMode.value !== 'race') return [];
   return whoIsBehind({ week: m.week, step: 'report' }, view.players);
 });
 
 let room: CrewRoom | null = null;
 let friendsOn = false;
+/** The shared-base session of this device (host or guest), while a co-op mission runs. */
+let coopSession: { dispose(): void } | null = null;
 let waitStop: (() => void) | null = null;
 const bubbleTimers = new Map<string, number>();
 let unsubscribe: (() => void) | null = null;
@@ -124,6 +130,13 @@ export async function joinRoom(code: string): Promise<void> {
 /** Leave the room. The single-player game is never touched. */
 export function leaveRoom(): void {
   endWait();
+  if (coopSession) {
+    // The shared base ends here: this device goes on alone, as in solo play.
+    coopSession.dispose();
+    coopSession = null;
+    coopDetach();
+  }
+  crewMode.value = 'race';
   stopWatching?.();
   stopWatching = null;
   unsubscribe?.();
@@ -160,14 +173,17 @@ export function canStart(): boolean {
 }
 
 /** Host: pick a real-history window for the world, and start for everybody. Returns false if it could not start. */
-export function hostStart(pick: { site: SetupChoice['site']; difficulty: SetupChoice['difficulty']; weeks: number }): boolean {
+export function hostStart(
+  pick: { site: SetupChoice['site']; difficulty: SetupChoice['difficulty']; weeks: number },
+  mode: GameMode = 'race',
+): boolean {
   if (!room || !getWorld()) return false;
   const windows = FEATURED_WINDOWS.filter((window) => window.sites.includes(pick.site));
   const window = windows[Math.floor(Math.random() * windows.length)];
   const choice: CrewChoice = { site: pick.site, difficulty: pick.difficulty, weeks: pick.weeks, windowId: window.id };
   const startDate = startDateOf(window.id);
   if (!startDate) return false;
-  return room.start(choice, Math.floor(Math.random() * 2 ** 31), startDate);
+  return room.start(choice, Math.floor(Math.random() * 2 ** 31), startDate, mode);
 }
 
 /** Send a sticker. */
@@ -300,6 +316,10 @@ async function runStart(start: StartPayload): Promise<void> {
     creative: false,
   };
   const before = profile.value.setup;
+  const shared = start.mode === 'coop';
+  crewMode.value = shared ? 'coop' : 'race';
+  // In both modes the friends are drawn: at the outpost while they plan, and live on their walks.
+  // (On a shared base they stand on the very same ground, so a walk outside is a walk together.)
   friendsOn = true;
   syncFriends(active.view);
   watchMission(start);
@@ -308,6 +328,21 @@ async function runStart(start: StartPayload): Promise<void> {
   } finally {
     // The crew's mission must not change the player's own setup for the next solo game.
     updateProfile({ setup: before });
+  }
+  if (!shared || room !== active || active.view.phase !== 'playing') return;
+  // One base together: the host's device runs the rules, every other device mirrors it.
+  const view = active.view;
+  try {
+    coopSession =
+      view.me === view.hostId
+        ? startCoopHost(
+            active,
+            view.players.map((player) => player.id),
+          )
+        : startCoopGuest(active);
+  } catch {
+    // The shared base could not start: this device plays on alone.
+    coopSession = null;
   }
 }
 

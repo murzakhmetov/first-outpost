@@ -20,6 +20,8 @@ import {
   setReady,
 } from '../net/crew';
 import { CODE_ALPHABET, CODE_LENGTH, CREW_SUITS, CREW_WEEKS, MAX_PLAYERS } from '../net/protocol';
+import { coopVisible } from '../net/config';
+import type { GameMode } from '../net/protocol';
 import type { Player } from '../net/room';
 import type { Difficulty, SiteId } from '../sim/types';
 import { Btn, IconBtn, Segmented } from './common';
@@ -61,6 +63,8 @@ export function CrewLobby(): JSX.Element {
   const [code, setCode] = useState('');
   const [copied, setCopied] = useState(false);
   const [pick, setPick] = useState<{ site: SiteId; difficulty: Difficulty; weeks: number }>({ site: 'mars', difficulty: 'cadet', weeks: CREW_WEEKS[0] });
+  const [mode, setMode] = useState<GameMode>('coop');
+  const showMode = coopVisible();
   const me = view.players.find((player) => player.me);
   const isHost = !!me?.host;
   const inRoom = view.phase === 'lobby' || view.phase === 'playing';
@@ -88,7 +92,7 @@ export function CrewLobby(): JSX.Element {
 
   const start = (): void => {
     audio.play('click');
-    if (!hostStart(pick)) notify('crew.loading', undefined, 'warn');
+    if (!hostStart(pick, showMode ? mode : 'race')) notify('crew.loading', undefined, 'warn');
   };
 
   const waitText = !isHost
@@ -193,6 +197,20 @@ export function CrewLobby(): JSX.Element {
                 {isHost && view.phase === 'lobby' && (
                   <div class="crew-pick">
                     <p class="note">{t('crew.hostPick')}</p>
+                    {showMode && (
+                      <>
+                        <Segmented<GameMode>
+                          label={t('crew.mode')}
+                          value={mode}
+                          onChange={setMode}
+                          options={[
+                            { value: 'coop', label: t('crew.modeCoop') },
+                            { value: 'race', label: t('crew.modeRace') },
+                          ]}
+                        />
+                        <p class="note">{mode === 'coop' ? t('crew.modeCoopHint') : t('crew.modeRaceHint')}</p>
+                      </>
+                    )}
                     <Segmented<SiteId>
                       label={t('setup.world')}
                       value={pick.site}

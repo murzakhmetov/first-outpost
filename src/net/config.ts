@@ -30,3 +30,18 @@ export function transportKind(search: string = typeof location === 'undefined' ?
   if (/[?&]crew=local(&|$)/.test(search)) return 'local';
   return netConfig() ? 'supabase' : null;
 }
+
+/**
+ * Kill switch of the shared base ("One base together"). The lobby shows the choice only when this is true:
+ * `?coop=1` in the address, the build setting VITE_COOP=1, or this constant. It is false until the real-device pass is done.
+ */
+export const COOP_DEFAULT_VISIBLE = false;
+
+export function coopVisible(
+  search: string = typeof location === 'undefined' ? '' : location.search,
+  env: Env = (import.meta as unknown as { env?: Env }).env ?? {},
+): boolean {
+  if (COOP_DEFAULT_VISIBLE) return true;
+  if (env.VITE_COOP === '1') return true;
+  return /[?&]coop=1(&|$)/.test(search);
+}
