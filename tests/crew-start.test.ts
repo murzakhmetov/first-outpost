@@ -162,15 +162,12 @@ describe('starting a crew mission', () => {
 });
 
 describe('the kill switch', () => {
-  it('shows the choice only with ?coop=1 or VITE_COOP=1', async () => {
+  it('shows the choice to everyone now that the shared base is on', async () => {
     const { coopVisible, COOP_DEFAULT_VISIBLE } = await import('../src/net/config');
-    expect(COOP_DEFAULT_VISIBLE).toBe(false);
-    expect(coopVisible('', {})).toBe(false);
-    expect(coopVisible('?crew=local', {})).toBe(false);
-    expect(coopVisible('?coop=0', {})).toBe(false);
+    expect(COOP_DEFAULT_VISIBLE).toBe(true);
+    expect(coopVisible('', {})).toBe(true);
+    expect(coopVisible('?crew=local', {})).toBe(true);
     expect(coopVisible('?coop=1', {})).toBe(true);
-    expect(coopVisible('?crew=local&coop=1', {})).toBe(true);
-    expect(coopVisible('', { VITE_COOP: '1' })).toBe(true);
-    expect(coopVisible('', { VITE_COOP: '0' })).toBe(false);
+    expect(coopVisible('', { VITE_COOP: '0' })).toBe(true);
   });
 });

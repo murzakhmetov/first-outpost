@@ -63,7 +63,7 @@ One pattern on every waiting screen: a row of dots in the crew's suit colours wi
 
 ### The kill switch
 
-The lobby shows the **One base together / Each their own base** choice only when `coopVisible()` in `src/net/config.ts` is true: the address has `?coop=1`, or the build was made with `VITE_COOP=1`, or the constant `COOP_DEFAULT_VISIBLE` is `true`. That constant is `false` for now, so a normal visitor sees race mode only: the host's Start always sends race mode. When the choice is shown, **One base together** is selected first. The switch only hides the choice in the lobby; the co-op code stays in the build and runs only when a host starts a mission in co-op mode. Whoever flips the constant should do it after a pass on real devices.
+The lobby shows the **One base together / Each their own base** choice when `coopVisible()` in `src/net/config.ts` is true: the constant `COOP_DEFAULT_VISIBLE` (now `true`), the address `?coop=1`, or a build made with `VITE_COOP=1`. It was switched on after a two-browser pass on the live site: make a room, join, choose One base together, start, and both players see the same mission and move from the forecast to the power plan together. A pass on two real devices (phones on mobile data, a dropped connection) is still to come. When the choice is shown, **One base together** is selected first. Setting the constant back to `false` hides the choice again; the co-op code stays in the build and runs only when a host starts a mission in co-op mode.
 
 ## What goes over the network
 

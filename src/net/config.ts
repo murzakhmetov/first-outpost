@@ -32,10 +32,11 @@ export function transportKind(search: string = typeof location === 'undefined' ?
 }
 
 /**
- * Kill switch of the shared base ("One base together"). The lobby shows the choice only when this is true:
- * `?coop=1` in the address, the build setting VITE_COOP=1, or this constant. It is false until the real-device pass is done.
+ * Kill switch of the shared base ("One base together"). The lobby shows the choice when this constant is true,
+ * with `?coop=1` in the address, or with the build setting VITE_COOP=1. It is on since a two-browser pass on the
+ * live site; set it back to false to hide the choice again.
  */
-export const COOP_DEFAULT_VISIBLE = false;
+export const COOP_DEFAULT_VISIBLE = true;
 
 export function coopVisible(
   search: string = typeof location === 'undefined' ? '' : location.search,
