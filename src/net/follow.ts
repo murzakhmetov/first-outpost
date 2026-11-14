@@ -5,7 +5,7 @@
  */
 import type { Step } from '../game/store';
 import { POSITION_MIN_MS } from './protocol';
-import type { Position, Status } from './protocol';
+import type { GameMode, Position, Status } from './protocol';
 
 // ----- Seeing friends walk -------------------------------------------------------------
 
@@ -115,6 +115,47 @@ export function friendMode(friend: FriendLike): FriendMode {
   const step = friend.status?.step ?? null;
   if (step === 'night') return 'hidden';
   return step === 'eva' ? 'walk' : 'base';
+}
+
+// ----- Friends on a shared base ("One base together") -------------------------------------------
+
+/** The part of the shared base's state that says where each seat is (src/net/coopview.ts CoopLive). */
+export interface CoopSeatsLike {
+  stage: string;
+  outside: boolean;
+  walk: Record<string, boolean>;
+  returned: string[];
+}
+
+/** On a walk outside right now: the host said the walkers are out, this seat chose to walk, and is not back yet. */
+function walksNow(live: CoopSeatsLike, id: string): boolean {
+  return live.stage === 'walk' && live.outside && live.walk[id] === true && !live.returned.includes(id);
+}
+
+/**
+ * Where a friend is drawn on a shared base. The stage belongs to the host, so a friend is outside only while the host's
+ * stage says the walkers are out and this friend chose to walk and is not back; everybody else stands at the base (a
+ * friend whose own step lags behind the stage is not drawn on a walk that is over). The night and the end hide everyone.
+ * Without a shared base (null) it is the race mode's rule.
+ */
+export function coopFriendMode(live: CoopSeatsLike | null, friend: FriendLike & { id: string }): FriendMode {
+  const own = friendMode(friend);
+  if (!live || own === 'hidden') return own;
+  if (live.stage === 'end') return 'hidden';
+  return walksNow(live, friend.id) ? 'walk' : 'base';
+}
+
+/** The step the icon and the pose of a friend come from: a stayer (or a walker who is back) does not show "outside". */
+export function coopFriendStep(live: CoopSeatsLike | null, friend: FriendLike & { id: string }): Step | null {
+  const step = friend.status?.step ?? null;
+  if (!live) return step;
+  if (live.stage === 'walk' && live.outside) return walksNow(live, friend.id) ? 'eva' : 'evaResult';
+  return step === 'eva' ? 'evaResult' : step;
+}
+
+/** The race mode's "wait for the crew" is for the "each their own base" mode only: a shared base has its own Ready check. */
+export function raceWaitApplies(mode: GameMode, sharedBaseRunning: boolean): boolean {
+  return mode === 'race' && !sharedBaseRunning;
 }
 
 // ----- Sending our position ---------------------------------------------------------------------

@@ -12,11 +12,13 @@ import type { SetupChoice } from '../game/store';
 import { FEATURED_WINDOWS } from '../sim/sites';
 import { netConfig, transportKind } from './config';
 import { startCoopGuest, startCoopHost } from './coopglue';
-import { PositionSender, assignSlots, friendMode, positionSample, whoIsBehind } from './follow';
+import { PositionSender, assignSlots, coopFriendMode, coopFriendStep, positionSample, raceWaitApplies, whoIsBehind } from './follow';
+import { coopLive } from './coopview';
 import { CREW_NAME_COUNT, CREW_SUITS, REACTIONS, REACTION_ICON, REACTION_MIN_MS, newPlayerId, startDateOf, statusOf, suitIndex } from './protocol';
 import type { CrewChoice, GameMode, ReactionId, StartPayload } from './protocol';
 import { CrewRoom } from './room';
 import type { Player, RoomView } from './room';
+import type { CoopLive } from './coopview';
 import type { FriendSpec } from '../world/friends';
 import { SupabaseTransport } from './supabase';
 import { LocalTransport } from './transport';
@@ -57,7 +59,7 @@ export const crewMode = signal<GameMode>('race');
 export const crewBehind = computed<Player[]>(() => {
   const view = crewView.value;
   const m = mission.value;
-  if (view.phase !== 'playing' || !view.online || !m || crewMode.value !== 'race') return [];
+  if (view.phase !== 'playing' || !view.online || !m || !raceWaitApplies(crewMode.value, coopLive.value !== null)) return [];
   return whoIsBehind({ week: m.week, step: 'report' }, view.players);
 });
 
@@ -69,6 +71,7 @@ let waitStop: (() => void) | null = null;
 const bubbleTimers = new Map<string, number>();
 let unsubscribe: (() => void) | null = null;
 let stopWatching: (() => void) | null = null;
+let stopCoopWatch: (() => void) | null = null;
 let toastId = 0;
 let coolTimer = 0;
 
@@ -137,6 +140,8 @@ export function leaveRoom(): void {
     coopDetach();
   }
   crewMode.value = 'race';
+  stopCoopWatch?.();
+  stopCoopWatch = null;
   stopWatching?.();
   stopWatching = null;
   unsubscribe?.();
@@ -221,7 +226,7 @@ function showReaction(player: Player, reaction: ReactionId): void {
 // ----- Friends in the 3D world ----------------------------------------------------------
 
 /** Give the world the friends to draw (in a crew mission), in the suit colour and place each one has. */
-function syncFriends(view: RoomView): void {
+function syncFriends(view: RoomView, live: CoopLive | null = coopLive.peek()): void {
   if (!friendsOn || view.phase !== 'playing') return;
   const others = view.players.filter((player) => !player.me);
   // Alone in the room: the two helper cadets keep the outpost lived in, as in solo play.
@@ -234,9 +239,10 @@ function syncFriends(view: RoomView): void {
   const list: FriendSpec[] = others.map((player) => ({
     id: player.id,
     color: CREW_SUITS[player.suit] ?? CREW_SUITS[0],
-    mode: friendMode(player),
+    // On a shared base the host's stage says who is outside; after it ends (live = null) the race rule applies.
+    mode: coopFriendMode(live, player),
     slot: slots.get(player.id) ?? 0,
-    step: player.status?.step ?? null,
+    step: coopFriendStep(live, player),
   }));
   getWorld()?.setFriends(list);
 }
@@ -255,6 +261,11 @@ function endWait(): void {
  */
 export function crewNextWeek(): void {
   const m = mission.peek();
+  // A shared base: the director turns this into the crew's Ready (no race-mode wait here).
+  if (!raceWaitApplies(crewMode.peek(), coopLive.peek() !== null)) {
+    goNextWeek();
+    return;
+  }
   if (!m || waitStop || m.week >= m.config.weeks || crewBehind.peek().length === 0) {
     if (!waitStop) goNextWeek();
     return;
@@ -343,7 +354,35 @@ async function runStart(start: StartPayload): Promise<void> {
   } catch {
     // The shared base could not start: this device plays on alone.
     coopSession = null;
+    crewMode.value = 'race';
+    return;
   }
+  watchCoopFriends(active);
+}
+
+/**
+ * Keep the friends in step with the shared base (who is outside comes from the host's stage). When the base ends
+ * by itself (the host left, or this device plays on alone) this device goes on in its own base: the friends are
+ * drawn by their own numbers again, and the race mode's wait for the crew works as it always did.
+ */
+function watchCoopFriends(active: CrewRoom): void {
+  stopCoopWatch?.();
+  let seen = false;
+  stopCoopWatch = effect(() => {
+    const live = coopLive.value;
+    if (room !== active) return;
+    if (live) {
+      seen = true;
+      syncFriends(active.view, live);
+    } else if (seen) {
+      seen = false;
+      queueMicrotask(() => {
+        if (room !== active || coopLive.peek() !== null) return;
+        crewMode.value = 'race';
+        syncFriends(active.view, null);
+      });
+    }
+  });
 }
 
 /** While the crew's mission runs, send our numbers. A different mission, or the title screen, ends the crew. */
