@@ -521,49 +521,6 @@
 .cutscene.is-short .cut-bar {
   height: 7vh;
 }
-/* The "Why?" button next to a step's title. */
-.why-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 8px;
-  padding: 3px 10px 3px 6px;
-  border: 1px solid var(--gold-edge);
-  border-radius: var(--r-sm);
-  font: inherit;
-  font-size: 0.875em;
-  font-weight: 800;
-  color: var(--navy);
-  background: var(--gold-lt);
-  cursor: pointer;
-  vertical-align: middle;
-}
-.why-btn:hover {
-  filter: brightness(1.08);
-}
-.why-btn:focus-visible {
-  outline: 2px solid var(--gold-dk);
-  outline-offset: 2px;
-}
-.why-btn.is-compact {
-  padding: 2px;
-  margin-left: 4px;
-}
-
-/* The night overlay is a button now: a tap skips the rest of the night. */
-button.night {
-  pointer-events: auto !important;
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-.night-skip {
-  margin-top: 2px;
-  font-size: 0.78rem;
-  font-style: normal;
-  opacity: 0.72;
-}
-
 /* A machine of the plan flashes when its energy changes. */
 .module {
   position: relative;
@@ -577,12 +534,10 @@ button.night {
 }
 @keyframes module-pulse {
   from {
-    background: rgba(255, 214, 120, 0.22);
-    box-shadow: 0 0 0 0 rgba(255, 214, 120, 0.7);
+    background: rgba(228, 197, 126, 0.45);
   }
   to {
     background: transparent;
-    box-shadow: 0 0 0 12px rgba(255, 214, 120, 0);
   }
 }
 .less-motion .module-pulse {

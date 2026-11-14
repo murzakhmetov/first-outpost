@@ -8,6 +8,7 @@
   --ivory: #f4eee2;
   --ivory-hi: #fbf7ee;
   --ivory-line: #e8ddc8;
+  --ivory-rule: #cdb98a;
   /* Gold: ornament lines and borders are --gold / --gold-edge; text on ivory uses --gold-dk only */
   --gold: #c9a55c;
   --gold-orn: #c9a55c; /* ornament: never re-mapped on ivory */
@@ -45,6 +46,7 @@
 
   /* Type */
   --font-display: 'Prata', 'Nunito Variable', Georgia, serif;
+  --font-ui: 'Nunito Variable', system-ui, sans-serif;
 
   /* Names the screens that are not rebuilt yet still use. On a dark surface (over the 3D world, on navy)
      text is ivory and ornament is gold; ivory panels re-map them below. */
@@ -184,7 +186,6 @@
   --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 1L13 7L7 13L1 7Z' fill='%23C9A55C' stroke='%237A5A18' stroke-width='1.2'/%3E%3C/svg%3E");
 }
 
-.card h2,
 .sheet-head h2,
 .modal-head h2 {
   font-family: var(--font-display);
@@ -193,25 +194,6 @@
   line-height: 1.25;
   letter-spacing: 0;
   color: var(--slate);
-}
-
-.card h2 {
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--gold-orn);
-}
-
-.card-foot {
-  background: var(--ivory);
-  border-top: 1px solid var(--ivory-line);
-}
-
-.card-foot.two {
-  grid-template-columns: 1fr 1.45fr;
-}
-
-.card-foot .btn {
-  padding-inline: 0.8em;
-  line-height: 1.15;
 }
 
 /* Section titles: a serif line with a diamond in front and a rule behind. */
@@ -475,7 +457,7 @@
   display: inline-block;
   padding: 1px 8px;
   border-radius: 3px;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 800;
   line-height: 1.5;
   background: var(--ivory-hi);
@@ -483,16 +465,39 @@
   border: 1px solid var(--gold-orn);
 }
 
+/* Real data: a gold plate with a solid diamond. The game's own model: an ivory plate with a dashed edge and a hollow diamond. */
+.tag-real,
+.tag-model {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+}
+
+.tag-real::before,
+.tag-model::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--navy);
+  transform: rotate(45deg);
+}
+
 .tag-real {
-  background: #e4edfb;
-  color: var(--blue-text);
-  border-color: var(--sys-life);
+  background: var(--gold-lt);
+  color: var(--navy);
+  border-color: var(--gold-edge);
+}
+
+.tag-real::before {
+  background: var(--navy);
 }
 
 .tag-model {
-  background: #ede8fa;
-  color: var(--violet-text);
-  border-color: var(--sys-lab);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  border: 1px dashed var(--gold-edge);
 }
 
 .tag-live {
@@ -506,6 +511,19 @@
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+@media (pointer: coarse) {
+  /* An inline source link: a 44px touch area around the text. */
+  .link {
+    position: relative;
+  }
+
+  .link::after {
+    content: '';
+    position: absolute;
+    inset: -12px -4px;
+  }
 }
 
 /* A glossary word: dark gold with a dotted line; tap it for the short explanation. */
@@ -1101,8 +1119,8 @@
   position: absolute;
   right: 12px;
   bottom: 128px;
-  background: var(--navy-2) !important;
-  border-color: var(--gold-lt) !important;
+  background: var(--navy-2);
+  border-color: var(--gold-lt);
 }
 
 .left-hand .round-drive {
@@ -1183,130 +1201,6 @@
   color: var(--gold);
   font-weight: 700;
   white-space: nowrap;
-}
-
-/* ----- The walk outside -------------------------------------------------------- */
-
-.eva-chip,
-.arrow {
-  background: var(--ivory);
-  color: var(--slate);
-  border: 1px solid var(--gold-edge);
-  border-radius: var(--r-md);
-  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--gold-orn);
-}
-
-.eva-chip {
-  padding: 5px 12px;
-}
-
-.eva-chip.good {
-  color: var(--green-text);
-}
-
-.eva-chip.bad {
-  color: var(--red);
-}
-
-.arrow b {
-  color: var(--slate);
-}
-
-.arrow-dial {
-  background: var(--navy);
-  color: var(--tone);
-}
-
-/* Suit air: one long bar at the bottom, like a health bar. */
-.suitbar {
-  position: absolute;
-  left: 50%;
-  bottom: 14px;
-  transform: translateX(-50%);
-  width: min(380px, 46vw);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 10px;
-  box-sizing: border-box;
-  padding: 5px 12px;
-  border: 1px solid var(--gold-orn);
-  border-radius: var(--r-md);
-  background: var(--navy);
-  color: var(--on-navy);
-  pointer-events: none !important;
-}
-
-.suitbar-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.8125rem;
-  font-weight: 800;
-  color: var(--on-navy);
-}
-
-.suitbar-track {
-  height: 9px;
-  border-radius: 999px;
-  background: rgba(14, 17, 34, 0.72);
-  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.55);
-  overflow: hidden;
-}
-
-.suitbar-track i {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: #7ad79a;
-  transition: width 0.3s linear;
-}
-
-.suitbar.is-low .suitbar-track i {
-  background: #ff8f84;
-}
-
-/* Running: the bar turns amber, because the air is going faster. */
-.suitbar.is-run .suitbar-track i {
-  background: #ffc24d;
-}
-
-.round-run.is-on,
-.round-view.is-on {
-  border-color: var(--gold-hi) !important;
-  background: var(--navy-2) !important;
-  box-shadow: 0 0 0 2px var(--gold-hi);
-}
-
-.suitbar b {
-  min-width: 2.6em;
-  font-size: 1rem;
-  font-weight: 900;
-  text-align: right;
-}
-
-.suitbar.is-low b {
-  color: #ff9a8c;
-}
-
-.eva-keys {
-  bottom: 56px;
-  background: var(--navy);
-  color: var(--on-navy);
-  border: 1px solid var(--gold-orn);
-  border-radius: var(--r-md);
-}
-
-.round {
-  background: var(--navy) !important;
-  color: var(--on-navy);
-  border: 2px solid var(--gold-orn) !important;
-  box-shadow: 0 0 0 1px var(--navy), 0 3px 8px rgba(29, 35, 51, 0.35);
-}
-
-.round-big {
-  background: var(--navy-2) !important;
-  border-color: var(--gold-lt) !important;
 }
 
 /* ----- Title screen -------------------------------------------------------------------------------

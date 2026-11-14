@@ -255,7 +255,9 @@ html {
   grid-row: 3;
 }
 
-/* ----- Stage and docked cards ---------------------------------------------- */
+/* ----- Stage and docked cards ----------------------------------------------
+   The week's panels. A dock is an ivory frame: a header with a gold rule and diamonds, a body that
+   scrolls, and a navy strip at the bottom that holds the buttons. */
 
 .stage {
   position: relative;
@@ -269,17 +271,16 @@ html {
 
 .dock {
   position: absolute;
+  z-index: 3;
   top: 0;
   right: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
   width: min(440px, 46vw);
   margin: auto 0;
   height: fit-content;
   max-height: 100%;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   animation: dock-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
@@ -290,6 +291,22 @@ html {
   }
 }
 
+.dock-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 22px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.dock-body > * {
+  flex: none;
+  min-width: 0;
+}
+
 .card {
   border-radius: var(--r-lg);
   padding: 16px 18px;
@@ -298,21 +315,125 @@ html {
   align-content: start;
 }
 
+/* A dock is a card laid out as a column: the body takes what is left and scrolls. */
+.dock.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
 .card h2 {
   display: flex;
   align-items: center;
   gap: 10px;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 1.25;
+  color: var(--slate);
 }
 
 .card h2 .speak {
   margin-left: auto;
 }
 
+/* The dock header: icon, serif title, "Why?" on the right, a rule with three diamonds under it. */
+.dock h2 {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-sizing: content-box;
+  min-height: 44px;
+  margin: 0 0 6px;
+  padding: 14px 0 10px;
+  background: var(--ivory);
+  border-bottom: 1px solid var(--gold-edge);
+  font-size: 1.5rem;
+}
+
+.dock h2::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 44px;
+  height: 11px;
+  transform: translateX(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 11'%3E%3Crect width='44' height='11' fill='%23F4EEE2'/%3E%3Cpath d='M5.5 1.5L9.5 5.5L5.5 9.5L1.5 5.5Z' fill='none' stroke='%23A8822E' stroke-width='1.2'/%3E%3Cpath d='M22 0L27 5.5L22 11L17 5.5Z' fill='%23A8822E'/%3E%3Cpath d='M38.5 1.5L42.5 5.5L38.5 9.5L34.5 5.5Z' fill='none' stroke='%23A8822E' stroke-width='1.2'/%3E%3C/svg%3E")
+    center / 44px 11px no-repeat;
+}
+
+.h2-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dock h2 > svg:first-child {
+  flex: none;
+  color: var(--gold-dk);
+}
+
+.dock h2 .speak + .why-btn {
+  margin-left: 8px;
+}
+
+.dock h2 .speak {
+  width: 44px;
+  height: 44px;
+}
+
+/* "Why?": replays the film that says what this is and why it matters. */
+.why-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: none;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.why-btn svg {
+  color: var(--gold-dk);
+}
+
+.why-btn:hover {
+  background: var(--gold-hi);
+}
+
+/* Beside a machine's name: a small round button with a 44px touch area around it. */
+.why-btn.is-compact {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  width: 26px;
+  height: 26px;
+  margin-left: 6px;
+  padding: 0;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.why-btn.is-compact::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+}
+
+/* A card that is not a dock keeps its footer at the bottom of the scroll area. */
 .card-foot {
   display: grid;
   gap: 10px;
@@ -320,34 +441,61 @@ html {
   bottom: -16px;
   margin: 0 -18px -16px;
   padding: 10px 18px 16px;
-  background: linear-gradient(180deg, transparent, rgba(12, 15, 40, 0.96) 34%);
+  background: var(--ivory);
+  border-top: 1px solid var(--ivory-line);
 }
 
 .card-foot.two {
-  grid-template-columns: 1fr 1.25fr;
+  grid-template-columns: 1fr 1.45fr;
+}
+
+.card-foot .btn {
+  padding-inline: 0.8em;
+  line-height: 1.15;
+}
+
+/* The dock's footer: a navy strip under the body, a gold line on top. */
+.dock > .card-foot {
+  position: static;
+  flex: none;
+  margin: 0;
+  padding: 10px 22px;
+  background: var(--navy);
+  border-top: 1px solid var(--gold-orn);
+  border-radius: 0 0 3px 3px;
+}
+
+.dock > .card-foot .btn-soft {
+  background: var(--navy-2);
+  border-color: var(--gold-orn);
+  color: var(--on-navy);
+}
+
+.dock > .card-foot .btn-soft:hover:not(:disabled) {
+  background: #36406a;
 }
 
 .rows {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 40px 1fr;
+  grid-template-columns: 44px 1fr;
   gap: 12px;
-  padding: 10px 6px;
+  padding: 10px 0;
   font-size: 0.9375rem;
 }
 
 .row + .row {
-  border-top: 1px solid var(--ivory-line);
+  border-top: 1px solid var(--ivory-rule);
 }
 
 .row b {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 1.0625rem;
   color: var(--slate);
 }
 
@@ -356,8 +504,7 @@ html {
   margin-top: 3px;
 }
 
-.row-warn b,
-.row-alert b {
+.row-warn b {
   color: var(--gold-dk);
 }
 
@@ -365,39 +512,59 @@ html {
   color: var(--red);
 }
 
+/* A medallion: a navy disc, the system colour as the first ring, then ivory and gold. */
 .row-icon {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
+  margin: 3px 0 0 3px;
   border-radius: 50%;
   display: grid;
   place-items: center;
+  color: var(--ivory);
   background: var(--navy);
-  box-shadow: 0 0 0 2px var(--gold-orn);
+  box-shadow: 0 0 0 2px var(--tone, var(--gold-orn)), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
 }
 
 .tone-power {
+  --tone: var(--gold-lt);
   color: var(--power);
 }
 
 .tone-air {
+  --tone: var(--sys-life);
   color: var(--air);
 }
 
 .tone-food {
+  --tone: var(--sys-green);
   color: var(--food);
 }
 
 .tone-dose {
+  --tone: #d46a9b;
   color: var(--dose);
 }
 
 .tone-science {
+  --tone: var(--sys-lab);
   color: var(--science);
 }
 
-.row > div,
-.rrow {
-  color: var(--ink);
+.tone-shield {
+  --tone: var(--sys-robot);
+}
+
+.row-icon.tone-power,
+.row-icon.tone-air,
+.row-icon.tone-food,
+.row-icon.tone-dose,
+.row-icon.tone-science {
+  color: var(--ivory);
+}
+
+.row > div {
+  min-width: 0;
+  color: var(--slate);
 }
 
 /* Decision card */
@@ -406,21 +573,23 @@ html {
   flex: none;
   width: 46px;
   height: 46px;
-  border-radius: 14px;
+  margin-left: 3px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(255, 209, 102, 0.16);
-  color: var(--gold);
+  color: var(--gold-lt);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
 }
 
 .event-icon.is-alert {
-  background: rgba(255, 93, 108, 0.22);
-  color: #ff97a2;
+  color: var(--ivory);
+  box-shadow: 0 0 0 2px var(--red-fill), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
   animation: pulse 1s ease-in-out infinite;
 }
 
 .event-storm {
-  border-color: rgba(255, 122, 184, 0.6);
+  border-color: var(--red);
 }
 
 .event-body {
@@ -429,7 +598,7 @@ html {
 
 .event-data {
   font-size: 0.875rem;
-  color: var(--ink-dim);
+  color: var(--muted);
 }
 
 #ui .choose {
@@ -447,15 +616,15 @@ html {
   padding: 11px 14px;
   border-radius: var(--r-md);
   text-align: left;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1.5px solid var(--line-strong) !important;
-  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+  color: var(--slate);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--ivory-line);
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .option:hover:not(:disabled) {
-  background: rgba(255, 209, 102, 0.16) !important;
-  border-color: var(--gold) !important;
-  transform: translateX(-2px);
+  background: var(--gold-hi);
 }
 
 .option:disabled {
@@ -471,23 +640,29 @@ html {
   align-items: center;
 }
 
+/* Mission Control's pick: a navy frame and a navy tag. */
 .option.is-advised {
-  border-color: var(--air) !important;
-  box-shadow: 0 0 0 3px rgba(95, 208, 255, 0.22);
+  border: 2px solid var(--navy);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--gold-orn);
 }
 
 .advice-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-style: normal;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 800;
   padding: 1px 8px;
-  border-radius: 99px;
-  background: rgba(95, 208, 255, 0.2);
-  color: #9fe3ff;
+  border-radius: 3px;
+  background: var(--navy);
+  color: var(--on-navy);
 }
 
 .option-block {
-  font-size: 0.8125rem;
-  color: var(--warn);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--amber);
 }
 
 .help-row {
@@ -496,16 +671,31 @@ html {
   flex-wrap: wrap;
 }
 
+/* "Ask Mission Control" and "Lumi's hint": secondary buttons, navy with a gold ring. */
 .ask {
   flex: 1 1 150px;
-  display: flex !important;
+  display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px 12px !important;
+  gap: 10px;
+  min-height: 48px;
+  padding: 6px 12px 6px 8px;
   border-radius: var(--r-sm);
-  border: 1.5px dashed var(--line-strong) !important;
+  border: 1px solid var(--gold-orn);
+  background: var(--navy);
+  color: var(--on-navy);
   text-align: left;
-  color: var(--ink-dim) !important;
+}
+
+.ask > svg {
+  flex: none;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--navy-2);
+  color: var(--gold-lt);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .ask span {
@@ -514,14 +704,15 @@ html {
 }
 
 .ask small {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--on-navy-dim);
 }
 
 .ask:hover {
-  border-color: var(--air) !important;
-  color: var(--ink) !important;
+  background: var(--navy-2);
 }
 
+/* Answers, hints and the waiting signal: ivory notes with a medallion. */
 .hint-box,
 .earth-box,
 .signal {
@@ -529,20 +720,30 @@ html {
   gap: 10px;
   align-items: flex-start;
   padding: 10px 12px;
-  border-radius: var(--r-sm);
-  background: rgba(95, 208, 255, 0.11);
-  border: 1px solid rgba(95, 208, 255, 0.35);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--ivory-line);
   font-size: 0.9375rem;
+  color: var(--slate);
 }
 
-.hint-box {
-  background: rgba(183, 156, 255, 0.12);
-  border-color: rgba(183, 156, 255, 0.4);
+.earth-box > svg:first-child,
+.signal > svg:first-child {
+  flex: none;
+  box-sizing: border-box;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold-lt);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .earth-box.is-late {
-  background: rgba(255, 193, 94, 0.12);
-  border-color: rgba(255, 193, 94, 0.5);
+  background: #fbf0d9;
+  border-color: var(--amber);
 }
 
 .signal {
@@ -552,9 +753,10 @@ html {
 
 .signal-track {
   flex: 1 1 90px;
-  height: 6px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.14);
+  height: 8px;
+  border-radius: 3px;
+  background: var(--ivory-line);
+  box-shadow: inset 0 0 0 1px var(--gold-edge);
   overflow: hidden;
 }
 
@@ -562,7 +764,7 @@ html {
   display: block;
   height: 100%;
   width: 100%;
-  background: var(--air);
+  background: var(--sys-life);
   transform-origin: left;
   animation: signal linear both;
 }
@@ -576,8 +778,8 @@ html {
 .story {
   padding: 12px 14px;
   border-radius: var(--r-md);
-  background: rgba(255, 209, 102, 0.09);
-  border: 1px solid rgba(255, 209, 102, 0.32);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
   display: grid;
   gap: 6px;
   font-size: 0.9375rem;
@@ -585,78 +787,132 @@ html {
 
 #ui .story h3 {
   margin: 0;
-  display: flex;
-  gap: 7px;
-  align-items: center;
 }
 
 /* Power plan */
 
 .plan-have {
   display: grid;
-  line-height: 1.25;
+  gap: 2px;
+  line-height: 1.3;
 }
 
 .plan-have b {
-  font-size: 1.0625rem;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
-.plan-have small {
-  color: var(--ink-dim);
-  font-size: 0.8125rem;
+.plan-have-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--slate);
 }
 
+.plan-free {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+}
+
+.plan-free i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gold-orn);
+  border: 1px solid var(--gold-dk);
+  transform: rotate(45deg);
+}
+
+.plan-free.is-wasted {
+  color: var(--amber);
+}
+
+/* One cut gem for each unit of power, in the colour of the machine it feeds. */
 .cells {
   display: flex;
-  gap: 4px;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
 }
 
-.cell {
-  width: 22px;
-  height: 26px;
-  border-radius: 6px;
-  border: 2px solid rgba(255, 255, 255, 0.28);
-  transition: background 0.2s ease, transform 0.2s cubic-bezier(0.2, 1.6, 0.4, 1);
+.gem {
+  flex: none;
+  overflow: visible;
 }
 
-.cell-free {
-  background: transparent;
-  border-style: dashed;
+.gem-body {
+  fill: var(--c);
+  stroke: var(--navy);
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+
+.gem-top {
+  fill: #fff;
+  fill-opacity: 0.38;
+}
+
+.gem-edge {
+  fill: none;
+  stroke: #fff;
+  stroke-opacity: 0.5;
+  stroke-width: 0.9;
 }
 
 .cell-life {
-  background: var(--air);
-  border-color: var(--air);
+  --c: var(--sys-life);
 }
 
 .cell-farm {
-  background: var(--food);
-  border-color: var(--food);
+  --c: var(--sys-green);
 }
 
 .cell-lab {
-  background: var(--science);
-  border-color: var(--science);
+  --c: var(--sys-lab);
 }
 
 .cell-shield {
-  background: var(--shield);
-  border-color: var(--shield);
+  --c: var(--sys-robot);
+}
+
+.cell-free .gem-body {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 2.5;
+}
+
+/* A little room between one machine's gems and the next one's. */
+.cell-life + .cell-farm,
+.cell-life + .cell-lab,
+.cell-life + .cell-shield,
+.cell-farm + .cell-lab,
+.cell-farm + .cell-shield,
+.cell-lab + .cell-shield,
+.gem:not(.cell-free) + .cell-free {
+  margin-left: 8px;
 }
 
 .modules {
   display: grid;
-  gap: 7px;
 }
 
 .module {
+  position: relative;
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--ivory-line);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--ivory-rule);
 }
 
 .module:last-child {
@@ -664,25 +920,25 @@ html {
 }
 
 .module-life {
-  --tone: var(--air);
+  --tone: var(--sys-life);
 }
 
 .module-farm {
-  --tone: var(--food);
+  --tone: var(--sys-green);
 }
 
 .module-lab {
-  --tone: var(--science);
+  --tone: var(--sys-lab);
 }
 
 .module-shield {
-  --tone: var(--shield);
+  --tone: var(--sys-robot);
 }
 
 .module-icon {
   width: 38px;
   height: 38px;
-  margin-left: 7px;
+  margin-left: 3px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -695,43 +951,37 @@ html {
   box-shadow: 0 0 0 2px var(--muted), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
 }
 
-.module-text b {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 1rem;
-}
-
 .module-text {
   display: grid;
   line-height: 1.25;
   min-width: 0;
 }
 
+.module-text b {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+/* The long description only fits on tall screens; the one-line effect is always shown. */
 .module-text small {
-  color: var(--ink-dim);
-  font-size: 0.75rem;
+  display: none;
+  color: var(--muted);
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
-/* On shorter screens the one-line effect is enough; the description would push the buttons away. */
-@media (max-height: 900px) {
+@media (min-height: 960px) {
   .module-text small {
-    display: none;
-  }
-
-  .module {
-    padding: 6px 10px;
-  }
-
-  .plan.card {
-    gap: 9px;
+    display: block;
   }
 }
 
 .module-effect {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--ink-dim);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .module.is-off .module-effect {
@@ -740,8 +990,6 @@ html {
 
 .module-effect em {
   font-style: normal;
-  color: var(--ink-dim);
-  font-weight: 700;
 }
 
 .stepper {
@@ -757,17 +1005,17 @@ html {
   display: grid;
   place-items: center;
   color: var(--slate);
-  background: var(--ivory-hi) !important;
-  border: 1.5px solid var(--gold-edge) !important;
-  transition: transform 0.1s ease, background 0.15s ease;
+  background: var(--ivory-hi);
+  border: 1.5px solid var(--gold-edge);
+  transition: background 0.15s ease;
 }
 
 .stepper button:hover:not(:disabled) {
-  background: var(--gold-hi) !important;
+  background: var(--gold-hi);
 }
 
 .stepper button:active:not(:disabled) {
-  transform: scale(0.9);
+  background: var(--gold-lt);
 }
 
 .stepper button:disabled,
@@ -775,15 +1023,19 @@ html {
   opacity: 0.42;
 }
 
+/* The level: one diamond for each step the machine can have, filled in its colour. */
 .level {
   display: flex;
-  gap: 7px;
-  padding: 0 3px;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
 }
 
 .level i {
-  width: 9px;
-  height: 9px;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin: 2px;
   transform: rotate(45deg);
   border: 1px solid var(--muted);
   background: transparent;
@@ -795,81 +1047,121 @@ html {
   border-color: var(--navy);
 }
 
-.leftover {
+.level b {
+  margin-left: 3px;
   font-size: 0.875rem;
-  color: var(--ink-dim);
+  font-weight: 800;
+  color: var(--slate);
 }
 
+.leftover {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* The end of the week: four numbers, a label over each. */
 .preview {
-  padding: 6px 0 2px;
-  border-top: 1px solid var(--gold-edge);
   display: grid;
   gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--gold-edge);
 }
 
 #ui .preview h3 {
+  display: block;
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 0.9375rem;
-  text-transform: none;
-  letter-spacing: 0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
   color: var(--slate);
+}
+
+#ui .preview h3::before,
+#ui .preview h3::after {
+  display: none;
 }
 
 .preview-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5px 12px;
-  font-size: 0.875rem;
+  grid-template-columns: repeat(auto-fit, minmax(5.4rem, 1fr));
+  gap: 4px 8px;
 }
 
 .pv {
+  display: grid;
+  min-width: 0;
+}
+
+.pv small {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--slate);
+}
+
+.pv > span {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 5px;
-  color: var(--ink-dim);
 }
 
 .pv b {
-  color: var(--ink);
-  margin-left: auto;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.375rem;
+  line-height: 1.25;
+  color: var(--slate);
 }
 
 .pv em {
   font-style: normal;
+  font-size: 0.875rem;
   font-weight: 800;
-  min-width: 2.6em;
-  text-align: right;
+  color: var(--muted);
 }
 
 .pv.good em {
-  color: var(--good);
+  color: var(--green-text);
 }
 
 .pv.bad em,
 .pv.bad b {
-  color: var(--bad);
+  color: var(--red);
 }
 
+/* The walk's rules, and what it gave: a medallion and a line each. */
 .facts {
   display: grid;
-  gap: 7px;
+  gap: 8px;
   font-size: 0.9375rem;
 }
 
 .facts li {
   display: grid;
-  grid-template-columns: 22px 1fr;
-  gap: 8px;
-  align-items: start;
+  grid-template-columns: 30px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.facts li > svg:first-child {
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold-lt);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .facts li.good {
-  color: var(--good);
+  color: var(--green-text);
 }
 
-/* Night */
+/* Night: a navy plaque with a gold double line, like Lumi's band. */
 
 .night {
   position: absolute;
@@ -879,34 +1171,40 @@ html {
   display: grid;
   justify-items: center;
   gap: 3px;
-  padding: 12px 26px;
-  border-radius: 999px;
-  background: rgba(12, 15, 40, 0.72);
-  border: 1px solid var(--line);
+  padding: 16px 34px;
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
+  box-shadow: inset 0 0 0 4px var(--navy), inset 0 0 0 5px var(--gold-orn);
+  color: var(--on-navy);
+  font: inherit;
   text-align: center;
-  pointer-events: none !important;
+  cursor: pointer;
 }
 
 .night b {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.25;
 }
 
 .night small {
-  color: var(--ink-dim);
+  font-size: 0.9375rem;
+  color: var(--on-navy-dim);
 }
 
 .night-dots {
   display: flex;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 6px;
 }
 
 .night-dots i {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--gold);
+  width: 8px;
+  height: 8px;
+  background: var(--gold-lt);
+  transform: rotate(45deg);
   opacity: 0.2;
   animation: dot-on 0.5s ease forwards;
 }
@@ -914,8 +1212,15 @@ html {
 @keyframes dot-on {
   to {
     opacity: 1;
-    transform: scale(1.2);
+    transform: rotate(45deg) scale(1.3);
   }
+}
+
+.night-skip {
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  font-style: normal;
+  color: var(--on-navy-dim);
 }
 
 /* Report */
@@ -932,19 +1237,29 @@ html {
   border-radius: var(--r-md);
   background: var(--ivory-hi);
   border: 1px solid var(--ivory-line);
+  color: var(--slate);
 }
 
 .rrow.is-bad {
-  background: #f7e4df;
+  background: #f8e6e2;
   border-color: var(--red);
 }
 
 .rrow-head {
   display: flex;
   align-items: center;
-  gap: 7px;
-  color: var(--ink);
+  gap: 8px;
+  color: var(--slate);
   font-size: 0.9375rem;
+}
+
+.rrow-head > svg:first-child {
+  flex: none;
+  color: var(--tone-ink, var(--tone, var(--gold-dk)));
+}
+
+.rrow.tone-power {
+  --tone-ink: var(--gold-dk);
 }
 
 .rrow-head b {
@@ -957,7 +1272,7 @@ html {
   font-weight: 900;
   min-width: 3em;
   text-align: right;
-  color: var(--ink-dim);
+  color: var(--muted);
 }
 
 .parts {
@@ -967,28 +1282,30 @@ html {
 }
 
 .part {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   padding: 1px 8px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--ink-dim);
+  border-radius: 3px;
+  background: var(--ivory);
+  border: 1px solid var(--ivory-line);
+  color: var(--muted);
 }
 
 .part.plus b {
-  color: var(--good);
+  color: var(--green-text);
 }
 
 .part.minus b {
-  color: var(--bad);
+  color: var(--red);
 }
 
 .rrow.tone-dose .part.plus b {
-  color: var(--bad);
+  color: var(--red);
 }
 
 .part.saved {
-  color: var(--good);
-  background: rgba(111, 230, 164, 0.12);
+  color: var(--green-text);
+  background: #e6f2e8;
+  border-color: var(--sys-green);
 }
 
 .notes {
@@ -1000,21 +1317,27 @@ html {
 .notes li {
   padding: 6px 10px;
   border-radius: var(--r-sm);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
+  color: var(--slate);
 }
 
 .notes li.good {
-  background: rgba(111, 230, 164, 0.14);
-  color: #b7f5d3;
+  background: #e6f2e8;
+  border-color: var(--sys-green);
+  color: var(--green-text);
 }
 
 .notes li.bad {
-  background: rgba(255, 93, 108, 0.16);
-  color: #ffc4ca;
+  background: #f8e6e2;
+  border-color: var(--red-fill);
+  color: var(--red);
 }
 
 .notes li.warn {
-  background: rgba(255, 193, 94, 0.14);
+  background: #fbf0d9;
+  border-color: var(--amber-fill);
+  color: var(--amber);
 }
 
 /* ----- Walk outside ------------------------------------------------------- */
@@ -1040,58 +1363,31 @@ html {
   pointer-events: none !important;
 }
 
-.suit {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: rgba(12, 15, 40, 0.8);
-}
-
-.suit b {
-  position: absolute;
-  font-size: 1.05rem;
-  font-weight: 900;
-}
-
-.ring-back {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.16);
-  stroke-width: 4;
-}
-
-.ring {
-  fill: none;
-  stroke: var(--air);
-  stroke-width: 4;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.2s linear;
-}
-
-.suit.is-low .ring {
-  stroke: var(--bad);
-}
-
-.eva-chip {
+/* Counters and arrows: ivory plates with a gold double line. */
+.eva-chip,
+.arrow {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  background: var(--ivory);
+  color: var(--slate);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--gold-orn);
+}
+
+.eva-chip {
   padding: 5px 12px;
-  border-radius: 99px;
-  background: rgba(12, 15, 40, 0.8);
-  border: 1px solid var(--line);
   font-weight: 900;
   font-size: 0.9375rem;
 }
 
 .eva-chip.good {
-  color: var(--good);
+  color: var(--green-text);
 }
 
 .eva-chip.bad {
-  color: #ffb3ba;
+  color: var(--red);
 }
 
 .eva-arrows {
@@ -1105,28 +1401,21 @@ html {
 }
 
 .arrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   padding: 4px 12px 4px 5px;
-  border-radius: 99px;
-  background: rgba(12, 15, 40, 0.78);
-  border: 1.5px solid var(--tone);
-  color: var(--tone);
   font-size: 0.875rem;
 }
 
 .arrow b {
-  color: var(--ink);
+  color: var(--slate);
   white-space: nowrap;
 }
 
 .arrow-home {
-  --tone: var(--good);
+  --tone: #7ad79a;
 }
 
 .arrow-sample {
-  --tone: var(--air);
+  --tone: #8fb4f0;
 }
 
 .arrow-dial {
@@ -1135,10 +1424,12 @@ html {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--tone) 22%, transparent);
+  background: var(--navy);
+  color: var(--tone);
   transition: transform 0.12s linear;
 }
 
+/* The storm alarm: a red plate with an ivory frame. */
 .alarm {
   position: absolute;
   top: 112px;
@@ -1148,14 +1439,14 @@ html {
   align-items: center;
   gap: 10px;
   padding: 10px 20px;
-  border-radius: 99px;
-  background: rgba(190, 30, 50, 0.92);
-  border: 2px solid #ffb3ba;
+  border-radius: var(--r-md);
+  background: var(--red);
+  border: 2px solid var(--ivory);
+  color: var(--ivory);
   font-weight: 900;
   font-size: 1.05rem;
   white-space: nowrap;
   max-width: 96vw;
-  animation: alarm 0.6s ease-in-out infinite alternate;
   pointer-events: none !important;
 }
 
@@ -1165,18 +1456,12 @@ html {
   text-align: right;
 }
 
-@keyframes alarm {
-  to {
-    box-shadow: 0 0 0 10px rgba(255, 93, 108, 0.25);
-  }
-}
-
 .eva.is-alert::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 120px 30px rgba(255, 40, 70, 0.4);
+  box-shadow: inset 0 0 0 6px rgba(200, 64, 47, 0.7);
   animation: pulse 0.8s ease-in-out infinite;
 }
 
@@ -1188,9 +1473,10 @@ html {
   display: grid;
   gap: 5px;
   padding: 8px 18px;
-  border-radius: 99px;
-  background: rgba(12, 15, 40, 0.82);
-  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
+  color: var(--on-navy);
   font-weight: 800;
   text-align: center;
   pointer-events: none !important;
@@ -1198,34 +1484,98 @@ html {
 
 .prompt-bar {
   height: 6px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.16);
+  border-radius: 3px;
+  background: rgba(244, 238, 226, 0.25);
   overflow: hidden;
 }
 
 .prompt-bar i {
   display: block;
   height: 100%;
-  background: var(--gold);
+  background: var(--gold-lt);
 }
 
 .eva-keys {
   position: absolute;
   left: 50%;
-  bottom: 8px;
+  bottom: 56px;
   transform: translateX(-50%);
   padding: 5px 14px;
-  border-radius: 99px;
-  background: rgba(12, 15, 40, 0.7);
+  border-radius: var(--r-md);
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
   font-size: 0.8125rem;
-  color: var(--ink-dim);
-  white-space: nowrap;
+  color: var(--on-navy);
+  text-align: center;
   max-width: 96vw;
-  overflow: hidden;
-  text-overflow: ellipsis;
   pointer-events: none !important;
 }
 
+/* Suit air: one long bar at the bottom, like a health bar. */
+.suitbar {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(380px, 46vw);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 5px 12px;
+  border: 1px solid var(--gold-orn);
+  border-radius: var(--r-md);
+  background: var(--navy);
+  color: var(--on-navy);
+  pointer-events: none !important;
+}
+
+.suitbar-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--on-navy);
+}
+
+.suitbar-track {
+  height: 9px;
+  border-radius: 3px;
+  background: rgba(14, 17, 34, 0.72);
+  box-shadow: 0 0 0 1.5px rgba(244, 238, 226, 0.55);
+  overflow: hidden;
+}
+
+.suitbar-track i {
+  display: block;
+  height: 100%;
+  background: #7ad79a;
+  transition: width 0.3s linear;
+}
+
+.suitbar.is-low .suitbar-track i {
+  background: #ff8f84;
+}
+
+/* Running: the bar turns amber, because the air is going faster. */
+.suitbar.is-run .suitbar-track i {
+  background: #ffc24d;
+}
+
+.suitbar b {
+  min-width: 2.6em;
+  font-size: 1rem;
+  font-weight: 900;
+  text-align: right;
+}
+
+.suitbar.is-low b {
+  color: #ff9a8c;
+}
+
+/* The touch stick: a navy ring with an ivory knob. */
 .stick {
   position: absolute;
   left: 18px;
@@ -1233,8 +1583,8 @@ html {
   width: 132px;
   height: 132px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(29, 35, 51, 0.5);
+  border: 2px solid var(--gold-orn);
   display: none;
   place-items: center;
   touch-action: none;
@@ -1244,11 +1594,12 @@ html {
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  background: var(--ivory);
+  box-shadow: 0 0 0 2px var(--gold-edge);
   pointer-events: none;
 }
 
+/* Run, View, Home and Jump: navy medallions with a gold ring. */
 .eva-buttons {
   position: absolute;
   right: 12px;
@@ -1259,20 +1610,22 @@ html {
 }
 
 .round {
-  display: grid !important;
+  display: grid;
   justify-items: center;
   align-content: center;
   gap: 1px;
   width: 68px;
   height: 68px;
-  border-radius: 50%;
-  background: rgba(12, 15, 40, 0.78) !important;
-  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  color: var(--on-navy);
+  border: 1px solid var(--gold-orn);
+  box-shadow: inset 0 0 0 3px var(--navy), inset 0 0 0 4px var(--gold-edge), 0 2px 4px rgba(29, 35, 51, 0.35);
   touch-action: none;
 }
 
 .round small {
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 800;
   line-height: 1;
   max-width: 60px;
@@ -1282,8 +1635,15 @@ html {
 .round-big {
   width: 92px;
   height: 92px;
-  background: rgba(255, 209, 102, 0.26) !important;
-  border-color: var(--gold) !important;
+  background: var(--navy-2);
+  border-color: var(--gold-lt);
+}
+
+.round-run.is-on,
+.round-view.is-on {
+  border-color: var(--gold-hi);
+  background: var(--navy-2);
+  box-shadow: 0 0 0 2px var(--gold-hi);
 }
 
 .round:active:not(:disabled) {
@@ -1313,6 +1673,286 @@ html {
   right: auto;
   left: 12px;
   flex-direction: row-reverse;
+}
+
+/* Phones held upright, and narrow windows: the dock becomes a bottom sheet. */
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  .dock {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    margin: 0;
+    max-height: min(64%, 560px);
+    border-radius: var(--r-md) var(--r-md) 0 0;
+    animation-name: sheet-in;
+  }
+
+  @keyframes sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+  }
+
+  .dock-body {
+    padding: 0 14px 12px;
+    gap: 10px;
+  }
+
+  .dock h2 {
+    padding-top: 8px;
+    font-size: 1.25rem;
+  }
+
+  /* Mission Control and Lumi's hint stay in reach while the options scroll. */
+  .dock-body > .help-row {
+    flex-wrap: nowrap;
+    position: sticky;
+    bottom: -12px;
+    margin: 0 -14px -12px;
+    padding: 8px 14px 12px;
+    background: var(--ivory);
+    border-top: 1px solid var(--ivory-line);
+  }
+
+  .dock-body > .help-row .ask {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 8px;
+    padding-right: 8px;
+  }
+
+  .dock-body > .help-row .ask small {
+    display: none;
+  }
+
+  .dock-body > .help-row .why-btn {
+    flex: none;
+    margin-left: 0;
+    padding: 0;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(auto-fit, minmax(4.4rem, 1fr));
+  }
+
+  /* Lumi's band takes the bottom of a phone: the night plaque sits above it. */
+  .night {
+    bottom: 24%;
+    width: min(320px, calc(100% - 32px));
+    box-sizing: border-box;
+  }
+
+  .dock > .card-foot {
+    padding: 8px 14px;
+  }
+
+  .card-foot .btn {
+    font-size: 0.9375rem;
+    padding-inline: 0.7em;
+  }
+
+  .card {
+    padding: 12px 14px;
+  }
+
+  .card-foot {
+    margin: 0 -14px -12px;
+    padding: 10px 14px 12px;
+    bottom: -12px;
+  }
+
+  .module {
+    gap: 8px;
+  }
+
+  .module-text b {
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+
+  .module-effect {
+    font-size: 0.8125rem;
+  }
+
+  .stepper {
+    gap: 4px;
+  }
+
+  .cells {
+    min-height: 32px;
+  }
+
+  .pv b {
+    font-size: 1.125rem;
+  }
+}
+
+/* Phones held sideways: little height, so everything gets tighter. */
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .dock {
+    width: min(480px, 56vw);
+  }
+
+  .dock-body {
+    padding: 0 12px 8px;
+    gap: 6px;
+  }
+
+  .dock h2 {
+    margin-bottom: 4px;
+    padding: 6px 0;
+    font-size: 1.125rem;
+  }
+
+  .dock > .card-foot {
+    padding: 6px 12px;
+  }
+
+  .card {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .card-foot {
+    margin: 0 -12px -10px;
+    padding: 8px 12px 10px;
+    bottom: -10px;
+  }
+
+  .card-foot .btn {
+    min-height: 44px;
+    font-size: 0.875rem;
+    line-height: 1.1;
+  }
+
+  /* Machines go two by two, the end of the week becomes one row. */
+  .plan-have-row > span:first-child,
+  #ui .preview h3 {
+    display: none;
+  }
+
+  .gem {
+    width: 18px;
+    height: 21px;
+  }
+
+  .cells {
+    gap: 3px;
+    min-height: 24px;
+  }
+
+  .preview {
+    padding-top: 4px;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(4, auto);
+    justify-content: space-between;
+    gap: 2px 8px;
+  }
+
+  .pv small {
+    font-size: 0.75rem;
+  }
+
+  .pv b {
+    font-size: 1rem;
+  }
+
+  .pv em {
+    font-size: 0.75rem;
+  }
+
+  .modules {
+    grid-template-columns: 1fr 1fr;
+    gap: 0 10px;
+  }
+
+  .module {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 2px 8px;
+    padding: 4px 0;
+  }
+
+  .module-icon {
+    width: 30px;
+    height: 30px;
+    margin-left: 2px;
+  }
+
+  .module-text b {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .module-effect {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .module-effect em {
+    display: none;
+  }
+
+  .stepper {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .stepper button {
+    width: 48px;
+    height: 44px;
+  }
+
+  .leftover {
+    font-size: 0.75rem;
+  }
+
+  .stick {
+    width: 112px;
+    height: 112px;
+  }
+
+  .round-big {
+    width: 78px;
+    height: 78px;
+  }
+
+  .alarm {
+    top: 62px;
+    font-size: 0.9375rem;
+    padding: 6px 14px;
+  }
+
+  .eva-arrows {
+    top: 58px;
+    left: auto;
+    right: 0;
+    transform: none;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .suitbar {
+    bottom: 6px;
+  }
+
+  /* Keep the hint clear of the round buttons on the right. */
+  .eva-keys {
+    left: 16px;
+    bottom: 48px;
+    transform: none;
+    max-width: calc(100% - 380px);
+  }
 }
 
 /* ----- Debrief ------------------------------------------------------------ */
@@ -1803,81 +2443,8 @@ html {
   font-weight: 900;
 }
 
-/* Phones held upright, and narrow windows: cards become a bottom sheet. */
+/* Phones held upright, and narrow windows. */
 @media (max-width: 760px), (max-aspect-ratio: 4/5) {
-  .dock {
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: auto;
-    margin: 0;
-    max-height: min(64%, 560px);
-    border-radius: var(--r-lg) var(--r-lg) var(--r-md) var(--r-md);
-    animation-name: sheet-in;
-  }
-
-  @keyframes sheet-in {
-    from {
-      opacity: 0;
-      transform: translateY(26px);
-    }
-  }
-
-  /* Lumi sits just above the bottom sheet, clear of the buildings. */
-
-  .module {
-    grid-template-columns: 38px minmax(0, 1fr) auto;
-    gap: 8px;
-    padding: 6px 0;
-  }
-
-  .module-icon {
-    width: 38px;
-    height: 38px;
-  }
-
-  .module-text b {
-    font-size: 0.875rem;
-    line-height: 1.15;
-    overflow-wrap: anywhere;
-    hyphens: auto;
-  }
-
-  .module-effect {
-    font-size: 0.75rem;
-  }
-
-  .stepper {
-    gap: 4px;
-  }
-
-  .stepper button {
-    width: 40px;
-    height: 40px;
-  }
-
-  .level i {
-    width: 8px;
-    height: 8px;
-  }
-
-  .card-foot .btn {
-    font-size: 0.9375rem;
-    padding-inline: 0.7em;
-    line-height: 1.15;
-  }
-
-  .card {
-    padding: 12px 14px;
-  }
-
-  .card-foot {
-    margin: 0 -14px -12px;
-    padding: 10px 14px 12px;
-    bottom: -12px;
-  }
-
   .setup-grid {
     grid-template-columns: 1fr;
   }
@@ -1895,155 +2462,9 @@ html {
 
 /* Phones held sideways: little height, so everything gets tighter. */
 @media (max-height: 520px) and (min-aspect-ratio: 4/5) {
-
   .game {
     grid-template-rows: auto 0 minmax(0, 1fr);
     gap: 4px;
-  }
-
-  .dock {
-    width: min(430px, 50vw);
-  }
-
-  .card {
-    padding: 10px 12px;
-    gap: 8px;
-  }
-
-  .card h2 {
-    font-size: 1rem;
-  }
-
-  .card-foot {
-    margin: 0 -12px -10px;
-    padding: 8px 12px 10px;
-    bottom: -10px;
-  }
-
-  .module-text small {
-    display: none;
-  }
-
-  /* Little height: modules go two by two, the preview becomes one line. */
-  .dock {
-    width: min(470px, 56vw);
-  }
-
-  .plan-have small,
-  #ui .preview h3 {
-    display: none;
-  }
-
-  .cell {
-    width: 16px;
-    height: 18px;
-    border-radius: 5px;
-  }
-
-  .preview {
-    padding: 5px 10px;
-  }
-
-  .preview-grid {
-    grid-template-columns: repeat(4, auto);
-    gap: 4px 10px;
-    font-size: 0.8125rem;
-  }
-
-  .pv {
-    font-size: 0;
-    gap: 3px;
-  }
-
-  .pv b,
-  .pv em {
-    font-size: 0.8125rem;
-    margin-left: 0;
-    min-width: 0;
-  }
-
-  .modules {
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-
-  .module {
-    grid-template-columns: 30px minmax(0, 1fr);
-    gap: 2px 8px;
-    padding: 5px 4px;
-  }
-
-  .module-icon {
-    width: 30px;
-    height: 30px;
-  }
-
-  .module-text b {
-    font-size: 0.8125rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .module-effect {
-    font-size: 0.6875rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .module-effect em {
-    display: none;
-  }
-
-  .stepper {
-    grid-column: 1 / -1;
-    justify-content: space-between;
-  }
-
-  .stepper button {
-    width: 44px;
-    height: 36px;
-  }
-
-  .level i {
-    width: 9px;
-    height: 9px;
-  }
-
-  .card-foot .btn {
-    min-height: 42px;
-    font-size: 0.875rem;
-    line-height: 1.1;
-  }
-
-  .leftover {
-    font-size: 0.75rem;
-  }
-
-  .stick {
-    width: 112px;
-    height: 112px;
-  }
-
-  .round-big {
-    width: 78px;
-    height: 78px;
-  }
-
-  .alarm {
-    top: 62px;
-    font-size: 0.9375rem;
-    padding: 6px 14px;
-  }
-
-  .eva-arrows {
-    top: 58px;
-    left: auto;
-    right: 0;
-    transform: none;
-    flex-direction: column;
-    align-items: flex-end;
   }
 }
 

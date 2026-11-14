@@ -81,8 +81,9 @@ function Briefing({ m }: { m: MissionState }): JSX.Element {
 
   return (
     <section class="dock card briefing" aria-label={t('brief.title', { n: m.week })}>
+      <div class="dock-body">
       <h2>
-        <Icon name="calendar" /> {t('brief.title', { n: m.week })}
+        <Icon name="calendar" /> <span class="h2-text">{t('brief.title', { n: m.week })}</span>
         <WhyBtn task="forecast" />
       </h2>
 
@@ -150,9 +151,10 @@ function Briefing({ m }: { m: MissionState }): JSX.Element {
           </div>
         </div>
       </div>
+      <CrewStrip stage="briefing" />
+      </div>
 
       <footer class="card-foot">
-        <CrewStrip stage="briefing" />
         <Btn kind="primary" iconRight="next" wide autoFocus disabled={coopAnswered('briefing')} onClick={continueBriefing}>
           {coopAnswered('briefing') ? t('crew.co.waitCrew') : t('brief.go')}
         </Btn>
@@ -193,11 +195,12 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
 
   return (
     <section class={`dock card event ${view.storm ? 'event-storm' : ''}`} aria-label={view.title}>
+      <div class="dock-body">
       <h2>
         <span class={`event-icon ${view.storm ? 'is-alert' : ''}`}>
           <Icon name={view.icon as IconName} size={26} />
         </span>
-        {view.title}
+        <span class="h2-text">{view.title}</span>
         <SpeakBtn text={`${view.title}. ${view.body}`} />
         <WhyBtn task="event" />
       </h2>
@@ -293,6 +296,7 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
           </div>
         </div>
       )}
+      </div>
     </section>
   );
 }
@@ -307,8 +311,9 @@ function EventResult({ m }: { m: MissionState }): JSX.Element | null {
   const onMarsUrgent = m.config.site === 'mars' && view.urgent && !!answer?.tooLate && result.advice;
   return (
     <section class="dock card event-result" aria-label={t('ev.resultTitle')}>
+      <div class="dock-body">
       <h2>
-        <Icon name="check" /> {t('ev.resultTitle')}
+        <Icon name="check" /> <span class="h2-text">{t('ev.resultTitle')}</span>
         <SpeakBtn text={`${text} ${view.story}`} />
       </h2>
       <p class="event-body">{text}</p>
@@ -334,8 +339,10 @@ function EventResult({ m }: { m: MissionState }): JSX.Element | null {
         </p>
       </div>
 
+      <CrewStrip stage="eventResult" />
+      </div>
+
       <footer class="card-foot">
-        <CrewStrip stage="eventResult" />
         <Btn kind="primary" iconRight="next" wide autoFocus disabled={coopAnswered('eventResult')} onClick={confirmEvent}>
           {coopAnswered('eventResult') ? t('crew.co.waitCrew') : t('common.continue')}
         </Btn>
@@ -373,6 +380,17 @@ function shieldExtra(m: MissionState): string {
   return t('mod.shield.built', { n: Math.round(m.shield * 100) });
 }
 
+/** One cut gem for one unit of power: a hexagon with a lit top facet. Free cells are outlines. */
+function Gem({ module }: { module: ModuleId | null }): JSX.Element {
+  return (
+    <svg class={module ? `gem cell-${module}` : 'gem cell-free'} viewBox="0 0 26 30" width="24" height="28" aria-hidden="true">
+      <polygon class="gem-body" points="13,1 24,9 24,21 13,29 2,21 2,9" />
+      {module && <polygon class="gem-top" points="13,1 24,9 13,13 2,9" />}
+      {module && <path class="gem-edge" d="M13 13v16M13 13L2 21M13 13l11 8" />}
+    </svg>
+  );
+}
+
 function PlanPanel({ m }: { m: MissionState }): JSX.Element {
   const outcome = computeWeek(m);
   const now = m.now;
@@ -383,105 +401,131 @@ function PlanPanel({ m }: { m: MissionState }): JSX.Element {
   while (cells.length < total) cells.push(null);
   const airDelta = outcome.airAfter - m.air;
   const doseDelta = outcome.doseAfter - m.dose;
+  const cellsLabel = MODULES.filter((module) => m.alloc[module] > 0)
+    .map((module) => `${m.alloc[module]} ${t(`mod.${module}.name`)}`)
+    .join(', ');
 
   return (
     <section class="dock card plan" aria-label={t('plan.title')}>
-      <h2>
-        <Icon name="power" /> {t('plan.title')}
-        <WhyBtn task="plan" />
-      </h2>
-      <p class="plan-have">
-        <b>{t('plan.have', { n: total })}</b>
-        <small>
-          {eventCost > 0
-            ? t('plan.fromEvent', { sun: now.solar, battery: m.battery, cost: eventCost })
-            : t('plan.from', { sun: now.solar, battery: m.battery })}
-        </small>
-      </p>
-      <PlanChangedNote />
-      <div class="cells" aria-hidden="true">
-        {cells.map((module, index) => (
-          <i key={index} class={module ? `cell cell-${module}` : 'cell cell-free'} />
-        ))}
-      </div>
-
-      <div class="preview" aria-label={t('plan.endOfWeek')}>
-        <h3>{t('plan.endOfWeek')}</h3>
-        <div class="preview-grid">
-          <span class={`pv ${airDelta < 0 ? 'bad' : airDelta > 0 ? 'good' : ''}`}>
-            <Icon name="air" size={16} /> {t('plan.pAir')} <b>{outcome.airAfter}%</b> <em>{signed(airDelta, 0)}</em>
-          </span>
-          <span class={`pv ${outcome.hungry ? 'bad' : outcome.harvested ? 'good' : ''}`}>
-            <Icon name="food" size={16} /> {t('plan.pFood')} <b>{num(outcome.foodAfter)}</b> <em>{signed(outcome.foodAfter - m.food)}</em>
-          </span>
-          <span class={`pv ${outcome.doseAfter > m.doseLimit * 0.8 ? 'bad' : ''}`}>
-            <Icon name="dose" size={16} /> {t('plan.pDose')} <b>{num(outcome.doseAfter, 0)}</b> <em>{signed(doseDelta)}</em>
-          </span>
-          <span class={`pv ${outcome.parts.sciLab > 0 ? 'good' : ''}`}>
-            <Icon name="science" size={16} /> {t('plan.pScience')} <b>{outcome.scienceAfter}</b> <em>{signed(outcome.parts.sciLab, 0)}</em>
+      <div class="dock-body">
+        <h2>
+          <Icon name="power" /> <span class="h2-text">{t('plan.title')}</span>
+          <WhyBtn task="plan" />
+        </h2>
+        <div class="plan-have">
+          <b>{t('plan.have', { n: total })}</b>
+          <span class="plan-have-row">
+            <span>
+              {eventCost > 0
+                ? t('plan.fromEvent', { sun: now.solar, battery: m.battery, cost: eventCost })
+                : t('plan.from', { sun: now.solar, battery: m.battery })}
+            </span>
+            <span class={`plan-free ${outcome.wasted > 0 ? 'is-wasted' : ''}`}>
+              <i aria-hidden="true" /> {t('plan.left', { n: outcome.leftover })}
+            </span>
           </span>
         </div>
-        {outcome.airAfter <= 0 && <p class="danger">{t('plan.airDanger')}</p>}
-        {outcome.hungry && <p class="danger">{t('plan.hungry')}</p>}
-        {outcome.doseAfter >= m.doseLimit && <p class="danger">{t('plan.doseDanger')}</p>}
-      </div>
+        <PlanChangedNote />
+        <div class="cells" role="img" aria-label={`${total}: ${cellsLabel}`}>
+          {cells.map((module, index) => (
+            <Gem key={index} module={module} />
+          ))}
+        </div>
 
-      <div class="modules">
-        {MODULES.map((module) => {
-          const level = m.alloc[module];
-          const max = MAX_LEVEL[module];
-          const finished = module === 'shield' && robotIdle(m);
-          const canAdd = level < max && outcome.leftover > 0 && !finished;
-          return (
-            <div key={module} class={`module module-${module} ${level === 0 ? 'is-off' : ''}`}>
-              <i key={`pulse-${level}`} class="module-pulse" aria-hidden="true" />
-              <ChangeFlash module={module} />
-              <span class="module-icon">
-                <Icon name={MODULE_ICON[module]} size={24} />
+        <div class="preview" role="group" aria-label={t('plan.endOfWeek')}>
+          <h3>{t('plan.endOfWeek')}</h3>
+          <div class="preview-grid">
+            <span class={`pv ${airDelta < 0 ? 'bad' : airDelta > 0 ? 'good' : ''}`}>
+              <small>{t('plan.pAir')}</small>
+              <span>
+                <b>{outcome.airAfter}%</b> <em>{signed(airDelta, 0)}</em>
               </span>
-              <div class="module-text">
-                <b>
-                  {t(`mod.${module}.name`)} <WhyBtn task={MODULE_TASK[module]} compact />
-                </b>
-                <small>
-                  <Rich text={t(`mod.${module}.what`)} />
-                </small>
-                <span class="module-effect">
-                  {moduleLine(m, module)}
-                  {module === 'farm' && farmExtra(m) && <em> · {farmExtra(m)}</em>}
-                  {module === 'shield' && <em> · {shieldExtra(m)}</em>}
+            </span>
+            <span class={`pv ${outcome.hungry ? 'bad' : outcome.harvested ? 'good' : ''}`}>
+              <small>{t('plan.pFood')}</small>
+              <span>
+                <b>{num(outcome.foodAfter)}</b> <em>{signed(outcome.foodAfter - m.food)}</em>
+              </span>
+            </span>
+            <span class={`pv ${outcome.doseAfter > m.doseLimit * 0.8 ? 'bad' : ''}`}>
+              <small>{t('plan.pDose')}</small>
+              <span>
+                <b>{num(outcome.doseAfter, 0)}</b> <em>{signed(doseDelta)}</em>
+              </span>
+            </span>
+            <span class={`pv ${outcome.parts.sciLab > 0 ? 'good' : ''}`}>
+              <small>{t('plan.pScience')}</small>
+              <span>
+                <b>{outcome.scienceAfter}</b> <em>{signed(outcome.parts.sciLab, 0)}</em>
+              </span>
+            </span>
+          </div>
+          {outcome.airAfter <= 0 && <p class="danger">{t('plan.airDanger')}</p>}
+          {outcome.hungry && <p class="danger">{t('plan.hungry')}</p>}
+          {outcome.doseAfter >= m.doseLimit && <p class="danger">{t('plan.doseDanger')}</p>}
+        </div>
+
+        <div class="modules">
+          {MODULES.map((module) => {
+            const level = m.alloc[module];
+            const max = MAX_LEVEL[module];
+            const finished = module === 'shield' && robotIdle(m);
+            const canAdd = level < max && outcome.leftover > 0 && !finished;
+            return (
+              <div key={module} class={`module module-${module} ${level === 0 ? 'is-off' : ''}`}>
+                <i key={`pulse-${level}`} class="module-pulse" aria-hidden="true" />
+                <ChangeFlash module={module} />
+                <span class="module-icon">
+                  <Icon name={MODULE_ICON[module]} size={22} />
                 </span>
+                <div class="module-text">
+                  <b>
+                    {t(`mod.${module}.name`)} <WhyBtn task={MODULE_TASK[module]} compact />
+                  </b>
+                  <small>
+                    <Rich text={t(`mod.${module}.what`)} />
+                  </small>
+                  <span class="module-effect">
+                    {moduleLine(m, module)}
+                    {module === 'farm' && farmExtra(m) && <em> · {farmExtra(m)}</em>}
+                    {module === 'shield' && <em> · {shieldExtra(m)}</em>}
+                  </span>
+                  <span class="level" role="img" aria-label={`${t('plan.level', { n: level })} / ${max}`}>
+                    {Array.from({ length: max }, (_, index) => (
+                      <i key={index} class={index < level ? 'is-on' : ''} />
+                    ))}
+                    <b>
+                      {level}/{max}
+                    </b>
+                  </span>
+                </div>
+                <div class="stepper" role="group" aria-label={t(`mod.${module}.name`)}>
+                  <button type="button" aria-label={t('plan.less', { name: t(`mod.${module}.name`) })} disabled={level === 0} onClick={() => changeAlloc(module, -1)}>
+                    <Icon name="minus" size={18} />
+                  </button>
+                  <button type="button" aria-label={t('plan.more', { name: t(`mod.${module}.name`) })} class={canAdd ? '' : 'is-blocked'} disabled={level >= max || finished} onClick={() => changeAlloc(module, 1)}>
+                    <Icon name="plus" size={18} />
+                  </button>
+                </div>
               </div>
-              <div class="stepper" role="group" aria-label={t(`mod.${module}.name`)}>
-                <button type="button" aria-label={t('plan.less', { name: t(`mod.${module}.name`) })} disabled={level === 0} onClick={() => changeAlloc(module, -1)}>
-                  <Icon name="minus" size={18} />
-                </button>
-                <span class="level" aria-label={t('plan.level', { n: level })}>
-                  {Array.from({ length: max }, (_, index) => (
-                    <i key={index} class={index < level ? 'is-on' : ''} />
-                  ))}
-                </span>
-                <button type="button" aria-label={t('plan.more', { name: t(`mod.${module}.name`) })} class={canAdd ? '' : 'is-blocked'} disabled={level >= max || finished} onClick={() => changeAlloc(module, 1)}>
-                  <Icon name="plus" size={18} />
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {(outcome.leftover > 0 || outcome.wasted > 0) && (
+          <p class={`leftover ${outcome.wasted > 0 ? 'warn' : ''}`}>
+            <Icon name="battery" size={18} /> {t('plan.toBattery', { n: outcome.batteryAfter })}
+            {outcome.wasted > 0 && <b> · {t('plan.wasted', { n: outcome.wasted })}</b>}
+          </p>
+        )}
+
+        <CrewStrip stage="plan" />
       </div>
-
-      <p class={`leftover ${outcome.wasted > 0 ? 'warn' : ''}`}>
-        <Icon name="battery" size={18} /> {t('plan.left', { n: outcome.leftover })}
-        {outcome.leftover > 0 && <> · {t('plan.toBattery', { n: outcome.batteryAfter })}</>}
-        {outcome.wasted > 0 && <b> · {t('plan.wasted', { n: outcome.wasted })}</b>}
-      </p>
-
-      <CrewStrip stage="plan" />
       <footer class="card-foot two">
-        <Btn kind="ghost" icon="shield" onClick={useSafePlan}>
+        <Btn kind="soft" onClick={useSafePlan}>
           {t('plan.safe')}
         </Btn>
-        <Btn kind="primary" iconRight="play" disabled={coopAnswered('plan')} onClick={confirmPlan}>
+        <Btn kind="primary" icon="play" disabled={coopAnswered('plan')} onClick={confirmPlan}>
           {coopAnswered('plan') ? t('crew.co.waitCrew') : t('plan.go')}
         </Btn>
       </footer>
@@ -516,8 +560,9 @@ function EvaIntro({ m }: { m: MissionState }): JSX.Element {
   const decided = !!co && (choice !== undefined || co.outside);
   return (
     <section class="dock card eva-intro" aria-label={t('eva.title')}>
+      <div class="dock-body">
       <h2>
-        <Icon name="walk" /> {t('eva.title')}
+        <Icon name="walk" /> <span class="h2-text">{t('eva.title')}</span>
         <WhyBtn task="walk" />
       </h2>
       <p class="event-body">{t('eva.body')}</p>
@@ -544,13 +589,15 @@ function EvaIntro({ m }: { m: MissionState }): JSX.Element {
       </ul>
       {co && <h3 class="choose">{t('crew.co.walkTitle')}</h3>}
       <CrewStrip stage="walk" />
-      {decided ? (
+      {decided && (
         <p class="crew-wait" role="status">
           {co.outside ? t('crew.co.outside', { n: friendsOutside(co) }) : t(choice ? 'crew.co.youWalk' : 'crew.co.youStay')}
         </p>
-      ) : (
+      )}
+      </div>
+      {!decided && (
         <footer class="card-foot two">
-          <Btn kind="ghost" onClick={skipWalk}>
+          <Btn kind="soft" onClick={skipWalk}>
             {t('eva.stay')}
           </Btn>
           <Btn kind="primary" icon="walk" autoFocus onClick={beginWalk}>
@@ -826,8 +873,9 @@ function EvaResultCard({ m }: { m: MissionState }): JSX.Element | null {
   const outsideNow = coWalk ? friendsOutside(coWalk) : 0;
   return (
     <section class="dock card eva-result" aria-label={t('eva.resultTitle')}>
+      <div class="dock-body">
       <h2>
-        <Icon name="home" /> {t('eva.resultTitle')}
+        <Icon name="home" /> <span class="h2-text">{t('eva.resultTitle')}</span>
       </h2>
       <ul class="facts">
         <li class={result.samples ? 'good' : ''}>
@@ -883,6 +931,7 @@ function EvaResultCard({ m }: { m: MissionState }): JSX.Element | null {
         </p>
       )}
       <CrewStrip stage="walk" />
+      </div>
       <footer class="card-foot">
         <Btn kind="primary" iconRight="next" wide autoFocus disabled={!!coopLive.value} onClick={finishWalk}>
           {coopLive.value ? t('crew.co.waitCrew') : t('common.continue')}
@@ -1012,8 +1061,9 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
 
   return (
     <section class="dock card report" aria-label={t('report.title', { n: record.week })}>
+      <div class="dock-body">
       <h2>
-        <Icon name="check" /> {t('report.title', { n: record.week })}
+        <Icon name="check" /> <span class="h2-text">{t('report.title', { n: record.week })}</span>
         <WhyBtn task="night" />
       </h2>
 
@@ -1111,24 +1161,25 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
         {record.dose > m.doseLimit * 0.8 && <li class="bad">{t('report.doseHigh')}</li>}
         {record.efficiency < 0.95 && <li class="warn">{t('report.efficiency', { n: Math.round(record.efficiency * 100) })}</li>}
       </ul>
+      {co && <CrewStrip stage="report" />}
+      {!co && waiting && (
+        <p class="crew-wait" role="status">
+          {t('crew.waitCrew', { names: behind.map((player) => t(`crew.name.${player.name}`)).join(', ') })}
+        </p>
+      )}
+      </div>
 
       <footer class="card-foot">
         {co ? (
           <>
-            <CrewStrip stage="report" />
             <Btn kind="primary" iconRight="next" wide autoFocus disabled={coopAnswered('report')} onClick={goNextWeek}>
               {coopAnswered('report') ? t('crew.co.waitNext') : t(last ? 'report.finish' : 'report.next')}
             </Btn>
           </>
         ) : waiting ? (
-          <>
-            <p class="crew-wait" role="status">
-              {t('crew.waitCrew', { names: behind.map((player) => t(`crew.name.${player.name}`)).join(', ') })}
-            </p>
-            <Btn kind="soft" wide onClick={crewDontWait}>
-              {t('crew.dontWait')}
-            </Btn>
-          </>
+          <Btn kind="soft" wide onClick={crewDontWait}>
+            {t('crew.dontWait')}
+          </Btn>
         ) : (
           <Btn kind="primary" iconRight="next" wide autoFocus onClick={crewNextWeek}>
             {t(last ? 'report.finish' : 'report.next')}
