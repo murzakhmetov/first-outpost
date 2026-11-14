@@ -66,6 +66,10 @@ class Rig {
   checks = 0;
   maxSt = 0;
   maxRec = 0;
+  /** The first st this rig sent (a fresh state) and every st and rec size, for the sizes the docs quote. */
+  firstSt = 0;
+  sizesSt: number[] = [];
+  sizesRec: number[] = [];
 
   constructor(
     readonly cfg: MissionConfig,
@@ -91,6 +95,8 @@ class Rig {
     const body = JSON.parse(JSON.stringify(encodeSnapshot(HOST, co, this.t))) as Record<string, unknown>;
     const size = JSON.stringify(body).length;
     this.maxSt = Math.max(this.maxSt, size);
+    if (!this.sizesSt.length) this.firstSt = size;
+    this.sizesSt.push(size);
     expect(size).toBeLessThanOrEqual(sizeLimit('st'));
     const parsed = parseCoopMessage('st', body);
     if (!parsed || parsed.event !== 'st') throw new Error('st did not parse: ' + JSON.stringify(body).slice(0, 400));
@@ -102,6 +108,7 @@ class Rig {
       const rec = JSON.parse(JSON.stringify(encodeRecord(HOST, co.rec))) as unknown;
       const size2 = JSON.stringify(rec).length;
       this.maxRec = Math.max(this.maxRec, size2);
+      this.sizesRec.push(size2);
       expect(size2).toBeLessThanOrEqual(sizeLimit('rec'));
       const back = parseCoopMessage('rec', rec);
       if (!back || back.event !== 'rec') throw new Error('rec did not parse');
@@ -243,6 +250,38 @@ describe('st and rec: what the host holds is what a guest rebuilds', () => {
     expect(sizeLimit('rec')).toBe(1200);
     expect(sizeLimit('int')).toBe(MAX_MESSAGE_SIZE);
     expect(sizeLimit('status')).toBe(MAX_MESSAGE_SIZE);
+  });
+
+  it('the sizes docs/MULTIPLAYER.md quotes stay in their measured ranges', () => {
+    const all = playRigs();
+    const med = (a: number[]) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
+    const sts = all.flatMap((rig) => rig.sizesSt);
+    const recs = all.flatMap((rig) => rig.sizesRec);
+    const firsts = all.map((rig) => rig.firstSt);
+    // Docs: a fresh st is 0.88-0.92 kB, the middle one 1.1 kB, the largest 1.96 kB; a rec about 0.8 kB.
+    expect(Math.min(...firsts)).toBeGreaterThanOrEqual(850);
+    expect(Math.max(...firsts)).toBeLessThanOrEqual(950);
+    expect(med(sts)).toBeGreaterThanOrEqual(1050);
+    expect(med(sts)).toBeLessThanOrEqual(1250);
+    expect(Math.max(...sts)).toBeGreaterThanOrEqual(1850);
+    expect(Math.max(...sts)).toBeLessThanOrEqual(2100);
+    expect(med(recs)).toBeGreaterThanOrEqual(750);
+    expect(med(recs)).toBeLessThanOrEqual(900);
+    expect(Math.max(...recs)).toBeGreaterThanOrEqual(780);
+    expect(Math.max(...recs)).toBeLessThanOrEqual(900);
+    // Docs: a power plan is about 100 characters, a walk result with every field at its largest about 275.
+    const plan = JSON.stringify(encodeIntent({ from: 'seat000002', n: 1, w: 1, s: 'plan', k: 'alloc', a: { life: 1, farm: 1, lab: 1, shield: 1 } } as Intent));
+    expect(plan.length).toBeGreaterThanOrEqual(90);
+    expect(plan.length).toBeLessThanOrEqual(130);
+    const walk = JSON.stringify(
+      encodeIntent({
+        from: 'seat000002', n: 12, w: 10, s: 'walk', k: 'walkEnd',
+        r: { seconds: 120, samples: 6, science: 17, chore: true, caught: false, alerted: false, finds: [FINDS.mars[0].id, FINDS.mars[1].id, FINDS.mars[2].id, FINDS.mars[3].id], materials: { regolith: 12, metal: 12 }, picked: [0, 1, 2, 3, 4, 5] },
+      } as Intent),
+    );
+    expect(walk.length).toBeGreaterThanOrEqual(260);
+    expect(walk.length).toBeLessThanOrEqual(290);
+    expect(walk.length).toBeLessThanOrEqual(sizeLimit('int'));
   });
 
   it('the plan, the history and the config never travel in st', () => {

@@ -121,7 +121,7 @@ function num(raw: unknown, min: number, max: number): number | null {
   return typeof raw === 'number' && Number.isFinite(raw) && raw >= min && raw <= max ? raw : null;
 }
 
-/** A walk result from the network: every number clamped to what a real walk can reach, no free text. */
+/** A walk result from the network: a number above what a real walk can reach refuses the whole result (nothing is trimmed); no free text. */
 export function parseWalkResult(raw: unknown): WalkResult | null {
   if (!raw || typeof raw !== 'object') return null;
   const o = raw as Record<string, unknown>;

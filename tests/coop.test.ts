@@ -342,6 +342,15 @@ describe('intents', () => {
     expect(parseIntent({ ...base, k: 'ready', on: true })).not.toBeNull();
   });
 
+  it('a walk result is refused whole above the limits in the docs (120 s, 12 of a material), not trimmed', () => {
+    const ok = { seconds: 120, samples: 6, science: 17, chore: false, caught: false, alerted: false, materials: { regolith: 12, metal: 12 } };
+    const send = (r: object) => parseIntent({ from: 's0', n: 1, w: 1, s: 'walk', k: 'walkEnd', r });
+    expect(send(ok)).not.toBeNull();
+    expect(send({ ...ok, seconds: 121 })).toBeNull();
+    expect(send({ ...ok, materials: { regolith: 13, metal: 0 } })).toBeNull();
+    expect(send({ ...ok, materials: { regolith: 0, metal: 13 } })).toBeNull();
+  });
+
   it('a walk that claims more science than the crew cap is refused, and so is a merge above it', () => {
     const big = { seconds: 30, samples: 6, science: 24, chore: false, caught: false, alerted: false, picked: [0, 1, 2, 3, 4, 5] };
     expect(parseIntent({ from: 's0', n: 1, w: 1, s: 'walk', k: 'walkEnd', r: big })).toBeNull();
@@ -828,7 +837,8 @@ describe('balance: a crew of four does not beat the solo envelope', () => {
         expect(row.stars, `crew of ${row.crew}`).toBeLessThanOrEqual(envelope.stars + 0.05);
         expect(row.three, `crew of ${row.crew}`).toBeLessThanOrEqual(envelope.three + 5);
       }
-    });
+      // About 1,700 whole missions: a few seconds alone, more on a busy machine.
+    }, 60_000);
   }
 
   it('four bold walkers bring home exactly what one bold walker does, never more from one walk', () => {
