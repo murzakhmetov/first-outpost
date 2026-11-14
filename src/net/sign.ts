@@ -75,28 +75,106 @@ export const SIG_OVERHEAD = 120;
 
 // ----- Ordered work ------------------------------------------------------------------------
 
+/** What a queued job may say about itself: the group it counts against, and a tag that survives a `clear`. */
+export interface JobOptions {
+  /** Jobs of one group wait at most `groupMax` at a time: a new one pushes out the oldest waiting job of its group. */
+  group?: string;
+  groupMax?: number;
+  tag?: string;
+  /**
+   * Starts the job's check early, while it still waits its turn. It answers whether the job is worth running: a job that
+   * is found bad leaves the queue at once (it frees its place); the order of the good ones does not change.
+   */
+  warm?: () => Maybe<boolean>;
+}
+
+interface Job {
+  run: () => unknown;
+  group: string;
+  tag: string;
+}
+
 /**
  * A first-in, first-out queue of jobs. A job may finish later (it returns a promise); the next one starts only after it
  * has finished, so a slow check can never let a later message overtake an earlier one. A synchronous job (the test fake)
- * runs inline inside `push`, with no extra tick. A job that throws or rejects is skipped. At most `max` jobs wait.
+ * runs inline inside `push`, with no extra tick. A job that throws or rejects is skipped. At most `max` jobs wait. A group
+ * has its own limit, so one noisy sender (or a forger writing in its name) cannot use up the room of everybody else.
  */
 export class Ordered {
-  private queue: (() => unknown)[] = [];
+  private queue: Job[] = [];
   private busy = false;
+  private warming = 0;
+  private idleWaiters: (() => void)[] = [];
 
   constructor(private readonly max: number) {}
 
-  /** False when the queue is full (the job is dropped). */
-  push(job: () => unknown): boolean {
+  /** False when the queue is full (the job is dropped). Over a group limit the oldest waiting job of that group goes instead. */
+  push(job: () => unknown, options: JobOptions = {}): boolean {
+    const group = options.group ?? '';
+    if (options.groupMax !== undefined) {
+      let count = 0;
+      for (const waiting of this.queue) if (waiting.group === group) count++;
+      if (count >= options.groupMax) {
+        const oldest = this.queue.findIndex((waiting) => waiting.group === group);
+        if (oldest >= 0) this.queue.splice(oldest, 1);
+      }
+    }
     if (this.queue.length >= this.max) return false;
-    this.queue.push(job);
+    const entry: Job = { run: job, group, tag: options.tag ?? '' };
+    this.queue.push(entry);
+    if (options.warm) this.warmUp(entry, options.warm);
     if (!this.busy) this.run();
     return true;
   }
 
-  /** Forget the jobs that have not started. */
-  clear(): void {
-    this.queue.length = 0;
+  /**
+   * At most this many early checks run at once. It is as big as the room's queue cap, so every waiting frame is checked
+   * early: a flood of forged frames then drops out together, and cannot make the honest message behind it wait in line.
+   */
+  private static readonly WARM_MAX = 256;
+
+  private warmUp(entry: Job, warm: () => Maybe<boolean>): void {
+    if (this.warming >= Ordered.WARM_MAX) return;
+    const drop = (): void => {
+      const at = this.queue.indexOf(entry);
+      if (at >= 0) this.queue.splice(at, 1);
+    };
+    let result: Maybe<boolean>;
+    try {
+      result = warm();
+    } catch {
+      return;
+    }
+    if (!isPromise(result)) {
+      if (!result) drop();
+      return;
+    }
+    this.warming++;
+    result.then(
+      (good) => {
+        this.warming--;
+        if (!good) drop();
+      },
+      () => {
+        this.warming--;
+      },
+    );
+  }
+
+  /** Forget the jobs that have not started (except the ones `keep` says yes to, by tag). */
+  clear(keep?: (tag: string) => boolean): void {
+    this.queue = keep ? this.queue.filter((job) => keep(job.tag)) : [];
+  }
+
+  /** Nothing is running and nothing waits. */
+  get idle(): boolean {
+    return !this.busy && this.queue.length === 0;
+  }
+
+  /** Call `done` once the queue is idle (at once when it is). */
+  whenIdle(done: () => void): void {
+    if (this.idle) done();
+    else this.idleWaiters.push(done);
   }
 
   private run(): void {
@@ -105,7 +183,7 @@ export class Ordered {
       const job = this.queue.shift()!;
       let result: unknown;
       try {
-        result = job();
+        result = job.run();
       } catch {
         continue;
       }
@@ -116,6 +194,9 @@ export class Ordered {
       }
     }
     this.busy = false;
+    const waiters = this.idleWaiters;
+    this.idleWaiters = [];
+    for (const done of waiters) done();
   }
 }
 

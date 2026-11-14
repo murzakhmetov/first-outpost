@@ -106,6 +106,20 @@ const WINDOW_MS = 2000;
 const INBOUND_LIMIT: Record<string, number> = { status: 8, final: 3, react: 3, pos: 16, st: 12, rec: 24, int: 24, sync: 3 };
 /** How many inbound (or outbound) jobs may wait for a check that finishes later. A job over the limit is dropped. */
 const QUEUE_MAX = 256;
+/**
+ * What may wait in the inbox for one claimed sender (a seated friend), for all unknown senders together, and for presence
+ * lists. Over a limit the OLDEST waiting job of that group goes, so a flood of frames in a friend's name (they cost a
+ * signature check each) cannot push out the friend's real message or the host's start behind it.
+ */
+const WAIT_PER_SENDER = 128;
+const WAIT_UNKNOWN = 16;
+const WAIT_PRESENCE = 64;
+/** A sticker from a friend who is not on the host's list yet waits for the list (a few, a short while). */
+const PARKED_PER_SENDER = 2;
+const PARKED_MAX = 8;
+const PARKED_MS = 10_000;
+/** Counters remembered across joins: one per (room, sender, key). */
+const COUNTERS_MAX = 512;
 /** A message counter is a positive integer that fits a double exactly. */
 const COUNTER_MAX = 2 ** 40;
 
@@ -157,15 +171,21 @@ export class CrewRoom {
   private identity: Identity | null = null;
   /** The public key we trust for an id: the host's from the moment we lock it in, a player's from the moment the host seats them. */
   private pins = new Map<string, string>();
-  /** The highest counter seen from each sender (only a verified message moves it): a copy of an older message is dropped. */
+  /**
+   * The highest counter seen from each sender in each room under each key (only a verified message moves it): a copy of an
+   * older message is dropped. It outlives a leave and a join, so a copy cannot be replayed after the receiver comes back to
+   * the same lobby; a friend who comes back with a new key (a new visit) starts again at one.
+   */
   private lastCounter = new Map<string, number>();
+  /** Stickers from a friend whose key we do not hold yet (the host's seat list is still on its way). */
+  private parked: { event: string; payload: unknown; from: string; at: number }[] = [];
   /** Our own counter. It never goes back, also when the room is left and another one is joined. */
   private counter = 0;
   /** Ids whose host entry (the one in `present`) carries a signature that checks out. */
   private verifiedHosts = new Set<string>();
   private checked = new Map<string, boolean>();
   private readonly inbox = new Ordered(QUEUE_MAX);
-  private readonly outbox = new Ordered(QUEUE_MAX);
+  private outbox = new Ordered(QUEUE_MAX);
 
   /** The host started the mission (also called on the host itself). */
   onStart: ((start: StartPayload) => void) | null = null;
@@ -269,7 +289,7 @@ export class CrewRoom {
     this.lastStatusJson = '';
     this.seen.clear();
     this.pins.clear();
-    this.lastCounter.clear();
+    this.parked = [];
     this.verifiedHosts.clear();
     this.checked.clear();
     this.entries = [];
@@ -277,7 +297,10 @@ export class CrewRoom {
 
   private cleanup(): void {
     this.inbox.clear();
-    this.outbox.clear();
+    // A final that is signed or waiting still goes out (a friend sees the leaver's last numbers); the rest is forgotten.
+    const outbox = this.outbox;
+    outbox.clear((tag) => tag === 'final');
+    this.outbox = new Ordered(QUEUE_MAX);
     clearTimeout(this.hostGoneTimer);
     clearTimeout(this.waitTimer);
     clearTimeout(this.statusTimer);
@@ -290,10 +313,24 @@ export class CrewRoom {
     const transport = this.transport;
     this.transport = null;
     if (transport) {
-      try {
-        transport.close();
-      } catch {
-        /* closing must never throw */
+      let closed = false;
+      const close = (): void => {
+        if (closed) return;
+        closed = true;
+        try {
+          transport.close();
+        } catch {
+          /* closing must never throw */
+        }
+      };
+      if (outbox.idle) close();
+      else {
+        // Close once the last signature is done (and in any case soon).
+        const late = setTimeout(close, 3000);
+        outbox.whenIdle(() => {
+          clearTimeout(late);
+          close();
+        });
       }
     }
   }
@@ -446,11 +483,29 @@ export class CrewRoom {
 
   /** Everything from the network goes through the one ordered inbox, presence and messages together (pins come from presence). */
   private onPresence(token: number, list: PresenceEntry[]): void {
-    this.inbox.push(() => this.takePresence(token, list));
+    this.inbox.push(() => this.takePresence(token, list), { group: '#presence', groupMax: WAIT_PRESENCE });
   }
 
   private onMessage(token: number, event: string, payload: unknown): void {
-    this.inbox.push(() => this.takeMessage(token, event, payload));
+    const claimed = isRecord(payload) ? playerId(payload.from) : null;
+    if (claimed === this.meta.id) return; // our own name: nothing we receive can be ours
+    const known = claimed !== null && this.roster.get(claimed)?.here === true;
+    // A friend whose key is already pinned has the signature checked while the frame waits (all in parallel); the
+    // result is used when its turn comes, so a flood of forged frames costs the waiting line nothing: they leave it as
+    // soon as they are found bad.
+    const early: { key: string; result?: Maybe<boolean> } | null = known ? { key: this.pins.get(claimed) ?? '', result: undefined } : null;
+    this.inbox.push(() => this.takeMessage(token, event, payload, early), {
+      group: known ? claimed : '#unknown',
+      groupMax: known ? WAIT_PER_SENDER : WAIT_UNKNOWN,
+      warm:
+        early && early.key
+          ? () => {
+              const result = this.checkSignature(event, payload, early.key);
+              early.result = result;
+              return result;
+            }
+          : undefined,
+    });
   }
 
   /** A presence list from the network. Runs inside the ordered inbox: a signature that is checked later holds the queue. */
@@ -535,6 +590,38 @@ export class CrewRoom {
     this.present = metas.sort(seatOrder);
     this.verifiedHosts = new Set(this.present.filter((meta) => meta.h && this.signedOk(meta)).map((meta) => meta.id));
     if (this.settled) this.reconcile();
+    this.retryParked();
+  }
+
+  /**
+   * The key a held sticker of `from` must be signed with: the key of the friend's one entry. Null when the sticker cannot
+   * be held at all (not the lobby, not a sticker, the host, no entry, or two different entries under that id).
+   */
+  private parkKey(event: string, from: string): string | null {
+    if (this.phase !== 'lobby' || event !== 'react' || this.isHost || from === this.hostId) return null;
+    const mine = this.entries.filter((meta) => meta.id === from);
+    if (mine.length === 0 || mine.some((meta) => meta.h || meta.k !== mine[0].k || !mine[0].k)) return null;
+    return mine[0].k;
+  }
+
+  /** Hold a sticker from a friend who has shown an entry but is not on the host's list yet. True when it is held. */
+  private park(event: string, payload: unknown, from: string): boolean {
+    if (this.parkKey(event, from) === null) return false;
+    const now = this.now();
+    this.parked = this.parked.filter((item) => now - item.at < PARKED_MS);
+    if (this.parked.length >= PARKED_MAX || this.parked.filter((item) => item.from === from).length >= PARKED_PER_SENDER) return false;
+    this.parked.push({ event, payload, from, at: now });
+    return true;
+  }
+
+  /** The seat list brought keys: the held stickers of those friends take their turn again, in the order they came. */
+  private retryParked(): void {
+    if (this.parked.length === 0) return;
+    const now = this.now();
+    const ready = this.parked.filter((item) => this.pins.has(item.from) && this.roster.has(item.from));
+    if (ready.length === 0) return;
+    this.parked = this.parked.filter((item) => !ready.includes(item));
+    for (const item of ready) if (now - item.at < PARKED_MS) this.onMessage(this.token, item.event, item.payload);
   }
 
   private believed(): Meta[] {
@@ -897,7 +984,8 @@ export class CrewRoom {
   private out(event: string, body: Record<string, unknown>): boolean {
     const identity = this.identity;
     const token = this.token;
-    if (!identity || !this.transport) return false;
+    const transport = this.transport;
+    if (!identity || !transport) return false;
     let plain: Record<string, unknown>;
     try {
       // The same plain data the other side will read back from the network.
@@ -906,14 +994,19 @@ export class CrewRoom {
       return false;
     }
     const text = messageText(this.code, event, plain);
-    const queued = this.outbox.push(() => {
-      if (token !== this.token) return;
-      const send = (sig: string): void => {
-        if (token === this.token) this.transport?.send(event, { ...plain, sig });
-      };
-      const signed = identity.sign(text);
-      return isPromise(signed) ? signed.then(send, () => undefined) : send(signed);
-    });
+    // The final numbers are the one message that still goes out when the room is left right after (cleanup keeps it).
+    const lastWord = event === 'final';
+    const queued = this.outbox.push(
+      () => {
+        if (token !== this.token && !lastWord) return;
+        const send = (sig: string): void => {
+          if (token === this.token || lastWord) transport.send(event, { ...plain, sig });
+        };
+        const signed = identity.sign(text);
+        return isPromise(signed) ? signed.then(send, () => undefined) : send(signed);
+      },
+      { tag: lastWord ? 'final' : '' },
+    );
     if (queued) this.counter++;
     return queued;
   }
@@ -946,7 +1039,26 @@ export class CrewRoom {
    * who the sender is, whether we hold a key for it), then the signature, and only then the counter and the rate budget,
    * so a stranger who writes in a friend's name can neither use up the friend's budget nor push the friend's counter up.
    */
-  private takeMessage(token: number, event: string, payload: unknown): Maybe<void> {
+  /** Does the signature of this frame match `key`? False for anything that is not a well-formed signed frame. */
+  private checkSignature(event: string, payload: unknown, key: string): Maybe<boolean> {
+    if (!isRecord(payload) || !(EVENT_NAMES as readonly string[]).includes(event)) return false;
+    const { sig, q, ...body } = payload;
+    if (!isSignature(sig) || typeof q !== 'number' || !Number.isInteger(q) || q < 1 || q > COUNTER_MAX) return false;
+    try {
+      // Too big a frame is never checked (the size is looked at before the signature, as in takeMessage).
+      if (JSON.stringify(payload).length > sizeLimit(event) + SIG_OVERHEAD) return false;
+    } catch {
+      return false;
+    }
+    try {
+      const result = this.crypto.verify(key, messageText(this.code, event, { ...body, q }), sig);
+      return isPromise(result) ? result.then((good) => good === true, () => false) : result === true;
+    } catch {
+      return false;
+    }
+  }
+
+  private takeMessage(token: number, event: string, payload: unknown, early: { key: string; result?: Maybe<boolean> } | null = null): Maybe<void> {
     if (token !== this.token || (this.phase !== 'lobby' && this.phase !== 'playing')) return;
     if (!(EVENT_NAMES as readonly string[]).includes(event) || !isRecord(payload)) return;
     const { sig, q, ...body } = payload;
@@ -960,6 +1072,21 @@ export class CrewRoom {
     if (size > sizeLimit(event) + SIG_OVERHEAD) return;
     const from = playerId(body.from);
     if (from === null || from === this.meta.id) return;
+    if (!this.pins.has(from)) {
+      // Not on the host's list yet: a sticker is held only when it is signed with the key from the friend's own entry.
+      // Whoever writes in a friend's name cannot sign it, so a forger cannot fill the holding places.
+      const own = this.parkKey(event, from);
+      if (own === null) return;
+      if (own !== '') {
+        const parkIt = (good: boolean): void => {
+          if (good && token === this.token) this.park(event, payload, from);
+        };
+        const checked = this.checkSignature(event, payload, own);
+        if (isPromise(checked)) return checked.then(parkIt, () => undefined);
+        parkIt(checked);
+        return;
+      }
+    }
     const sender = this.roster.get(from);
     if (!sender || !sender.here || !this.mayReceive(event, from)) return;
     // No pinned key for this id: nothing it says can be believed.
@@ -967,17 +1094,16 @@ export class CrewRoom {
     if (!key) return;
     const accept = (good: boolean): void => {
       if (!good || token !== this.token) return;
-      if (q <= (this.lastCounter.get(from) ?? 0)) return; // a copy of an older message
-      this.lastCounter.set(from, q);
+      const slot = `${this.code}/${from}/${key}`;
+      if (q <= (this.lastCounter.get(slot) ?? 0)) return; // a copy of an older message
+      this.lastCounter.delete(slot);
+      this.lastCounter.set(slot, q);
+      if (this.lastCounter.size > COUNTERS_MAX) this.lastCounter.delete(this.lastCounter.keys().next().value as string);
       this.deliver(event, body, from);
     };
-    try {
-      const result = this.crypto.verify(key, messageText(this.code, event, { ...body, q }), sig);
-      if (isPromise(result)) return result.then(accept, () => undefined);
-      accept(result);
-    } catch {
-      /* a check that throws is a message that does not count */
-    }
+    const result = early && early.key === key && early.result !== undefined ? early.result : this.checkSignature(event, payload, key);
+    if (isPromise(result)) return result.then(accept, () => undefined);
+    accept(result);
   }
 
   /** A checked shared-base message (signature already verified): who it is from, who may send it, the rate, then every field. */
