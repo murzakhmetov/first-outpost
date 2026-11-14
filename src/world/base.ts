@@ -197,7 +197,7 @@ export class Base {
       lamp_warm: warm,
       lamp_cyan: cyan,
       glow_red: this.own(glow('#ff5a5a', 3)),
-      glass: this.own(glass('#bfe6ff', { opacity: 0.22, glow: this.power.life, glowColor: '#ffd9a0' })),
+      glass: this.own(glass('#bfe6ff', { opacity: 0.22, glow: this.power.life, glowColor: '#ffd9a0', interior: 0.7 })),
     });
     hab.position.set(HAB.x, 0, HAB.z);
     this.group.add(hab);
@@ -217,7 +217,7 @@ export class Base {
     const farm = this.dress('farm', null, {
       lamp_grow: growLight,
       lamp_door: doorLamp,
-      glass: this.own(glass('#c8f2dc', { opacity: 0.13, edge: 0.6, glow: this.farmGlow, glowColor: '#ff6fd8' })),
+      glass: this.own(glass('#c8f2dc', { opacity: 0.13, edge: 0.6, glow: this.farmGlow, glowColor: '#ff6fd8', interior: 1 })),
     });
 
     // Plants: little leafy clumps, drawn as one batch.

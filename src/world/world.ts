@@ -158,12 +158,12 @@ export class World {
     this.site = site;
     const quality = this.engine.quality;
 
-    this.terrain = buildTerrain(site, quality.terrain, PATHS);
+    this.terrain = buildTerrain(site, quality.terrain, PATHS, quality.groundDetail);
     const height = this.terrain.info.height;
     this.sky = new Sky({ detail: quality.skyDetail, withEarth: site === 'moon', sunSize: site === 'moon' ? 0.02 : 0.026 });
     this.base = new Base(site);
     this.base.setView(this.view);
-    this.props = new Props(site, height, quality.rocks, quality.shadows);
+    this.props = new Props(site, height, quality.rocks, quality.shadows, quality.scatter);
     this.scenery = new Scenery(site, height);
     this.annex = new Annex(height);
     this.annex.setView(this.outpost);
@@ -198,8 +198,10 @@ export class World {
     this.interior = new Interior(this.astronaut, this.lumi, this.rig, {
       shadows: quality.shadows,
       shadowSize: quality.shadowSize,
+      shadowRadius: quality.shadowRadius,
       pointLights: quality.pointLights,
       outlines: quality.outlines,
+      roomLight: quality.interiorLight,
       suit: () => this.suitColor,
     });
     if (inside) Object.assign(this.interior, inside);
@@ -232,7 +234,7 @@ export class World {
     }
 
     this.daylight = new Daylight(this.engine.scene, this.sky, this.engine.post, site, this.terrain.mountains);
-    this.daylight.configureShadows(quality.shadowSize, quality.shadows);
+    this.daylight.configureShadows(quality.shadowSize, quality.shadows, quality.shadowWide, quality.shadowRadius);
 
     this.rig.heightAt = height;
     this.rig.blockers = this.colliders;
@@ -286,9 +288,12 @@ export class World {
         quality.outlines !== previous.outlines ||
         quality.particles !== previous.particles ||
         quality.pointLights !== previous.pointLights ||
-        quality.shadows !== previous.shadows);
+        quality.shadows !== previous.shadows ||
+        quality.groundDetail !== previous.groundDetail ||
+        quality.scatter !== previous.scatter ||
+        quality.interiorLight !== previous.interiorLight);
     this.engine.setQuality(quality);
-    if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows);
+    if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows, quality.shadowWide, quality.shadowRadius);
     if (!rebuild) return;
     // The picture gets cheaper at once. The scene itself cannot be swapped under a
     // player who is walking outside, so that part waits until the walk ends.
@@ -833,6 +838,7 @@ export class World {
     this.rig.update(dt, time);
     this.focus.copy(this.mode === 'eva' ? this.eva.position : this.rig.target);
     this.focus.y = 0;
+    this.daylight.titleLight = this.mode === 'title';
     this.daylight.update(this.engine.camera, time, this.focus);
     this.base.update(dt, time, this.daylight.sunDir);
     this.props.update(time);

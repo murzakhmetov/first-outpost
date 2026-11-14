@@ -280,7 +280,7 @@ export class Annex {
     switch (name) {
       case 'glass':
         mesh.renderOrder = 5;
-        return this.keep(glass('#e6f4ff', { opacity: 0.16, edge: 0.6 }));
+        return this.keep(glass('#e6f4ff', { opacity: 0.16, edge: 0.6, interior: 0.6 }));
       case 'window':
         return toon({ color: '#1d2a52', rim: 0.7, rimWidth: 0.55, spec: 1.6, vertexColors: true });
       case 'solar':

@@ -99,4 +99,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
 }
 
 // A handle for testing in the browser console during development. Not part of the build.
-if (import.meta.env.DEV) void import('./dev');
+if (import.meta.env.DEV) {
+  void import('./dev');
+  void import('./dev/gfxlab');
+}

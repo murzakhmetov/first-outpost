@@ -3,6 +3,7 @@
  * On the Moon it also carries the Earth.
  */
 import * as THREE from 'three';
+import { flag } from './devflags';
 
 const SKY_VERT = /* glsl */ `
 varying vec3 vDir;
@@ -36,6 +37,7 @@ uniform float uStarSpin;
 uniform float uAirless;
 uniform float uLessMotion;
 uniform float uGlare;
+uniform float uStylize;
 uniform vec4 uPhobos;
 uniform vec4 uDeimos;
 varying vec3 vDir;
@@ -56,6 +58,16 @@ float noise2( vec2 p ) {
   f = f * f * ( 3.0 - 2.0 * f );
   return mix( mix( hash12( i ), hash12( i + vec2( 1.0, 0.0 ) ), f.x ),
               mix( hash12( i + vec2( 0.0, 1.0 ) ), hash12( i + vec2( 1.0, 1.0 ) ), f.x ), f.y );
+}
+float fbm3o( vec2 p ) {
+  float sum = 0.0;
+  float amp = 0.5;
+  for ( int i = 0; i < 3; i++ ) {
+    sum += amp * noise2( p );
+    p = p * 2.03 + vec2( 17.0, 9.0 );
+    amp *= 0.5;
+  }
+  return sum;
 }
 float fbm2( vec2 p ) {
   float sum = 0.0;
@@ -114,6 +126,23 @@ void main() {
   float t = pow( smoothstep( -0.03, 1.0, h ), 0.42 );
   vec3 color = mix( uHorizon, uZenith, t );
   color = mix( color, uGround, smoothstep( 0.0, -0.22, h ) );
+  #ifdef SKY_FANCY
+  if ( uStylize > 0.5 && uAirless < 0.5 ) {
+    // Painted horizon: two wide, soft colour layers between horizon and zenith, wobbling slowly along the azimuth.
+    float az = atan( d.z, d.x );
+    float wob = noise2( vec2( az * 2.2 + uTime * 0.01 * ( 1.0 - uLessMotion ), 3.7 ) ) - 0.5;
+    float wob2 = noise2( vec2( az * 3.1 - 5.0, 8.3 ) ) - 0.5;
+    float hw = h + wob * 0.07;
+    float lowSun = 1.0 - smoothstep( 0.08, 0.6, uSunDir.y );
+    float strength = ( 0.3 + 0.7 * lowSun ) * smoothstep( -0.12, 0.05, uSunDir.y );
+    float bandA = smoothstep( 0.0, 0.07, hw ) * smoothstep( 0.24, 0.1, hw );
+    float bandB = smoothstep( 0.16, 0.3, hw + wob2 * 0.08 ) * smoothstep( 0.62, 0.4, hw );
+    vec3 warm = mix( uHorizon, uGlowColor, 0.3 ) * 1.06;
+    vec3 cool = mix( uHorizon, uZenith, 0.72 ) * 0.97;
+    color = mix( color, warm, bandA * 0.5 * strength );
+    color = mix( color, cool, bandB * 0.45 * strength );
+  }
+  #endif
 
   // Sun glow and disc.
   float sunDot = dot( d, uSunDir );
@@ -196,7 +225,8 @@ void main() {
     #endif
     vec2 uv = d.xz / ( h + 0.24 ) * 0.78 + vec2( ct * 0.004, 0.0 );
     #ifdef SKY_FANCY
-    float body = fbm2( uv * vec2( 0.8, 2.3 ) + fbm2( uv * 0.6 + ct * 0.006 ) * 1.6 );
+    float warp = fbm2( uv * 0.6 + ct * 0.006 );
+    float body = fbm2( uv * vec2( 0.8, 2.3 ) + warp * 1.6 );
     #else
     float body = fbm2( uv * vec2( 0.8, 2.3 ) + fbm2( uv * 0.6 ) * 1.6 );
     #endif
@@ -214,6 +244,21 @@ void main() {
     float core = smoothstep( 0.62, 0.8, shape );
     vec3 rim = mix( uCloudColor, uHorizon, 0.5 ) * 0.94;
     vec3 lit = mix( rim, uCloudColor * 1.06, core ) + uGlowColor * pow( near, 6.0 ) * 0.9;
+    #ifdef SKY_FANCY
+    if ( uStylize > 0.5 && uAirless < 0.5 ) {
+      // Cel shading: how much thinner is the cloud towards the Sun? Thin side faces the light.
+      vec2 toSun = normalize( uSunDir.xz + vec2( 1e-4, 0.0 ) );
+      float dS = fbm3o( ( uv + toSun * 0.13 ) * vec2( 0.8, 2.3 ) + warp * 1.6 ) * 1.0714;
+      float x = 0.5 + ( body - dS ) * 4.2 + ( core - 0.5 ) * 0.5;
+      float topK = smoothstep( 0.6, 0.68, x );
+      float midK = smoothstep( 0.34, 0.42, x );
+      vec3 baseC = mix( uCloudColor, uHorizon, 0.55 ) * 0.7;
+      vec3 midC = mix( rim, uCloudColor * 1.06, core );
+      vec3 topC = mix( uCloudColor * 1.08, uSunColor, 0.3 ) * 1.1;
+      vec3 shaded = mix( mix( baseC, midC, midK ), topC, topK ) + uGlowColor * pow( near, 6.0 ) * 0.9;
+      lit = mix( lit, shaded, smoothstep( -0.05, 0.15, uSunDir.y ) );
+    }
+    #endif
     color = mix( color, lit, cover * 0.9 );
   }
   // Aurora: Mars has no global magnetic field, so a solar storm can light the whole sky.
@@ -345,6 +390,7 @@ export class Sky {
         uAirless: { value: options.withEarth ? 1 : 0 },
         uLessMotion: { value: 0 },
         uGlare: { value: 0 },
+        uStylize: { value: 0 },
         uPhobos: { value: new THREE.Vector4(0, 1, 0, 0.015) },
         uDeimos: { value: new THREE.Vector4(0, 1, 0, 0.0025) },
       },
@@ -417,6 +463,7 @@ export class Sky {
   update(camera: THREE.Camera, time: number, sunDir: THREE.Vector3): void {
     this.mesh.position.copy(camera.position);
     const u = this.material.uniforms;
+    u.uStylize.value = 'SKY_FANCY' in this.material.defines && flag('G6') ? 1 : 0;
     u.uTime.value = time;
     u.uSunDir.value.copy(sunDir);
     if (this.mars && 'SKY_FANCY' in this.material.defines) this.moveMoons(time);

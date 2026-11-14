@@ -89,8 +89,12 @@ export class Engine {
   private applyShadowSettings(): void {
     const q = this.quality;
     this.renderer.shadowMap.enabled = q.shadows;
-    this.renderer.shadowMap.type = q.softShadows ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+    this.renderer.shadowMap.type = this.wantedShadowType();
     this.renderer.shadowMap.needsUpdate = true;
+  }
+
+  private wantedShadowType(): THREE.ShadowMapType {
+    return this.quality.softShadows ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
   }
 
   setQuality(quality: QualityOptions): void {

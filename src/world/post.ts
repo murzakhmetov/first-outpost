@@ -8,6 +8,7 @@
 import * as THREE from 'three';
 import { GLOBALS } from './materials';
 import type { QualityOptions } from './quality';
+import { flag } from './devflags';
 
 const FULLSCREEN_VERT = /* glsl */ `
 varying vec2 vUv;
@@ -186,6 +187,77 @@ void main() {
   gl_FragColor = vec4(vec3(clamp(light, 0.0, 1.0) * reach), 1.0);
 }`;
 
+// Volumetric dust (ultra, Mars): march from the camera to each pixel's world position and count the dust that
+// the Sun reaches, using the Sun's shadow map. Same half-size target and same final-pass path as SHAFT_FRAG.
+const SHAFT_VOL_FRAG = /* glsl */ `
+precision highp float;
+uniform sampler2D tDepth;
+uniform sampler2D tShadow;
+uniform mat4 uInvViewProj;
+uniform mat4 uShadowMat;
+uniform vec3 uCam;
+uniform vec3 uSunDir;
+uniform float uShadowBias;
+uniform float uDensity;
+varying vec2 vUv;
+float hash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+// Same unpacking as three's unpackRGBAToDepth: the shadow map is an RGBA8 colour image holding packed depth.
+float unpackShadowDepth(vec4 v) {
+  return dot(v, vec4(255.0 / 256.0, 255.0 / 65536.0, 255.0 / 16777216.0, 1.0 / 16777216.0));
+}
+// Sun reaches the point: 1 lit, 0 shadowed. Outside the shadow box it is a neutral 0.75, blended in over the
+// outer edge of the box, so the box edge and the box-size steps never show as a seam in the haze.
+float sunReach(vec3 p) {
+  vec4 sc = uShadowMat * vec4(p, 1.0);
+  vec3 s = sc.xyz / sc.w;
+  float edge = smoothstep(0.0, 0.12, min(min(s.x, 1.0 - s.x), min(s.y, 1.0 - s.y)));
+  if (edge <= 0.0 || s.z > 1.0) return 0.75;
+  float lit = step(s.z + uShadowBias, unpackShadowDepth(texture2D(tShadow, s.xy)));
+  return mix(0.75, lit, edge);
+}
+void main() {
+  float d = texture2D(tDepth, vUv).x;
+  vec4 w = uInvViewProj * vec4(vUv * 2.0 - 1.0, min(d, 0.99999) * 2.0 - 1.0, 1.0);
+  vec3 target = w.xyz / w.w;
+  vec3 ray = target - uCam;
+  float len = min(length(ray), VOL_MAX_LEN);
+  vec3 dir = normalize(ray);
+  float stepLen = len / float(SHAFT_SAMPLES);
+  // Fixed per-pixel jitter: no frame-to-frame change, so nothing shimmers.
+  float jitter = hash12(gl_FragCoord.xy);
+  float sum = 0.0;
+  for (int i = 0; i < SHAFT_SAMPLES; i++) {
+    float t = (float(i) + jitter) * stepLen;
+    vec3 p = uCam + dir * t;
+    float layer = 1.0 - smoothstep(VOL_LAYER * 0.4, VOL_LAYER, p.y);
+    if (layer <= 0.0) continue;
+    float lit = sunReach(p);
+    sum += lit * layer;
+  }
+  // Forward scatter: Henyey-Greenstein, brightest looking towards the Sun, a floor so the air is lit from the side too.
+  float c = dot(dir, uSunDir);
+  float g = 0.55;
+  float phase = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * c, 1.5);
+  // Shadowed ground gets less haze than sunlit ground (same air column, but the glow would lift the shadow and
+  // flatten the contrast); sky pixels are not dimmed. Four taps in shadow space soften the texel stairs.
+  float reach = 1.0;
+  if (d < 0.99999) {
+    vec3 q = target - dir * 0.3;
+    vec3 side = normalize(cross(dir, vec3(0.0, 1.0, 0.0)) + vec3(1e-4, 0.0, 0.0)) * 0.5;
+    reach = 0.25 * (sunReach(q + side) + sunReach(q - side) + sunReach(q + vec3(0.0, 0.5, 0.0)) + sunReach(q - vec3(0.0, 0.5, 0.0)));
+  }
+  // Optical depth along the ray, saturating softly; the haze stays a veil (never above about 0.22), so a far lit
+  // mesa gets a light warm lift and keeps its own colour instead of turning white.
+  float optical = sum * stepLen * uDensity * 0.004;
+  float phaseK = 0.35 + 0.65 * min(phase / 8.0, 1.0);
+  float amount = 0.45 * (1.0 - exp(-optical)) * phaseK * mix(0.3, 1.0, reach);
+  gl_FragColor = vec4(vec3(clamp(amount, 0.0, 1.0)), 1.0);
+}`;
+
 // Where the film camera focuses: the depth at the middle of the picture, followed slowly.
 const FOCUS_FRAG = /* glsl */ `
 precision highp float;
@@ -230,9 +302,14 @@ uniform vec2 uTexel;
 uniform float uNear;
 uniform float uFar;
 uniform float uOutline;
+#ifdef USE_ANIME_INK
+uniform float uAnimeInk;
+#endif
 uniform float uCine;
 uniform sampler2D tAO;
 uniform float uAO;
+uniform vec2 uAOTexel;
+uniform float uAOUp;
 uniform sampler2D tShafts;
 uniform vec3 uShaftColor;
 uniform vec3 uGradeShadow;
@@ -275,6 +352,29 @@ vec3 toSrgb(vec3 c) {
   return mix(c * 12.92, 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, c));
 }
 
+#ifdef USE_AO
+// Half-size occlusion, enlarged with four taps that ignore texels lying on another surface (no grey halo).
+float aoUpsample() {
+  vec2 p = vUv / uAOTexel - 0.5;
+  vec2 i = floor(p);
+  vec2 f = p - i;
+  float zc = linZ(texture2D(tDepth, vUv).x);
+  float tol = zc * 0.03 + 0.02;
+  float sum = 0.0;
+  float wsum = 0.0;
+  for (int k = 0; k < 4; k++) {
+    vec2 o = vec2(float(k & 1), float(k >> 1));
+    vec2 uv = (i + o + 0.5) * uAOTexel;
+    float bw = (o.x > 0.5 ? f.x : 1.0 - f.x) * (o.y > 0.5 ? f.y : 1.0 - f.y);
+    float dz = (linZ(texture2D(tDepth, uv).x) - zc) / tol;
+    float w = bw * exp(-dz * dz);
+    sum += texture2D(tAO, uv).r * w;
+    wsum += w;
+  }
+  return wsum > 0.002 ? sum / wsum : texture2D(tAO, vUv).r;
+}
+#endif
+
 void main() {
   vec3 c = texture2D(tScene, vUv).rgb;
   #ifdef USE_CINEMA
@@ -291,7 +391,14 @@ void main() {
   }
   #endif
   #ifdef USE_AO
-  c *= mix(1.0, texture2D(tAO, vUv).r, uAO);
+  if (uAOUp > 0.5) {
+    // Outdoors the occluded part takes the world's shadow colour, pushed darker; indoors uGrade is 0, so it stays neutral.
+    float ao = aoUpsample();
+    vec3 tint = vec3(ao) * uGradeShadow * uGradeShadow;
+    c *= mix(vec3(1.0), mix(vec3(ao), tint, 0.35 * uGrade * (1.0 - ao)), uAO);
+  } else {
+    c *= mix(1.0, texture2D(tAO, vUv).r, uAO);
+  }
   #endif
   #ifdef USE_SHAFTS
   c += uShaftColor * texture2D(tShafts, vUv).r;
@@ -326,21 +433,40 @@ void main() {
     // Ink lines where depth jumps. Raw depth is flat across any plane on screen,
     // so a simple Laplacian finds silhouettes without marking sloped surfaces.
     float d0 = texture2D(tDepth, vUv).x;
-    float dl = texture2D(tDepth, vUv - vec2(uTexel.x, 0.0)).x;
-    float dr = texture2D(tDepth, vUv + vec2(uTexel.x, 0.0)).x;
-    float du = texture2D(tDepth, vUv + vec2(0.0, uTexel.y)).x;
-    float dd = texture2D(tDepth, vUv - vec2(0.0, uTexel.y)).x;
+    vec2 tx = uTexel;
+    #ifdef USE_ANIME_INK
+    {
+      // About 1.5 pixels near the camera, 1 pixel far away.
+      float z0 = (uNear * uFar) / (uFar - d0 * (uFar - uNear));
+      tx *= mix(1.0, mix(1.5, 1.0, smoothstep(8.0, 70.0, z0)), uAnimeInk);
+    }
+    #endif
+    float dl = texture2D(tDepth, vUv - vec2(tx.x, 0.0)).x;
+    float dr = texture2D(tDepth, vUv + vec2(tx.x, 0.0)).x;
+    float du = texture2D(tDepth, vUv + vec2(0.0, tx.y)).x;
+    float dd = texture2D(tDepth, vUv - vec2(0.0, tx.y)).x;
     float nearest = min(d0, min(min(dl, dr), min(du, dd)));
     float z = (uNear * uFar) / (uFar - nearest * (uFar - uNear));
     float jump = abs(dl + dr + du + dd - 4.0 * d0) * z / uNear;
     float line = smoothstep(0.045, 0.11, jump) * (1.0 - smoothstep(55.0, 150.0, z));
-    c = mix(c, c * vec3(0.2, 0.16, 0.3), line * uOutline);
+    vec3 inkColor = c * vec3(0.2, 0.16, 0.3);
+    #ifdef USE_ANIME_INK
+    {
+      // The line takes its colour from the picture: the local colour, darker and richer, a little toward the ink tone.
+      float lum = dot(c, vec3(0.2126, 0.7152, 0.0722));
+      vec3 rich = max(mix(vec3(lum), c, 1.6), 0.0) * 0.3;
+      vec3 surf = mix(rich, vec3(0.2, 0.16, 0.3) * 0.55, 0.3);
+      inkColor = mix(inkColor, surf, uAnimeInk);
+    }
+    #endif
+    c = mix(c, inkColor, line * uOutline);
   }
   #endif
 
   vec2 q = (vUv - 0.5) * vec2(1.0, 0.92);
   c *= mix(1.0, smoothstep(0.92 - 0.12 * uCine, 0.28, length(q)), clamp(uVignette + 0.3 * uCine, 0.0, 1.0));
 
+  #ifndef FINISH_LATER
   // Charged particles hitting the camera during a radiation storm. Real rover cameras show this "snow".
   if (uSpecks > 0.001) {
     vec2 cell = floor(gl_FragCoord.xy / 2.0);
@@ -349,8 +475,111 @@ void main() {
     float streak = step(1.0 - 0.0012 * uSpecks, hash12(vec2(cell.x * 0.07 + tick, floor(cell.y / 9.0))));
     c += vec3(0.9, 0.95, 1.0) * (speck + streak * 0.7);
   }
+  #endif
 
   c = mix(c, uFade.rgb, uFade.a);
+  #ifndef FINISH_LATER
+  c += (hash12(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;
+  #endif
+  gl_FragColor = vec4(c, 1.0);
+}`;
+
+// FXAA 3.11 (quality, 12 steps) on the finished sRGB picture. The film specks and the dither are
+// applied here, after the smoothing, so FXAA does not blur them (the final pass skips them: FINISH_LATER).
+const FXAA_FRAG = /* glsl */ `
+precision highp float;
+uniform sampler2D tMap;
+uniform vec2 uTexel;
+uniform float uTime;
+uniform float uSpecks;
+uniform float uFadeA;
+varying vec2 vUv;
+
+float hash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+float lumaAt(vec2 uv) {
+  return dot(texture2D(tMap, uv).rgb, vec3(0.299, 0.587, 0.114));
+}
+
+void main() {
+  vec2 uv = vUv;
+  vec2 tx = uTexel;
+  vec3 rgbM = texture2D(tMap, uv).rgb;
+  float lM = dot(rgbM, vec3(0.299, 0.587, 0.114));
+  float lN = lumaAt(uv + vec2(0.0, tx.y));
+  float lS = lumaAt(uv - vec2(0.0, tx.y));
+  float lE = lumaAt(uv + vec2(tx.x, 0.0));
+  float lW = lumaAt(uv - vec2(tx.x, 0.0));
+  float lMax = max(max(lN, lS), max(max(lE, lW), lM));
+  float lMin = min(min(lN, lS), min(min(lE, lW), lM));
+  float range = lMax - lMin;
+  vec3 c = rgbM;
+  if (range >= max(0.0312, lMax * 0.125)) {
+    float lNW = lumaAt(uv + vec2(-tx.x, tx.y));
+    float lNE = lumaAt(uv + vec2(tx.x, tx.y));
+    float lSW = lumaAt(uv + vec2(-tx.x, -tx.y));
+    float lSE = lumaAt(uv + vec2(tx.x, -tx.y));
+    float edgeV = abs(lNW + lSW - 2.0 * lW) + 2.0 * abs(lN + lS - 2.0 * lM) + abs(lNE + lSE - 2.0 * lE);
+    float edgeH = abs(lNW + lNE - 2.0 * lN) + 2.0 * abs(lW + lE - 2.0 * lM) + abs(lSW + lSE - 2.0 * lS);
+    bool horz = edgeH >= edgeV;
+    float l1 = horz ? lS : lW;
+    float l2 = horz ? lN : lE;
+    float g1 = l1 - lM;
+    float g2 = l2 - lM;
+    bool steep1 = abs(g1) >= abs(g2);
+    float gradScaled = 0.25 * max(abs(g1), abs(g2));
+    float stepLen = horz ? tx.y : tx.x;
+    float lAvg;
+    if (steep1) { stepLen = -stepLen; lAvg = 0.5 * (l1 + lM); } else { lAvg = 0.5 * (l2 + lM); }
+    vec2 cur = uv;
+    if (horz) cur.y += stepLen * 0.5; else cur.x += stepLen * 0.5;
+    vec2 off = horz ? vec2(tx.x, 0.0) : vec2(0.0, tx.y);
+    vec2 uv1 = cur - off;
+    vec2 uv2 = cur + off;
+    float e1 = lumaAt(uv1) - lAvg;
+    float e2 = lumaAt(uv2) - lAvg;
+    bool r1 = abs(e1) >= gradScaled;
+    bool r2 = abs(e2) >= gradScaled;
+    if (!r1) uv1 -= off;
+    if (!r2) uv2 += off;
+    for (int i = 2; i < 12; i++) {
+      if (r1 && r2) break;
+      float q = i < 5 ? 1.0 : (i < 6 ? 1.5 : (i < 10 ? 2.0 : (i < 11 ? 4.0 : 8.0)));
+      if (!r1) { e1 = lumaAt(uv1) - lAvg; r1 = abs(e1) >= gradScaled; }
+      if (!r2) { e2 = lumaAt(uv2) - lAvg; r2 = abs(e2) >= gradScaled; }
+      if (!r1) uv1 -= off * q;
+      if (!r2) uv2 += off * q;
+    }
+    float d1 = horz ? uv.x - uv1.x : uv.y - uv1.y;
+    float d2 = horz ? uv2.x - uv.x : uv2.y - uv.y;
+    bool dir1 = d1 < d2;
+    float dMin = min(d1, d2);
+    float thick = d1 + d2;
+    float pixOff = -dMin / thick + 0.5;
+    bool centerSmaller = lM < lAvg;
+    bool good = ((dir1 ? e1 : e2) < 0.0) != centerSmaller;
+    float fin = good ? pixOff : 0.0;
+    float lAverage = (1.0 / 12.0) * (2.0 * (lN + lS + lE + lW) + (lNW + lSW) + (lNE + lSE));
+    float sp1 = clamp(abs(lAverage - lM) / range, 0.0, 1.0);
+    float sp2 = (-2.0 * sp1 + 3.0) * sp1 * sp1;
+    fin = max(fin, sp2 * sp2 * 0.5);
+    vec2 fuv = uv;
+    if (horz) fuv.y += fin * stepLen; else fuv.x += fin * stepLen;
+    c = texture2D(tMap, fuv).rgb;
+  }
+
+  if (uSpecks > 0.001) {
+    vec2 cell = floor(gl_FragCoord.xy / 2.0);
+    float tick = floor(uTime * 24.0);
+    float speck = step(1.0 - 0.006 * uSpecks, hash12(cell + tick * 17.13));
+    float streak = step(1.0 - 0.0012 * uSpecks, hash12(vec2(cell.x * 0.07 + tick, floor(cell.y / 9.0))));
+    // The final pass mixed the fade over the specks; the same result from here.
+    c += vec3(0.9, 0.95, 1.0) * (speck + streak * 0.7) * (1.0 - uFadeA);
+  }
   c += (hash12(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;
   gl_FragColor = vec4(c, 1.0);
 }`;
@@ -426,7 +655,14 @@ export class PostFX {
   /** Contact shadow strength, 0-1. */
   aoStrength = 0.85;
   /** Light shafts: direction to the Sun, its colour and how strong the shafts are (0 = none). Set each frame by the Daylight. */
-  readonly sun = { dir: new THREE.Vector3(0, 1, 0), color: new THREE.Color(1, 0.9, 0.7), shafts: 0 };
+  readonly sun = {
+    dir: new THREE.Vector3(0, 1, 0),
+    color: new THREE.Color(1, 0.9, 0.7),
+    shafts: 0,
+    /** Dust amount 0..1 and the Sun's shadow (null without shadows): used by the volumetric dust on ultra. */
+    dust: 0,
+    shadow: null as THREE.DirectionalLightShadow | null,
+  };
   /** True while a building's inside is drawn: no light shafts and no world colour mood there. */
   indoor = false;
   /** Set from the "less motion" setting: no colour fringes, a calmer film look, no flicker in the shafts. */
@@ -447,9 +683,13 @@ export class PostFX {
   private down!: THREE.ShaderMaterial;
   private up!: THREE.ShaderMaterial;
   private final!: THREE.ShaderMaterial;
+  private fxaa: THREE.ShaderMaterial | null = null;
+  private fxaaTarget: THREE.WebGLRenderTarget | null = null;
   private ao: THREE.ShaderMaterial | null = null;
   private aoBlur: THREE.ShaderMaterial | null = null;
   private shafts: THREE.ShaderMaterial | null = null;
+  private shaftsVol: THREE.ShaderMaterial | null = null;
+  private readonly invViewProj = new THREE.Matrix4();
   private focus: THREE.ShaderMaterial | null = null;
   private quality: QualityOptions;
   private readonly hdrSupported: boolean;
@@ -512,9 +752,12 @@ export class PostFX {
       uNear: { value: 0.25 },
       uFar: { value: 4000 },
       uOutline: { value: 0.8 },
+      uAnimeInk: { value: 1 },
       uCine: { value: 0 },
       tAO: { value: this.white },
       uAO: { value: 0.85 },
+      uAOTexel: { value: new THREE.Vector2(1, 1) },
+      uAOUp: { value: 1 },
       tShafts: { value: this.black },
       uShaftColor: { value: new THREE.Color(1, 0.9, 0.7) },
       uGradeShadow: { value: new THREE.Color(1, 1, 1) },
@@ -601,6 +844,7 @@ export class PostFX {
       this.sceneTarget.depthTexture = depth;
     }
     this.setDefine(this.final, 'USE_OUTLINE', q.outlines ? '' : null);
+    this.setDefine(this.final, 'USE_ANIME_INK', q.outlines && q.grade ? '' : null);
     this.final.uniforms.uTexel.value.set(1 / w, 1 / h);
 
     for (const target of [...this.bloomDown, ...this.bloomUp, ...this.aoTargets, ...this.blurTargets, ...this.focusTargets]) target.dispose();
@@ -649,6 +893,28 @@ export class PostFX {
       this.shaftTarget = makeTarget(hw, hh, THREE.UnsignedByteType);
       this.shafts ??= fullscreenMaterial(SHAFT_FRAG, { tDepth: { value: null }, uSunUv: { value: new THREE.Vector2() }, uTime: { value: 0 } });
       this.setDefine(this.shafts, 'SHAFT_SAMPLES', String(q.shafts));
+      if (q.shaftsVolumetric) {
+        this.shaftsVol ??= fullscreenMaterial(SHAFT_VOL_FRAG, {
+          tDepth: { value: null },
+          tShadow: { value: null },
+          uInvViewProj: { value: new THREE.Matrix4() },
+          uShadowMat: { value: new THREE.Matrix4() },
+          uCam: { value: new THREE.Vector3() },
+          uSunDir: { value: new THREE.Vector3() },
+          uShadowBias: { value: 0 },
+          uDensity: { value: 1 },
+        });
+        this.setDefine(this.shaftsVol, 'SHAFT_SAMPLES', '18');
+        this.setDefine(this.shaftsVol, 'VOL_MAX_LEN', '120.0');
+        this.setDefine(this.shaftsVol, 'VOL_LAYER', '25.0');
+      } else if (this.shaftsVol) {
+        this.shaftsVol.dispose();
+        this.shaftsVol = null;
+      }
+    }
+    if (!useShafts && this.shaftsVol) {
+      this.shaftsVol.dispose();
+      this.shaftsVol = null;
     }
     this.setDefine(this.final, 'USE_SHAFTS', useShafts ? '' : null);
     this.setDefine(this.final, 'USE_GRADE', q.grade ? '' : null);
@@ -665,6 +931,43 @@ export class PostFX {
       });
     }
     this.setDefine(this.final, 'USE_CINEMA', useCinema ? '' : null);
+    this.resizeFxaa(w, h);
+    this.precompile();
+  }
+
+  /**
+   * Compile the tier's post programs now (final pass with its defines, FXAA, shafts) so the first frame
+   * after a tier switch does not stall on a synchronous compile. Programs already built are reused.
+   */
+  private precompile(): void {
+    try {
+      this.setDefine(this.final, 'FINISH_LATER', this.fxaaTarget !== null && this.fxaa !== null && flag('G9') ? '' : null);
+      const list = [this.final, this.fxaa, this.shafts, this.shaftsVol, this.ao, this.aoBlur, this.focus];
+      for (const m of list) {
+        if (!m) continue;
+        this.quad.material = m;
+        this.renderer.compile(this.quadScene, this.quadCamera);
+      }
+    } catch {
+      /* compile is only a warm-up: a failure shows up on the first real draw */
+    }
+  }
+
+  /** The image the final pass draws into before FXAA (high and ultra only). */
+  private resizeFxaa(w: number, h: number): void {
+    this.fxaaTarget?.dispose();
+    this.fxaaTarget = null;
+    if (!this.quality.fxaa || !this.hdrSupported) return;
+    // Half float: the picture must not be quantized to 8 bit before the FXAA pass adds the dither.
+    this.fxaaTarget = makeTarget(w, h, THREE.HalfFloatType);
+    this.fxaa ??= fullscreenMaterial(FXAA_FRAG, {
+      tMap: { value: null },
+      uTexel: { value: new THREE.Vector2() },
+      uTime: { value: 0 },
+      uSpecks: { value: 0 },
+      uFadeA: { value: 0 },
+    });
+    this.fxaa.uniforms.uTexel.value.set(1 / w, 1 / h);
   }
 
   private pass(material: THREE.ShaderMaterial, target: THREE.WebGLRenderTarget | null): void {
@@ -710,8 +1013,10 @@ export class PostFX {
       blur.uStep.value.set(0, 1 / a.height);
       this.pass(this.aoBlur, a);
       u.tAO.value = a.texture;
+      u.uAOTexel.value.set(1 / a.width, 1 / a.height);
     }
     u.uAO.value = this.aoStrength;
+    u.uAOUp.value = flag('G7') ? 1 : 0;
 
     // Light shafts from the Sun's place on the screen.
     let shaft = 0;
@@ -720,7 +1025,24 @@ export class PostFX {
       this.sunView.copy(this.sun.dir).transformDirection(camera.matrixWorldInverse);
       const facing = -this.sunView.z;
       shaft = this.sun.shafts * THREE.MathUtils.smoothstep(facing, -0.05, 0.3);
-      if (shaft > 0.002) {
+      const shadowMap = this.sun.shadow?.map?.texture;
+      const vol = this.quality.shaftsVolumetric && this.shaftsVol && shadowMap && flag('G10') && this.sun.shadow ? this.shaftsVol : null;
+      if (vol && this.sun.shadow && shadowMap) {
+        // The phase term carries the direction to the Sun, so the strength does not fade with it.
+        shaft = this.sun.shafts;
+        this.invViewProj.multiplyMatrices(camera.matrixWorld, camera.projectionMatrixInverse);
+        const v = vol.uniforms;
+        v.tDepth.value = depth;
+        v.tShadow.value = shadowMap;
+        v.uInvViewProj.value.copy(this.invViewProj);
+        v.uShadowMat.value.copy(this.sun.shadow.matrix);
+        v.uCam.value.setFromMatrixPosition(camera.matrixWorld);
+        v.uSunDir.value.copy(this.sun.dir);
+        v.uShadowBias.value = this.sun.shadow.bias - 0.0008;
+        v.uDensity.value = 0.5 + 1.5 * this.sun.dust;
+        this.pass(vol, this.shaftTarget);
+        u.tShafts.value = this.shaftTarget.texture;
+      } else if (shaft > 0.002) {
         const e = camera.projectionMatrix.elements;
         const w = Math.max(facing, 0.05);
         const sx = (this.sunView.x * e[0] + this.sunView.z * e[8]) / w;
@@ -790,6 +1112,7 @@ export class PostFX {
     u.uNear.value = camera.near;
     u.uFar.value = camera.far;
     u.uOutline.value = this.outline;
+    u.uAnimeInk.value = flag('G8') ? 1 : 0;
     u.uBloom.value = this.grade.bloom;
     u.uExposure.value = this.grade.exposure;
     u.uSaturation.value = this.grade.saturation;
@@ -803,7 +1126,19 @@ export class PostFX {
     u.uGradeShadow.value.copy(this.look.shadow);
     u.uGradeHigh.value.copy(this.look.high);
     u.uGlow.value = this.indoor ? this.look.glow * 0.6 : this.look.glow;
-    this.pass(this.final, null);
+    const fxaaOn = this.fxaaTarget !== null && this.fxaa !== null && flag('G9');
+    this.setDefine(this.final, 'FINISH_LATER', fxaaOn ? '' : null);
+    if (fxaaOn) {
+      this.pass(this.final, this.fxaaTarget);
+      const f = this.fxaa!.uniforms;
+      f.tMap.value = this.fxaaTarget!.texture;
+      f.uTime.value = u.uTime.value;
+      f.uSpecks.value = this.specks;
+      f.uFadeA.value = u.uFade.value.w;
+      this.pass(this.fxaa!, null);
+    } else {
+      this.pass(this.final, null);
+    }
   }
 
   dispose(): void {
@@ -815,9 +1150,12 @@ export class PostFX {
     this.down.dispose();
     this.up.dispose();
     this.final.dispose();
+    this.fxaaTarget?.dispose();
+    this.fxaa?.dispose();
     this.ao?.dispose();
     this.aoBlur?.dispose();
     this.shafts?.dispose();
+    this.shaftsVol?.dispose();
     this.focus?.dispose();
     this.quad.geometry.dispose();
     this.black.dispose();

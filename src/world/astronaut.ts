@@ -9,7 +9,7 @@ import * as THREE from 'three';
 import { shape } from './build';
 import { faceTextures } from './face';
 import type { FaceKind } from './face';
-import { GLOBALS, addOutline, glow, outlineMaterial, toon } from './materials';
+import { GLOBALS, STREAK_GLSL, addOutline, glow, outlineMaterial, toon } from './materials';
 import { model } from './models';
 import { dotTexture } from './textures';
 
@@ -30,7 +30,7 @@ export const SUIT_COLORS = ['#ff8a3d', '#39c2f0', '#ff5fa2', '#8f7bff', '#4fd98a
 /** The clear helmet bubble: nearly invisible in the middle, sky-coloured at the edge, with two drawn highlights. */
 function bubbleMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
-    uniforms: { uSky: GLOBALS.skyColor, uAnime: GLOBALS.anime, uTint: { value: new THREE.Color('#dff3ff') } },
+    uniforms: { uSky: GLOBALS.skyColor, uAnime: GLOBALS.anime, uStreak: GLOBALS.streak, uSunDirView: GLOBALS.sunDirView, uTint: { value: new THREE.Color('#dff3ff') } },
     vertexShader: /* glsl */ `
       varying vec3 vNormal;
       varying vec3 vView;
@@ -44,8 +44,11 @@ function bubbleMaterial(): THREE.ShaderMaterial {
       uniform vec3 uSky;
       uniform vec3 uTint;
       uniform float uAnime;
+      uniform float uStreak;
+      uniform vec3 uSunDirView;
       varying vec3 vNormal;
       varying vec3 vView;
+      ${STREAK_GLSL}
       void main() {
         vec3 n = normalize( vNormal );
         vec3 v = normalize( vView );
@@ -63,6 +66,13 @@ function bubbleMaterial(): THREE.ShaderMaterial {
         // A soft sky-coloured sheen across the whole visor, a little stronger when the Sun is out.
         color += sky * 0.12 * uAnime * ( 1.0 - fresnel );
         float alpha = clamp( 0.035 + fresnel * 0.72 + glint * 0.8 + 0.05 * uAnime, 0.0, 1.0 );
+        // One thin band near the rim, faded out where the visor faces the camera so the face always shows (G11).
+        float facing = 1.0 - smoothstep( 0.62, 0.84, n.z );
+        vec2 st = animeStreak( n, uSunDirView, 0.2 ) * uAnime * uStreak * facing;
+        color = mix( color, vec3( 0.06, 0.12, 0.3 ), st.y * 0.3 );
+        alpha += 0.15 * st.y * ( 1.0 - alpha );
+        color = mix( color, vec3( 1.6, 1.58, 1.55 ), st.x );
+        alpha = mix( alpha, max( alpha, STREAK_PEAK ), st.x );
         gl_FragColor = vec4( color, alpha );
       }`,
     transparent: true,

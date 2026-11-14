@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import type { SiteId } from '../sim/types';
 import { ground } from './materials';
 import { Noise2D, clamp01, lerp, smoothstep } from './noise';
+import { flag } from './devflags';
+import { mulberry32 } from '../sim/rng';
 
 /** Flat building ground around the centre of the outpost, metres. */
 export const BASE_RADIUS = 44;
@@ -130,6 +132,90 @@ function pathMask(x: number, z: number, paths: [number, number, number, number][
   return best;
 }
 
+
+/** Seed for the colour-only ground detail (own stream: nothing else draws from it). */
+const DETAIL_SEED = 60731;
+const ICE = new THREE.Color('#1a2233');
+
+interface Stain {
+  x: number;
+  z: number;
+  /** Half length along the wind and half width across it, metres. */
+  along: number;
+  across: number;
+  /** -1 darker dust patch, +1 lighter drift. */
+  sign: number;
+}
+
+/** About eight wide, soft stains on Mars, long axis along the ripple wind (0.82, 0.57). */
+function marsStains(): Stain[] {
+  const random = mulberry32(DETAIL_SEED);
+  const list: Stain[] = [];
+  for (let i = 0; i < 8; i++) {
+    const angle = random() * Math.PI * 2;
+    const dist = 38 + random() * 130;
+    const sign = i % 2 === 0 ? -1 : 1;
+    const across = 16 + random() * 22;
+    list.push({ x: Math.cos(angle) * dist, z: Math.sin(angle) * dist, along: across * (sign < 0 ? 1.6 : 3.2), across, sign });
+  }
+  return list;
+}
+
+/** Angular ray pattern for the freshest Moon craters, 0-1. */
+function rayPattern(noise: Noise2D, angle: number, seed: number): number {
+  const n = noise.get(Math.cos(angle) * 3.2 + seed, Math.sin(angle) * 3.2 - seed) * 0.5 + 0.5;
+  const fine = noise.get(Math.cos(angle) * 9 - seed, Math.sin(angle) * 9 + seed) * 0.5 + 0.5;
+  return smoothstep(0.55, 0.8, n * 0.7 + fine * 0.3);
+}
+
+/**
+ * Colour-only detail on top of the plain ground colour: crater bowls, bright rims and rays on the
+ * Moon, soft wide stains on Mars. It never touches the height function.
+ */
+function groundDetailColor(
+  mars: boolean,
+  noise: Noise2D,
+  stains: Stain[],
+  freshest: Set<Crater>,
+  x: number,
+  z: number,
+  color: THREE.Color,
+  high: THREE.Color,
+  dark: THREE.Color,
+): void {
+  if (mars) {
+    const wx = 0.82;
+    const wz = 0.57;
+    for (const s of stains) {
+      const dx = x - s.x;
+      const dz = z - s.z;
+      const a = (dx * wx + dz * wz) / s.along;
+      const b = (-dx * wz + dz * wx) / s.across;
+      const w = Math.exp(-(a * a + b * b) * 1.4);
+      if (w < 0.01) continue;
+      color.lerp(s.sign < 0 ? dark : high, w * 0.3);
+    }
+    return;
+  }
+  for (const crater of MOON_CRATERS) {
+    const dx = x - crater.x;
+    const dz = z - crater.z;
+    const d = Math.hypot(dx, dz) / crater.r;
+    if (d > 3.4) continue;
+    if (d < 1) {
+      color.multiplyScalar(1 - 0.3 * (1 - smoothstep(0.25, 1, d)));
+    } else {
+      const rim = Math.exp(-(((d - 1.05) / 0.16) ** 2));
+      color.lerp(high, rim * 0.65);
+      if (freshest.has(crater) && d < 3.2) {
+        const ray = rayPattern(noise, Math.atan2(dz, dx), crater.r);
+        const fade = smoothstep(1.05, 1.4, d) * (1 - smoothstep(1.8, 3.2, d));
+        color.lerp(high, ray * fade * 0.95);
+      }
+    }
+  }
+}
+
 export interface TerrainBuild {
   mesh: THREE.Mesh;
   mountains: THREE.Group;
@@ -141,6 +227,7 @@ export function buildTerrain(
   site: SiteId,
   segments: number,
   paths: [number, number, number, number][],
+  groundDetail = false,
 ): TerrainBuild {
   const info = makeHeightFunction(site);
   const noise = new Noise2D(site === 'mars' ? 77 : 78);
@@ -148,6 +235,10 @@ export function buildTerrain(
   geometry.rotateX(-Math.PI / 2);
   const position = geometry.attributes.position as THREE.BufferAttribute;
   const colors = new Float32Array(position.count * 3);
+  const detailColors = groundDetail ? new Float32Array(position.count * 3) : null;
+  const detailNoise = groundDetail ? new Noise2D(DETAIL_SEED) : null;
+  const stains = groundDetail && site === 'mars' ? marsStains() : [];
+  const freshest = new Set<Crater>(groundDetail && site === 'moon' ? [...MOON_CRATERS].sort((a, b) => a.r - b.r).slice(0, 3) : []);
 
   const mars = site === 'mars';
   const palette = mars
@@ -185,32 +276,54 @@ export function buildTerrain(
     color.copy(palette.low).lerp(palette.mid, smoothstep(0.25, 0.7, patch));
     color.lerp(palette.high, smoothstep(0.62, 0.95, patch) * 0.8);
     color.lerp(palette.dark, smoothstep(0.7, 1, fine) * 0.22);
-    if (dist < BASE_RADIUS + 20) {
-      color.lerp(palette.pad, (1 - smoothstep(BASE_RADIUS - 6, BASE_RADIUS + 20, dist)) * 0.5);
-      color.lerp(palette.path, pathMask(x, z, paths) * 0.75);
+    const finish = (target: Float32Array) => {
+      if (dist < BASE_RADIUS + 20) {
+        color.lerp(palette.pad, (1 - smoothstep(BASE_RADIUS - 6, BASE_RADIUS + 20, dist)) * 0.5);
+        color.lerp(palette.path, pathMask(x, z, paths) * 0.75);
+      }
+      if (info.iceCrater) {
+        // The deep crater never sees the Sun: very dark, with a blue hint of ice.
+        const c = info.iceCrater;
+        const inside = 1 - smoothstep(0.55, 1.0, Math.hypot(x - c.x, z - c.z) / c.r);
+        color.lerp(ICE, inside * 0.82);
+      }
+      target[i * 3] = color.r;
+      target[i * 3 + 1] = color.g;
+      target[i * 3 + 2] = color.b;
+    };
+    if (detailColors && detailNoise) {
+      const base = color.clone();
+      groundDetailColor(mars, detailNoise, stains, freshest, x, z, color, palette.high, palette.dark);
+      finish(detailColors);
+      color.copy(base);
     }
-    if (info.iceCrater) {
-      // The deep crater never sees the Sun: very dark, with a blue hint of ice.
-      const c = info.iceCrater;
-      const inside = 1 - smoothstep(0.55, 1.0, Math.hypot(x - c.x, z - c.z) / c.r);
-      color.lerp(new THREE.Color('#1a2233'), inside * 0.82);
-    }
-    colors[i * 3] = color.r;
-    colors[i * 3 + 1] = color.g;
-    colors[i * 3 + 2] = color.b;
+    finish(colors);
   }
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const colorAttr = new THREE.BufferAttribute(detailColors ? detailColors.slice() : colors, 3);
+  geometry.setAttribute('color', colorAttr);
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
 
-  const material = ground(
-    mars
-      ? { speck: '#56322a', light: '#f3c892', bandEdge: 0.02, bandSoft: 0.16, ripples: true }
-      : { speck: '#34373f', light: '#e6e8ee', bandEdge: 0.075, bandSoft: 0.06, ripples: false },
-  );
+  const material = ground({
+    ...(mars
+      ? { speck: '#56322a', light: '#f3c892', bandEdge: 0.02, bandSoft: 0.16, ripples: true, patches: ['#d19a52', '#e3b693', '#a4563a'] }
+      : { speck: '#34373f', light: '#e6e8ee', bandEdge: 0.075, bandSoft: 0.06, ripples: false, patches: ['#a39c88', '#aeb2bd', '#50535d'] }),
+    relief: groundDetail,
+  });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.receiveShadow = true;
   mesh.name = 'terrain';
+  if (detailColors) {
+    // Dev A/B: both colour sets are baked once; the dev flag only picks which copy is on the GPU.
+    let showing = true;
+    mesh.onBeforeRender = () => {
+      const want = flag('G4');
+      if (want === showing) return;
+      showing = want;
+      (colorAttr.array as Float32Array).set(want ? detailColors : colors);
+      colorAttr.needsUpdate = true;
+    };
+  }
 
   const mountains = buildMountains(site);
   return {
@@ -219,6 +332,7 @@ export function buildTerrain(
     info,
     dispose() {
       geometry.dispose();
+      material.dispose();
       mountains.traverse((child) => {
         const m = child as THREE.Mesh;
         if (m.isMesh) {

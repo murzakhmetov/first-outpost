@@ -23,6 +23,10 @@ export interface QualityOptions {
   shadows: boolean;
   shadowSize: number;
   softShadows: boolean;
+  /** Sun shadows also cover the far edges of the overview picture (the box widens in steps). */
+  shadowWide: boolean;
+  /** Edge softness of the sun shadow in shadow texels; above 1 uses the radius filter instead of PCFSoft. */
+  shadowRadius: number;
   /** Dark outlines around characters. */
   outlines: boolean;
   /** Multiplier for the number of dust, sparkle and star particles. */
@@ -41,12 +45,22 @@ export interface QualityOptions {
   ao: number;
   /** Sun light shafts through dust and haze. 0 = off, else the number of samples along each ray. */
   shafts: number;
+  /** Mars dust lit through the Sun's shadow map instead of screen-space rays (ultra only). */
+  shaftsVolumetric: boolean;
   /** Per-world colour grade and the soft anime glow on highlights. */
   grade: boolean;
   /** Film look for cutscenes: depth of field and colour fringes. */
   cinematic: boolean;
   /** Moons, Earth "star", shooting stars, sun glare and softer clouds in the sky. */
   skyFancy: boolean;
+  /** Fine relief on the ground: grain and an irregular light/shadow edge near the camera. */
+  groundDetail: boolean;
+  /** FXAA on the finished picture (one extra full-screen pass and one half-float image). */
+  fxaa: boolean;
+  /** Small stones scattered on bare ground (instances; 0 = none). */
+  scatter: number;
+  /** Rooms: floor light pools, wall gradient, window shafts and contact shadows (G13). */
+  interiorLight: boolean;
 }
 
 export const QUALITY: Record<QualityTier, QualityOptions> = {
@@ -61,6 +75,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: false,
     shadowSize: 0,
     softShadows: false,
+    shadowWide: false,
+    shadowRadius: 1,
     outlines: false,
     particles: 0.3,
     terrain: 72,
@@ -70,9 +86,14 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 0,
     shafts: 0,
+    shaftsVolumetric: false,
     grade: false,
     cinematic: false,
     skyFancy: false,
+    groundDetail: false,
+    fxaa: false,
+    scatter: 0,
+    interiorLight: false,
   },
   medium: {
     tier: 'medium',
@@ -85,6 +106,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: true,
     shadowSize: 1024,
     softShadows: false,
+    shadowWide: false,
+    shadowRadius: 1,
     outlines: true,
     particles: 0.6,
     terrain: 110,
@@ -94,9 +117,14 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 0,
     shafts: 0,
+    shaftsVolumetric: false,
     grade: false,
     cinematic: false,
     skyFancy: false,
+    groundDetail: false,
+    fxaa: false,
+    scatter: 0,
+    interiorLight: false,
   },
   high: {
     tier: 'high',
@@ -109,6 +137,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: true,
     shadowSize: 2048,
     softShadows: true,
+    shadowWide: true,
+    shadowRadius: 1,
     outlines: true,
     particles: 1,
     terrain: 150,
@@ -118,9 +148,14 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 8,
     shafts: 20,
+    shaftsVolumetric: false,
     grade: true,
     cinematic: true,
     skyFancy: true,
+    groundDetail: true,
+    fxaa: true,
+    scatter: 2000,
+    interiorLight: true,
   },
   ultra: {
     tier: 'ultra',
@@ -133,6 +168,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: true,
     shadowSize: 4096,
     softShadows: true,
+    shadowWide: true,
+    shadowRadius: 1,
     outlines: true,
     particles: 1.5,
     terrain: 190,
@@ -142,9 +179,14 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 14,
     shafts: 32,
+    shaftsVolumetric: true,
     grade: true,
     cinematic: true,
     skyFancy: true,
+    groundDetail: true,
+    fxaa: true,
+    scatter: 6000,
+    interiorLight: true,
   },
 };
 
