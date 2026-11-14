@@ -131,3 +131,26 @@ turns red and quick on alert.
 In `docs/img/upgrade/`: `mars_*_before/after.jpg`, `moon_before/after.jpg` (same tier with the new
 flags off, and ultra), `mars_cinematic.jpg`, `moon_cinematic.jpg`, `sky_phobos.jpg`,
 `sky_night_earth_star.jpg`, `cadet_front.jpg`, `cadet_back.jpg`, `lumi.jpg`.
+
+## How to measure
+
+Dev only (`npm run dev`); production bundles do not contain `src/dev/gfxlab.ts`. The browser pane is small and
+capped at 60 fps, so never judge from pane screenshots. Use `window.gfxlab` instead.
+
+Start the shot saver once (it keeps running; default folder is `gfx-shots2` next to the worktree's scratchpad):
+
+    node scripts/dev/shot-saver.mjs [folder] [port]      # port 5199
+
+In the page console (or the browser tool's javascript tool):
+
+    await gfxlab.tier('ultra')                 // low | medium | high | ultra
+    await gfxlab.scene('mars-overview')        // mars-overview mars-lowsun mars-walk moon-overview moon-walk title interior
+    await gfxlab.shot('name')                  // 1920x1080 JPEG q0.95 -> saved path; {png: true} as 4th arg for PNG
+    gfxlab.frameMs(frames=60, batches=7)         // {median, min, max, drawCalls, triangles} at 1920x1080, GPU-synced
+    gfxlab.set('flagId', false); gfxlab.flags()
+    await gfxlab.ab('name', 'flagId')          // name_off + name_on, the SAME frame
+    gfxlab.diff('flagId')                      // {different, maxDelta}: no files saved (noise floor with an unused flag: ~100 px, maxDelta 1)
+    gfxlab.live()                              // give the game its own loop back
+
+Every new effect reads `flag('id')` from `src/world/devflags.ts` (true in production). `scene()` freezes time
+(clock 100 s), seeds `Math.random`, and stops the real-time loop; call `gfxlab.live()` to resume play.
