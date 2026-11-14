@@ -171,6 +171,11 @@ export interface EvaResult {
   chore: boolean;
   /** A particle storm caught the crew outdoors. */
   caught: boolean;
+  /**
+   * Shared base only: the share of the walkers who were caught (0-1). Missing means 1 when caught,
+   * so a walk alone behaves as it always did (see sim/coop.ts mergeWalks).
+   */
+  caughtShare?: number;
   /** A storm alert sounded during the walk. */
   alerted: boolean;
   /** The radiation vest was worn on this walk (filled in when the walk is recorded). */

@@ -716,7 +716,7 @@ export function computeWeek(state: MissionState): WeekOutcome {
     doseAvoided += full - doseStorm;
     // In the shelter the credit goes to the shelter: the wall counts only for what it adds on top.
     doseWall += full * (now.sheltered ? Math.max(0, SHELTER_FACTOR - walls) : 1 - walls);
-    if (now.eva?.caught) doseStorm += full * CAUGHT_OUTSIDE * ((now.eva.vest ?? hasTool(state, 'vest')) ? TOOL_EFFECT.vestFactor : 1);
+    if (now.eva?.caught) doseStorm += full * CAUGHT_OUTSIDE * (now.eva.caughtShare ?? 1) * ((now.eva.vest ?? hasTool(state, 'vest')) ? TOOL_EFFECT.vestFactor : 1);
   }
   const doseAfter = state.dose + doseGcr + doseStorm;
 
