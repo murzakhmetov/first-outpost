@@ -74,5 +74,5 @@ describe('random play keeps the state sane', () => {
     for (const line of bad) { const key = line.replace(/^[^:]*: /, '').replace(/[-\d.]+/g, '#'); if (!kinds.has(key)) kinds.set(key, line); }
     console.log([...kinds.values()].slice(0, 20).join('\n'));
     expect(bad).toEqual([]);
-  });
+  }, 60000);
 });

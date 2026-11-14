@@ -28,6 +28,8 @@ export interface Settings {
   speak: boolean;
   /** Recorded voices for the films and Lumi (see game/voice.ts). */
   voice: boolean;
+  /** Lumi speaks every new line by itself (off: only when the speaker button is tapped). */
+  autoSpeak: boolean;
   lessMotion: boolean;
   patterns: boolean;
   leftHand: boolean;
@@ -90,6 +92,7 @@ const DEFAULT_SETTINGS: Settings = {
   textScale: 1,
   speak: false,
   voice: true,
+  autoSpeak: true,
   lessMotion: false,
   patterns: false,
   leftHand: false,

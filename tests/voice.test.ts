@@ -142,6 +142,8 @@ describe('hash', () => {
 });
 
 describe('plan', () => {
+  /** The config without the extra Lumi keys, for tests with a tiny text set. */
+  const bare: VoiceConfig = { ...cfg, lumiExtra: [] };
   const lines = collectLines(cfg, dicts, { model: MODEL });
   const never = (): boolean => false;
   /** Files that exist: the ones a manifest names. */
@@ -200,17 +202,17 @@ describe('plan', () => {
 
   it('does not pay again for a renamed key: a file with the same hash is already there', () => {
     const d: Dicts = { en: { 'lumi.old': 'Same words.' }, ru: {} };
-    const first = planLines(collectLines(cfg, d, { model: MODEL, only: 'lumi', lang: 'en' }), emptyManifest(), never, 9000, PER_CHAR);
+    const first = planLines(collectLines(bare, d, { model: MODEL, only: 'lumi', lang: 'en' }), emptyManifest(), never, 9000, PER_CHAR);
     const hash = first.lines[0].hash;
     const renamed: Dicts = { en: { 'lumi.new': 'Same words.' }, ru: {} };
-    const plan = planLines(collectLines(cfg, renamed, { model: MODEL, only: 'lumi', lang: 'en' }), emptyManifest(), (file) => file === fileName(hash), 9000, PER_CHAR);
+    const plan = planLines(collectLines(bare, renamed, { model: MODEL, only: 'lumi', lang: 'en' }), emptyManifest(), (file) => file === fileName(hash), 9000, PER_CHAR);
     expect(plan.jobs).toEqual([]);
     expect(plan.lines[0].status).toBe('cached');
   });
 
   it('sends a text used by two keys only once', () => {
     const d: Dicts = { en: { 'lumi.a': 'Same words.', 'lumi.b': 'Same words.' }, ru: {} };
-    const plan = planLines(collectLines(cfg, d, { model: MODEL, only: 'lumi', lang: 'en' }), emptyManifest(), never, 9000, PER_CHAR);
+    const plan = planLines(collectLines(bare, d, { model: MODEL, only: 'lumi', lang: 'en' }), emptyManifest(), never, 9000, PER_CHAR);
     expect(plan.jobs.length).toBe(1);
     expect(plan.lines.map((line) => line.status).sort()).toEqual(['new', 'shared']);
   });
@@ -258,12 +260,26 @@ describe('manifest lookup and fallback', () => {
     expect(parseManifest(null)).toEqual({});
     expect(parseManifest({ lines: [] })).toEqual({});
   });
-  it('decides: file, else the device voice only when asked, else silence', () => {
+  it('decides: file when Voices is on, there is a file and it can be heard; else the device voice if its setting is on; else silence', () => {
     const entry = findEntry(manifest, 'en', 'story.mars.1');
-    expect(decide(entry, {})).toBe('file');
-    expect(decide(null, { fallback: true, text: 'Hi' })).toBe('speech');
-    expect(decide(null, { fallback: true })).toBe('none');
-    expect(decide(null, { text: 'Hi' })).toBe('none');
+    expect(entry).not.toBeNull();
+    const say = { text: 'Hi', fallback: true, audible: true };
+    expect(decide(entry, say)).toBe('file');
+    expect(decide(entry, { ...say, voices: true })).toBe('file');
+    // Sound effects at 0: the file cannot be heard, the device voice reads
+    expect(decide(entry, { ...say, audible: false })).toBe('speech');
+    // Voices off
+    expect(decide(entry, { ...say, voices: false })).toBe('speech');
+    // the manifest is not loaded yet / no file for the line
+    expect(decide(null, say)).toBe('speech');
+    // the speaking setting is off: silence, never a second voice
+    expect(decide(null, { ...say, fallback: false })).toBe('none');
+    expect(decide(entry, { ...say, audible: false, fallback: false })).toBe('none');
+    expect(decide(entry, { ...say, voices: false, fallback: false })).toBe('none');
+    expect(decide(null, { audible: true, fallback: true })).toBe('none'); // no text
+    // films: a line that has a recording is never read by the device voice
+    expect(decide(entry, { ...say, audible: false, recordedOnly: true })).toBe('none');
+    expect(decide(null, { ...say, recordedOnly: true })).toBe('speech');
   });
   it('builds a relative file address', () => {
     expect(voiceUrl('abc.mp3')).toMatch(/voice\/abc\.mp3$/);
@@ -367,8 +383,9 @@ describe('generator run', () => {
     expect(result.code).toBe(0);
     expect(calls).toEqual([]);
     expect(readdirSync(out)).toEqual([]);
-    expect(logs.join('\n')).toMatch(/films: (\d+)\/\1 lines in/);
-    expect(result.plan?.credits).toBeLessThanOrEqual(9000);
+    expect(logs.join('\n')).toMatch(/films\s+(\d+)\/\1\s/);
+    expect(logs.join('\n')).toMatch(/cards\s+\d+\/\d+/);
+    expect(result.plan?.credits).toBeLessThanOrEqual(30000);
   });
 
   it('stops with a clear message when the key is missing', async () => {

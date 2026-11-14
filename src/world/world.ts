@@ -32,6 +32,10 @@ import type { RoomId } from '../sim/outpost';
 import { Lumi } from './lumi';
 import type { Mood } from './lumi';
 import { Props } from './props';
+import { LUMI_CLEAR, LUMI_GOAL_CLEAR, resolveSphere } from './keepclear';
+import type { Solids } from './keepclear';
+import { DRIVE_LOOKAHEAD, DRIVE_LOOKAHEAD_SPEED, driveGoal, liftGoalOverPath, walkGoal } from './lumifollow';
+import { lumiProbeStep } from './lumiprobe';
 import { Rover } from './rover';
 import { Scenery } from './scenery';
 import type { QualityOptions } from './quality';
@@ -129,6 +133,10 @@ export class World {
   private readonly root = new THREE.Group();
   private readonly focus = new THREE.Vector3();
   private readonly colliders: Collider[] = [];
+  /** What Lumi must keep out of: the walk's colliders (not the rover's circles, the rover is boxes) and the rover's body. */
+  private lumiSolids: Solids = { circles: [], boxes: [], ground: () => 0 };
+  /** The same without the rover (the drive look-ahead of the goal keeps away from buildings only). */
+  private lumiBuildings: Solids = { circles: [], boxes: [], ground: () => 0 };
   private readonly tmp = new THREE.Vector3();
   private readonly tmp2 = new THREE.Vector3();
 
@@ -161,7 +169,7 @@ export class World {
     this.terrain = buildTerrain(site, quality.terrain, PATHS, quality.groundDetail);
     const height = this.terrain.info.height;
     this.sky = new Sky({ detail: quality.skyDetail, withEarth: site === 'moon', sunSize: site === 'moon' ? 0.02 : 0.026 });
-    this.base = new Base(site);
+    this.base = new Base(site, height);
     this.base.setView(this.view);
     this.props = new Props(site, height, quality.rocks, quality.shadows, quality.scatter);
     this.scenery = new Scenery(site, height);
@@ -183,6 +191,10 @@ export class World {
 
     this.colliders.length = 0;
     this.colliders.push(...this.base.colliders, ...this.props.colliders, ...this.scenery.colliders, ...this.annex.colliders);
+    const roverCircles = new Set<Collider>(this.props.roverColliders);
+    this.lumiSolids = { circles: [...this.colliders.filter((c) => !roverCircles.has(c)), ...this.base.lumiOnly, ...this.props.lumiOnly, ...this.annex.lumiOnly], boxes: this.rover.boxes, ground: height };
+    this.lumiBuildings = { circles: this.lumiSolids.circles, boxes: [], ground: height };
+    this.lumi.keepOut = { solids: this.lumiSolids, active: () => this.lumiHardOn() };
     const crater = this.terrain.info.iceCrater;
     // The ice chore sits on the rim of the dark crater, on the side facing the outpost.
     const icePoint = crater
@@ -364,6 +376,7 @@ export class World {
   setMode(mode: WorldMode, spot?: SpotId, instant = false): void {
     if (!this.ready) return;
     this.mode = mode;
+    this.lumiTeleport = true;
     this.spot = mode === 'focus' ? spot : undefined;
     const rig = this.rig;
     // On a walk and in the intro film the camera does not sit behind rocks and buildings.
@@ -426,6 +439,7 @@ export class World {
   enterRoom(room: RoomId, look: RoomLook): void {
     if (!this.ready) return;
     if (!this.interior.active) this.outsideMode = this.mode;
+    this.lumiTeleport = true;
     this.eva.endView(); // the room has its own camera
     this.interior.open(room, look);
     this.engine.view = this.interior.scene;
@@ -436,6 +450,7 @@ export class World {
   leaveRoom(): void {
     if (!this.ready || !this.interior.active) return;
     this.interior.close();
+    this.lumiTeleport = true;
     this.root.add(this.astronaut.group, this.lumi.group);
     this.engine.view = null;
     this.engine.setFovScale(1);
@@ -880,7 +895,10 @@ export class World {
       // Fly beside the player, a little ahead, and look where they are going.
       const yaw = this.astronaut.group.rotation.y;
       const p = this.eva.position;
-      lumi.goal.set(p.x + Math.cos(yaw) * 1.1 + Math.sin(yaw) * 0.5, p.y + 2.05, p.z - Math.sin(yaw) * 1.1 + Math.cos(yaw) * 0.5);
+      const rover = this.rover;
+      // Driving: above the roof, a little behind the middle. On foot: beside the cadet, a little ahead.
+      if (rover.driving) driveGoal(lumi.goal, rover.x, rover.y, rover.z, rover.heading);
+      else walkGoal(lumi.goal, p.x, p.y, p.z, yaw);
       // Standing still for a moment, Lumi turns round and looks at the player.
       this.lumiStill = this.eva.speed < 0.35 ? this.lumiStill + dt : 0;
       if (this.lumiStill > 1.2) lumi.lookTarget.copy(camera.position);
@@ -896,7 +914,39 @@ export class World {
     } else {
       lumi.lookTarget.copy(camera.position);
     }
+    // The goal keeps out of solid things too, so the flight leads round them and the hard rule rarely has to act.
+    if (this.lumiHardOn()) {
+      // Driving, the goal looks ahead: it clears the buildings by a few metres more, so it is already high or well to the side
+      // when the rover squeezes along a wall (where only a big lift would get Lumi out of the gap in one frame).
+      // Only while the rover is really moving: parked against a wall it needs no run-up, and the look-ahead would lift Lumi out of the camera's view.
+      if (this.rover.driving && Math.abs(this.rover.speed) > DRIVE_LOOKAHEAD_SPEED) resolveSphere(lumi.goal, LUMI_GOAL_CLEAR + DRIVE_LOOKAHEAD, this.lumiBuildings);
+      resolveSphere(lumi.goal, LUMI_GOAL_CLEAR, this.lumiSolids);
+      // And the flight to it goes over what is in the way, not through gaps that only a jump could get Lumi out of.
+      liftGoalOverPath(lumi.goal, lumi.group.position, LUMI_CLEAR + 0.1, this.lumiSolids);
+    }
+    const teleport = this.lumiJumped();
     lumi.update(dt, this.daylight.night);
+    if (import.meta.env.DEV) lumiProbeStep(lumi.group.position, dt, teleport, this.lumiHardOn(), this.lumiSolids);
+  }
+
+  /** Lumi is held out of solid things on walks. Films, rooms and the other views place it themselves, as before. */
+  private lumiHardOn(): boolean {
+    return this.ready && !this.interior.active && this.mode === 'eva';
+  }
+
+  /** The cadet (or the scene) was moved in one go this frame: boarding, leaving the rover, a room, a new mode. Lumi may jump with it. */
+  private lumiTeleport = true;
+  private readonly lumiLast = new THREE.Vector3();
+  private lumiWasDriving = false;
+
+  private lumiJumped(): boolean {
+    const here = this.eva.position;
+    const jumped = this.lumiTeleport || this.lumi.snapped || this.rover.driving !== this.lumiWasDriving || here.distanceToSquared(this.lumiLast) > 3.5 * 3.5;
+    this.lumiTeleport = false;
+    this.lumi.snapped = false;
+    this.lumiWasDriving = this.rover.driving;
+    this.lumiLast.copy(here);
+    return jumped;
   }
 
   /** Numbers for the performance display. */

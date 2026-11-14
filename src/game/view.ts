@@ -123,13 +123,27 @@ export function eventView(state: MissionState): EventView | null {
   };
 }
 
-/** What happened after a choice. */
-export function resultText(state: MissionState, eventId: string, optionId: OptionId): string {
-  const env = currentEnv(state);
-  const params = eventParams(state, env);
+/** The text key of what happened after a choice. */
+function resultKey(state: MissionState, eventId: string, optionId: OptionId): string {
   // On Mars near opposition Earth's answer comes in time, and a card may say so in its own words.
   const variants = state.config.site === 'mars' && earthInTime(state) ? ['marsNear', state.config.site] : [state.config.site];
-  return t(pick(`ev.${eventId}.r${optionId}`, variants), params);
+  return pick(`ev.${eventId}.r${optionId}`, variants);
+}
+
+/** What happened after a choice. */
+export function resultText(state: MissionState, eventId: string, optionId: OptionId): string {
+  return t(resultKey(state, eventId, optionId), eventParams(state, currentEnv(state)));
+}
+
+/**
+ * The text keys the speaker buttons of the cards read, in reading order, for the recorded voices
+ * (game/voice.ts): the event card reads its title and body; with an option, the result card reads
+ * the result and the story. The keys are the very ones the card shows, so a card is voiced on both worlds.
+ */
+export function cardVoiceKeys(state: MissionState, eventId: string, optionId?: OptionId): string[] {
+  const v = variants(state, currentEnv(state));
+  const key = (field: string): string => pick(`ev.${eventId}.${field}`, v);
+  return optionId ? [resultKey(state, eventId, optionId), key('story')] : [key('title'), key('body')];
 }
 
 /** Mission Control's advice in words. */

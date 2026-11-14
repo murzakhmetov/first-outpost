@@ -16,7 +16,11 @@ import { voiceEn, voiceRu } from '../../src/i18n/voice.ts';
 export type Lang = 'en' | 'ru';
 export const LANGS: Lang[] = ['en', 'ru'];
 export type Speaker = FilmSpeaker;
-export type LineKind = 'films' | 'lumi';
+export type LineKind = 'films' | 'lumi' | 'cards';
+/** Which text of an event card a line is. The order is the priority: stories first, titles and bodies last. */
+export type CardPart = 'story' | 'result' | 'title' | 'body';
+export const CARD_PARTS: CardPart[] = ['story', 'result', 'title', 'body'];
+export const KINDS: LineKind[] = ['films', 'lumi', 'cards'];
 
 export interface SpeakerConfig {
   name?: string;
@@ -31,6 +35,10 @@ export interface VoiceConfig {
   outputFormat: string;
   speakers: Record<Speaker, SpeakerConfig>;
   lumiPriority: string[];
+  /** Keys outside `lumi.*` that Lumi's bubble also says (for example `eva.edge`). */
+  lumiExtra?: string[];
+  /** Keys Lumi can say that are left out on purpose: key -> why. The tests insist that nothing else is unplanned. */
+  lumiSkip?: Record<string, string>;
 }
 
 export interface ManifestEntry {
@@ -52,11 +60,13 @@ export interface VoiceLine {
   lang: Lang;
   speaker: Speaker;
   kind: LineKind;
+  /** For the event-card lines: which text of the card it is. */
+  part?: CardPart;
   /** Lower is more important. Both languages of a line share it. */
   order: number;
   /** The text to send, clean; null when the line cannot be voiced (the reason is in `skip`). */
   text: string | null;
-  skip?: 'params' | 'missing';
+  skip?: 'params' | 'missing' | 'listed';
   hash: string;
   chars: number;
 }
@@ -93,7 +103,7 @@ export function loadDicts(): Dicts {
 }
 
 /** What a line says: the `voice.<key>` text when there is one, else the shown text. Null when it cannot be voiced. */
-export function spokenText(key: string, lang: Lang, dicts: Dicts): { text: string | null; skip?: 'params' | 'missing' } {
+export function spokenText(key: string, lang: Lang, dicts: Dicts): { text: string | null; skip?: 'params' | 'missing' | 'listed' } {
   const dict = dicts[lang];
   const raw = dict[`voice.${key}`] ?? dict[key];
   if (raw === undefined) return { text: null, skip: 'missing' };
@@ -142,11 +152,30 @@ export function lumiKeys(cfg: VoiceConfig, dicts: Dicts): string[] {
     const index = cfg.lumiPriority.findIndex((prefix) => key.startsWith(prefix));
     return index < 0 ? cfg.lumiPriority.length : index;
   };
-  return Object.keys(dicts.en)
-    .filter((key) => key.startsWith('lumi.') && key !== 'lumi.name')
+  const keys = Object.keys(dicts.en).filter((key) => key.startsWith('lumi.') && key !== 'lumi.name');
+  for (const extra of cfg.lumiExtra ?? []) if (!keys.includes(extra)) keys.push(extra);
+  return keys
     .map((key, position) => ({ key, position, rank: rank(key) }))
     .sort((a, b) => a.rank - b.rank || a.position - b.position)
     .map((item) => item.key);
+}
+
+const CARD_KEY = /^ev\.[a-z0-9_]+\.(title|body|story|r[abc])(?:\.[A-Za-z]+)?$/;
+
+/**
+ * The texts the speaker buttons of the event card (title, body) and of the result card (result, story) read, on
+ * both worlds: every variant (`.mars`, `.moon`, `.cme`, `.rad`, `.marsNear`). Stories first, then results, then
+ * titles and bodies; inside a part, the order of en.ts.
+ */
+export function cardKeys(dicts: Dicts): { key: string; part: CardPart }[] {
+  const found: { key: string; part: CardPart }[] = [];
+  for (const key of Object.keys(dicts.en)) {
+    const match = CARD_KEY.exec(key);
+    if (!match) continue;
+    const word = match[1];
+    found.push({ key, part: word === 'story' ? 'story' : word === 'title' ? 'title' : word === 'body' ? 'body' : 'result' });
+  }
+  return CARD_PARTS.flatMap((part) => found.filter((item) => item.part === part));
 }
 
 export interface CollectOptions {
@@ -155,17 +184,25 @@ export interface CollectOptions {
   model: string;
 }
 
-/** All lines to voice, with their text, hash and size. Sorted by priority (films first, then Lumi). */
+/** All lines to voice, with their text, hash and size. Sorted by priority (films, then Lumi, then the event cards). */
 export function collectLines(cfg: VoiceConfig, dicts: Dicts, options: CollectOptions): VoiceLine[] {
-  const sources: { key: string; speaker: Speaker; kind: LineKind }[] = [];
-  if (options.only !== 'lumi') for (const { key, speaker } of filmKeys()) sources.push({ key, speaker, kind: 'films' });
-  const filmSet = new Set(sources.map((source) => source.key));
-  if (options.only !== 'films') for (const key of lumiKeys(cfg, dicts)) if (!filmSet.has(key)) sources.push({ key, speaker: 'lumi', kind: 'lumi' });
+  const sources: { key: string; speaker: Speaker; kind: LineKind; part?: CardPart }[] = [];
+  const taken = new Set<string>();
+  const add = (source: { key: string; speaker: Speaker; kind: LineKind; part?: CardPart }): void => {
+    if (taken.has(source.key)) return;
+    taken.add(source.key);
+    sources.push(source);
+  };
+  const wants = (kind: LineKind): boolean => !options.only || options.only === kind;
+  if (wants('films')) for (const { key, speaker } of filmKeys()) add({ key, speaker, kind: 'films' });
+  if (wants('lumi')) for (const key of lumiKeys(cfg, dicts)) add({ key, speaker: 'lumi', kind: 'lumi' });
+  if (wants('cards')) for (const { key, part } of cardKeys(dicts)) add({ key, speaker: 'caption', kind: 'cards', part });
   const langs = options.lang ? [options.lang] : LANGS;
   const lines: VoiceLine[] = [];
   sources.forEach((source, order) => {
     for (const lang of langs) {
-      const { text, skip } = spokenText(source.key, lang, dicts);
+      const listed = source.kind === 'lumi' && cfg.lumiSkip?.[source.key] !== undefined;
+      const { text, skip } = listed ? { text: null, skip: 'listed' as const } : spokenText(source.key, lang, dicts);
       lines.push({
         ...source,
         lang,
@@ -182,7 +219,7 @@ export function collectLines(cfg: VoiceConfig, dicts: Dicts, options: CollectOpt
 
 // ----- The plan -----------------------------------------------------------------------------------
 
-export type Status = 'cached' | 'new' | 'shared' | 'over-budget' | 'skipped-params' | 'skipped-missing';
+export type Status = 'cached' | 'new' | 'shared' | 'over-budget' | 'skipped-params' | 'skipped-missing' | 'skipped-listed';
 
 export interface PlannedLine extends VoiceLine {
   status: Status;
@@ -235,7 +272,7 @@ export function planLines(
   const groups = new Map<number, VoiceLine[]>();
   for (const line of lines) {
     if (line.text === null) {
-      planned.set(line, line.skip === 'missing' ? 'skipped-missing' : 'skipped-params');
+      planned.set(line, line.skip === 'missing' ? 'skipped-missing' : line.skip === 'listed' ? 'skipped-listed' : 'skipped-params');
       continue;
     }
     const group = groups.get(line.order);
@@ -303,6 +340,46 @@ export function summarize(plan: Plan, perChar: number, statuses: Status[] = ['ne
     chars: rows.reduce((sum, row) => sum + row.chars, 0),
     credits: rows.reduce((sum, row) => sum + row.credits, 0),
   };
+}
+
+export interface CategoryRow {
+  kind: LineKind;
+  /** For the event cards: the part of the card; absent for the whole category. */
+  part?: CardPart;
+  /** Lines of the category (a line is a text key in one language). */
+  total: number;
+  /** Lines that are planned: made already, new, or sharing a file. */
+  planned: number;
+  /** Characters and credits of the planned lines (a text shared by two keys counts once). */
+  chars: number;
+  credits: number;
+}
+
+/** What the plan holds per category (films, Lumi, cards and the four parts of the cards), in priority order. */
+export function summarizeCategories(plan: Plan, perChar: number): CategoryRow[] {
+  const rows: CategoryRow[] = [];
+  const rowFor = (kind: LineKind, part?: CardPart): CategoryRow => {
+    const row: CategoryRow = { kind, part, total: 0, planned: 0, chars: 0, credits: 0 };
+    const seen = new Set<string>();
+    for (const line of plan.lines) {
+      if (line.kind !== kind || (part && line.part !== part)) continue;
+      row.total += 1;
+      if (line.text === null || line.status === 'over-budget' || line.status.startsWith('skipped')) continue;
+      row.planned += 1;
+      if (seen.has(line.hash)) continue;
+      seen.add(line.hash);
+      row.chars += line.chars;
+      row.credits += line.chars * perChar;
+    }
+    return row;
+  };
+  for (const kind of KINDS) {
+    const whole = rowFor(kind);
+    if (whole.total === 0) continue;
+    rows.push(whole);
+    if (kind === 'cards') for (const part of CARD_PARTS) rows.push(rowFor(kind, part));
+  }
+  return rows;
 }
 
 // ----- The API ----------------------------------------------------------------------------------

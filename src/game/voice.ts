@@ -2,11 +2,16 @@
  * The voice-over: recorded lines (made by scripts/voice/generate.ts, see docs/VOICE.md) for the films
  * and for Lumi. `public/voice/manifest.json` says which lines have a file: "<lang>:<text key>".
  *
- * - A line with a file plays through the audio module (volume setting, music steps aside, Mission Control
- *   gets a light radio sound).
- * - A line without a file does nothing here, or is read by the device's own voice when the caller asks for
- *   that (`fallback`, used for the "read texts aloud" setting).
- * - Nothing here ever throws: a missing manifest, a missing file or a broken file just means "no voice".
+ * One rule for every text (Lumi's bubble, the card speaker buttons, the read-aloud texts), see `decide`:
+ * - A recording plays when Voices is on, the line has a file, the file can be heard (the Sound effects slider is
+ *   above 0: the recorded voices use that volume) and it loads. It goes through the audio module (music steps
+ *   aside, Mission Control gets a light radio sound).
+ * - Otherwise the device's own voice reads the text, when the caller says its speaking setting is on
+ *   (`fallback`: "Lumi speaks by itself" for Lumi, "Read texts aloud" for the rest). With Sound effects at 0 no
+ *   file is downloaded.
+ * - One voice per line: a card whose file fails part-way reads only the parts not played yet.
+ * - Films keep their old rule (`recordedOnly`): a line that has a recording is never read by the device's voice.
+ * - Nothing here ever throws: a missing manifest or a broken file just means the device's voice (or silence).
  *
  * Nothing runs when this module is imported (the tests import it in Node).
  */
@@ -24,9 +29,16 @@ export interface VoiceEntry {
 export type VoiceLines = Record<string, VoiceEntry>;
 
 export interface PlayOptions {
-  /** The shown text: read by the device's voice when there is no file and `fallback` is set. */
+  /** The shown text: read by the device's voice when the recording does not play and `fallback` is set. */
   text?: string;
+  /** The shown text of each key of a list, in order: after a failure part-way only the parts not played yet are read. */
+  parts?: string[];
+  /** The speaking setting for this text is on: the device's voice may read it. */
   fallback?: boolean;
+  /** The "Voices" setting (default on): off means no recording is played. */
+  voices?: boolean;
+  /** Films: a line that has a recording is never read by the device's voice, it plays or stays silent. */
+  recordedOnly?: boolean;
   /** For the device's voice: wait for the text that is being read instead of cutting it off. */
   queue?: boolean;
 }
@@ -60,9 +72,21 @@ export function findEntry(lines: VoiceLines | null, lang: string, key: string): 
   return lines?.[voiceId(lang, key)] ?? null;
 }
 
-/** What to do with a line: play its file, read it with the device's voice, or stay silent. */
-export function decide(entry: VoiceEntry | null, options: PlayOptions): 'file' | 'speech' | 'none' {
-  if (entry) return 'file';
+export interface DecideOptions extends PlayOptions {
+  /** The file can be heard: the Sound effects slider is above 0 (see audio.voiceAudible). */
+  audible: boolean;
+}
+
+/**
+ * THE rule for what to do with a line. `entry` is its manifest entry (null: no file, or the manifest is not loaded).
+ * - 'file': Voices is on, there is a file, it can be heard. (It can still fail to load: the caller then reads the
+ *   text, see runLines.)
+ * - 'speech': otherwise, when the speaking setting for this text is on (`fallback`) and there is a text.
+ * - 'none': otherwise. Films (`recordedOnly`) stay silent instead of speech when the line has a recording.
+ */
+export function decide(entry: VoiceEntry | null, options: DecideOptions): 'file' | 'speech' | 'none' {
+  if (entry && options.voices !== false && options.audible) return 'file';
+  if (entry && options.recordedOnly) return 'none';
   return options.fallback && options.text ? 'speech' : 'none';
 }
 
@@ -180,6 +204,9 @@ export async function prefetchLines(keys: string[], lang: string): Promise<void>
 let token = 0;
 let current: { stop: () => void; ended: Promise<unknown> } | null = null;
 let spoke = false;
+/** The call of playLines that is loading or playing now (0 when none), and the key list it was asked for. */
+let activeId = 0;
+let talkingKey = '';
 
 function endCurrent(): void {
   const line = current;
@@ -187,9 +214,15 @@ function endCurrent(): void {
   line?.stop();
 }
 
+function deviceBusy(): boolean {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
+  return window.speechSynthesis.speaking || window.speechSynthesis.pending;
+}
+
 /** Stops the line that is playing (and a line the device's voice is reading for it). */
 export function stopLine(): void {
   token += 1;
+  activeId = 0;
   endCurrent();
   if (spoke) {
     spoke = false;
@@ -197,10 +230,20 @@ export function stopLine(): void {
   }
 }
 
-function fallbackSpeech(options: PlayOptions, lang: string): false {
-  if (decide(null, options) === 'speech') {
+/**
+ * True while the line (or list of lines) with this id is loading, playing or being read by the device's voice, so
+ * that its speaker button can stop it instead of starting it again. The id is the keys joined with "|".
+ */
+export function isTalking(id: string): boolean {
+  if (!id || talkingKey !== id) return false;
+  return activeId !== 0 || current !== null || (spoke && deviceBusy());
+}
+
+/** Reads the text with the device's voice (when there is one). Always `false`. */
+function speakText(text: string | undefined, lang: string, queue?: boolean): false {
+  if (text) {
     try {
-      speak(options.text as string, lang, options.queue);
+      speak(text, lang, queue);
       spoke = true;
     } catch {
       /* no voice on this device */
@@ -209,53 +252,190 @@ function fallbackSpeech(options: PlayOptions, lang: string): false {
   return false;
 }
 
+/** Waits (at most 20 s) until the device's voice has finished the text it is reading, or the call is replaced. */
+async function deviceSpeechEnded(id: number): Promise<void> {
+  for (let waited = 0; waited < 100 && id === token && deviceBusy(); waited++) {
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+  }
+}
+
+/** Plays one recorded segment to its end. `false` when it was stopped. */
+function playSegment(handle: { stop: () => void; done: Promise<unknown> }): Promise<boolean> {
+  return new Promise<boolean>((resolve) => {
+    const mine = {
+      stop: () => {
+        handle.stop();
+        resolve(false);
+      },
+      ended: handle.done,
+    };
+    current = mine;
+    void handle.done.then(() => {
+      if (current === mine) current = null;
+      resolve(true);
+    });
+  });
+}
+
 /**
- * Plays the line for a text key. Resolves `true` when a recorded line played to its end, and `false` when
- * there was no file, it could not be played, or it was stopped. Never rejects.
- * A new call stops the line that is playing.
+ * Plays the lines of a list of text keys one after another (a card: its title, then its body), by the rule in
+ * `decide`. When every key has a file (and Voices is on and the sound can be heard) the files play; if a file
+ * cannot be loaded or started, the device's voice reads the parts not played yet (`parts`, else the whole `text`
+ * when nothing has played), when `fallback` allows it: never both voices on one part. If any key has no file, the
+ * whole text is read by the device's voice instead. With the Sound effects volume at 0 the manifest and the files
+ * are not downloaded. Films pass `recordedOnly`: no device voice for a line that has a recording.
+ * Resolves `true` when the last recorded line played to its end, and `false` otherwise (read by the device's
+ * voice, nothing to play, or stopped). Never rejects. A new call stops what is playing.
  */
-export async function playLine(key: string, lang: string, options: PlayOptions = {}): Promise<boolean> {
+export async function playLines(keys: string[], lang: string, options: PlayOptions = {}): Promise<boolean> {
   const id = ++token;
+  activeId = id;
+  talkingKey = keys.join('|');
+  try {
+    return await runLines(id, keys, lang, options);
+  } finally {
+    if (activeId === id) activeId = 0;
+  }
+}
+
+async function runLines(id: number, keys: string[], lang: string, options: PlayOptions): Promise<boolean> {
   // A line that comes while another plays waits for it when asked to (`queue`), else it replaces it.
   const waitFor = options.queue ? current : null;
   if (!waitFor) endCurrent();
-  if (spoke) {
+  const waitDevice = !!options.queue && spoke && !waitFor;
+  if (spoke && !waitDevice) {
     spoke = false;
-    if (!options.queue) stopSpeaking();
+    stopSpeaking();
   }
+  const audible = audio.voiceAudible;
+  /** Reads the text from part `from` on, if the caller allows it (nothing else is playing then). */
+  const speakFrom = (from: number): false => {
+    if (id !== token || !options.fallback) return false;
+    const text = options.parts && options.parts.length === keys.length ? options.parts.slice(from).join(' ') : from === 0 ? options.text : undefined;
+    return speakText(text, lang, !!options.queue && from === 0);
+  };
+  let started = 0; // parts whose recording was handed to the audio engine: the device's voice never re-reads them
   try {
-    const lines = await loadManifest();
+    // Sound at 0 (or Voices off): the manifest is not downloaded either (what is already known is used).
+    const lines = audible && options.voices !== false ? await loadManifest() : (voiceLines.value ?? {});
     if (id !== token) return false;
     if (waitFor) {
       await waitFor.ended;
       if (id !== token) return false;
     }
-    const entry = findEntry(lines, lang, key);
-    // With the sound volume at 0 the file would be silent: it is not downloaded (the device's voice may still read it).
-    if (decide(entry, options) === 'file' && entry && audio.voiceAudible) {
-      const buffer = await loadBuffer(entry);
+    if (waitDevice) {
+      await deviceSpeechEnded(id);
       if (id !== token) return false;
-      const handle = buffer ? audio.playVoice(buffer, entry.speaker === 'mc') : null;
-      if (handle) {
-        stopSpeaking(); // the device's voice and a recorded line must not talk at once
-        return await new Promise<boolean>((resolve) => {
-          const mine = {
-            stop: () => {
-              handle.stop();
-              resolve(false);
-            },
-            ended: handle.done,
-          };
-          current = mine;
-          void handle.done.then(() => {
-            if (current === mine) current = null;
-            resolve(true);
-          });
-        });
-      }
+      spoke = false;
     }
+    const entries = keys.map((key) => findEntry(lines, lang, key));
+    const whole = entries.length > 0 && entries.every((entry): entry is VoiceEntry => entry !== null);
+    const mode = decide(whole ? (entries[0] as VoiceEntry) : null, { ...options, audible });
+    if (mode === 'file') {
+      // Start loading every part at once (the next one loads while the first plays); a failure is a null.
+      const loads = (entries as VoiceEntry[]).map((entry) => loadBuffer(entry).catch(() => null));
+      for (let index = 0; index < loads.length; index++) {
+        const buffer = await loads[index];
+        if (id !== token) return false;
+        if (!buffer) return options.recordedOnly ? false : speakFrom(index); // cannot load: the device's voice reads what has not been played
+        const handle = audio.playVoice(buffer, (entries[index] as VoiceEntry).speaker === 'mc');
+        if (!handle) return options.recordedOnly ? false : speakFrom(index); // cannot start (tab hidden, no sound on the device)
+        started = index + 1;
+        stopSpeaking(); // the device's voice and a recorded line must not talk at once
+        if (!(await playSegment(handle))) return false;
+        if (id !== token) return false;
+      }
+      return true;
+    }
+    if (mode === 'speech') return speakFrom(0);
+    return false;
   } catch {
-    /* fall back below */
+    // Never re-read a part that has started; films never use the device's voice.
+    return options.recordedOnly ? false : speakFrom(started);
   }
-  return id === token ? fallbackSpeech(options, lang) : false;
+}
+
+/** Plays the line for a text key (see playLines). */
+export function playLine(key: string, lang: string, options: PlayOptions = {}): Promise<boolean> {
+  return playLines([key], lang, options);
+}
+
+// ----- Lumi speaks by itself ------------------------------------------------------------------------
+
+export interface AutoSpeakInput {
+  /** The setting "Lumi speaks by itself". */
+  autoSpeak: boolean;
+  /** The setting "Voices" (recorded voices). */
+  voices: boolean;
+  /** The line has a recorded file. */
+  hasFile: boolean;
+  /** A film is playing: films speak for themselves. */
+  inFilm: boolean;
+  /** The Sound effects volume setting, 0 to 1 (the recorded voices use it; it is not a master volume). */
+  volume: number;
+}
+
+/**
+ * What happens at once when a new line appears in Lumi's bubble, by the one rule in `decide`: its recorded file
+ * (Voices on, a file, volume above 0), else the device's voice reading the shown text (Voices off, no file, or
+ * Sound effects at 0: Lumi is always heard), or nothing (the setting is off, or a film is playing).
+ */
+export function decideAutoSpeak(input: AutoSpeakInput): 'file' | 'speech' | 'none' {
+  if (!input.autoSpeak || input.inFilm) return 'none';
+  const entry: VoiceEntry | null = input.hasFile ? { file: 'x.mp3', hash: '', chars: 0, speaker: 'lumi' } : null;
+  return decide(entry, { text: 'x', fallback: input.autoSpeak, voices: input.voices, audible: input.volume > 0 });
+}
+
+let lastAutoKey = '';
+let lastAutoAt = 0;
+let autoToken = -1;
+/** The same key counts as a repeat only for this long: a fresh alert of the same kind is spoken again. */
+const REPEAT_MS = 12_000;
+
+/**
+ * The same line is not spoken twice in a row within a few seconds (a hint that comes again on every tap of the
+ * plan). The key decides, not the text: only the numbers in it change. A line that a film or a close cut off is
+ * forgotten (see stopAutoLine), so that its copy after the film is heard.
+ */
+export function isRepeat(key: string, now: number = Date.now()): boolean {
+  return lastAutoKey === key && now - lastAutoAt < REPEAT_MS;
+}
+export function markSpoken(key: string, now: number = Date.now()): void {
+  lastAutoKey = key;
+  lastAutoAt = now;
+}
+/** A new mission starts: the first line is spoken even if it is the one spoken last. */
+export function forgetSpoken(): void {
+  lastAutoKey = '';
+  lastAutoAt = 0;
+  autoToken = -1;
+}
+
+/**
+ * Speaks a new line of Lumi by itself: its file, or the shown text with the device's voice. A new line stops the
+ * old one. The line remembers that it is Lumi's own, so that a film can cut it off (see stopAutoLine).
+ */
+export function speakAutoLine(what: 'file' | 'speech', key: string, text: string, lang: string): void {
+  markSpoken(key);
+  if (isTalking(key)) return; // already playing: not restarted
+  if (what === 'file') {
+    void playLines([key], lang, { text, fallback: true });
+  } else {
+    stopLine();
+    talkingKey = key;
+    speakText(text, lang);
+  }
+  autoToken = token;
+}
+
+/**
+ * A film starts: Lumi's own line stops, but only if nothing newer has started since (the first beat of the film
+ * may already be playing, and must not be cut).
+ */
+export function stopAutoLine(): void {
+  if (autoToken === token) {
+    stopLine();
+    lastAutoKey = ''; // it was cut off: its copy after a film is heard
+  }
+  autoToken = -1;
 }

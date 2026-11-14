@@ -1,11 +1,12 @@
 import type { JSX } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { audio } from '../game/audio';
+import { audio, canSpeak } from '../game/audio';
 import { CODEX, cardById } from '../game/codex';
 import { changeAlloc, cycleAlloc, getWorld, openPanel } from '../game/director';
 import { cutscene, discovery, evaHud, fading, fps, lumiLine, mission, panel, pickups, placing, printing, profile, roomGame, settings, step, toast } from '../game/store';
 import type { Pickup } from '../game/store';
 import type { Step } from '../game/store';
+import { decideAutoSpeak, hasLine, isRepeat, loadManifest, speakAutoLine, stopAutoLine } from '../game/voice';
 import { fmtRange, lang, num, t } from '../i18n';
 import { computeWeek, currentEnv, starTargets } from '../sim/mission';
 import { BUILDINGS, buildBlock, isCreative, robotIdle, stockOf } from '../sim/outpost';
@@ -551,12 +552,55 @@ function OutpostBtn({ m }: { m: MissionState }): JSX.Element {
   );
 }
 
+/** The text of a line of Lumi as it is shown (a missing name would leave ", !" behind: tidy that up). */
+function lumiText(line: NonNullable<typeof lumiLine.value>): string {
+  const name = profile.value.name.trim();
+  return t(line.key, { ...line.params, name }).replace(/,\s*!/, '!').replace(/\s+!/, '!');
+}
+
+/** A new line of Lumi is spoken at once when "Lumi speaks by itself" is on (see decideAutoSpeak in game/voice.ts). */
+let seenLineId = -1;
+function speakNewLine(line: NonNullable<typeof lumiLine.value>): void {
+  // The bubble can mount again with the line that is already current (a panel opens and closes): not a new line.
+  if (seenLineId === line.id) return;
+  seenLineId = line.id;
+  const now = (hasFile: boolean): 'file' | 'speech' | 'none' =>
+    decideAutoSpeak({ autoSpeak: settings.value.autoSpeak, voices: settings.value.voice, hasFile, inFilm: cutscene.value, volume: settings.value.volume });
+  // Nothing to do (the setting is off, or a film plays): nothing is downloaded either.
+  if (decideAutoSpeak({ autoSpeak: settings.value.autoSpeak, voices: false, hasFile: false, inFilm: cutscene.value, volume: 0 }) === 'none') return;
+  const text = lumiText(line);
+  // The same line again (a hint on every tap of the plan) goes on as it is.
+  if (isRepeat(line.key)) return;
+  // The old bubble is gone: its voice stops, even when the new line is not spoken.
+  stopAutoLine();
+  // With Voices off or Sound effects at 0 no recording can play, so the list of voices is not downloaded.
+  void (settings.value.voice && settings.value.volume > 0 ? loadManifest() : Promise.resolve({})).then(() => {
+    // A newer line came while the list of voices was loading: that one speaks.
+    if (lumiLine.peek()?.id !== line.id) return;
+    const what = now(hasLine(line.key, lang.value));
+    if (what === 'none' || isRepeat(line.key)) return;
+    // No voice of this device for the language and no file: nothing can sound, so the line is not marked as spoken.
+    if (what === 'speech' && !canSpeak(lang.value)) return;
+    speakAutoLine(what, line.key, text, lang.value);
+  });
+}
+
 /** Lumi speaks: the helper's name, then the line, as in a story game. */
 export function LumiBubble(): JSX.Element | null {
   const line = lumiLine.value;
   const [hidden, setHidden] = useState(0);
   const band = useRef<HTMLElement>(null);
   const shown = !!line && hidden !== line.id;
+  const inFilm = cutscene.value;
+  useEffect(() => {
+    // No line (hushed, or a timed line ran out): its voice stops with the bubble.
+    if (line) speakNewLine(line);
+    else stopAutoLine();
+  }, [line?.id]);
+  // A film speaks for itself: a line of Lumi that is still being read stops when it starts.
+  useEffect(() => {
+    if (inFilm) stopAutoLine();
+  }, [inFilm]);
   // The cards on the side stop above the band: tell the styles how tall it is.
   useEffect(() => {
     const element = band.current;
@@ -575,9 +619,7 @@ export function LumiBubble(): JSX.Element | null {
     };
   }, [shown, line?.id]);
   if (!line || !shown) return null;
-  const name = profile.value.name.trim();
-  // A missing name would leave ", !" behind: tidy that up.
-  const text = t(line.key, { ...line.params, name }).replace(/,\s*!/, '!').replace(/\s+!/, '!');
+  const text = lumiText(line);
   return (
     <aside key={line.id} ref={band} class={`lumi mood-${line.mood}`} aria-live="polite">
       <span class="lumi-medal">
@@ -593,8 +635,11 @@ export function LumiBubble(): JSX.Element | null {
         <svg class="lumi-next" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M6 9l6 6 6-6" />
         </svg>
-        <SpeakBtn text={text} voiceKey={line.key} />
-        <button type="button" class="lumi-close" aria-label={t('common.close')} onClick={() => setHidden(line.id)}>
+        <SpeakBtn text={text} voiceKey={line.key} auto={false} />
+        <button type="button" class="lumi-close" aria-label={t('common.close')} onClick={() => {
+            setHidden(line.id);
+            stopAutoLine(); // closing the bubble silences Lumi's own line
+          }}>
           <Icon name="close" size={20} />
         </button>
       </div>
