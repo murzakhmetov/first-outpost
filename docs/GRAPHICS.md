@@ -18,11 +18,15 @@ the vignette stronger on every tier.
 | Scene picture | 0.8 scale, no HDR | full, HDR, MSAA 2 | full, HDR, MSAA 4 | pixel ratio up to 2, MSAA 4 |
 | Bloom, ink outlines | no | yes | yes | yes (6 levels) |
 | Contact shadows (AO) | no | no | yes, 8 samples, half size | yes, 14 samples, half size |
-| Sun light shafts (Mars) | no | no | yes, 20 samples | yes, 32 samples |
+| Sun light shafts (Mars) | no | no | yes, screen-space, 20 samples | yes, volumetric dust (G10, 18 steps against the shadow map), screen-space where it cannot run |
 | World colour grade + anime glow | no | no | yes | yes |
 | Film look for cutscenes | stronger vignette only | stronger vignette only | vignette, colour fringes, soft focus | same |
 | Sky: Phobos, Deimos, Earth star, meteors, glare, soft clouds | no | no | yes | yes |
 | Anime suit shading, glass sky reflection, night glow on lights | no | no | yes | yes |
+| Anti-aliasing after the picture (FXAA, G9) | no | no | yes | yes |
+| Ground micro-relief (`groundDetail`, G2) | no | no | yes | yes |
+| Pebble scatter (`scatter`, G5) | no | no | 2000 | 6000 |
+| Painted sky (G6), contact-shadow upsample (G7) | no | no | yes | yes |
 | Models | `_low` | `_low` | full | full |
 | Dynamic resolution | yes | yes | yes | yes |
 
@@ -102,10 +106,27 @@ same tier with the new flags off.
 
 Per-flag check (G1 to G10, each switched off alone, 60 frames x 5 batches, ultra mars-walk, 1080p): every flag is within +-0.25 ms of the all-on frame (2.3 ms); ultra mars-overview about 3.5 ms. The first measurement after a scene change reads about 0.4 ms slow (warm-up), so read differences below that as zero.
 
-The new passes add 3 to 7 draw calls (the walk row differs because the scene itself had a different
-number of objects when each run started) and cost less than the noise of this measurement (about
-0.3 ms) on this card. They were **not** measured on a weak GPU or an integrated one. Those stay on low and
-medium by default, and dynamic resolution is the safety net for a high or ultra tier on a slower card.
+The title, overview and walk rows above were taken in separate runs, and the scene had a different number of
+animated objects each time (a "before" and "after" row is not the same frame), so the draw-call drop on
+the high walk row (421 to 371) is scene variation, not a saving from this branch. Do not read the
+table as the cost of the new passes. The reliable numbers are the per-flag check above (every flag within
+the 0.3 ms noise of this measurement) and the later run on the final branch (1920 x 1080, 60 frames x 5
+batches): ultra mars-walk 2.5 ms, ultra mars-overview 3.1 ms, high mars-walk 2.1 ms. The new passes
+add 3 to 7 draw calls (pebbles 2, shafts and FXAA 1 each). They were **not** measured on a weak GPU or an
+integrated one. Those stay on low and medium by default, and dynamic resolution is the safety net for a
+high or ultra tier on a slower card.
+
+Low and medium, mars-walk, same run: low 1.0 ms, 115 to 117 draw calls; medium 2.0 ms, 323 draw calls.
+Toggling the FXAA flag changes neither tier's draw calls (the count moves by 2 on low between identical
+runs, from a blinking actor), and `gfxlab.diff('G9')` returns 0 different pixels on low and 1 (maxDelta 1)
+on medium. Both tiers have no FXAA image, no shaft pass and no relief or scatter (quality options false or 0).
+There is no pre-change build in this worktree, so low and medium are not compared against a baseline
+build here.
+
+Tier switches compile their post programs at once: `Post.resize()` calls `precompile()`, which runs
+`renderer.compile` for the final pass (with its defines), FXAA, shafts, volumetric shafts, AO and focus
+materials, so the first frame after a switch does not wait on shader compiles. The rock material variant used by the pebbles is
+still compiled on its first draw. The hitch was not timed.
 
 ## Models: cadet and Lumi
 

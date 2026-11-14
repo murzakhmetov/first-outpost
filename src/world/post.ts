@@ -932,6 +932,25 @@ export class PostFX {
     }
     this.setDefine(this.final, 'USE_CINEMA', useCinema ? '' : null);
     this.resizeFxaa(w, h);
+    this.precompile();
+  }
+
+  /**
+   * Compile the tier's post programs now (final pass with its defines, FXAA, shafts) so the first frame
+   * after a tier switch does not stall on a synchronous compile. Programs already built are reused.
+   */
+  private precompile(): void {
+    try {
+      this.setDefine(this.final, 'FINISH_LATER', this.fxaaTarget !== null && this.fxaa !== null && flag('G9') ? '' : null);
+      const list = [this.final, this.fxaa, this.shafts, this.shaftsVol, this.ao, this.aoBlur, this.focus];
+      for (const m of list) {
+        if (!m) continue;
+        this.quad.material = m;
+        this.renderer.compile(this.quadScene, this.quadCamera);
+      }
+    } catch {
+      /* compile is only a warm-up: a failure shows up on the first real draw */
+    }
   }
 
   /** The image the final pass draws into before FXAA (high and ultra only). */
