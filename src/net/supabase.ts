@@ -4,6 +4,7 @@
  * the tests never load it otherwise.
  */
 import type { NetConfig } from './config';
+import { EVENT_NAMES } from './protocol';
 import type { Transport, TransportHandlers } from './transport';
 
 /** How long to wait for the connection before saying "offline". */
@@ -45,7 +46,7 @@ export class SupabaseTransport implements Transport {
       const state = channel.presenceState();
       handlers.presence(Object.entries(state).flatMap(([id, entries]) => entries.map((meta) => ({ key: id, meta }))));
     });
-    for (const event of ['status', 'final', 'react', 'pos']) {
+    for (const event of EVENT_NAMES) {
       channel.on('broadcast', { event }, (message: { payload?: unknown }) => handlers.message(event, message?.payload));
     }
 

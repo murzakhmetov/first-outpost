@@ -12,8 +12,14 @@
  *    from the host that was locked in when we joined. A presence key used by two connections is "contested"
  *    and believed for neither, so nobody can speak for the host (known gap, see docs/MULTIPLAYER.md: an exact
  *    copy of the host entry that outlives the host connection);
- *  - every message is checked (protocol.ts) and limited in rate before it is believed.
+ *  - every message is checked (protocol.ts) and limited in rate before it is believed;
+ *  - the host cannot start while a seat speaks another protocol version (a mixed crew would play two different games);
+ *  - the shared-base messages (coopwire.ts) are only passed through: this room checks who may send them and that they
+ *    are well formed, and hands them to `onCoop`; src/net/coop.ts (the session) decides what they mean. They are
+ *    read only when the host started the mission in "coop" mode, so a race-mode room never looks at them.
  */
+import { isCoopEvent, parseCoopMessage, senderOf } from './coopwire';
+import type { CoopIncoming } from './coopwire';
 import {
   MAX_PLAYERS,
   POSITION_MIN_MS,
@@ -28,10 +34,11 @@ import {
   parseStart,
   randomCode,
   seatOrder,
+  sizeLimit,
   statusToWire,
   wire,
 } from './protocol';
-import type { CrewChoice, Meta, Position, ReactionId, StartPayload, Status } from './protocol';
+import type { CoopEventName, CrewChoice, GameMode, Meta, Position, ReactionId, StartPayload, Status } from './protocol';
 import type { PresenceEntry, Transport, TransportHandlers } from './transport';
 
 type Timer = ReturnType<typeof setTimeout> | 0;
@@ -65,6 +72,8 @@ export interface RoomView {
   online: boolean;
   failure: Failure | null;
   start: StartPayload | null;
+  /** False while a seat in the room speaks another protocol version (the host cannot start then). */
+  versionOk: boolean;
 }
 
 export interface RoomOptions {
@@ -81,7 +90,7 @@ export interface RoomOptions {
 
 /** Inbound limits: at most this many messages of a kind from one player in a 2 second window. */
 const WINDOW_MS = 2000;
-const INBOUND_LIMIT: Record<string, number> = { status: 8, final: 3, react: 3, pos: 16 };
+const INBOUND_LIMIT: Record<string, number> = { status: 8, final: 3, react: 3, pos: 16, st: 12, rec: 24, int: 24, sync: 3 };
 
 export class CrewRoom {
   private transport: Transport | null = null;
@@ -118,6 +127,8 @@ export class CrewRoom {
   onStart: ((start: StartPayload) => void) | null = null;
   onReaction: ((player: Player, reaction: ReactionId) => void) | null = null;
   onPosition: ((player: Player, position: Position) => void) | null = null;
+  /** A checked shared-base message (co-op mode only): the commander's `st` and `rec`, a guest's `int` and `sync`. */
+  onCoop: ((incoming: CoopIncoming, from: Player) => void) | null = null;
 
   private readonly now: () => number;
   private readonly random: () => number;
@@ -149,6 +160,7 @@ export class CrewRoom {
       online: this.online,
       failure: this.failure,
       start: this.startPayload,
+      versionOk: this.versionsMatch(),
     };
   }
 
@@ -533,17 +545,26 @@ export class CrewRoom {
     this.reconcile();
   }
 
-  /** The host can start when there are at least two players here and all of them are ready. */
+  /** Every player here sent the same protocol version as ours. */
+  private versionsMatch(): boolean {
+    for (const player of this.roster.values()) {
+      if (!player.here || player.me) continue;
+      if (this.present.find((meta) => meta.id === player.id)?.v !== this.meta.v) return false;
+    }
+    return true;
+  }
+
+  /** The host can start when there are at least two players here, all ready and all on the same version. */
   canStart(): boolean {
     if (this.phase !== 'lobby' || this.meta.id !== this.hostId) return false;
     const here = [...this.roster.values()].filter((player) => player.here);
-    return here.length >= 2 && here.every((player) => player.host || player.ready);
+    return here.length >= 2 && here.every((player) => player.host || player.ready) && this.versionsMatch();
   }
 
-  /** Start the mission for everybody. Only the host, only once. */
-  start(choice: CrewChoice, seed: number, startDate: string): boolean {
+  /** Start the mission for everybody. Only the host, only once. `mode`: each their own base, or one base together. */
+  start(choice: CrewChoice, seed: number, startDate: string, mode: GameMode = 'race'): boolean {
     if (!this.canStart()) return false;
-    const payload = parseStart({ choice, seed, startDate });
+    const payload = parseStart({ mode, choice, seed, startDate });
     if (!payload) return false;
     this.startPayload = payload;
     this.phase = 'playing';
@@ -624,6 +645,26 @@ export class CrewRoom {
     return true;
   }
 
+  /**
+   * Send a shared-base message. The commander sends `st` and `rec`, a guest `int` and `sync`; anything else, a message
+   * that is too big, or any call outside a co-op mission sends nothing. The body is sent as it is (coopwire.ts builds it);
+   * `from` is always this player. Rate limits are the session's job (src/net/coop.ts).
+   */
+  sendCoop(event: CoopEventName, body: Record<string, unknown>): boolean {
+    if (this.phase !== 'playing' || this.startPayload?.mode !== 'coop') return false;
+    if ((event === 'st' || event === 'rec') !== this.isHost) return false;
+    const payload = { ...body, from: this.meta.id };
+    let size: number;
+    try {
+      size = JSON.stringify(payload).length;
+    } catch {
+      return false;
+    }
+    if (size > sizeLimit(event)) return false;
+    this.transport?.send(event, payload);
+    return true;
+  }
+
   // ----- Receiving ---------------------------------------------------------------------
 
   private allowed(from: string, event: string): boolean {
@@ -639,8 +680,30 @@ export class CrewRoom {
     return true;
   }
 
+  private onCoopMessage(event: CoopEventName, payload: unknown): void {
+    if (this.phase !== 'playing' || this.startPayload?.mode !== 'coop') return;
+    const from = senderOf(payload);
+    if (from === null || from === this.meta.id) return;
+    const sender = this.roster.get(from);
+    if (!sender || !sender.here) return;
+    // State and records only from the commander (to the guests); intents and resync requests only to the commander.
+    if (event === 'st' || event === 'rec') {
+      if (this.isHost || from !== this.hostId) return;
+    } else if (!this.isHost) {
+      return;
+    }
+    if (!this.allowed(from, event)) return;
+    const incoming = parseCoopMessage(event, payload);
+    if (!incoming || incoming.from !== from) return;
+    this.onCoop?.(incoming, { ...sender });
+  }
+
   private onMessage(token: number, event: string, payload: unknown): void {
     if (token !== this.token || (this.phase !== 'lobby' && this.phase !== 'playing')) return;
+    if (isCoopEvent(event)) {
+      this.onCoopMessage(event, payload);
+      return;
+    }
     const message = parseMessage(event, payload);
     if (!message || message.from === this.meta.id) return;
     const sender = this.roster.get(message.from);

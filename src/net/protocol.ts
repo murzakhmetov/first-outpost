@@ -10,7 +10,11 @@ import { FEATURED_WINDOWS } from '../sim/sites';
 import type { Difficulty, EndReason, MissionState, SiteId } from '../sim/types';
 import type { Step } from '../game/store';
 
-export const PROTOCOL = 1;
+/**
+ * The version of the messages. 2: the start carries a mode (race or one shared base) and the co-op
+ * messages exist. The host cannot start while a seat has another version (room.ts).
+ */
+export const PROTOCOL = 2;
 export const MAX_PLAYERS = 4;
 
 /** Room codes: 31 letters and digits, no I, L, O, 0 or 1 (they look alike). */
@@ -39,6 +43,20 @@ export const REACTION_ICON: Record<ReactionId, string> = {
 
 /** Largest message accepted, in characters of JSON. Real messages are under 300. */
 export const MAX_MESSAGE_SIZE = 700;
+
+/** Messages of the shared base ("One base together"): live state, a week record, an intent, a resync request. */
+export const COOP_EVENT_NAMES = ['st', 'rec', 'int', 'sync'] as const;
+export type CoopEventName = (typeof COOP_EVENT_NAMES)[number];
+
+/** Largest message of one kind, in characters of JSON. The live state and a week record are bigger than the rest. */
+export const MESSAGE_LIMITS: Record<string, number> = { st: 3000, rec: 1200 };
+export function sizeLimit(event: string): number {
+  return MESSAGE_LIMITS[event] ?? MAX_MESSAGE_SIZE;
+}
+
+/** How a mission is played: "race" = each their own base, "coop" = one base together. */
+export const MODES = ['race', 'coop'] as const;
+export type GameMode = (typeof MODES)[number];
 
 /** Sending limits. */
 export const STATUS_MIN_MS = 500;
@@ -83,7 +101,7 @@ export function newPlayerId(random: () => number = Math.random): string {
 
 // ----- Small checks ---------------------------------------------------------
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
@@ -103,7 +121,7 @@ function flag(value: unknown): boolean | null {
 
 const ID_PATTERN = /^[a-z0-9]{6,16}$/;
 
-function playerId(value: unknown): string | null {
+export function playerId(value: unknown): string | null {
   return typeof value === 'string' && ID_PATTERN.test(value) ? value : null;
 }
 
@@ -215,6 +233,8 @@ export interface CrewChoice {
 }
 
 export interface StartPayload {
+  /** 'coop' = one base together. Absent means race mode (each their own base), exactly as before. */
+  mode?: GameMode;
   choice: CrewChoice;
   seed: number;
   startDate: string;
@@ -236,7 +256,8 @@ export type Incoming =
   | { event: 'react'; from: string; reaction: ReactionId }
   | { event: 'pos'; from: string; pos: Position };
 
-export const EVENT_NAMES = ['status', 'final', 'react', 'pos'] as const;
+/** Every message name the network may carry. The real transport subscribes to exactly this list. */
+export const EVENT_NAMES = ['status', 'final', 'react', 'pos', ...COOP_EVENT_NAMES] as const;
 
 /** The start date a featured window gives (the same rule as the Setup screen). */
 export function startDateOf(windowId: string): string | null {
@@ -260,10 +281,12 @@ export function parseStart(raw: unknown): StartPayload | null {
   if (!isRecord(raw)) return null;
   const choice = parseChoice(raw.choice);
   const seed = int(raw.seed, 0, 2 ** 31 - 1);
-  if (choice === null || seed === null || typeof raw.startDate !== 'string') return null;
+  const mode = raw.mode === undefined ? 'race' : oneOf(raw.mode, MODES);
+  if (choice === null || seed === null || mode === null || typeof raw.startDate !== 'string') return null;
   // The start date is not free: it is the one the chosen real-history window gives.
   if (raw.startDate !== startDateOf(choice.windowId)) return null;
-  return { choice, seed, startDate: raw.startDate };
+  // Race mode is written without a mode, so its messages are the very ones of the earlier version.
+  return mode === 'coop' ? { mode, choice, seed, startDate: raw.startDate } : { choice, seed, startDate: raw.startDate };
 }
 
 export function parseStatus(raw: unknown): Status | null {
@@ -304,7 +327,7 @@ function parsePosition(raw: unknown): Position | null {
 
 /**
  * Check one message from the network. Returns null for anything unknown, too big or not shaped
- * exactly right. The result is rebuilt from the checked fields, so nothing extra comes through.
+ * exactly right. The co-op messages (COOP_EVENT_NAMES) are read by src/net/coopwire.ts, not here. The result is rebuilt from the checked fields, so nothing extra comes through.
  */
 export function parseMessage(event: string, raw: unknown): Incoming | null {
   if (!(EVENT_NAMES as readonly string[]).includes(event)) return null;
@@ -315,7 +338,7 @@ export function parseMessage(event: string, raw: unknown): Incoming | null {
   } catch {
     return null;
   }
-  if (size > MAX_MESSAGE_SIZE) return null;
+  if (size > sizeLimit(event)) return null;
   const from = playerId(raw.from);
   if (from === null) return null;
   switch (event) {

@@ -21,7 +21,7 @@ import { SupabaseTransport } from './supabase';
 import { LocalTransport } from './transport';
 import type { Transport } from './transport';
 
-const IDLE: RoomView = { phase: 'idle', code: '', me: '', hostId: null, players: [], online: true, failure: null, start: null };
+const IDLE: RoomView = { phase: 'idle', code: '', me: '', hostId: null, players: [], online: true, failure: null, start: null, versionOk: true };
 
 /** Everything the screens draw from. */
 export const crewView = signal<RoomView>(IDLE);

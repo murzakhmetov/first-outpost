@@ -91,7 +91,7 @@ afterEach(async () => {
   crewDontWait();
   stop?.();
   stop = null;
-  crewView.value = { phase: 'idle', code: '', me: '', hostId: null, players: [], online: true, failure: null, start: null };
+  crewView.value = { phase: 'idle', code: '', me: '', hostId: null, players: [], online: true, failure: null, start: null, versionOk: true };
   store.mission.value = null;
   store.step.value = 'briefing';
   store.screen.value = 'title';
