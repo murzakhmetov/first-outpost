@@ -158,7 +158,7 @@ export class World {
     this.sky = new Sky({ detail: quality.skyDetail, withEarth: site === 'moon', sunSize: site === 'moon' ? 0.02 : 0.026 });
     this.base = new Base(site);
     this.base.setView(this.view);
-    this.props = new Props(site, height, quality.rocks, quality.shadows);
+    this.props = new Props(site, height, quality.rocks, quality.shadows, quality.scatter);
     this.scenery = new Scenery(site, height);
     this.annex = new Annex(height);
     this.annex.setView(this.outpost);
@@ -278,7 +278,8 @@ export class World {
         quality.particles !== previous.particles ||
         quality.pointLights !== previous.pointLights ||
         quality.shadows !== previous.shadows ||
-        quality.groundDetail !== previous.groundDetail);
+        quality.groundDetail !== previous.groundDetail ||
+        quality.scatter !== previous.scatter);
     this.engine.setQuality(quality);
     if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows, quality.shadowWide, quality.shadowRadius);
     if (!rebuild) return;

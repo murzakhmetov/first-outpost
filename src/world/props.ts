@@ -10,11 +10,13 @@ import type { SiteId } from '../sim/types';
 import { BATTERY, FARM, HAB, LAB, PATHS, SOLAR } from './base';
 import type { Collider } from './base';
 import { Kit, disposeTree, shape } from './build';
+import { flag as devFlag } from './devflags';
 import { GLOBALS, canvasTexture, glass, glow, lamp, toon } from './materials';
 import { model, modelGeometry, modelPart } from './models';
 import { ROVER, ROVER_HEADING } from './rover';
 import { dotTexture, padTexture } from './textures';
 import { BASE_RADIUS, PLAZA } from './terrain';
+import { PLOTS } from './annex';
 
 export const LANDER = { x: 31, z: 21 };
 export { ROVER, ROVER_HEADING };
@@ -36,13 +38,17 @@ export class Props {
   readonly roverColliders: Collider[] = [];
   private readonly own: THREE.Material[] = [];
   private flag: THREE.Mesh | null = null;
+  /** The rock material, shared with the pebbles. */
+  private rockMaterial: THREE.Material | null = null;
+  private pebbles: THREE.InstancedMesh[] = [];
   private readonly site: SiteId;
 
-  constructor(site: SiteId, height: (x: number, z: number) => number, rockFactor: number, softShadows: boolean) {
+  constructor(site: SiteId, height: (x: number, z: number) => number, rockFactor: number, softShadows: boolean, scatter = 0) {
     this.site = site;
     this.group.name = 'props';
     this.buildBlobs(softShadows);
     this.buildRocks(height, rockFactor);
+    if (scatter > 0) this.buildPebbles(height, scatter);
     this.buildPathLights();
     this.buildLander();
     this.buildRover();
@@ -106,7 +112,8 @@ export class Props {
 
     const total = Math.round(330 * factor);
     const perShape = Math.ceil(total / shapes.length);
-    const material = toon({ color: '#ffffff', rim: 0.26, bandSoft: 0.05, vertexColors: true });
+    const material = this.keep(toon({ color: '#ffffff', rim: 0.26, bandSoft: 0.05, vertexColors: true }));
+    this.rockMaterial = material;
     const matrix = new THREE.Matrix4();
     const quaternion = new THREE.Quaternion();
     const euler = new THREE.Euler();
@@ -172,6 +179,109 @@ export class Props {
       mesh.instanceMatrix.needsUpdate = true;
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.frustumCulled = false;
+      this.group.add(mesh);
+    });
+  }
+
+  /**
+   * Small stones on bare ground (high and ultra). Own random stream, so no rock or collider moves.
+   * Two draw calls: two small stone shapes made in code, with the rock material. No shadows cast, no colliders.
+   */
+  private buildPebbles(height: (x: number, z: number) => number, total: number): void {
+    const material = this.rockMaterial;
+    if (!material) return;
+    const random = mulberry32(this.site === 'mars' ? 8811 : 8812);
+    const mars = this.site === 'mars';
+    const palette = mars ? ['#7a4634', '#99583a', '#5c3a34', '#b0704a'] : ['#7d808a', '#9a9da6', '#5d6069', '#b4b7bf'];
+    // Two lumpy 20-triangle stones made in code: at 4 to 14 cm a full rock mesh only costs triangles.
+    const shapes = [0, 1].map((seed) => {
+      const stone = new THREE.IcosahedronGeometry(1, 0);
+      const rand = mulberry32(900 + seed);
+      const pos = stone.attributes.position as THREE.BufferAttribute;
+      const moved = new Map<string, THREE.Vector3>();
+      for (let i = 0; i < pos.count; i++) {
+        const key = `${pos.getX(i).toFixed(3)},${pos.getY(i).toFixed(3)},${pos.getZ(i).toFixed(3)}`;
+        let v = moved.get(key);
+        if (!v) {
+          v = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)).multiplyScalar(0.75 + rand() * 0.4);
+          moved.set(key, v);
+        }
+        pos.setXYZ(i, v.x, v.y, v.z);
+      }
+      stone.computeVertexNormals();
+      const colors = new Float32Array(pos.count * 3).fill(1);
+      stone.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      return stone;
+    });
+    const perShape = Math.ceil(total / shapes.length);
+    const plots = Object.values(PLOTS);
+    const blocked = (x: number, z: number): boolean => {
+      if (Math.hypot(x - LANDER.x, z - LANDER.z) < 8) return true;
+      if (Math.hypot(x - PLAZA.x, z - PLAZA.z) < PLAZA.r + 1.2) return true;
+      if (Math.hypot(x - ROVER.x, z - ROVER.z) < 3) return true;
+      if (Math.hypot(x - HAB.x, z - HAB.z) < 11) return true;
+      if (Math.hypot(x - FARM.x, z - FARM.z) < 9) return true;
+      if (Math.hypot(x - LAB.x, z - LAB.z) < 8) return true;
+      if (Math.hypot(x - SOLAR.x, z - SOLAR.z) < 11) return true;
+      if (Math.hypot(x - BATTERY.x, z - BATTERY.z) < 4.5) return true;
+      for (const plot of plots) if (Math.hypot(x - plot.x, z - plot.z) < 7) return true;
+      for (const [ax, az, bx, bz] of PATHS) {
+        const dx = bx - ax;
+        const dz = bz - az;
+        const t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz)));
+        if (Math.hypot(x - (ax + dx * t), z - (az + dz * t)) < 2.0) return true;
+      }
+      return false;
+    };
+    // Loose clusters: about 70 percent near the outpost, the rest thinning out to 90 m.
+    const centres: [number, number, number][] = [];
+    const clusterCount = Math.max(12, Math.round(total / 60));
+    for (let i = 0; i < clusterCount; i++) {
+      const near = random() < 0.7;
+      const radius = near ? 6 + random() * 39 : 45 + random() * 45;
+      const angle = random() * Math.PI * 2;
+      centres.push([Math.cos(angle) * radius, Math.sin(angle) * radius, 2.5 + random() * 4]);
+    }
+    const matrix = new THREE.Matrix4();
+    const quaternion = new THREE.Quaternion();
+    const euler = new THREE.Euler();
+    const scale = new THREE.Vector3();
+    const position = new THREE.Vector3();
+    const color = new THREE.Color();
+    shapes.forEach((geometry) => {
+      geometry.computeBoundingBox();
+      const bounds = geometry.boundingBox!;
+      const half = Math.max(bounds.max.x - bounds.min.x, bounds.max.z - bounds.min.z, 0.01) / 2;
+      const mesh = new THREE.InstancedMesh(geometry, material, perShape);
+      let placed = 0;
+      let guard = perShape * 12;
+      while (placed < perShape && guard-- > 0) {
+        const [cx, cz, spread] = centres[Math.floor(random() * centres.length)];
+        const offset = Math.sqrt(random()) * spread;
+        const around = random() * Math.PI * 2;
+        const x = cx + Math.cos(around) * offset;
+        const z = cz + Math.sin(around) * offset;
+        const radius = 0.04 + random() ** 1.8 * 0.1; // 0.04 to 0.14 m
+        if (blocked(x, z)) continue;
+        const flat = 0.6 + random() * 0.4;
+        const k = radius / half;
+        position.set(x, height(x, z) - radius * flat * 0.33, z);
+        euler.set((random() - 0.5) * 0.5, random() * Math.PI * 2, (random() - 0.5) * 0.5);
+        quaternion.setFromEuler(euler);
+        scale.set(k * (0.8 + random() * 0.4), k * flat, k * (0.8 + random() * 0.4));
+        matrix.compose(position, quaternion, scale);
+        mesh.setMatrixAt(placed, matrix);
+        color.set(palette[Math.floor(random() * palette.length)]).multiplyScalar(0.8 + random() * 0.3);
+        mesh.setColorAt(placed, color);
+        placed++;
+      }
+      mesh.count = placed;
+      mesh.castShadow = false;
+      mesh.receiveShadow = true;
+      mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+      mesh.frustumCulled = false;
+      this.pebbles.push(mesh);
       this.group.add(mesh);
     });
   }
@@ -360,6 +470,7 @@ export class Props {
   }
 
   update(time: number): void {
+    for (const mesh of this.pebbles) mesh.visible = devFlag('G5');
     const flag = this.flag;
     if (!flag || !flag.userData.wave) return;
     const position = flag.geometry.attributes.position as THREE.BufferAttribute;
@@ -376,6 +487,10 @@ export class Props {
   }
 
   dispose(): void {
+    // Instanced meshes own GPU buffers (matrices, colours) that only mesh.dispose() frees.
+    this.group.traverse((object) => {
+      if ((object as THREE.InstancedMesh).isInstancedMesh) (object as THREE.InstancedMesh).dispose();
+    });
     disposeTree(this.group);
     for (const material of this.own) material.dispose();
   }

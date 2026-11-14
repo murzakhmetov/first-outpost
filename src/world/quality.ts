@@ -53,6 +53,8 @@ export interface QualityOptions {
   skyFancy: boolean;
   /** Fine relief on the ground: grain and an irregular light/shadow edge near the camera. */
   groundDetail: boolean;
+  /** Small stones scattered on bare ground (instances; 0 = none). */
+  scatter: number;
 }
 
 export const QUALITY: Record<QualityTier, QualityOptions> = {
@@ -82,6 +84,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     cinematic: false,
     skyFancy: false,
     groundDetail: false,
+    scatter: 0,
   },
   medium: {
     tier: 'medium',
@@ -109,6 +112,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     cinematic: false,
     skyFancy: false,
     groundDetail: false,
+    scatter: 0,
   },
   high: {
     tier: 'high',
@@ -136,6 +140,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     cinematic: true,
     skyFancy: true,
     groundDetail: true,
+    scatter: 2000,
   },
   ultra: {
     tier: 'ultra',
@@ -163,6 +168,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     cinematic: true,
     skyFancy: true,
     groundDetail: true,
+    scatter: 6000,
   },
 };
 
