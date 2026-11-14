@@ -1,5 +1,5 @@
 /* Crew mode: the lobby, the crew dock in the game, the stickers and the debrief comparison.
-   Every class starts with "crew-". Colours come from theme.css. */
+   Every class starts with "crew-". Ivory panels, gold lines and navy tags: the tokens of theme.css. */
 
 /* ----- Lobby ---------------------------------------------------------------- */
 
@@ -29,14 +29,15 @@
   margin: 0;
   padding: 8px 12px;
   border-radius: var(--r-sm);
-  border: 1px dashed var(--line-strong);
+  border: 1px dashed var(--gold-edge);
+  color: var(--muted);
 }
 
 .crew-rules {
   padding: 14px 16px;
   border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--ivory-rule);
+  background: var(--ivory-hi);
 }
 
 .crew-rules h3 {
@@ -62,7 +63,7 @@
 .crew-rules li svg {
   flex: none;
   margin-top: 2px;
-  color: #6fe6a4;
+  color: var(--green-text);
 }
 
 .crew-join {
@@ -77,7 +78,7 @@
 }
 
 .crew-join input {
-  letter-spacing: 0.22em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-family: var(--font-display);
   font-size: 1.15rem;
@@ -97,8 +98,9 @@
   gap: 10px;
   padding: 10px 14px;
   border-radius: var(--r-md);
-  background: rgba(120, 48, 40, 0.45);
-  border: 1px solid rgba(255, 140, 120, 0.5);
+  background: var(--ivory-hi);
+  border: 1px solid var(--red);
+  color: var(--red);
 }
 
 .crew-error p {
@@ -112,7 +114,7 @@
 }
 
 .crew-lost {
-  color: #ffd39a;
+  color: var(--amber);
 }
 
 .crew-you {
@@ -130,22 +132,23 @@
   flex-wrap: wrap;
   padding: 10px 14px;
   border-radius: var(--r-md);
-  border: 1px solid var(--line-strong);
-  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--gold-edge);
+  background: var(--ivory-hi);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--gold-orn);
 }
 
 .crew-code-box small {
   flex: 1 0 100%;
-  color: var(--ink-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
 }
 
 .crew-code {
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 5vw, 2.2rem);
-  letter-spacing: 0.28em;
-  color: var(--gold);
+  letter-spacing: 0.16em;
+  color: var(--slate);
   user-select: all;
 }
 
@@ -164,18 +167,19 @@
   min-height: 44px;
   padding: 6px 12px;
   border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--ivory-rule);
+  background: var(--ivory-hi);
 }
 
 .crew-member.is-me {
-  border-color: var(--line-strong);
+  border-color: var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--gold-orn);
 }
 
 .crew-member.is-empty {
   border-style: dashed;
   background: transparent;
-  opacity: 0.45;
+  color: var(--muted);
 }
 
 .crew-member b {
@@ -185,11 +189,11 @@
 .crew-ready {
   margin-left: auto;
   font-size: 0.8125rem;
-  color: var(--ink-faint);
+  color: var(--muted);
 }
 
 .crew-ready.is-on {
-  color: #6fe6a4;
+  color: var(--green-text);
   font-weight: 800;
 }
 
@@ -199,26 +203,24 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--ivory-hi);
+  box-shadow: 0 0 0 1px var(--slate);
 }
 
 .crew-tag {
   font-style: normal;
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 2px 7px;
+  padding: 1px 8px;
   margin-left: 4px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  color: var(--ink-dim);
+  border-radius: var(--r-sm);
+  background: var(--ivory-line);
+  color: var(--muted);
 }
 
 .crew-tag-host {
-  background: rgba(236, 210, 151, 0.22);
-  color: var(--gold);
+  background: var(--navy);
+  color: var(--gold-hi);
 }
 
 .crew-pick {
@@ -259,12 +261,13 @@
   align-items: flex-start;
   padding: 10px 12px;
   border-radius: var(--r-md);
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--ivory-rule);
+  background: var(--ivory-hi);
 }
 
 .crew-row.is-me {
-  border-color: var(--line-strong);
+  border-color: var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--gold-orn);
 }
 
 .crew-row .crew-dot {
@@ -284,11 +287,11 @@
 }
 
 .crew-end.is-good {
-  color: #6fe6a4;
+  color: var(--green-text);
 }
 
 .crew-end.is-bad {
-  color: #ffb38a;
+  color: var(--red);
 }
 
 .crew-row-stats {
@@ -305,11 +308,11 @@
 }
 
 .crew-row-stars .lit {
-  color: var(--gold);
+  color: var(--gold-dk);
 }
 
 .crew-row-stars .dim {
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--ivory-rule);
 }
 
 .crew-line {
@@ -325,12 +328,12 @@
 
 .crew-prize {
   font-style: normal;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 800;
   padding: 2px 9px;
-  border-radius: 999px;
-  background: rgba(236, 210, 151, 0.22);
-  color: var(--gold);
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  color: var(--gold-hi);
 }
 
 @media (max-width: 760px) {
@@ -373,7 +376,7 @@
   align-items: center;
   gap: 2px;
   min-width: 26px;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .crew-pip.is-done {
@@ -386,18 +389,19 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 2px solid var(--navy);
+  border: 2px solid var(--ivory-hi);
+  box-shadow: 0 0 0 1px var(--slate);
   color: #12163a;
 }
 
 .crew-pip.is-me i {
-  box-shadow: 0 0 0 2px var(--gold);
+  box-shadow: 0 0 0 1px var(--slate), 0 0 0 3px var(--gold-orn);
 }
 
 .crew-pip small {
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 800;
-  color: var(--ink-dim);
+  color: var(--muted);
 }
 
 .crew-pip-mark {
@@ -406,14 +410,15 @@
   top: -6px;
   padding: 1px;
   border-radius: 50%;
-  background: var(--glass-deep);
+  background: var(--ivory-hi);
+  color: var(--green-text);
 }
 
 .crew-count,
 .crew-waiting {
   font-size: 0.8125rem;
   font-weight: 800;
-  color: var(--ink-dim);
+  color: var(--muted);
 }
 
 .crew-goon {
@@ -443,16 +448,17 @@
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  border: 1.5px solid var(--navy);
+  border: 1.5px solid var(--slate);
 }
 
 .crew-votes i.is-me {
-  box-shadow: 0 0 0 1.5px var(--gold);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .option.is-voted {
-  border: 2px solid var(--navy);
-  background: var(--gold-hi);
+  border: 1px solid var(--gold-edge);
+  background: var(--ivory-hi);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--gold-orn);
 }
 
 .crew-vote-hint {
@@ -466,7 +472,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid var(--navy);
+  border: 2px solid var(--slate);
   pointer-events: none;
   animation: crew-flash 1.8s ease-out forwards;
 }
@@ -512,21 +518,22 @@
   justify-content: center;
   gap: 8px 12px;
   max-width: calc(100vw - 20px);
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1.5px solid var(--line-strong);
-  background: var(--glass-deep);
-  box-shadow: var(--shadow);
+  padding: 8px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--gold-edge);
+  background: var(--ivory);
+  color: var(--slate);
+  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--gold-orn), var(--shadow);
   font-size: 0.875rem;
 }
 
 .crew-alone {
-  min-height: 34px;
+  min-height: 44px;
   padding: 4px 14px;
-  border-radius: 999px;
-  border: 1.5px solid var(--gold);
-  background: rgba(255, 209, 102, 0.14);
-  color: var(--ink);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  background: var(--gold-hi);
+  color: var(--slate);
   font: inherit;
   font-weight: 800;
   cursor: pointer;
@@ -536,15 +543,16 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: calc(max(12px, env(safe-area-inset-top)) + 60px);
+  top: calc(max(12px, env(safe-area-inset-top)) + 64px);
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin: 0;
   padding: 4px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: var(--glass-deep);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  background: var(--ivory);
+  color: var(--slate);
   font-size: 0.8125rem;
   font-weight: 800;
   white-space: nowrap;

@@ -551,10 +551,9 @@ export function useStarReveal(stars: number, onDone?: () => void): number {
 }
 
 /** Three star slots: `lit` of them gold (each pops in as it lights), the others dark. */
-export function StarRow({ stars, lit, won, big = 64, small = 50 }: { stars: number; lit: number; won: boolean; big?: number; small?: number }): JSX.Element {
+export function StarRow({ stars, lit, big = 64, small = 50 }: { stars: number; lit: number; big?: number; small?: number }): JSX.Element {
   return (
     <div class="mg-stars3" role="img" aria-label={t('mg.starsGot', { n: stars })}>
-      {won && lit > 0 && <span class="mg-rays" aria-hidden="true" />}
       {[0, 1, 2].map((index) => {
         const on = index < lit;
         return (
@@ -603,7 +602,7 @@ export function Result(props: ResultProps): JSX.Element {
       <div class={`mg-card mg-result ${props.won ? 'is-win' : 'is-lose'}`}>
         <div class="mg-card-a">
           <p class="mg-kicker">{t(props.won ? 'mg.done.win' : 'mg.done.lose')}</p>
-          <StarRow stars={props.stars} lit={lit} won={props.won} />
+          <StarRow stars={props.stars} lit={lit} />
           <h3 id={headId} class="mg-card-title" role="status">
             {props.title}
           </h3>

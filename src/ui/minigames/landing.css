@@ -19,8 +19,8 @@
   border-radius: var(--r-md, 12px);
   overflow: hidden;
   background: #0b0f20;
-  border: 1px solid rgba(236, 222, 190, 0.16);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px #0b0f20, inset 0 0 0 4px var(--gold-orn);
   touch-action: none;
   -webkit-touch-callout: none;
 }
@@ -51,12 +51,10 @@
   display: grid;
   gap: 3px;
   min-width: 118px;
-  padding: 6px 9px 7px;
-  border-radius: 10px;
-  background: rgba(10, 12, 28, 0.66);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  border: 1px solid var(--gold-edge);
   line-height: 1.15;
 }
 
@@ -68,11 +66,9 @@
 }
 
 .mg-gauge-name {
-  color: var(--ink-faint, #9c98b0);
-  font-size: 0.625rem;
-  font-weight: 900;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  color: #c4cadb;
+  font-size: 0.75rem;
+  font-weight: 800;
 }
 
 .mg-gauge b {
@@ -180,13 +176,11 @@
   width: 56px;
   height: 56px;
   padding: 0;
-  border-radius: 16px;
+  border-radius: var(--r-md);
   color: #ffffff;
-  background: rgba(14, 17, 34, 0.55);
+  background: rgba(29, 35, 51, 0.8);
   border: 1.5px solid rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 6px 16px rgba(4, 6, 20, 0.4);
+  box-shadow: 0 4px 10px rgba(4, 6, 20, 0.4);
   transition: transform 0.08s ease, background 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -194,7 +188,7 @@
   transform: scale(0.93);
   background: rgba(127, 227, 255, 0.38);
   border-color: #7fe3ff;
-  box-shadow: 0 0 18px rgba(127, 227, 255, 0.55);
+  box-shadow: none;
 }
 
 .mg-thrust {
@@ -206,23 +200,21 @@
   height: 92px;
   padding: 0;
   border-radius: 50%;
-  color: var(--cream-ink, #384058);
-  background: radial-gradient(circle at 45% 35%, #fff6dc, #ecd297 60%, #c9a45c);
-  border: 2px solid #fffaf0;
-  box-shadow: 0 6px 22px rgba(236, 210, 151, 0.4), inset 0 -4px 0 rgba(120, 90, 40, 0.3);
-  font-size: 0.75rem;
+  color: var(--slate);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), 0 4px 10px rgba(29, 35, 51, 0.45);
+  font-size: 0.8125rem;
   font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 /* Dark letters on the gold button (".mg button" would otherwise pass down the light text colour). */
 .mg .mg-thrust {
   position: relative;
-  color: var(--cream-ink, #384058);
-  border-color: #2b2440;
-  box-shadow: 0 0 0 3px #fffaf0, 0 6px 22px rgba(236, 210, 151, 0.4), inset 0 -4px 0 rgba(120, 90, 40, 0.3);
+  color: var(--slate);
+  border-color: var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), 0 4px 10px rgba(29, 35, 51, 0.45);
 }
 
 .mg .mg-pad-btn:not(.is-on) {
@@ -256,19 +248,17 @@
   display: grid;
   gap: 4px;
   padding: 8px 10px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   text-align: left;
-  background: rgba(8, 10, 26, 0.42);
-  border: 1px solid rgba(236, 222, 190, 0.12);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-gravity-title {
   margin: 0 0 2px;
   color: var(--ink-faint, #9c98b0);
-  font-size: 0.6875rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 800;
 }
 
 .mg-gravity-row {
@@ -277,7 +267,7 @@
   align-items: center;
   gap: 8px;
   color: var(--ink-dim, #cfcad9);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 
 .mg-gravity-row b {
@@ -289,7 +279,7 @@
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--ivory-line);
 }
 
 .mg-gravity-bar i {
@@ -301,15 +291,15 @@
 }
 
 .mg-gravity-row.is-earth i {
-  background: linear-gradient(90deg, #3f7fe0, #8fd0ff);
+  background: var(--sys-life);
 }
 
 .mg-gravity-row.is-mars i {
-  background: linear-gradient(90deg, #c45a30, #f2a272);
+  background: var(--sys-robot);
 }
 
 .mg-gravity-row.is-moon i {
-  background: linear-gradient(90deg, #8f95a6, #e6e9f1);
+  background: #7a8294;
 }
 
 .mg-gravity-row.is-here {
@@ -345,7 +335,7 @@
   .mg-thrust {
     width: 78px;
     height: 78px;
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
   }
 
   .mg-gauge {

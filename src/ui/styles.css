@@ -1970,7 +1970,7 @@ html {
 .end-head h2 {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 4.6vw, 2.3rem);
-  font-weight: 800;
+  font-weight: 400;
   color: var(--gold-dk);
 }
 
@@ -1980,7 +1980,7 @@ html {
 
 .end-line {
   font-weight: 800;
-  color: var(--gold);
+  color: var(--gold-dk);
 }
 
 .stats {
@@ -1996,19 +1996,22 @@ html {
   gap: 2px;
   padding: 10px 6px;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   text-align: center;
-  color: var(--ink-dim);
+  color: var(--muted);
 }
 
 .stats b {
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--slate);
 }
 
 .stats small {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
 }
 
 /* Only the chart itself stretches: the small icons in the legend keep their size. */
@@ -2017,22 +2020,23 @@ html {
   height: auto;
   display: block;
   border-radius: var(--r-md);
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .chart .grid {
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: var(--ivory-line);
   stroke-width: 1;
 }
 
 .chart .tick {
-  fill: var(--ink-faint);
+  fill: var(--muted);
   font-size: 12px;
   font-family: var(--font-ui);
 }
 
 .chart .storm-band {
-  fill: rgba(255, 122, 184, 0.14);
+  fill: rgba(238, 123, 46, 0.18);
 }
 
 .chart .line polyline {
@@ -2060,7 +2064,7 @@ html {
 .line-dose,
 .legend-dose,
 .legend-storm {
-  color: var(--dose);
+  color: var(--amber);
 }
 
 .line-science,
@@ -2115,12 +2119,13 @@ html {
   gap: 9px;
   padding: 9px 12px;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   font-size: 0.9375rem;
 }
 
 .insight-good {
-  background: rgba(111, 230, 164, 0.12);
+  border-color: var(--green-text);
 }
 
 .insight-good .icon {
@@ -2128,7 +2133,7 @@ html {
 }
 
 .insight-bad {
-  background: rgba(255, 93, 108, 0.13);
+  border-color: var(--red);
 }
 
 .insight-bad .icon {
@@ -2147,10 +2152,10 @@ html {
   align-items: center;
   gap: 9px;
   padding: 8px 14px 8px 10px;
-  border-radius: 99px;
-  background: rgba(255, 209, 102, 0.14);
-  border: 1px solid rgba(255, 209, 102, 0.5);
-  color: var(--gold);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  color: var(--gold-dk);
 }
 
 .badge span {
@@ -2160,8 +2165,8 @@ html {
 }
 
 .badge small {
-  color: var(--ink-dim);
-  font-size: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
 }
 
 .learned-card {
@@ -2169,7 +2174,7 @@ html {
   align-items: center;
   gap: 7px;
   padding: 7px 14px;
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   background: var(--ivory-hi);
   border: 1px solid var(--gold-orn);
   font-weight: 800;
@@ -2177,6 +2182,17 @@ html {
 
 .end-foot {
   justify-content: flex-end;
+}
+
+@media (max-width: 520px) {
+  .end-foot {
+    flex-wrap: wrap;
+  }
+
+  .end-foot .btn {
+    flex: 1 1 calc(50% - 6px);
+    padding-inline: 0.6em;
+  }
 }
 
 /* ----- Panels ------------------------------------------------------------- */
@@ -2339,7 +2355,7 @@ html {
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   background: var(--ivory-hi);
   border: 1px solid var(--gold-orn);
 }
@@ -2350,7 +2366,7 @@ html {
 }
 
 .suit-reward small {
-  opacity: 0.8;
+  color: var(--muted);
 }
 
 .suit-dot {
@@ -2358,12 +2374,13 @@ html {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85), 0 0 18px rgba(255, 209, 102, 0.6);
+  box-shadow: 0 0 0 2px var(--ivory-hi), 0 0 0 3px var(--gold-edge);
 }
 
 .rank-dot {
   display: grid;
   place-items: center;
-  color: #3a2a10;
-  background: radial-gradient(circle at 35% 30%, #fff4d6, #f2c46d 60%, #c98f2e);
+  color: var(--gold-lt);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--ivory-hi), 0 0 0 5px var(--gold-edge);
 }

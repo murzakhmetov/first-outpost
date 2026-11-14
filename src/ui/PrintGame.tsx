@@ -143,7 +143,7 @@ function PrintResult({ tool, accuracy, saving, onTake }: { tool: ToolId; accurac
         <ItemArt item={{ kind: 'tool', id: tool }} size={58} />
       </span>
       <strong class="print-done">{t('print.done')}</strong>
-      <StarRow stars={stars} lit={lit} won big={46} small={36} />
+      <StarRow stars={stars} lit={lit} big={46} small={36} />
       <span class="print-grade">
         {t(`print.grade.${stars}`)} · {t('print.accuracy', { n: Math.round(accuracy * 100) })}
       </span>

@@ -116,8 +116,8 @@
 
 .hud-week b {
   display: block;
-  font-family: var(--font-display);
-  font-weight: 400;
+  font-family: var(--font-ui);
+  font-weight: 800;
   font-size: 1.0625rem;
   color: var(--slate);
   white-space: normal;

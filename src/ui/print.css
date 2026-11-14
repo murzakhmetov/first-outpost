@@ -1,6 +1,5 @@
-/* The workshop's 3D printer game: a printer drawn in the game's cel look (dark outlines,
-   a lit side and a shadow side), the tool growing layer by layer on its heated bed, and a
-   result card in the style of the other menus. */
+/* The workshop's 3D printer game: an ivory card with a double gold border; the printer, drawn in the
+   game's cel look, sits in a navy frame and the tool grows layer by layer on its heated bed. */
 
 .print-back {
   position: fixed;
@@ -11,8 +10,7 @@
   display: grid;
   place-items: center;
   padding: 16px;
-  background: radial-gradient(ellipse at 50% 40%, rgba(40, 46, 82, 0.72), rgba(8, 10, 22, 0.88));
-  backdrop-filter: blur(3px);
+  background: rgba(29, 35, 51, 0.8);
   animation: print-in 0.25s ease-out;
 }
 
@@ -30,15 +28,12 @@
   gap: 10px;
   width: min(560px, 100%);
   max-height: 100%;
-  padding: 16px 18px 18px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(31, 36, 64, 0.97), rgba(18, 21, 40, 0.97));
-  box-shadow:
-    inset 0 0 0 1px rgba(242, 196, 109, 0.35),
-    inset 0 0 0 5px rgba(18, 21, 40, 0.9),
-    inset 0 0 0 6px rgba(242, 196, 109, 0.18),
-    0 24px 60px rgba(0, 0, 0, 0.55);
-  color: var(--ivory);
+  padding: 18px 20px 20px;
+  border-radius: var(--r-lg);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
+  color: var(--slate);
   overflow: auto;
   animation: print-rise 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
@@ -62,10 +57,11 @@
   place-items: center;
   width: 42px;
   height: 42px;
+  margin: 0 4px 0 3px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #4a5275, #262b45);
-  color: var(--gold-lt);
-  box-shadow: 0 0 0 2px rgba(242, 196, 109, 0.55), 0 0 14px rgba(242, 196, 109, 0.25);
+  background: var(--navy);
+  color: var(--ivory);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
 }
 
 .print-titles {
@@ -76,17 +72,16 @@
 }
 
 .print-titles small {
-  color: var(--gold-lt);
-  font-size: 0.72rem;
+  color: var(--gold-dk);
+  font-size: 0.8125rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
 }
 
 .print-titles strong {
-  font-family: 'Prata', 'Nunito Variable', serif;
+  font-family: var(--font-display);
   font-size: 1.32rem;
-  font-weight: 700;
+  font-weight: 400;
+  color: var(--slate);
 }
 
 /* At least 48 px, like every button a finger presses. */
@@ -96,16 +91,16 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(236, 229, 216, 0.12);
-  color: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  color: var(--slate);
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
 }
 
 .print-close:hover {
-  background: rgba(236, 229, 216, 0.24);
+  background: var(--ivory);
 }
 
 .print-close:active {
@@ -114,7 +109,7 @@
 
 .print-hint {
   margin: 0;
-  color: rgba(236, 229, 216, 0.82);
+  color: var(--muted);
   font-size: 0.92rem;
   line-height: 1.35;
 }
@@ -129,14 +124,13 @@
   aspect-ratio: 4 / 3;
   justify-self: center;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: var(--r-md);
   background:
-    radial-gradient(ellipse at 50% 100%, rgba(255, 170, 90, 0.2), transparent 60%),
-    radial-gradient(ellipse at 50% 30%, rgba(127, 233, 255, 0.08), transparent 70%),
     linear-gradient(rgba(127, 233, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px,
     linear-gradient(90deg, rgba(127, 233, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px,
-    linear-gradient(180deg, #151a33, #0c0f20);
-  box-shadow: inset 0 0 0 2px #2b2440, inset 0 0 0 3px rgba(127, 233, 255, 0.14), inset 0 -30px 50px rgba(0, 0, 0, 0.35);
+    var(--navy);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--navy), inset 0 0 0 4px var(--gold-orn);
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;
@@ -178,7 +172,6 @@
   stroke: #bff6ff;
   stroke-width: 3;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 4px rgba(127, 233, 255, 0.9));
 }
 
 .print-spool {
@@ -203,7 +196,7 @@
   background:
     repeating-linear-gradient(90deg, transparent 0 18px, rgba(255, 150, 80, 0.4) 18px 20px),
     linear-gradient(180deg, #5a6390 0 30%, #3b4262 30%);
-  box-shadow: inset 0 2px 0 rgba(255, 190, 120, 0.8), 0 -4px 16px rgba(255, 140, 60, 0.35);
+  box-shadow: inset 0 2px 0 rgba(255, 190, 120, 0.8);
 }
 
 /* Where the next layer must go: a dashed box right above the top of the print. */
@@ -265,13 +258,13 @@
 }
 
 .print-layer.is-perfect {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(255, 214, 120, 0.8), 0 0 10px rgba(255, 214, 120, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px var(--gold-lt);
 }
 
 .print-layer.is-moving {
   z-index: 3;
   background: color-mix(in srgb, var(--fil-a) 28%, transparent);
-  box-shadow: inset 0 0 0 2px var(--fil-a), 0 0 16px var(--fil-a);
+  box-shadow: inset 0 0 0 2px var(--fil-a);
   animation: print-glow 0.8s ease-in-out infinite alternate;
 }
 
@@ -402,7 +395,6 @@
 
 .print-head-hot {
   fill: #ffb45e;
-  filter: drop-shadow(0 0 3px #ff9a3d);
   animation: print-hot 0.5s ease-in-out infinite alternate;
 }
 
@@ -425,9 +417,9 @@
   left: 50%;
   z-index: 6;
   padding: 3px 14px;
-  border-radius: 99px;
-  border: 2px solid #2b2440;
-  font-weight: 900;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  font-weight: 800;
   font-size: 1.05rem;
   white-space: nowrap;
   transform: translateX(-50%);
@@ -436,13 +428,12 @@
 }
 
 .print-flash.is-perfect {
-  background: linear-gradient(180deg, #ffe7a6, #f2c46d);
-  color: #4a3410;
-  box-shadow: 0 0 18px rgba(242, 196, 109, 0.8);
+  background: var(--gold-hi);
+  color: var(--navy);
 }
 
 .print-flash.is-miss {
-  background: rgba(236, 229, 216, 0.95);
+  background: var(--ivory);
   color: var(--slate);
 }
 
@@ -474,13 +465,12 @@
   align-items: center;
   gap: 5px;
   padding: 3px 12px;
-  border-radius: 999px;
-  border: 2px solid #2b2440;
-  color: #3b2a05;
-  background: linear-gradient(180deg, #fff1bf, #f2c46d);
-  font-size: 0.82rem;
-  font-weight: 900;
-  box-shadow: 0 0 14px rgba(242, 196, 109, 0.6);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  color: var(--navy);
+  background: var(--gold-hi);
+  font-size: 0.875rem;
+  font-weight: 800;
   pointer-events: none;
   animation: print-chip 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
 }
@@ -502,10 +492,9 @@
   height: 78px;
   margin-top: -52px;
   border-radius: 50%;
-  border: 2.5px solid #2b2440;
-  background: radial-gradient(circle at 35% 30%, #fff4d6, #f2c46d 60%, #c98f2e);
-  color: #3a2a10;
-  box-shadow: 0 0 0 4px rgba(255, 244, 214, 0.35), 0 0 36px rgba(242, 196, 109, 0.85);
+  background: var(--navy);
+  color: var(--ivory);
+  box-shadow: 0 0 0 3px var(--gold-orn), 0 0 0 6px var(--ivory), 0 0 0 7px var(--gold-edge);
   animation: print-trophy 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.4) 0.35s both;
 }
 
@@ -515,27 +504,11 @@
   height: 58px;
 }
 
-.print-trophy::before {
-  content: '';
-  position: absolute;
-  inset: -40px;
-  z-index: -1;
-  border-radius: 50%;
-  background: repeating-conic-gradient(rgba(255, 230, 160, 0.32) 0 8deg, transparent 8deg 24deg);
-  animation: print-rays 9s linear infinite;
-  mask-image: radial-gradient(circle, #000 30%, transparent 70%);
-}
 
 @keyframes print-trophy {
   from {
     transform: scale(0.2) rotate(-25deg);
     opacity: 0;
-  }
-}
-
-@keyframes print-rays {
-  to {
-    transform: rotate(1turn);
   }
 }
 
@@ -563,23 +536,24 @@
 .print-dots i {
   width: 14px;
   height: 14px;
-  border-radius: 4px;
-  background: rgba(236, 229, 216, 0.16);
+  border-radius: 2px;
+  background: var(--ivory-line);
+  border: 1px solid var(--gold-edge);
   transform: rotate(45deg);
 }
 
 .print-dots i.is-laid {
-  background: var(--ivory);
+  background: var(--slate);
 }
 
 .print-dots i.is-perfect {
-  background: var(--gold-lt);
-  box-shadow: 0 0 8px rgba(242, 196, 109, 0.8);
+  background: var(--gold-orn);
+  border-color: var(--gold-dk);
   animation: print-dot 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.6) both;
 }
 
 .print-dots i.is-now {
-  box-shadow: 0 0 0 2px var(--gold-lt);
+  box-shadow: 0 0 0 2px var(--gold-dk);
   animation: print-glow 0.7s ease-in-out infinite alternate;
 }
 
@@ -591,8 +565,8 @@
 
 .print-dots span {
   margin-left: 6px;
-  color: rgba(236, 229, 216, 0.75);
-  font-size: 0.85rem;
+  color: var(--muted);
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
@@ -605,9 +579,9 @@
 }
 
 .print-done {
-  font-family: 'Prata', 'Nunito Variable', serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
-  color: var(--gold-lt);
+  color: var(--slate);
 }
 
 .print-result .mg-stars3 {
@@ -631,30 +605,30 @@
   align-items: center;
   gap: 6px;
   padding: 3px 12px;
-  border-radius: 99px;
+  border-radius: var(--r-sm);
   font-weight: 800;
   font-size: 0.9rem;
   animation: print-chip 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
 }
 
 .print-chip.is-tool {
-  color: #3b2a05;
-  background: linear-gradient(180deg, #fff6d8, #f2c46d);
-  border: 2px solid #2b2440;
+  color: var(--slate);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
 }
 
 .print-chip.is-saved {
-  background: rgba(95, 255, 154, 0.16);
-  color: #9dffc0;
-  border: 1px solid rgba(95, 255, 154, 0.45);
+  background: var(--ivory-hi);
+  color: var(--green-text);
+  border: 1px solid var(--green-text);
   animation-delay: 0.15s;
 }
 
 .print-fact {
   max-width: 44ch;
   margin: 2px 0 6px;
-  color: rgba(236, 229, 216, 0.75);
-  font-size: 0.86rem;
+  color: var(--muted);
+  font-size: 0.875rem;
   line-height: 1.35;
 }
 

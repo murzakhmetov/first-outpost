@@ -1,6 +1,6 @@
 /* First Outpost — mini-games inside the buildings.
-   One glass panel in the adventure-game look (theme.css): gold title, cream
-   buttons, dark insets for the play area. A briefing card opens each game, a
+   One ivory panel with a double gold border (theme.css): slate title, navy
+   framed play areas. A briefing card opens each game, a
    result card with stars closes it; both lie over the whole panel. One column
    on upright screens; on wide, short screens (a phone held sideways) the words
    sit on the left and the game on the right. Sizes follow the screen height
@@ -10,13 +10,20 @@
 .mg {
   --mg-pad: clamp(12px, 2.8vw, 20px);
   --mg-cyan: #6ae8ff;
-  --mg-good: var(--good, #6fe6a4);
-  --mg-bad: var(--bad, #ff7b86);
-  --mg-warn: var(--warn, #ffc15e);
-  --mg-inset: rgba(8, 10, 26, 0.52);
+  --mg-good: var(--green-text);
+  --mg-bad: var(--red);
+  --mg-warn: var(--amber);
+  --mg-inset: var(--navy);
   --mg-site: 224, 135, 90;
   --mg-left: minmax(220px, 0.8fr);
   --mg-right: minmax(0, 1.2fr);
+  /* An ivory panel: the text colours below are the dark-on-ivory ones; the navy play areas set their own. */
+  --ink: var(--slate);
+  --ink-dim: var(--muted);
+  --ink-faint: var(--muted);
+  --gold: var(--gold-dk);
+  --line: var(--ivory-line);
+  --line-strong: var(--gold-edge);
   position: relative;
   box-sizing: border-box;
   display: flex;
@@ -25,18 +32,16 @@
   max-height: 100%;
   margin-inline: auto;
   overflow: hidden;
-  border-radius: var(--r-lg, 18px);
-  color: var(--ink, #f6f1e6);
-  font-family: var(--font-ui, 'Nunito Variable', system-ui, sans-serif);
+  border-radius: var(--r-lg);
+  color: var(--slate);
+  font-family: var(--font-ui);
   font-weight: 600;
   font-size: 1rem;
   line-height: 1.35;
   text-align: left;
-  background: linear-gradient(172deg, rgba(40, 47, 78, 0.95), rgba(16, 19, 38, 0.97));
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
-  outline: 1px solid rgba(236, 222, 190, 0.13);
-  outline-offset: -6px;
-  box-shadow: var(--shadow, 0 16px 44px rgba(4, 6, 20, 0.55));
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
@@ -75,14 +80,14 @@
   min-width: 1.8em;
   height: 1.7em;
   padding: 0 0.4em;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   font: inherit;
   font-size: 0.75rem;
   font-weight: 900;
   line-height: 1;
-  color: var(--cream-ink, #384058);
-  background: linear-gradient(180deg, #fbf5e7, #e3d4ad);
-  box-shadow: inset 0 -2px 0 rgba(120, 90, 40, 0.3);
+  color: var(--slate);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
 }
 
 /* The scrolling inside of the panel, laid out in named areas. */
@@ -144,9 +149,10 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  color: var(--cream-ink, #384058);
-  background: radial-gradient(circle at 40% 35%, #fff8e6, var(--gold, #ecd297) 72%);
-  box-shadow: 0 0 0 3px rgba(236, 210, 151, 0.2), 0 4px 14px rgba(236, 210, 151, 0.25);
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
+  margin: 0 4px 0 3px;
 }
 
 .mg-head h2 {
@@ -155,11 +161,10 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(1.1rem, 3.4vw, 1.45rem);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.15;
-  letter-spacing: 0.01em;
-  color: var(--gold, #ecd297);
-  overflow-wrap: anywhere;
+  color: var(--slate);
+  overflow-wrap: break-word;
 }
 
 /* The level: three small diamonds, gold up to the level played. */
@@ -169,22 +174,21 @@
   align-items: center;
   gap: 5px;
   padding: 6px 9px;
-  border-radius: 999px;
-  background: rgba(8, 10, 26, 0.5);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-lv i {
   width: 7px;
   height: 7px;
   transform: rotate(45deg);
-  border: 1.5px solid rgba(236, 210, 151, 0.55);
+  border: 1.5px solid var(--gold-dk);
 }
 
 .mg-lv i.is-on {
-  background: var(--gold, #ecd297);
-  border-color: var(--gold, #ecd297);
-  box-shadow: 0 0 6px rgba(236, 210, 151, 0.7);
+  background: var(--gold-orn);
+  border-color: var(--gold-dk);
 }
 
 .mg .mg-leave {
@@ -200,11 +204,12 @@
   display: flex;
   align-items: center;
   gap: 8px 10px;
-  min-height: 38px;
+  /* Never squeezed below its own text when the game board takes the height (large text, Russian). */
+  min-height: min-content;
   padding: 5px 8px 5px 12px;
-  border-radius: 11px;
-  background: linear-gradient(90deg, rgba(236, 210, 151, 0.16), rgba(236, 210, 151, 0.05) 70%, rgba(236, 210, 151, 0.02));
-  border: 1px solid rgba(236, 210, 151, 0.24);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-goal-mark {
@@ -212,8 +217,8 @@
   width: 9px;
   height: 9px;
   transform: rotate(45deg);
-  background: var(--gold, #ecd297);
-  box-shadow: 0 0 10px rgba(236, 210, 151, 0.8);
+  background: var(--gold-orn);
+  border: 1px solid var(--gold-dk);
 }
 
 .mg-goal-text {
@@ -243,23 +248,22 @@
   gap: 5px;
   min-height: 28px;
   padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(8, 10, 26, 0.6);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
-  color: var(--ink-dim, #cfcad9);
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  border: 1px solid var(--gold-edge);
+  color: var(--on-navy);
   font-size: 0.8125rem;
   font-weight: 800;
   white-space: nowrap;
 }
 
 .mg-target.is-3 {
-  color: var(--gold, #ecd297);
-  border-color: rgba(236, 210, 151, 0.6);
-  box-shadow: 0 0 10px rgba(236, 210, 151, 0.18);
+  color: var(--gold-hi);
+  border-color: var(--gold-orn);
 }
 
 .mg-target.is-2 {
-  color: var(--ink, #f6f1e6);
+  color: var(--on-navy);
 }
 
 /* ----- Stars ---------------------------------------------------------------------------------- */
@@ -276,15 +280,15 @@
 }
 
 .mg-star-body {
-  fill: rgba(8, 10, 26, 0.6);
-  stroke: rgba(236, 222, 190, 0.45);
+  fill: var(--ivory-hi);
+  stroke: #6b7180;
   stroke-width: 1.4;
   stroke-linejoin: round;
 }
 
 .mg-star.is-on .mg-star-body {
-  fill: #ffd463;
-  stroke: #8a5a12;
+  fill: var(--gold-hi);
+  stroke: var(--gold-dk);
 }
 
 .mg-star-shine {
@@ -299,9 +303,9 @@
   margin: 0;
   padding: 8px 10px;
   list-style: none;
-  border-radius: 11px;
-  background: rgba(8, 10, 26, 0.42);
-  border: 1px solid rgba(236, 222, 190, 0.12);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-track li {
@@ -311,7 +315,7 @@
   gap: 8px;
   font-size: 0.8125rem;
   line-height: 1.25;
-  color: var(--ink-dim, #cfcad9);
+  color: var(--muted);
   transition: color 0.3s ease, opacity 0.3s ease;
 }
 
@@ -321,18 +325,18 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1.5px solid var(--line-strong, rgba(236, 222, 190, 0.46));
+  border: 1.5px solid var(--gold-edge);
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .mg-track li.is-met {
-  color: #d3f9e1;
+  color: var(--green-text);
 }
 
 .mg-track li.is-met .mg-track-mark {
-  color: #0d2a18;
-  background: var(--mg-good);
-  border-color: var(--mg-good);
+  color: #fff;
+  background: var(--green-text);
+  border-color: var(--green-text);
   animation: mg-pop-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
 }
 
@@ -341,14 +345,14 @@
 }
 
 .mg-track li.is-lost .mg-track-mark {
-  color: var(--mg-bad);
-  border-color: rgba(255, 123, 134, 0.5);
+  color: var(--red);
+  border-color: var(--red);
 }
 
 .mg-track li.is-lost .mg-star.is-on .mg-star-body,
 .mg-checks li:not(.is-met) .mg-star.is-on .mg-star-body {
-  fill: rgba(236, 210, 151, 0.22);
-  stroke: rgba(236, 210, 151, 0.35);
+  fill: var(--ivory-line);
+  stroke: #6b7180;
 }
 
 .mg-track li.is-lost .mg-star-shine,
@@ -376,8 +380,9 @@
   display: grid;
   gap: 6px;
   margin: 0 calc(-1 * var(--mg-pad)) calc(-1 * var(--mg-pad));
-  padding: 6px var(--mg-pad) var(--mg-pad);
-  background: linear-gradient(180deg, rgba(16, 19, 38, 0), rgba(16, 19, 38, 0.97) 26%);
+  padding: 8px var(--mg-pad) var(--mg-pad);
+  background: var(--ivory);
+  border-top: 1px solid var(--ivory-line);
 }
 
 .mg-chip {
@@ -386,27 +391,27 @@
   gap: 6px;
   min-height: 32px;
   padding: 3px 12px 3px 10px;
-  border-radius: 999px;
-  background: rgba(8, 10, 26, 0.6);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   font-size: 0.875rem;
   font-weight: 800;
   white-space: nowrap;
 }
 
 .mg-chip.is-good {
-  color: #c4f7a0;
-  border-color: rgba(183, 245, 140, 0.5);
+  color: var(--green-text);
+  border-color: var(--green-text);
 }
 
 .mg-chip.is-warn {
-  color: #ffd98c;
-  border-color: rgba(255, 210, 122, 0.55);
+  color: var(--amber);
+  border-color: var(--amber);
 }
 
 .mg-chip.is-bad {
-  color: #ffaab2;
-  border-color: rgba(255, 123, 134, 0.6);
+  color: var(--red);
+  border-color: var(--red);
 }
 
 .mg-status {
@@ -421,7 +426,7 @@
 .mg-hint,
 .mg-note {
   margin: 0;
-  color: var(--ink-dim, #cfcad9);
+  color: var(--muted);
   font-size: 0.875rem;
   text-align: center;
 }
@@ -430,34 +435,32 @@
   display: grid;
   place-items: center;
   min-height: 2.7em;
-  color: var(--ink, #f6f1e6);
+  color: var(--slate);
   font-weight: 800;
 }
 
 .mg-note.is-alert {
-  color: #ffc7cc;
+  color: var(--red);
 }
 
 .mg-keys {
   margin: 0;
-  color: var(--ink-faint, #9c98b0);
-  font-size: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
   text-align: center;
 }
 
 .mg-small {
   margin: 0;
-  color: var(--ink-faint, #9c98b0);
-  font-size: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
   text-align: center;
 }
 
 .mg-label {
-  color: var(--ink-faint, #9c98b0);
-  font-size: 0.6875rem;
+  color: var(--ink-faint);
+  font-size: 0.8125rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .mg-sr {
@@ -492,9 +495,7 @@
   padding: clamp(10px, 2.5vw, 18px);
   overflow: auto;
   overscroll-behavior: contain;
-  background: radial-gradient(120% 90% at 50% 40%, rgba(16, 19, 38, 0.55), rgba(8, 10, 24, 0.86));
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  background: rgba(29, 35, 51, 0.82);
   animation: mg-fade 0.25s ease both;
 }
 
@@ -512,14 +513,13 @@
   gap: 12px;
   width: min(100%, 440px);
   margin: auto;
-  padding: 18px 18px 16px;
-  border-radius: 16px;
+  padding: 20px 18px 16px;
+  border-radius: var(--r-lg);
   text-align: center;
-  background: linear-gradient(172deg, rgba(52, 60, 100, 0.98), rgba(20, 24, 46, 0.99));
-  border: 1px solid var(--line-strong, rgba(236, 222, 190, 0.46));
-  outline: 1px solid rgba(236, 222, 190, 0.16);
-  outline-offset: -6px;
-  box-shadow: 0 18px 50px rgba(4, 6, 20, 0.65);
+  color: var(--slate);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
   animation: mg-card-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
 }
 
@@ -527,12 +527,14 @@
 .mg-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 12%;
-  right: 12%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold, #ecd297) 30%, #fff6d8 50%, var(--gold, #ecd297) 70%, transparent);
-  box-shadow: 0 0 10px rgba(236, 210, 151, 0.8);
+  top: -5px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -5px;
+  transform: rotate(45deg);
+  background: var(--gold-orn);
+  border: 1px solid var(--gold-dk);
 }
 
 .mg-card-a,
@@ -552,10 +554,9 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(1.15rem, 3.6vw, 1.4rem);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.2;
-  color: #fff4d6;
-  text-shadow: 0 2px 12px rgba(236, 210, 151, 0.25);
+  color: var(--slate);
 }
 
 .mg-medal {
@@ -564,10 +565,10 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  color: var(--cream-ink, #384058);
-  background: radial-gradient(circle at 40% 35%, #fff8e6, var(--gold, #ecd297) 72%);
-  box-shadow: 0 0 0 4px rgba(236, 210, 151, 0.22), 0 0 0 10px rgba(236, 210, 151, 0.07), 0 6px 22px rgba(236, 210, 151, 0.35);
-  animation: mg-float-soft 3.2s ease-in-out infinite;
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 3px var(--gold-orn), 0 0 0 6px var(--ivory), 0 0 0 7px var(--gold-edge);
+  margin: 6px 0;
 }
 
 /* A small picture from the game on its briefing card, on a soft gold glow. */
@@ -583,10 +584,11 @@
 .mg-brief-art::before {
   content: '';
   position: absolute;
-  inset: -6px -14px;
+  inset: -4px -12px;
   z-index: -1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(236, 210, 151, 0.32), rgba(236, 210, 151, 0.08) 70%, transparent);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-brief-art > svg,
@@ -659,7 +661,7 @@
 
 .mg-brief-intro {
   margin: 0;
-  color: var(--ink-dim, #cfcad9);
+  color: var(--muted);
   font-size: 0.9375rem;
 }
 
@@ -669,9 +671,9 @@
   gap: 9px;
   margin: 0;
   padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(8, 10, 26, 0.5);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   font-size: 0.875rem;
   text-align: left;
 }
@@ -683,13 +685,14 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  color: #0b2a33;
-  background: var(--mg-cyan);
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .mg-brief-note {
   margin: 0;
-  color: #bdf3ff;
+  color: var(--blue-text);
   font-size: 0.8125rem;
   text-align: left;
 }
@@ -710,9 +713,9 @@
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  border-radius: 10px;
-  background: rgba(236, 210, 151, 0.07);
-  border: 1px solid rgba(236, 210, 151, 0.16);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   font-size: 0.8125rem;
   font-weight: 700;
 }
@@ -727,7 +730,7 @@
   width: 100%;
   margin-top: 2px;
   padding-top: 4px;
-  background: linear-gradient(180deg, rgba(24, 28, 52, 0), rgba(24, 28, 52, 0.96) 35%);
+  background: var(--ivory);
 }
 
 .mg-card-buttons .btn {
@@ -746,29 +749,22 @@
   align-items: center;
   gap: 10px;
   margin: 0;
-  color: var(--gold, #ecd297);
-  font-size: 0.75rem;
-  font-weight: 900;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-shadow: 0 0 12px rgba(236, 210, 151, 0.6);
+  color: var(--gold-dk);
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 400;
 }
 
 .mg-kicker::before,
 .mg-kicker::after {
   content: '';
   width: 26px;
-  height: 1.5px;
-  background: linear-gradient(90deg, transparent, var(--gold, #ecd297));
-}
-
-.mg-kicker::after {
-  transform: scaleX(-1);
+  height: 1px;
+  background: var(--gold-orn);
 }
 
 .mg-result.is-lose .mg-kicker {
-  color: var(--ink-dim, #cfcad9);
-  text-shadow: none;
+  color: var(--muted);
 }
 
 .mg-stars3 {
@@ -800,7 +796,7 @@
 }
 
 .mg-star-slot.is-on .mg-star {
-  filter: drop-shadow(0 0 10px rgba(255, 207, 90, 0.75));
+  filter: none;
 }
 
 .mg-star-slot .mg-burst {
@@ -831,7 +827,7 @@
   gap: 8px;
   margin: 0;
   padding: 5px 14px 5px 6px;
-  border-radius: 999px;
+  border-radius: var(--r-md);
   font-size: 0.8125rem;
   font-weight: 800;
   line-height: 1.2;
@@ -840,19 +836,17 @@
 }
 
 .mg-reward.is-fresh {
-  color: #3b2a05;
-  background: linear-gradient(180deg, #fff6d8, #f2c46d 70%, #d9a64a);
-  border: 2px solid #2b2440;
-  box-shadow: 0 0 0 3px rgba(255, 230, 160, 0.25), 0 0 22px rgba(255, 210, 110, 0.55), inset 0 -3px 0 rgba(120, 80, 20, 0.25);
+  color: var(--slate);
+  background: var(--ivory-hi);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory-hi), inset 0 0 0 3px var(--gold-orn);
 }
 
 .mg-reward.is-fresh small {
   display: block;
-  font-size: 0.625rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.75;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--gold-dk);
 }
 
 .mg-reward.is-fresh b {
@@ -866,17 +860,17 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  color: #fff6d8;
-  background: radial-gradient(circle at 40% 35%, #5a6aa8, #2b2440 78%);
-  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .mg-reward.is-old,
 .mg-reward.is-locked {
   padding: 5px 14px 5px 10px;
-  color: var(--ink-dim, #cfcad9);
-  background: rgba(8, 10, 26, 0.55);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
+  color: var(--muted);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-reward.is-old .icon {
@@ -922,8 +916,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 3px solid #fff4d6;
-  box-shadow: 0 0 14px rgba(255, 230, 160, 0.9);
+  border: 3px solid var(--gold-lt);
+  outline: 1px solid var(--navy);
   opacity: 0;
   animation: mg-hand-ring 1.3s ease-out infinite;
 }
@@ -937,18 +931,16 @@
   left: 22px;
   top: 40px;
   padding: 3px 10px;
-  border-radius: 999px;
-  color: #2b2440;
-  background: #fff6d8;
-  border: 2px solid #2b2440;
+  border-radius: var(--r-sm);
+  color: var(--slate);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
   font-family: var(--font-display);
   font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: normal;
-  text-transform: none;
+  font-weight: 400;
+  line-height: 1.2;
   white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(4, 6, 20, 0.45);
+  box-shadow: 0 3px 8px rgba(29, 35, 51, 0.35);
   animation: mg-pop-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
 }
 
@@ -1070,21 +1062,6 @@
 }
 
 /* Slow light rays behind the stars after a win. */
-.mg-rays {
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  z-index: -2;
-  width: 240px;
-  height: 240px;
-  margin: -120px 0 0 -120px;
-  border-radius: 50%;
-  background: repeating-conic-gradient(from 0deg, rgba(255, 222, 140, 0.2) 0deg 7deg, transparent 7deg 20deg);
-  -webkit-mask: radial-gradient(circle, #000 18%, transparent 66%);
-  mask: radial-gradient(circle, #000 18%, transparent 66%);
-  pointer-events: none;
-  animation: mg-spin 16s linear infinite, mg-fade 0.8s ease 0.3s both;
-}
 
 .mg-stats-line {
   display: flex;
@@ -1102,9 +1079,9 @@
   gap: 5px;
   min-height: 28px;
   padding: 2px 10px;
-  border-radius: 999px;
-  background: rgba(8, 10, 26, 0.55);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   font-size: 0.8125rem;
   font-weight: 800;
   white-space: nowrap;
@@ -1116,10 +1093,10 @@
   align-items: center;
   gap: 8px;
   padding: 5px 10px;
-  border-radius: 10px;
-  background: rgba(8, 10, 26, 0.42);
-  border: 1px solid rgba(236, 222, 190, 0.12);
-  color: var(--ink-dim, #cfcad9);
+  border-radius: var(--r-md);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
+  color: var(--muted);
   font-size: 0.8125rem;
   line-height: 1.25;
   animation: mg-rise 0.35s ease both;
@@ -1134,9 +1111,9 @@
 }
 
 .mg-checks li.is-met {
-  color: var(--ink, #f6f1e6);
-  background: rgba(111, 230, 164, 0.08);
-  border-color: rgba(111, 230, 164, 0.35);
+  color: var(--slate);
+  background: var(--ivory-hi);
+  border-color: var(--gold-edge);
 }
 
 .mg-check-box {
@@ -1144,14 +1121,14 @@
   place-items: center;
   width: 22px;
   height: 22px;
-  border-radius: 6px;
-  border: 1.5px solid var(--line-strong, rgba(236, 222, 190, 0.46));
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--gold-edge);
 }
 
 .mg-checks li.is-met .mg-check-box {
-  color: #0d2a18;
-  background: var(--mg-good);
-  border-color: var(--mg-good);
+  color: #fff;
+  background: var(--green-text);
+  border-color: var(--green-text);
 }
 
 .mg-fact {
@@ -1159,10 +1136,10 @@
   align-items: flex-start;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   text-align: left;
-  background: linear-gradient(180deg, rgba(244, 237, 221, 0.13), rgba(244, 237, 221, 0.05));
-  border: 1px solid rgba(236, 210, 151, 0.32);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
 }
 
 .mg-fact p {
@@ -1174,10 +1151,10 @@
 .mg-fact b {
   display: block;
   margin-bottom: 2px;
-  color: var(--gold, #ecd297);
-  font-size: 0.6875rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  color: var(--gold-dk);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 400;
 }
 
 .mg-fact-icon {
@@ -1186,9 +1163,10 @@
   place-items: center;
   width: 28px;
   height: 28px;
-  border-radius: 8px;
-  color: var(--cream-ink, #384058);
-  background: radial-gradient(circle at 40% 35%, #fff8e6, var(--gold, #ecd297) 75%);
+  border-radius: 50%;
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 /* ----- Countdown, bursts and stamps ----------------------------------------------------------- */
@@ -1201,23 +1179,22 @@
   place-items: center;
   border-radius: inherit;
   pointer-events: none;
-  background: radial-gradient(closest-side, rgba(8, 10, 26, 0.6), rgba(8, 10, 26, 0.2) 70%, transparent);
+  background: rgba(29, 35, 51, 0.55);
 }
 
 .mg-count-num {
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
+  font-weight: 800;
   font-size: clamp(3rem, 12vw, 5.5rem);
-  font-weight: 700;
   line-height: 1;
-  color: #fff4d6;
-  text-shadow: 0 0 24px rgba(236, 210, 151, 0.85), 0 4px 0 rgba(120, 80, 20, 0.55);
+  color: var(--gold-hi);
+  text-shadow: 0 2px 0 var(--navy);
   animation: mg-count 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 
 .mg-count-num.is-go {
   font-size: clamp(2.2rem, 9vw, 4rem);
-  color: #c4ffdc;
-  text-shadow: 0 0 24px rgba(125, 255, 176, 0.8), 0 4px 0 rgba(20, 90, 50, 0.5);
+  color: #bff0cf;
 }
 
 /* A ring opens around every number of the countdown. */
@@ -1234,8 +1211,7 @@
   height: 1.5em;
   margin: -0.75em 0 0 -0.75em;
   border-radius: 50%;
-  border: 0.06em solid rgba(255, 244, 214, 0.85);
-  box-shadow: 0 0 18px rgba(236, 210, 151, 0.6);
+  border: 0.04em solid var(--gold-lt);
   pointer-events: none;
   animation: mg-count-ring 0.6s ease-out both;
 }
@@ -1272,22 +1248,20 @@
   width: 8px;
   height: 8px;
   border-radius: 2px;
-  background: #ffe38a;
-  box-shadow: 0 0 8px rgba(255, 220, 120, 0.9);
+  background: var(--gold-lt);
   opacity: 0;
   animation: mg-burst 0.8s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
 .mg-burst i:nth-child(3n + 2) {
-  background: #9ff4ff;
-  box-shadow: 0 0 8px rgba(120, 230, 255, 0.9);
+  background: var(--gold-orn);
 }
 
 .mg-burst i:nth-child(3n) {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ffd3f1;
+  background: var(--ivory);
 }
 
 .mg-stamp {
@@ -1299,23 +1273,39 @@
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
-  border-radius: 999px;
+  border-radius: var(--r-md);
   transform: translate(-50%, -50%);
   white-space: nowrap;
   pointer-events: none;
   font-family: var(--font-display);
   font-size: 1.15rem;
-  font-weight: 700;
-  color: #0d2a18;
-  background: linear-gradient(180deg, #d4ffe6, #6fe6a4);
-  box-shadow: 0 0 0 3px rgba(111, 230, 164, 0.3), 0 10px 30px rgba(4, 6, 20, 0.5);
+  font-weight: 400;
+  color: #fff;
+  background: var(--green-text);
+  border: 1px solid var(--ivory);
+  box-shadow: 0 0 0 2px var(--green-text), 0 8px 18px rgba(29, 35, 51, 0.4);
   animation: mg-stamp 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
 }
 
 .mg-stamp.is-bad {
-  color: #2a0b10;
-  background: linear-gradient(180deg, #ffd9dd, #ff9aa3);
-  box-shadow: 0 0 0 3px rgba(255, 123, 134, 0.3), 0 10px 30px rgba(4, 6, 20, 0.5);
+  background: var(--red);
+  box-shadow: 0 0 0 2px var(--red), 0 8px 18px rgba(29, 35, 51, 0.4);
+}
+
+
+/* The navy play areas: light text and gold-light ornament inside, on top of the ivory panel's dark-on-ivory colours. */
+.mg-board,
+.mg-garden,
+.mg-rock,
+.mg-lanes,
+.mg-land {
+  --ink: var(--on-navy);
+  --ink-dim: var(--on-navy-dim);
+  --ink-faint: #c4cadb;
+  --gold: var(--gold-lt);
+  --line: rgba(201, 165, 92, 0.45);
+  --line-strong: var(--gold-orn);
+  color: var(--on-navy);
 }
 
 /* ----- Pipes: life support ------------------------------------------------------------------------ */
@@ -1323,6 +1313,9 @@
 .mg-board {
   --gap: 4px;
   --ink-line: #2b2440;
+  --ink: var(--on-navy);
+  --ink-dim: var(--on-navy-dim);
+  --gold: var(--gold-lt);
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 0.8fr) repeat(var(--cols, 4), minmax(0, 1fr)) minmax(0, 0.8fr);
@@ -1331,12 +1324,10 @@
   width: min(100%, 460px, max(306px, calc((100vh - 300px) * var(--ratio, 1.4))));
   width: min(100%, 460px, max(306px, calc((100dvh - 300px) * var(--ratio, 1.4))));
   padding: 8px;
-  border-radius: var(--r-md, 12px);
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgba(var(--mg-site), 0.14), transparent 70%),
-    linear-gradient(rgba(127, 233, 255, 0.04) 1px, transparent 1px) 0 0 / 100% 14px,
-    var(--mg-inset);
-  border: 1px solid rgba(236, 222, 190, 0.12);
+  border-radius: var(--r-md);
+  background: var(--navy);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--navy), inset 0 0 0 4px var(--gold-orn);
 }
 
 /* A steel plate for every pipe piece, with a rivet in each corner. */
@@ -1822,8 +1813,8 @@
 }
 
 .mg-chip-leak {
-  color: #ffe2b0;
-  border-color: rgba(255, 213, 140, 0.45);
+  color: var(--amber);
+  border-color: var(--amber);
 }
 
 /* ----- Plants: the greenhouse -------------------------------------------------------------------- */
@@ -1841,9 +1832,9 @@
 }
 
 .mg-chip-streak {
-  color: #3b2a05;
-  background: linear-gradient(180deg, #fff1bf, #ecd297);
-  border-color: #fff6d8;
+  color: var(--navy);
+  background: var(--gold-hi);
+  border-color: var(--gold-dk);
   animation: mg-pop-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.6) both;
 }
 
@@ -1856,11 +1847,9 @@
   width: min(100%, 500px, max(240px, calc((100dvh - 440px) * 1.2)));
   padding: 8px;
   border-radius: var(--r-md, 12px);
-  background:
-    linear-gradient(180deg, rgba(255, 110, 214, 0.1), transparent 34%),
-    radial-gradient(120% 70% at 50% 100%, rgba(var(--mg-site), 0.16), transparent 70%),
-    var(--mg-inset);
-  border: 1px solid rgba(236, 222, 190, 0.12);
+  background: var(--navy);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--navy), inset 0 0 0 4px var(--gold-orn);
 }
 
 /* Time left: a bar that shrinks, and the seconds beside it. */
@@ -1876,7 +1865,7 @@
   flex: 1;
   display: block;
   height: 8px;
-  border-radius: 999px;
+  border-radius: var(--r-sm);
   overflow: hidden;
   background: rgba(8, 10, 26, 0.75);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
@@ -1886,7 +1875,7 @@
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #7df0a8, #b7f58c);
+  background: #7ad79a;
   transition: width 0.1s linear;
 }
 
@@ -1901,7 +1890,7 @@
 }
 
 .mg-clock.is-low .mg-timebar i {
-  background: linear-gradient(90deg, #ffb36b, #ffd27a);
+  background: var(--amber-fill);
 }
 
 .mg-clock.is-low .mg-time {
@@ -1917,15 +1906,13 @@
   min-width: 0;
   padding: 12% 6% 7%;
   border-radius: var(--r-md, 12px);
-  border: 1px solid rgba(236, 222, 190, 0.15);
-  background:
-    radial-gradient(110% 60% at 50% 0%, rgba(255, 110, 214, 0.26), transparent 62%),
-    linear-gradient(180deg, rgba(34, 30, 62, 0.94), rgba(14, 16, 34, 0.97));
+  border: 1px solid rgba(201, 165, 92, 0.4);
+  background: #252d47;
   cursor: pointer;
   transition: border-color 0.2s ease, transform 0.12s ease, box-shadow 0.25s ease;
 }
 
-/* The pink grow light above each pot: plants in space greenhouses grow under red and blue lamps. */
+/* The grow light above each pot: plants in space greenhouses grow under red and blue lamps. */
 .mg-pot::before {
   content: '';
   position: absolute;
@@ -1934,8 +1921,7 @@
   right: 20%;
   height: 4px;
   border-radius: 0 0 4px 4px;
-  background: linear-gradient(90deg, #ff6fd8, #8f7bff);
-  box-shadow: 0 0 12px rgba(255, 111, 216, 0.85);
+  background: var(--gold-lt);
 }
 
 .mg-pot:disabled {
@@ -1951,8 +1937,8 @@
 }
 
 .mg-pot.is-happy {
-  border-color: rgba(183, 245, 140, 0.7);
-  box-shadow: 0 0 18px rgba(183, 245, 140, 0.35);
+  border-color: #7ad79a;
+  box-shadow: 0 0 0 1px #7ad79a;
 }
 
 .mg-pot.is-wilted {
@@ -2297,8 +2283,8 @@
   right: 6px;
   min-width: 1.5em;
   height: 1.5em;
-  font-size: 0.6875rem;
-  opacity: 0.85;
+  font-size: 0.75rem;
+  opacity: 1;
 }
 
 .mg-tool-water {
@@ -2318,8 +2304,8 @@
 
 .mg-tool.is-on {
   border-color: var(--tool);
-  background: linear-gradient(180deg, var(--tool-soft), rgba(244, 237, 221, 0.06));
-  box-shadow: 0 0 0 2px var(--tool), 0 6px 18px var(--tool-soft);
+  background: var(--tool-soft);
+  box-shadow: 0 0 0 2px var(--tool);
   transform: translateY(-2px);
 }
 
@@ -2397,8 +2383,9 @@
   gap: 8px 12px;
   padding: 10px 12px;
   border-radius: var(--r-md, 12px);
-  background: radial-gradient(120% 120% at 0% 100%, rgba(var(--mg-site), 0.16), transparent 60%), var(--mg-inset);
-  border: 1px solid rgba(236, 222, 190, 0.12);
+  background: var(--navy);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--navy), inset 0 0 0 4px var(--gold-orn);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   animation: mg-slide-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
 }
@@ -2640,14 +2627,14 @@
   padding: 8px 10px 10px;
   border-radius: var(--r-md, 12px);
   border: 1.5px solid var(--line, rgba(236, 222, 190, 0.2));
-  background: rgba(244, 237, 221, 0.07);
+  background: var(--ivory-hi);
   text-align: left;
   cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.2s ease, background 0.15s ease, opacity 0.2s ease, transform 0.12s ease;
 }
 
 .mg-el:hover:not(:disabled) {
-  background: rgba(244, 237, 221, 0.12);
+  background: var(--ivory);
 }
 
 .mg-el:active:not(:disabled) {
@@ -2674,7 +2661,7 @@
   padding: 0 4px;
   border-radius: 9px;
   border: 1.5px solid var(--slot);
-  color: var(--slot);
+  color: var(--slate);
   background: var(--slot-soft);
   font-family: var(--font-display);
   font-size: 1.05rem;
@@ -2701,14 +2688,14 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(16, 19, 38, 0.95);
+  box-shadow: 0 0 0 3px var(--ivory);
   animation: mg-pop-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.6) both;
 }
 
 .mg-el.is-picked {
-  border-color: var(--slot);
-  background: linear-gradient(180deg, var(--slot-soft), rgba(244, 237, 221, 0.05));
-  box-shadow: 0 0 0 2px var(--slot), 0 6px 18px rgba(4, 6, 20, 0.35);
+  border-color: var(--slate);
+  background: var(--slot-soft);
+  box-shadow: 0 0 0 2px var(--slot);
 }
 
 .mg-el.is-picked .mg-el-sym {
@@ -2718,7 +2705,7 @@
 
 /* Level 1: a picked element that is in the rock glows as its lines light up. */
 .mg-el.is-match {
-  box-shadow: 0 0 0 2px var(--slot), 0 0 18px var(--slot);
+  box-shadow: 0 0 0 2px var(--slot);
 }
 
 .mg-el.is-right {
@@ -2727,7 +2714,7 @@
 }
 
 .mg-el.is-right .mg-el-verdict {
-  color: #0d2a18;
+  color: #fff;
   background: var(--mg-good);
 }
 
@@ -2737,7 +2724,7 @@
 }
 
 .mg-el.is-wrong .mg-el-verdict {
-  color: #2a0b10;
+  color: #fff;
   background: var(--mg-bad);
 }
 
@@ -2780,34 +2767,34 @@
   margin: 0;
   padding: 10px 12px;
   border-radius: var(--r-md, 12px);
-  background: rgba(8, 10, 26, 0.62);
-  border: 1px solid var(--line, rgba(236, 222, 190, 0.2));
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   font-size: 0.9375rem;
   animation: mg-rise 0.3s ease both;
 }
 
 .mg-verdict.is-right p {
-  border-color: rgba(111, 230, 164, 0.55);
+  border-color: var(--green-text);
 }
 
 .mg-verdict.is-right b {
-  color: #a6f2c6;
+  color: var(--green-text);
 }
 
 .mg-verdict.is-wrong p {
-  border-color: rgba(255, 123, 134, 0.55);
+  border-color: var(--red);
 }
 
 .mg-verdict.is-wrong b {
-  color: #ffb3ba;
+  color: var(--red);
 }
 
 .mg-verdict.is-retry p {
-  border-color: rgba(255, 193, 94, 0.55);
+  border-color: var(--amber);
 }
 
 .mg-verdict.is-retry b {
-  color: #ffd98c;
+  color: var(--amber);
 }
 
 .mg-beam {
@@ -2914,13 +2901,13 @@
 
   .mg-in {
     grid-template-columns: var(--mg-left) var(--mg-right);
-    grid-template-rows: auto auto auto minmax(0, 1fr);
+    grid-template-rows: min-content min-content min-content minmax(0, 1fr);
     grid-template-areas: 'head play' 'goal play' 'stars play' 'foot play';
     column-gap: clamp(16px, 3vw, 30px);
   }
 
   .mg-plants .mg-in {
-    grid-template-rows: auto auto auto auto minmax(0, 1fr);
+    grid-template-rows: min-content min-content min-content min-content minmax(0, 1fr);
     grid-template-areas: 'head play' 'goal play' 'stars play' 'tools play' 'foot play';
   }
 
@@ -2995,11 +2982,10 @@
   }
 
   .mg-head h2 {
-    font-size: 1.05rem;
+    font-size: 0.9375rem;
   }
 
   .mg-goal {
-    min-height: 32px;
     padding-block: 3px;
   }
 
@@ -3185,12 +3171,6 @@
 @keyframes mg-float-soft {
   50% {
     transform: translateY(-4px);
-  }
-}
-
-@keyframes mg-spin {
-  to {
-    transform: rotate(360deg);
   }
 }
 
@@ -3562,4 +3542,24 @@
   left: auto;
   right: 0;
   transform: none;
+}
+
+/* A narrow phone (large text): the rock sits above its light, so the spectrum keeps its full width. */
+@media (max-width: 520px) {
+  .mg-rock {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .mg-rock-info {
+    width: 100%;
+  }
+
+  .mg-rock-top {
+    flex-wrap: wrap;
+  }
+
+  .mg-rock-art {
+    width: 76px;
+  }
 }

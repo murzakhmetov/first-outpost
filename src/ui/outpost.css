@@ -1084,7 +1084,7 @@ body:has(.placement) .dock {
   inset: 0;
   z-index: 35;
   pointer-events: none;
-  color: var(--ink);
+  color: var(--slate);
   animation: fade-in 0.4s ease both;
 }
 
@@ -1101,11 +1101,11 @@ body:has(.placement) .dock {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 7px 8px 7px 7px;
+  padding: 8px 10px 8px 14px;
   border-radius: var(--r-lg);
-  background: var(--navy);
-  border: 1px solid var(--gold-orn);
-  box-shadow: var(--shadow);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
 }
 
 .room-title {
@@ -1115,15 +1115,16 @@ body:has(.placement) .dock {
 }
 
 .room-title small {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--ink-faint);
+  color: var(--muted);
 }
 
 .room-title b {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  color: var(--gold);
+  font-weight: 400;
+  color: var(--slate);
   line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
@@ -1136,9 +1137,11 @@ body:has(.placement) .dock {
   flex: none;
   width: 40px;
   height: 40px;
+  margin-left: 2px;
   border-radius: 50%;
-  color: var(--cream-ink);
-  background: radial-gradient(circle at 35% 30%, #fffaf0, #e9d39c 70%, #c9a45c);
+  color: var(--ivory);
+  background: var(--navy);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
 }
 
 .room-task {
@@ -1146,24 +1149,27 @@ body:has(.placement) .dock {
   align-items: center;
   gap: 5px;
   padding: 5px 11px;
-  border-radius: 99px;
-  font-size: 0.78rem;
+  border-radius: var(--r-sm);
+  font-size: 0.8125rem;
   font-weight: 800;
-  color: var(--gold);
-  background: rgba(255, 209, 102, 0.12);
-  border: 1px solid rgba(255, 209, 102, 0.35);
+  color: var(--gold-dk);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-rule);
   white-space: nowrap;
 }
 
 .room-task.is-done {
-  color: var(--good);
-  background: rgba(111, 230, 164, 0.12);
-  border-color: rgba(111, 230, 164, 0.4);
+  color: var(--green-text);
+  background: var(--ivory-hi);
+  border-color: var(--green-text);
 }
 
 .room3d .room-keys {
   top: calc(max(12px, env(safe-area-inset-top)) + 64px);
   bottom: auto;
+  background: var(--ivory);
+  border-color: var(--gold-orn);
+  color: var(--slate);
 }
 
 .room-buttons .round.round-big.is-ready {
@@ -1193,80 +1199,17 @@ body:has(.placement) .dock {
   display: grid;
   place-items: center;
   padding: max(74px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
-  background: rgba(6, 7, 22, 0.5);
+  background: rgba(29, 35, 51, 0.55);
   animation: fade-in 0.25s ease both;
 }
 
-.room-game {
-  position: relative;
-  width: min(780px, 100%);
-  max-height: 100%;
-  overflow: auto;
-  display: grid;
-  gap: 10px;
-  padding: 12px 14px 14px;
-  border-radius: var(--r-lg);
-  background: var(--navy);
-  border: 1px solid var(--line);
-  outline: 1px solid rgba(236, 222, 190, 0.13);
-  outline-offset: -6px;
-  box-shadow: var(--shadow);
-  animation: rise 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
-}
 
-.room-game-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
 
-.room-game-head b {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  color: var(--gold);
-}
 
-.room-game-close {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid var(--line-strong);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--ink);
-  cursor: pointer;
-}
 
-.room-result {
-  display: grid;
-  gap: 14px;
-  padding: 18px 6px 6px;
-  text-align: center;
-}
 
-.room-reward {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--ink-dim);
-}
 
-.room-reward.is-good {
-  color: var(--good);
-}
 
-.room-result-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
 
 @media (max-width: 760px) {
   .outpost-top {
@@ -1310,10 +1253,6 @@ body:has(.placement) .dock {
 
   .room-game-back {
     padding-top: max(66px, env(safe-area-inset-top));
-  }
-
-  .room-game {
-    padding: 8px;
   }
 }
 
@@ -1417,16 +1356,18 @@ body:has(.placement) .dock {
 
 /* A room game whose reward waits for next week (another game paid this week's). */
 .room-task.is-spent {
-  color: var(--ink-faint);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--muted);
+  background: var(--ivory-hi);
+  border-color: var(--ivory-line);
 }
 
 /* The room game is still arriving (slow connection). */
 .room-loading {
   margin: auto;
   padding: 12px 22px;
-  border-radius: 999px;
-  background: rgba(14, 17, 34, 0.85);
+  border-radius: var(--r-md);
+  color: var(--slate);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
   font-weight: 800;
 }
