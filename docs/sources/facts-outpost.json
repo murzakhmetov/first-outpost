@@ -1,0 +1,718 @@
+[
+  {
+    "id": "O1",
+    "key": "isru",
+    "status": "verified",
+    "claim": "Using local materials instead of bringing everything from Earth is what NASA calls In-Situ Resource Utilization (ISRU): collecting, processing, storing and using materials found on the Moon, for example turning water ice into breathable oxygen or getting metal for building. A NASA-hosted paper says lunar regolith contains approximately 45% oxygen by mass; the oxygen is not a gas but is bound in the minerals (NASA, 2026: oxygen 'molecularly bonded to rock and dust'). NASA's Carbothermal Reduction Demonstration (CaRD) heats regolith with carbon so the oxygen leaves the rock as carbon monoxide (and carbon dioxide); other, already proven steps then turn that into oxygen. Tests: (1) on 25 April 2023 NASA reported that a team at Johnson Space Center in Houston had melted lunar soil simulant with a high-powered laser (standing in for concentrated sunlight) inside a carbothermal reactor built by Sierra Space, in JSC's 15-foot (about 4.6 m) Dirty Thermal Vacuum Chamber; the MSolo mass spectrometer detected carbon monoxide, and NASA said the reactor reached technology readiness level 6. (2) In summer 2024 Sierra Space ran its automated reactor again and again in the same chamber at lunar-like vacuum and temperature. (3) A later integrated test used real concentrated sunlight with a NASA Glenn solar concentrator and confirmed carbon monoxide production (NASA article of 13 Feb 2026; test photo dated 7 Aug 2025).",
+    "card_en": "Astronauts can't carry everything from Earth, so NASA wants to use what is already on the Moon. Moon rock and dust are almost half oxygen (about 45% of their mass), but the oxygen is locked inside the minerals. In 2023 a NASA team melted look-alike Moon soil with a laser inside a vacuum chamber, and the oxygen came out joined to carbon, as a gas called carbon monoxide, which other machines can turn into oxygen to breathe.",
+    "card_ru": "Астронавты не могут привезти с Земли всё, что нужно, поэтому NASA хочет использовать то, что уже есть на Луне. Лунные камни и пыль почти наполовину состоят из кислорода (около 45% их массы), но он крепко заперт внутри минералов. В 2023 году команда NASA расплавила лазером искусственный лунный грунт в вакуумной камере, и кислород вышел из него вместе с углеродом — в виде угарного газа, из которого другие машины умеют получать кислород для дыхания.",
+    "values": [
+      { "label": "Oxygen in lunar regolith, by mass (total oxygen bound in minerals; NASA-hosted ICES-2025 paper)", "value": 45, "unit": "percent (approximately)" },
+      { "label": "Diameter of JSC's Dirty Thermal Vacuum Chamber (NASA says 15-foot; metres are my conversion, 15 x 0.3048)", "value": 15, "unit": "feet (about 4.6 m)" },
+      { "label": "Date NASA reported the laser test in the vacuum chamber (the article says only 'a recent test')", "value": "2023-04-25", "unit": "date" },
+      { "label": "Gas detected after the simulant was heated (MSolo mass spectrometer)", "value": "carbon monoxide", "unit": "gas" },
+      { "label": "Technology readiness level of the reactor after the 2023 test (NASA)", "value": 6, "unit": "TRL (scale 1-9)" },
+      { "label": "Repeated automated runs of the Sierra Space reactor in the same JSC chamber (ICES-2025 paper; NASA's Lunar Surface Technology page says 2025)", "value": "summer 2024", "unit": "date" },
+      { "label": "Chamber conditions in the 2024 test (ICES-2025 paper)", "value": "as low as -45 C; vacuum below 1e-4 torr", "unit": "temperature / pressure" },
+      { "label": "Measured temperature of the reacting simulant (pyrometer, assuming emissivity 0.8)", "value": 1782.9, "unit": "degrees C" },
+      { "label": "Program goal for oxygen extraction (the paper says yield and efficiency 'exceeded the program goals')", "value": 3.5, "unit": "grams of oxygen per kilowatt-hour of heat" },
+      { "label": "Photo date of the integrated test with real concentrated sunlight (NASA article published 13 Feb 2026)", "value": "2025-08-07", "unit": "date" }
+    ],
+    "source_title": "NASA Successfully Extracts Oxygen from Lunar Soil Simulant (NASA Johnson, published 25 Apr 2023, updated 14 Sep 2023)",
+    "source_url": "https://www.nasa.gov/centers-and-facilities/johnson/nasa-successfully-extracts-oxygen-from-lunar-soil-simulant/",
+    "quote": "During a recent test, scientists at NASA’s Johnson Space Center in Houston successfully extracted oxygen from simulated lunar soil.",
+    "extra_sources": [
+      {
+        "title": "Same NASA article (25 Apr 2023) - the vacuum chamber",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/nasa-successfully-extracts-oxygen-from-lunar-soil-simulant/",
+        "quote": "NASA’s Carbothermal Reduction Demonstration (CaRD) team conducted the test in conditions similar to those found on the Moon by using a special spherical chamber with a 15-foot diameter called the Dirty Thermal Vacuum Chamber."
+      },
+      {
+        "title": "Same NASA article - laser and reactor",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/nasa-successfully-extracts-oxygen-from-lunar-soil-simulant/",
+        "quote": "The team used a high-powered laser to simulate heat from a solar energy concentrator and melted the lunar soil simulant within a carbothermal reactor developed for NASA by Sierra Space Corp., of Broomfield, Colorado."
+      },
+      {
+        "title": "Same NASA article - carbon monoxide detected, readiness level, conclusion",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/nasa-successfully-extracts-oxygen-from-lunar-soil-simulant/",
+        "quote": "After the soil was heated, the team was able to detect carbon monoxide using a device called the Mass Spectrometer Observing Lunar Operations (MSolo). | increased the technical readiness level of the reactor to a six | With the successful completion of this demonstration test, NASA has established that oxygen can be extracted from existing lunar material to provide humans with resources critical for survival and transportation on extraterrestrial worlds."
+      },
+      {
+        "title": "Environmental Testing of a Fully Automated Carbothermal Reactor for Lunar Oxygen Production (Haggerty and White, Sierra Space; Paz and O'Connor, NASA JSC; Azim and Captain, NASA KSC; ICES-2025-200, Prague, July 2025; NTRS 20250004151) - oxygen share",
+        "url": "https://ntrs.nasa.gov/api/citations/20250004151/downloads/Carbothermal_Paper_Final.pdf",
+        "quote": "the Lunar regolith contains approximately 45% oxygen by mass"
+      },
+      {
+        "title": "Same ICES-2025 paper - what the process makes",
+        "url": "https://ntrs.nasa.gov/api/citations/20250004151/downloads/Carbothermal_Paper_Final.pdf",
+        "quote": "The carbothermal reduction process involves heating lunar regolith to high temperatures resulting in the production of oxygen as carbon monoxide and carbon dioxide, and a slag byproduct that contains the reduced metals. | the contractual scope of Sierra Space's effort for carbothermal reduction development concluded with the extraction of oxygen from regolith in the form of the carbon monoxide and carbon dioxide"
+      },
+      {
+        "title": "Same ICES-2025 paper - summer 2024 thermal vacuum test at JSC",
+        "url": "https://ntrs.nasa.gov/api/citations/20250004151/downloads/Carbothermal_Paper_Final.pdf",
+        "quote": "In Summer 2024 Sierra Space successfully demonstrated repeated use of the automated material handling, gas handling, and carbothermal reduction processing systems inside NASA JSC's \"dirty\" TVAC chamber while at the relevant lunar topographical, vacuum, and temperature conditions. | In the summer of 2024, Sierra Space progressed to demonstrating full regolith handling cycles within a thermal vacuum chamber at as low as -45°C with a vacuum pressure of <1e-4 torr."
+      },
+      {
+        "title": "Same ICES-2025 paper - temperature and oxygen goal",
+        "url": "https://ntrs.nasa.gov/api/citations/20250004151/downloads/Carbothermal_Paper_Final.pdf",
+        "quote": "The temperature inside of the red circle was measured to be 1782.9 °C, assuming an emissivity of 0.8. | The initial goal for the program was to extract 3.5 grams of oxygen for every kilowatt-hour of thermal input into the system. Oxygen extraction energy efficiency and production yield from regolith exceeded the program goals."
+      },
+      {
+        "title": "Lunar Surface Technology (NASA, page last updated 5 Nov 2026) - what ISRU means",
+        "url": "https://www.nasa.gov/lunar-surface-technology/",
+        "quote": "NASA's ISRU efforts encompasses collecting, processing, storing, and using materials found and/or manufactured on the lunar surface, such as extracting water ice to convert to breathable oxygen or metal to use for building infrastructure."
+      },
+      {
+        "title": "Same NASA page - CaRD dates (they CONFLICT with the paper and the photo date, see notes)",
+        "url": "https://www.nasa.gov/lunar-surface-technology/",
+        "quote": "In 2025, the project successfully demonstrated the Carbothermal reactor in a thermal vacuum environment. | In 2026, the CaRD team in partnership with Sierra Space, performed integrated prototype testing that used concentrated solar energy to extract carbon monoxide from simulated lunar regolith, while confirming the production of oxygen through a solar-driven chemical reaction."
+      },
+      {
+        "title": "Sunlight Extracts Oxygen From Regolith Using Solar Chemistry (NASA Johnson, published 13 Feb 2026, updated 22 Jun 2026)",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/sunlight-extracts-oxygen-from-regolith-using-solar-chemistry/",
+        "quote": "The CaRD team performed integrated prototype testing that used concentrated solar energy to extract oxygen | confirming the production of carbon monoxide | a solar concentrator designed by NASA’s Glenn Research Center in Cleveland | The same downstream systems used to convert carbon monoxide into oxygen"
+      },
+      {
+        "title": "Harnessing the Sun to Extract Oxygen on the Moon (NASA image article, 27 Feb 2026) - test photo date",
+        "url": "https://www.nasa.gov/image-article/harnessing-the-sun-to-extract-oxygen-on-the-moon/",
+        "quote": "Light shines onto a solar concentrator being tested in this Aug. 7, 2025, photo."
+      },
+      {
+        "title": "NASA Calls for Proposals to Accelerate Lunar Surface Technologies (NASA release, 8 Sep 2026, updated 28 Sep 2026) - oxygen is bonded in the rock",
+        "url": "https://www.nasa.gov/news-release/nasa-calls-for-proposals-to-accelerate-lunar-surface-technologies/",
+        "quote": "to extract usable oxygen molecularly bonded to rock and dust covering the Moon’s surface."
+      }
+    ],
+    "notes": "Status 'verified': the draft is right; wording tips below. (1) Oxygen share: the NASA-hosted sources I opened say 'approximately 45%' (the ICES-2025 paper, citing the Lunar Sourcebook); I found no NASA page giving 40%. Say 'almost half (about 45%) of the mass'. This is the TOTAL oxygen locked in the minerals; machines recover only part of it (lower yield figures appeared only in search snippets; not used). (2) What was made: the 2023 test detected carbon monoxide, i.e. the oxygen left the rock joined to carbon. The Sierra Space paper says its contract work 'concluded with the extraction of oxygen from regolith in the form of the carbon monoxide and carbon dioxide'; turning CO into breathable O2 uses other, already proven steps (the paper names a Sabatier reactor and water electrolysis). So say 'made carbon monoxide, a gas that can be turned into oxygen', not 'made breathable oxygen'. (3) NASA pages disagree on dates: the ICES-2025 paper puts the automated thermal-vacuum test in summer 2024, NASA's Lunar Surface Technology page says 'In 2025'; the integrated solar test has a NASA photo dated 7 Aug 2025, but the same Lunar Surface Technology page says 'In 2026'. That page also reverses the products ('extract carbon monoxide ... while confirming the production of oxygen'), while the Johnson article says it extracted oxygen while 'confirming the production of carbon monoxide'. Safe card wording: 'In 2023' for the laser test in the vacuum chamber, and no dates for the later tests. (4) The 2023 NASA article does not give the test date ('a recent test'); it was published 25 Apr 2023. (5) 4.6 m is my conversion of 15 feet. (6) 'Living off the land' is the draft's phrase; the NASA pages I opened say ISRU and 'using materials found and/or manufactured on the lunar surface'. (7) Oxygen from Mars air (MOXIE) is already on the existing 'moxie' card and is not repeated here. (8) Quotes were read through a page-to-text tool; the NTRS PDF was read with a PDF text extractor, which dropped the degree signs (restored by me). Lines joined with ' | ' are separate passages from the same source; typographic characters (curly apostrophes, dashes) may differ from the original."
+  },
+  {
+    "id": "O2",
+    "key": "printed_habitats",
+    "status": "verified",
+    "claim": "NASA's 3D-Printed Habitat Challenge, a Centennial Challenges competition run with Bradley University, began in 2015 and was completed in May 2019; 60 teams took part and NASA awarded more than $2 million in prize money. In the final head-to-head round (1-4 May 2019, at Caterpillar's Edwards Demonstration & Learning Center in Edwards, Illinois) the teams printed one-third-scale habitats; AI SpaceFactory won the top prize of $500,000 and Pennsylvania State University won $200,000. The company ICON 3D printed Mars Dune Alpha, a 1,700-square-foot (about 158 m2) simulated Martian habitat at NASA's Johnson Space Center in Houston (ICON won the subcontract in 2021 from Jacobs). NASA's first CHAPEA crew of four volunteers lived in it from 25 June 2023 to 6 July 2024, a mission NASA calls 378 days; a second CHAPEA crew of four lived there from 19 October 2025 to 31 October 2026, also a 378-day mission. In November 2022 NASA gave ICON a $57.2 million SBIR Phase III contract, running through 2028, for its Olympus construction system, which NASA says is 'designed to use local resources on the Moon and Mars as building materials'; in 2020 NASA said ICON would work with NASA Marshall under the MMPACT project 'to test lunar soil simulant with various processing and printing technologies'.",
+    "card_en": "Big 3D printers can build a house by laying down building material layer after layer. NASA ran a contest for 3D-printed space homes from 2015 to 2019, and later the company ICON printed Mars Dune Alpha, a pretend Mars home of 1,700 square feet (about 158 square metres), in Houston. Two crews of four volunteers have each lived inside it for 378 days, as if they were on Mars.",
+    "card_ru": "Большие 3D-принтеры умеют строить дома, укладывая строительный материал слой за слоем. С 2015 по 2019 год NASA проводило конкурс на напечатанный дом для космоса, а потом компания ICON напечатала в Хьюстоне Mars Dune Alpha — «марсианский» дом площадью около 158 квадратных метров. В нём уже пожили два экипажа по четыре добровольца, каждый по 378 дней, будто на Марсе.",
+    "values": [
+      { "label": "3D-Printed Habitat Challenge began", "value": 2015, "unit": "year" },
+      { "label": "Challenge completed", "value": "May 2019", "unit": "date" },
+      { "label": "Teams that took part", "value": 60, "unit": "teams" },
+      { "label": "Prize money awarded by NASA", "value": "more than 2", "unit": "million USD" },
+      { "label": "Top prize, final round (AI SpaceFactory)", "value": 500000, "unit": "USD" },
+      { "label": "Second place, final round (Pennsylvania State University)", "value": 200000, "unit": "USD" },
+      { "label": "Size of the final-round habitats", "value": "one-third scale", "unit": "scale of the team's design" },
+      { "label": "Floor area of Mars Dune Alpha (NASA: 1,700 square feet; m2 is my conversion, 1,700 x 0.0929)", "value": 1700, "unit": "square feet (about 158 m2)" },
+      { "label": "CHAPEA Mission 1 in the habitat", "value": "2023-06-25 to 2024-07-06", "unit": "dates" },
+      { "label": "CHAPEA Mission 2 in the habitat", "value": "2025-10-19 to 2026-10-31", "unit": "dates" },
+      { "label": "Length of each CHAPEA mission (NASA)", "value": 378, "unit": "days" },
+      { "label": "Crew per CHAPEA mission", "value": 4, "unit": "volunteers" },
+      { "label": "Value of NASA's contract for ICON's Olympus construction system (SBIR Phase III, Nov 2022)", "value": 57.2, "unit": "million USD" },
+      { "label": "Olympus contract runs through", "value": 2028, "unit": "year" }
+    ],
+    "source_title": "NASA, ICON Advance Lunar Construction Technology for Moon Missions (NASA Marshall, 29 Nov 2022)",
+    "source_url": "https://www.nasa.gov/centers-and-facilities/marshall/nasa-icon-advance-lunar-construction-technology-for-moon-missions/",
+    "quote": "ICON 3D printed a 1,700-square-foot simulated Martian habitat, called Mars Dune Alpha, that will be used during NASA’s Crew Health and Performance Analog, or CHAPEA, analog mission starting in 2023.",
+    "extra_sources": [
+      {
+        "title": "3D-Printed Habitat Challenge (NASA Facts FS-2020-02-008-MSFC, 2020)",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/05/3d-printed-habitat-challenge-fs-2020.pdf",
+        "quote": "The challenge began in 2015 and was completed in May 2019. | Throughout the competition, 60 teams participated, and NASA awarded more than $2 million in prize money."
+      },
+      {
+        "title": "Teams 3D Print Planetary Habitats, Awarded $700K in NASA Challenge (NASA release 19-017, 4 May 2019)",
+        "url": "https://www.nasa.gov/news-release/teams-3d-print-planetary-habitats-awarded-700k-in-nasa-challenge/",
+        "quote": "The top prize of $500,000 was awarded to New York based AI. SpaceFactory. | Second-place and $200,000 was awarded to Pennsylvania State University of University Park. | The two teams faced off May 1-4 at Caterpillar's Edwards Demonstration & Learning Center in Edwards, Illinois. | The size of the structures had to be a one-third scale version of their architectural designs."
+      },
+      {
+        "title": "CHAPEA (NASA, page last updated 28 Oct 2026)",
+        "url": "https://www.nasa.gov/humans-in-space/chapea/",
+        "quote": "Each mission consists of four crew members living in an isolated 1,700-square-foot habitat. | CHAPEA is a 3D-printed structure designed to provide separate areas within the habitat for living and working. | Mission 1 began June 25, 2023 and ended July 6, 2024."
+      },
+      {
+        "title": "First CHAPEA Crew Begins 378-Day Mission (NASA, 10 Jul 2023)",
+        "url": "https://www.nasa.gov/missions/analog-field-testing/chapea/first-chapea-crew-begins-378-day-mission/",
+        "quote": "when the four-person volunteer crew entered its new home at NASA's Johnson Space Center in Houston | to begin a 378-day Mars surface simulation."
+      },
+      {
+        "title": "CHAPEA Mission 2 Crew Reflects After 378 Days on Simulated Mars (NASA, 9 Nov 2026)",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/chapea-mission-2-crew-reflects-after-378-days-on-simulated-mars/",
+        "quote": "entered the roughly 1,700-square-foot, 3D-printed habitat at NASA's Johnson Space Center in Houston on Oct. 19, 2025. | stepped out of NASA's Mars Dune Alpha habitat on Oct. 31. | builds on the first CHAPEA mission, which concluded July 6, 2024."
+      },
+      {
+        "title": "Same NASA article as the main source (29 Nov 2022) - Olympus and the contract",
+        "url": "https://www.nasa.gov/centers-and-facilities/marshall/nasa-icon-advance-lunar-construction-technology-for-moon-missions/",
+        "quote": "The new NASA SBIR Phase III award will support the development of ICON’s Olympus construction system, which is designed to use local resources on the Moon and Mars as building materials. | The contract runs through 2028 and has a value of $57.2 million."
+      },
+      {
+        "title": "NASA Looks to Advance 3D Printing Construction Systems for the Moon and Mars (NASA, Lee Mohon, 1 Oct 2020) - lunar simulant tests",
+        "url": "https://www.nasa.gov/technology/manufacturing-materials-3-d-printing/nasa-looks-to-advance-3d-printing-construction-systems-for-the-moon-and-mars/",
+        "quote": "ICON will work with NASA's Marshall Space Flight Center in Huntsville, Alabama, under the Moon to Mars Planetary Autonomous Construction Technologies (MMPACT) project to test lunar soil simulant with various processing and printing technologies."
+      },
+      {
+        "title": "NASA Spinoff article on ICON (spinoff.nasa.gov, published 9 Jan 2026) - who built Mars Dune Alpha",
+        "url": "https://spinoff.nasa.gov/Mission_Home",
+        "quote": "ICON ended up winning the subcontract in 2021 from Jacobs | the contractor that oversaw the construction of the 1,700-square-foot analog building called Mars Dune Alpha."
+      }
+    ],
+    "notes": "Status 'verified': every point in the draft is confirmed, plus one update. (1) Update: a SECOND crew finished another 378-day stay in Mars Dune Alpha on 31 Oct 2026, so 'housed the first CHAPEA crew' is true but no longer the whole story. (2) 378 days is NASA's count; 25 Jun 2023 to 6 Jul 2024 is 377 days apart by subtraction (my arithmetic), so NASA counts both the first and the last day. Use NASA's '378 days'. (3) NASA's CHAPEA page and the Mission 2 article do not name ICON; the ICON link comes from NASA's Nov 2022 article and NASA Spinoff (2026). (4) NASA's 2022 article expands CHAPEA as 'Crew Health and Performance Analog'; other NASA pages say 'Crew Health and Performance Exploration Analog'. (5) Project Olympus: the NASA pages I opened describe the plan and the contract only; I found no NASA page with results of ICON printing with lunar simulant (news sites mention vacuum tests and a 2025 suborbital 'Duneflow' experiment; not opened, not used). The existing 'regolith_shield' card already mentions the $57.2 million contract. (6) The printing material of Mars Dune Alpha is not named on the NASA pages I opened; do not name it. (7) 158 m2 is my conversion. (8) The final round paid $700,000 in total; the fact sheet also mentions Phase 1 (design, 2015) and Phase 2 (structural members, completed August 2017). (9) Quotes were read through a page-to-text tool (the fact sheet with a PDF text extractor); lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O3",
+    "key": "space_printer",
+    "status": "verified",
+    "claim": "The first 3D printer in space (the 3D Printing in Zero-G technology demonstration, built by Made In Space with NASA's Marshall Space Flight Center) was installed on the International Space Station by Expedition 42 commander Barry 'Butch' Wilmore on 17 November 2014. On 24 November 2014 ground controllers commanded the first printed part: a faceplate of the extruder's casing (NASA: 'the printhead faceplate'), engraved with the names NASA and Made In Space, which showed that the printer can make replacement parts for itself. In December 2014 (NASA photo dated 16 Dec 2014) the printer made a ratchet wrench from a design file sent from the ground; a NASA in-space manufacturing presentation says the file was 'e-mailed', i.e. uplinked. The Refabricator, built by Tethers Unlimited, recycled waste plastic (including earlier printed items) into new printer filament; Anne McClain installed it in February 2019, when it began operations, and NASA says it 'successfully manufactured its first object', with some bonding problems likely caused by microgravity.",
+    "card_en": "In November 2014 astronaut Butch Wilmore set up the first 3D printer in space, on the International Space Station. Its very first print was a small cover plate for the printer itself, which showed that a printer can make its own spare parts. In December 2014 engineers on Earth sent up the design of a ratchet wrench, and the station printed the tool.",
+    "card_ru": "В ноябре 2014 года астронавт Бутч Уилмор установил на Международной космической станции первый в космосе 3D-принтер. Самой первой его деталью стала небольшая крышка для самого принтера — так проверили, что принтер может печатать запчасти сам для себя. В декабре 2014 года инженеры отправили с Земли чертёж ключа-трещотки, и на станции этот инструмент напечатали.",
+    "values": [
+      { "label": "Printer installed on the ISS (Barry 'Butch' Wilmore)", "value": "2014-11-17", "unit": "date" },
+      { "label": "First printed part commanded from the ground", "value": "2014-11-24", "unit": "date" },
+      { "label": "First printed part", "value": "faceplate of the extruder's casing (printhead faceplate)", "unit": "part" },
+      { "label": "Date of NASA's photo of Wilmore holding the printed ratchet wrench", "value": "2014-12-16", "unit": "date" },
+      { "label": "Height of the station above Earth in NASA's wording", "value": "more than 200", "unit": "miles" },
+      { "label": "Parts printed on the ISS and returned to Earth (NASA in-space manufacturing presentation; another NASA page says 'more than a dozen parts')", "value": 55, "unit": "parts" },
+      { "label": "Refabricator (plastic recycler and printer) installed and began operations", "value": "February 2019", "unit": "date" }
+    ],
+    "source_title": "Open for Business: 3-D Printer Creates First Object in Space on International Space Station (NASA, Beth Ridgeway, 25 Nov 2014)",
+    "source_url": "https://www.nasa.gov/missions/station/open-for-business-3-d-printer-creates-first-object-in-space-on-international-space-station/",
+    "quote": "On Nov. 24, ground controllers sent the printer the command to make the first printed part: a faceplate of the extruder’s casing.",
+    "extra_sources": [
+      {
+        "title": "Same NASA article (25 Nov 2014) - installation",
+        "url": "https://www.nasa.gov/missions/station/open-for-business-3-d-printer-creates-first-object-in-space-on-international-space-station/",
+        "quote": "NASA astronaut Barry \"Butch\" Wilmore, Expedition 42 commander aboard the International Space Station, installed the printer on Nov. 17 and conducted the first calibration test print."
+      },
+      {
+        "title": "Same NASA article - the faceplate and spare parts",
+        "url": "https://www.nasa.gov/missions/station/open-for-business-3-d-printer-creates-first-object-in-space-on-international-space-station/",
+        "quote": "The first object 3-D printed in space, the printhead faceplate, is engraved with names of the organizations that collaborated on this space station technology demonstration: NASA and Made In Space, Inc. | This demonstrated that the printer can make replacement parts for itself."
+      },
+      {
+        "title": "Made in Space: Producing Tools on Demand (NASA image page, photo dated 16 Dec 2014)",
+        "url": "https://www.nasa.gov/image-detail/nasa-2071125-79-7f-2/",
+        "quote": "NASA astronaut Barry (Butch) Wilmore holds a 3D-printed tool made aboard the International Space Station. | The 3D printer completed the first phase of a NASA technology demonstration | printing a ratchet wrench and other parts from a design file transmitted from the ground."
+      },
+      {
+        "title": "In-space Manufacturing (ISM): Make it, Don't Take it! (NASA presentation, NTRS 20200001731) - 'e-mailed'",
+        "url": "https://ntrs.nasa.gov/api/citations/20200001731/downloads/20200001731.pdf",
+        "quote": "In 2014, NASA and the company Made in Space, Inc. (MIS) sent the first 3D Printer to the International Space Station (ISS) . | There were 55 parts printed on ISS and then returned to Earth. | design file for the wrench was \"e-mailed\" (i.e. uplinked) from the ground to the ISS."
+      },
+      {
+        "title": "3D Printing: Saving Weight and Space at Launch (NASA, 21 Mar 2025)",
+        "url": "https://www.nasa.gov/missions/station/iss-research/3d-printing-saving-weight-and-space-at-launch/",
+        "quote": "3D Printing in Zero-G sent the first 3D printer, developed by NASA’s Marshall Space Flight Center and Redwire (formerly Made in Space), to the space station in 2014. | The investigation produced more than a dozen parts, including a ratchet wrench, showing that researchers could send a design from the ground to the system on the station more than 200 miles above."
+      },
+      {
+        "title": "Same NASA article (21 Mar 2025) - recycling plastic and the Refabricator",
+        "url": "https://www.nasa.gov/missions/station/iss-research/3d-printing-saving-weight-and-space-at-launch/",
+        "quote": "Another approach is recycling plastic – for example, turning a used 3D-printed wrench into a spoon | The Refabricator, a machine created by Tethers Unlimited Inc, tested this approach and successfully manufactured its first object. | Some issues occurred in the bonding process, likely caused by microgravity, but"
+      },
+      {
+        "title": "Solving the Challenges of Long Duration Space Flight with 3D Printing (NASA, 16 Dec 2019) - Refabricator",
+        "url": "https://www.nasa.gov/missions/station/solving-the-challenges-of-long-duration-space-flight-with-3d-printing/",
+        "quote": "to recycle waste plastic materials, including previously printed items, into high quality 3D-printer filament. | installs the ReFabricator on the space station in Feb. 2019. | It began operations on the space station in February of 2019."
+      }
+    ],
+    "notes": "Status 'verified': all four draft points are confirmed. (1) 'Emailed': NASA news pages say the design was 'transmitted from the ground' or that researchers could 'send a design from the ground'; a NASA in-space manufacturing presentation (on NTRS) writes 'e-mailed' in quotation marks and explains it as 'uplinked'. Card wording 'sent up from Earth' is safest. (2) Ratchet date: NASA's photo of Wilmore holding the tool is dated 16 Dec 2014; news reports give 17 or 18 Dec (search results only, not used). Say 'in December 2014'. (3) The first part: NASA calls it 'the printhead faceplate' and 'a faceplate of the extruder's casing'. (4) Part counts differ: 'more than a dozen parts' (NASA, 2025) versus '55 parts printed on ISS and then returned to Earth' (NASA presentation, which may count later printing too). Avoid a count on the card. (5) Made In Space is now part of Redwire (NASA 2025: 'Redwire (formerly Made in Space)'). (6) Refabricator: NASA confirms recycling and a first object, but also bonding problems; the NASA pages I opened name neither the first object nor its date, so do not claim the recycling worked perfectly. (7) Quotes were read through a page-to-text tool (the NTRS presentation with a PDF text extractor); lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O4",
+    "key": "astrorad",
+    "status": "verified",
+    "claim": "Artemis I (16 November to 11 December 2022, no crew) carried MARE, the Matroshka AstroRad Radiation Experiment: two identical female torso phantoms ('mannequins'), Helga (provided by DLR, no vest, seat 4, the baseline) and Zohar (provided by the Israel Space Agency, wearing the AstroRad vest, seat 3), fitted with passive and active radiation detectors. Results were published in Science Advances on 12 August 2026 (Houri et al.). There was no solar particle event (solar storm) during Artemis I, so the team used measurements from Orion's pass through the inner Van Allen belt and computer models to predict the vest's effect in two big historical storms: effective dose reductions of 60% for an August 1972-like event and nearly 40% for an October 1989-like event (DLR's release also gives 58.2% and 36.9% for virtual full-body phantoms). That could spare astronauts the equivalent of up to 193 and 131 days of deep-space radiation exposure. The flight vest had a high-density polyethylene core made of thousands of hexagonal rods and a mass of 26 kg; it protects red bone marrow, colon, lungs, stomach, breasts and ovaries.",
+    "card_en": "On the Artemis I flight around the Moon in 2022, two model human bodies named Helga and Zohar rode in the Orion spacecraft, packed with radiation sensors. Only Zohar wore AstroRad, a 26 kg vest made of thousands of small plastic rods. There was no solar storm on the trip, so scientists used the measurements and computer models: in a very strong solar storm the vest would cut the dose by about 40 to 60 percent, depending on the storm.",
+    "card_ru": "Во время полёта Artemis I вокруг Луны в 2022 году в корабле Orion летели два манекена, Хельга и Зохар, с датчиками радиации внутри. Только на Зохар надели AstroRad — жилет массой 26 кг из тысяч маленьких пластиковых стерженьков. Солнечной бури в полёте не случилось, поэтому учёные взяли измерения и компьютерные модели: в очень сильную солнечную бурю жилет уменьшил бы дозу радиации примерно на 40–60%, в зависимости от бури.",
+    "values": [
+      { "label": "Artemis I mission dates (Science Advances paper)", "value": "2022-11-16 to 2022-12-11", "unit": "dates" },
+      { "label": "Phantoms flown (identical female torsos)", "value": 2, "unit": "phantoms" },
+      { "label": "Predicted effective dose reduction by the vest, August 1972-like solar storm", "value": 60, "unit": "percent" },
+      { "label": "Predicted effective dose reduction by the vest, October 1989-like solar storm", "value": "nearly 40", "unit": "percent" },
+      { "label": "Same reductions with virtual full-body phantoms, 1972 / 1989 event (DLR release)", "value": "58.2 / 36.9", "unit": "percent" },
+      { "label": "Exposure the vest could spare, 1972-like / 1989-like event", "value": "up to 193 / 131", "unit": "days of deep-space radiation exposure (equivalent)" },
+      { "label": "Mass of the flight vest", "value": 26, "unit": "kg" },
+      { "label": "Active M-42 radiation detectors from DLR in MARE (DLR release)", "value": 16, "unit": "detectors" },
+      { "label": "Results published (Science Advances 12, eadz1892)", "value": "2026-08-12", "unit": "date" }
+    ],
+    "source_title": "Houri J. M., Berger T., ... Milstein O., 'First evaluation of wearable radiation protection for human deep space exploration, as flown on Artemis I', Science Advances 12, eadz1892 (12 Aug 2026), open access CC BY 4.0",
+    "source_url": "https://doi.org/10.1126/sciadv.adz1892",
+    "quote": "Inner Van Allen belt transit active dosimeter measurements were extrapolated to simulate SPE scenarios, predicting effective dose reductions of 60% for an August 1972–like SPE and nearly 40% for an October 1989–like SPE, varying slightly with anatomical model.",
+    "extra_sources": [
+      {
+        "title": "Same paper - no solar storm during the flight",
+        "url": "https://doi.org/10.1126/sciadv.adz1892",
+        "quote": "As there were no SPEs during Artemis I, estimation of the AstroRad vest's efficacy in its intended use case relied on model-based extrapolation of empirical data from the mission's inner Van Allen belt transit."
+      },
+      {
+        "title": "Same paper - Helga and Zohar, mission dates",
+        "url": "https://doi.org/10.1126/sciadv.adz1892",
+        "quote": "This first test of the AstroRad vest's radiation shielding efficacy in deep space took place during NASA's uncrewed Artemis I lunar mission (November 16 to December 11 2022). | The phantom at seat 3, provided by ISA, was named Zohar and was fitted with the AstroRad radiation protection vest. | The phantom at seat 4, provided by DLR, was named Helga and was not equipped with a vest, serving as the radiation exposure baseline"
+      },
+      {
+        "title": "Same paper - the vest",
+        "url": "https://doi.org/10.1126/sciadv.adz1892",
+        "quote": "The shielding core of the MARE AstroRad vest is composed of HDPE | Because HDPE is solid and inflexible, the shielding core consists of thousands of tessellated interconnected hexagonal rods | This design resulted in a vest with a mass of 26 kg."
+      },
+      {
+        "title": "Same paper - days of exposure spared",
+        "url": "https://doi.org/10.1126/sciadv.adz1892",
+        "quote": "Such reductions could spare astronauts the equivalent of up to 193 and 131 days of deep space radiation exposure, respectively."
+      },
+      {
+        "title": "AstroRad vest can significantly reduce radiation exposure for humans in space (DLR news, 13 Aug 2026)",
+        "url": "https://www.dlr.de/en/latest/news/2026/astrorad-vest-can-significantly-reduce-radiation-exposure-for-humans-in-space",
+        "quote": "the AstroRad vest could reduce a person's effective radiation dose in space by approximately 60 percent. | the extrapolation indicates a reduction of just under 40 percent. | the dose reduction provided by the AstroRad vest was 58.2 percent for the 1972 event and 36.9 percent for the 1989 event | there was no significant increase in solar activity during the flight."
+      },
+      {
+        "title": "Same DLR news - detectors and vest weight",
+        "url": "https://www.dlr.de/en/latest/news/2026/astrorad-vest-can-significantly-reduce-radiation-exposure-for-humans-in-space",
+        "quote": "The team integrated several thousand passive dosimeters, as well as 16 M-42 active radiation measuring devices. | The vest used for MARE weighed approximately 26 kilograms on Earth."
+      },
+      {
+        "title": "Artemis I Space Radiation Research to Help Moon, Mars Explorers (NASA, 23 Feb 2022, updated 26 Jul 2023) - the setup",
+        "url": "https://www.nasa.gov/general/artemis-i-space-radiation-research-to-help-moon-mars-explorers/",
+        "quote": "Zohar will wear a radiation protection vest, called AstroRad, while Helga will not. | mimic human bones, soft tissues, and organs of an adult female"
+      }
+    ],
+    "notes": "Status 'verified': the draft is right, and the results it asked about are now published. (1) The numbers are PREDICTIONS, not a measurement during a storm: no solar particle event happened on Artemis I, so the team extrapolated data from Orion's pass through the inner Van Allen belt to two historical storms using computer models. The 60% and 'nearly 40%' are reductions of EFFECTIVE DOSE for August 1972-like and October 1989-like storms, compared with sitting unshielded in Orion's normal cabin (not in the storm shelter). Do NOT write 'the vest blocked 60% of the radiation on Artemis I', and do not apply the numbers to cosmic rays: the paper says solar-storm protons can be weakened by realistic shielding 'unlike' galactic cosmic radiation. (2) The paper's first and last authors work for StemRad, the company that makes the vest (co-authors from DLR, NASA JSC, the Israel Space Agency and Lockheed Martin). (3) Mass: 26 kg. DLR says 'weighed approximately 26 kilograms on Earth'; the mass is the same anywhere, only the weight changes. (4) I found no NASA web page about the 2026 results; NASA's 2022 page confirms the setup. The game already has an 'artemis_radiation' card (Helga, Zohar and the 2024 Nature dose map, see facts-radiation.json R13); this fact adds the vest result. (5) I read the paper through the open-access copy on DLR's elib (https://elib.dlr.de/226165/1/ME-SBA-2026-Houri-Berger-sciadv.adz1892.pdf) with a PDF text extractor; dashes in '1972–like' were lost in extraction and restored, and hyphenation breaks ('model-b ased') were joined. The DLR page was read through a page-to-text tool. Lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O5",
+    "key": "space_peppers",
+    "status": "verified",
+    "claim": "In NASA's Plant Habitat-04 (PH-04) experiment, astronaut Shane Kimbrough put 48 seeds of NuMex 'Española Improved', which NASA calls a hybrid Hatch chile pepper, into the Advanced Plant Habitat (APH) on 12 July 2021. NASA calls the APH the largest plant growth facility on the space station; it is fully automated and has 180 sensors and controls. On 29 October 2021 the crew sampled seven freshly harvested, mild-heat peppers from the first crop, the first time astronauts ate peppers grown in space (a NASA photo shows Megan McArthur with 'a taco with space-grown chile peppers'). On 26 November 2021 Mark Vande Hei did the final harvest; NASA reported 26 chile peppers from four plants, and 12 peppers from the second harvest were sent back to Earth for analysis. NASA said PH-04 ended 137 days after it began and called it 'the longest – and perhaps the spiciest – plant experiment in the history of the International Space Station' (as of November 2021); it also broke the record for feeding the most astronauts from a crop grown in space.",
+    "card_en": "In July 2021 astronauts planted 48 chile pepper seeds in the Advanced Plant Habitat, the biggest plant-growing chamber on the space station. On 29 October 2021 the crew became the first astronauts to eat peppers grown in space, and even put some in tacos. When the experiment ended after 137 days, the plants had grown 26 peppers, and NASA called it the longest plant experiment in the station's history up to then.",
+    "card_ru": "В июле 2021 года астронавты посадили 48 семян перца чили в Advanced Plant Habitat — самую большую камеру для выращивания растений на космической станции. 29 октября 2021 года экипаж первым в истории попробовал перцы, выращенные в космосе, и даже положил их в тако. Опыт закончился через 137 дней: на растениях выросло 26 перцев, и NASA назвало его самым долгим опытом с растениями за всю историю станции на тот момент.",
+    "values": [
+      { "label": "Seeds planted (NuMex 'Española Improved')", "value": 48, "unit": "seeds" },
+      { "label": "Planting date (Shane Kimbrough)", "value": "2021-07-12", "unit": "date" },
+      { "label": "First harvest and first tasting", "value": "2021-10-29", "unit": "date" },
+      { "label": "Peppers sampled at the first tasting", "value": 7, "unit": "peppers" },
+      { "label": "Final harvest (Mark Vande Hei)", "value": "2021-11-26", "unit": "date" },
+      { "label": "Length of the experiment (NASA)", "value": 137, "unit": "days" },
+      { "label": "Peppers grown, from four plants (NASA)", "value": 26, "unit": "peppers" },
+      { "label": "Peppers from the second harvest returned to Earth", "value": 12, "unit": "peppers" },
+      { "label": "Sensors and controls in the Advanced Plant Habitat", "value": 180, "unit": "sensors and controls" },
+      { "label": "Day of the experiment on which the first harvest came (my arithmetic, 12 Jul to 29 Oct 2021)", "value": 109, "unit": "days" }
+    ],
+    "source_title": "NASA's Second Pepper Harvest Sets Record on Space Station (NASA Kennedy, Jason Costa, 30 Nov 2021)",
+    "source_url": "https://www.nasa.gov/missions/station/nasas-second-pepper-harvest-sets-record-on-space-station/",
+    "quote": "The longest – and perhaps the spiciest – plant experiment in the history of the International Space Station, Plant Habitat-04 (PH-04), concluded recently, 137 days after it began.",
+    "extra_sources": [
+      {
+        "title": "Same NASA article (30 Nov 2021) - final harvest and record",
+        "url": "https://www.nasa.gov/missions/station/nasas-second-pepper-harvest-sets-record-on-space-station/",
+        "quote": "On Nov. 26, Expedition 66 Flight Engineer Mark Vande Hei harvested and with other members of the crew sampled some of the 26 chile peppers grown from four plants in the orbiting laboratory’s Advanced Plant Habitat (APH), with PH-04 also breaking the record for feeding the most astronauts from a crop grown in space. | During the second harvest, Vande Hei prepared 12 peppers for return to Earth."
+      },
+      {
+        "title": "Chile Peppers Start Spicing Up the Space Station (NASA Kennedy, Linda Herridge, 13 Jul 2021)",
+        "url": "https://www.nasa.gov/missions/station/iss-research/chile-peppers-start-spicing-up-the-space-station/",
+        "quote": "selected the NuMex 'Española Improved' pepper, a hybrid Hatch pepper | Shane Kimbrough inserted 48 Hatch chili pepper seeds into the Advanced Plant Habitat (APH), on July 12, 2021 | This will be one of the longest and most challenging plant experiments attempted aboard the orbital lab. | The APH is the largest plant growth facility on the space station | has 180 sensors and controls for monitoring plant growth and the environment"
+      },
+      {
+        "title": "Astronauts Have First Taste of Peppers Grown in Space (NASA, 2 Nov 2021)",
+        "url": "https://www.nasa.gov/image-article/astronauts-have-first-taste-of-peppers-grown-space/",
+        "quote": "added some spice to their diets on Oct. 29, | sampled seven freshly harvested mild heat chile peppers. | This is the first time astronauts have eaten peppers grown in space. | Astronaut Megan McArthur shows off a taco with space-grown chile peppers."
+      },
+      {
+        "title": "Science in Space: Week of July 10, 2023 - Plant Science (NASA, 17 Jul 2023)",
+        "url": "https://www.nasa.gov/missions/station/iss-research/science-in-space-week-of-july-10-2023-plant-science/",
+        "quote": "The first crop, harvested on Oct. 29, 2021, was eaten by the crew | 12 peppers from the second harvest were returned to Earth for analysis"
+      },
+      {
+        "title": "Station Science 101: Plant Research (NASA, 18 Oct 2023, updated 24 Jul 2024) - what the APH is",
+        "url": "https://www.nasa.gov/missions/station/ways-the-international-space-station-helps-us-study-plant-growth-in-space/",
+        "quote": "The Advanced Plant Habitat is a fully-automated facility designed to study growing plants in ways that require only minimal crew attention."
+      }
+    ],
+    "notes": "Status 'verified'. (1) 'Longest plant experiment': NASA said so on 30 Nov 2021. Later experiments may have run longer (I did not check), so write 'the longest up to then' or 'in 2021, the longest'. (2) The first tasting (29 Oct 2021) was the first time astronauts ATE peppers grown in space; do not write 'the first peppers grown in space'. NASA calls them 'mild heat' peppers. (3) 137 days is NASA's figure (12 Jul to 26 Nov 2021, which matches by my count); the first harvest came about 109 days in (my arithmetic, not on NASA's pages). (4) NASA says PH-04 broke 'the record for feeding the most astronauts from a crop grown in space' but the article gives no number of astronauts. (5) NASA spells it 'chili' in one sentence and 'chile' elsewhere; use 'chile pepper'. (6) Veggie: the 'Outredgeous' red romaine lettuce eaten on 10 Aug 2015 is already on the existing 'space_farming' card (sourced there to NASA's Veggie fact sheet). A NASA search result confirmed the date and the variety, and noted that the very first Veggie crop (2014) was not eaten; I did not re-quote it here. (7) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O6",
+    "key": "moon_telescope",
+    "status": "verified",
+    "claim": "Apollo 16 astronauts John Young (commander) and Charles Duke spent a little under three days on the Moon in April 1972. Young set up the gold-plated Far Ultraviolet Camera/Spectrograph, designed and built by George R. Carruthers, on a tripod in the shadow of the lunar module in the Descartes highlands. NASA calls it the first Moon-based telescope and 'the first telescope used to make astronomical observations from the surface of another planetary body'. It looked back at Earth and took the very first images of Earth's geocorona from space (the ultraviolet glow of hydrogen in the outermost atmosphere) and of aurorae; it also studied star clusters, nebulae and the Large Magellanic Cloud, a small galaxy orbiting the Milky Way. The astronauts brought back 178 frames of film, and the instrument is still on the Moon. NASA's Carruthers Geocorona Observatory, named after him, launched on 24 September 2025 and reached its orbit around the Sun-Earth L1 point in January 2026.",
+    "card_en": "In April 1972 the Apollo 16 astronauts set up the first telescope on the Moon, a gold-coated camera built by the scientist George Carruthers. It saw ultraviolet light, which our eyes cannot see, and photographed the glow of Earth's outermost air, called the geocorona, as well as star clusters and a nearby galaxy. The telescope is still standing on the Moon today.",
+    "card_ru": "В апреле 1972 года астронавты Apollo 16 установили на Луне первый телескоп — позолоченную камеру, которую создал учёный Джордж Каррутерс. Она видела ультрафиолетовый свет, невидимый для наших глаз, и сфотографировала свечение самого внешнего слоя воздуха Земли — геокорону, а ещё звёздные скопления и соседнюю галактику. Этот телескоп и сейчас стоит на Луне.",
+    "values": [
+      { "label": "Mission and month", "value": "Apollo 16, April 1972", "unit": "mission / date" },
+      { "label": "Time Young and Duke spent on the Moon (NASA: 'a little under three days')", "value": "a little under 3", "unit": "days" },
+      { "label": "Frames of film brought back from the telescope", "value": 178, "unit": "frames" },
+      { "label": "Where it stands today", "value": "Descartes highland region, Moon", "unit": "place" },
+      { "label": "Launch of NASA's Carruthers Geocorona Observatory", "value": "2025-09-24", "unit": "date" },
+      { "label": "Final orbit maneuver of that observatory, into a halo orbit around Sun-Earth L1", "value": "2026-01-08", "unit": "date" }
+    ],
+    "source_title": "Remembering the First Moon-Based Telescope (NASA, Elizabeth R. Landau, 15 Jul 2019, updated 15 Apr 2025)",
+    "source_url": "https://www.nasa.gov/history/remembering-the-first-moon-based-telescope/",
+    "quote": "It was the first telescope used to make astronomical observations from the surface of another planetary body.",
+    "extra_sources": [
+      {
+        "title": "Same NASA article - who set it up, and where",
+        "url": "https://www.nasa.gov/history/remembering-the-first-moon-based-telescope/",
+        "quote": "Astronauts Charles M. Duke Jr., the lunar module pilot, and John W. Young, the commander, spent a little under three days on the Moon in April 1972. | Young took the telescope out of its plastic bag and planted it on a tripod in the shadow of the lunar module"
+      },
+      {
+        "title": "Same NASA article - what it observed",
+        "url": "https://www.nasa.gov/history/remembering-the-first-moon-based-telescope/",
+        "quote": "Notably the telescope also looked back at Earth, viewing its upper atmosphere, called the \"geocorona,\" and aurorae. | Astronauts also pointed it at the Large Magellanic Cloud, which is a small galaxy orbiting the Milky Way. | The Moon-based telescope studied a variety of star clusters as well as nebulae"
+      },
+      {
+        "title": "Same NASA article - film and present location",
+        "url": "https://www.nasa.gov/history/remembering-the-first-moon-based-telescope/",
+        "quote": "In total, the astronauts returned 178 frames of film from the telescope. | The Far Ultraviolet Camera/Spectrograph remains on the Moon in the Descartes highland region today. | examine the gold-plated ultraviolet camera/spectrograph"
+      },
+      {
+        "title": "NASA Names Mission in Honor of Dr. George R. Carruthers, Visionary Behind First Moon-Based Telescope (NASA Goddard, Miles Hatfield, 2 Dec 2022)",
+        "url": "https://www.nasa.gov/general/nasa-names-mission-in-honor-of-dr-george-r-carruthers-visionary-behind-first-moon-based-telescope/",
+        "quote": "In 1972, Apollo 16 astronauts planted a gold-plated telescope in the Descartes highland region on the Moon. | That telescope, designed and built by Carruthers, captured the very first images of Earth’s geocorona from space."
+      },
+      {
+        "title": "Carruthers Geocorona Observatory (NASA Science mission page, updated 14 Sep 2026) - what the geocorona is",
+        "url": "https://science.nasa.gov/mission/carruthers-geocorona-observatory/",
+        "quote": "The first image of Earth's exosphere came from a telescope placed on the Moon during the Apollo 16 mission in 1972. | Scientists call this ultraviolet emission the geocorona, which is Latin for \"Earth's Crown.\""
+      },
+      {
+        "title": "NASA's Carruthers Geocorona Observatory Reaches Target Orbit (NASA Science blog, Miles Hatfield, 12 Jan 2026)",
+        "url": "https://science.nasa.gov/blogs/carruthers-geocorona-observatory/2026/01/12/nasas-carruthers-geocorona-observatory-reaches-target-orbit/",
+        "quote": "The loveseat-sized spacecraft launched from NASA's Kennedy Space Center on Sept. 24, 2025. | The spacecraft has now entered its intended halo orbit around the Sun-Earth L1 Lagrange point | The achievement was confirmed following its third and final orbital maneuver, a 2-minute thruster fire, on Jan. 8."
+      }
+    ],
+    "notes": "Status 'verified', with one wording fix. (1) Targets: NASA names Earth's geocorona and aurorae, 'a variety of star clusters as well as nebulae', and ONE galaxy, the Large Magellanic Cloud. The draft's 'galaxies' (plural) and plain 'stars' are not NASA's wording; say 'star clusters and a nearby galaxy'. (2) 'First': NASA says 'the first telescope used to make astronomical observations from the surface of another planetary body'; NASA captions say 'the first moon-based observatory'. (3) Carruthers designed and built it; NASA says he received a patent for such a camera while at the Naval Research Laboratory (one NASA caption says 'Naval Research Institute'). (4) 'Gold-plated' is NASA's word; 'gold-coated' on the card means the same. (5) A wavelength range of 50-160 nm appeared only in a search snippet; not verified, not used. (6) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O7",
+    "key": "vertical_solar",
+    "status": "verified",
+    "claim": "NASA's Vertical Solar Array Technology (VSAT) project, led by NASA Langley with NASA Glenn, develops solar arrays on tall masts for the lunar South Pole, where the Sun does not rise very far above the horizon and long shadows can block flat (horizontal) arrays. In March 2021 NASA picked five companies (Astrobotic, ATK Space Systems/Northrop Grumman, Honeybee Robotics, Lockheed Martin, Space Systems Loral/Maxar) for 12-month design contracts worth up to $700,000 each. In August 2022 NASA chose three to build prototypes and test them, $19.4 million in total: Astrobotic $6.2 million, Honeybee Robotics $7 million, Lockheed Martin $6.2 million. The arrays must deploy by themselves up to 32 feet (about 10 m) high, on uneven ground, and retract so they can be moved; NASA's project documents and its Lunar Surface Technology page say VSAT explores masts of up to 20 m. Power: a 2023 NASA review lists Honeybee's design (LAMPS) at 10 kW, and NASA says regenerative fuel cells plus VSAT can supply and recharge 10 kW. In summer 2024 Honeybee Robotics (a Blue Origin company) and Astrobotic tested their prototypes in Chamber A at NASA Johnson in Houston. Status (November 2026): none has flown; NASA's goal is to deploy at least one near the Moon's South Pole near the end of this decade, and a September 2026 NASA call for proposals lists vertical solar arrays among the technologies to mature and demonstrate.",
+    "card_en": "At the Moon's south pole the Sun stays low near the horizon, so long shadows can hide flat solar panels. NASA is developing solar panels that rise on a tall mast, about 10 metres high (masts up to 20 metres are being studied), and fold back down so they can be moved. In summer 2024 two companies tested their prototypes in a giant vacuum chamber in Houston, and NASA hopes to set one up near the south pole by the end of this decade.",
+    "card_ru": "На южном полюсе Луны Солнце всё время висит низко над горизонтом, и длинные тени могут закрыть плоские солнечные панели. NASA разрабатывает панели, которые поднимаются на высокой мачте — примерно на 10 метров (изучают и мачты до 20 метров) — и складываются обратно, чтобы их можно было перевезти. Летом 2024 года две компании испытали свои образцы в огромной вакуумной камере в Хьюстоне, а до конца этого десятилетия NASA надеется поставить такую установку у южного полюса.",
+    "values": [
+      { "label": "First selection: companies for 12-month design contracts (NASA, 23 Mar 2021)", "value": 5, "unit": "companies" },
+      { "label": "Value of each 2021 design contract", "value": "up to 700,000", "unit": "USD" },
+      { "label": "Second selection: total for prototypes and environmental testing (NASA release, 23 Aug 2022)", "value": 19.4, "unit": "million USD" },
+      { "label": "Astrobotic / Honeybee Robotics / Lockheed Martin awards (2022)", "value": "6.2 / 7 / 6.2", "unit": "million USD" },
+      { "label": "Required deployed height (NASA: 'up to 32 feet'; metres are my conversion, 32 x 0.3048 = 9.75)", "value": 32, "unit": "feet (about 10 m)" },
+      { "label": "Mast length being explored by the VSAT project (NASA 2023 review; Lunar Surface Technology page 2026)", "value": "up to 20", "unit": "m" },
+      { "label": "Power of Honeybee's LAMPS design (NASA 2023 review) and of RFC + VSAT (NASA quick fact)", "value": 10, "unit": "kW" },
+      { "label": "Prototype tests in Chamber A at NASA Johnson (Honeybee Robotics, Astrobotic)", "value": "summer 2024", "unit": "date" },
+      { "label": "NASA goal for deploying one near the South Pole", "value": "near the end of this decade", "unit": "time" },
+      { "label": "NASA call for proposals that includes vertical solar arrays (NextSTEP-3, Appendix A)", "value": "2026-09-08", "unit": "date" }
+    ],
+    "source_title": "Three Companies to Help NASA Advance Solar Array Technology for Moon (NASA release 22-090, 23 Aug 2022)",
+    "source_url": "https://www.nasa.gov/news-release/three-companies-to-help-nasa-advance-solar-array-technology-for-moon/",
+    "quote": "NASA is supporting development of vertical solar arrays that can autonomously deploy up to 32 feet high | will help prevent loss of power at the lunar poles where the Sun does not rise very far above the horizon | The agency will award a total of $19.4 million to three companies",
+    "extra_sources": [
+      {
+        "title": "Same NASA release (23 Aug 2022) - the three awards and the goal",
+        "url": "https://www.nasa.gov/news-release/three-companies-to-help-nasa-advance-solar-array-technology-for-moon/",
+        "quote": "Astrobotic Technology of Pittsburgh, Pennsylvania: $6.2 million | Honeybee Robotics of Brooklyn, New York: $7 million | Lockheed Martin of Littleton, Colorado: $6.2 million | with the goal of deploying one of the systems near the Moon’s South Pole near the end of this decade"
+      },
+      {
+        "title": "NASA, Industry to Mature Vertical Solar Array Technologies for Lunar Surface (NASA, 23 Mar 2021, updated 22 Jun 2026)",
+        "url": "https://www.nasa.gov/technology/nasa-industry-to-mature-vertical-solar-array-technologies-for-lunar-surface/",
+        "quote": "The vertical position and height of these new designs will help prevent loss of power at the lunar poles where the Sun does not rise very far above the horizon. | The shadows can block horizontally structured solar arrays from obtaining light. | At the end of the 12-month fixed-price base contracts, valued at up to $700,000 each, the companies will provide NASA their system designs, analysis, and data."
+      },
+      {
+        "title": "From Houston to the Moon: Johnson's Thermal Vacuum Chamber Tests Lunar Solar Technology (NASA Johnson, 19 Nov 2024, updated 22 Jun 2026)",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/from-houston-to-the-moon-johnsons-thermal-vacuum-chamber-tests-lunar-solar-technology/",
+        "quote": "In the summer of 2024, both Honeybee Robotics, a Blue Origin company from Altadena, California and Astrobotic Technology | They must also deploy on a curved surface, extend 32 feet high to reach sunlight, and retract for possible relocation. | Chamber A remains as one of the largest thermal vacuum chambers of its kind | with the goal to deploy at least one of the systems near the Moon's South Pole"
+      },
+      {
+        "title": "VSAT annual review for NASA's Game Changing Development program (NASA STMD, September 2023; NTRS 20230012849)",
+        "url": "https://ntrs.nasa.gov/api/citations/20230012849/downloads/GCD%20Annual%20Review%20VSAT%20September%202023%20Final.pdf",
+        "quote": "VSAT is exploring vertical array deployment on extension masts of up to 20m in length in order to capture near continuous sun light at the lunar south pole. | During Option Phase each vendor will develop and test a prototype that will be tested in TVAC conditions at JSC Chamber A in 2024 | LAMPS:Lunar Array Mast & Power System | 10kW solar power"
+      },
+      {
+        "title": "Lunar Surface Technology (NASA, page last updated 5 Nov 2026) - VSAT",
+        "url": "https://www.nasa.gov/lunar-surface-technology/",
+        "quote": "providing sustainable, continuous solar power by deploying vertical arrays on masts of up to 20 meters in length. | Combining Regenerative Fuel Cells with a Vertical Solar Array Technology enables supply and recharge of 10KW of power to permanently shadowed regions on the Moon."
+      },
+      {
+        "title": "NASA Calls for Proposals to Accelerate Lunar Surface Technologies (NASA release, 8 Sep 2026, updated 28 Sep 2026)",
+        "url": "https://www.nasa.gov/news-release/nasa-calls-for-proposals-to-accelerate-lunar-surface-technologies/",
+        "quote": "Vertical solar array technology that can provide consistent power generation, management, distribution, and energy storage."
+      }
+    ],
+    "notes": "Status 'verified': the draft's idea (tall vertical arrays because the Sun is low at the lunar South Pole) is NASA's own reasoning; the details below answer the draft's questions. (1) Heights: NASA's releases of 2021, 2022 and 2024 give 'up to 32 feet' (about 9.8 m, my conversion; 'about 10 m' on the card); NASA's 2023 project review and its Lunar Surface Technology page say masts 'of up to 20' m. Use 10 m for the tested prototypes and 20 m only as 'being studied'. (2) Power: the 2021, 2022 and 2024 releases give no power figure. The 2023 NASA review lists Honeybee's LAMPS as '10kW solar power'; NASA's quick fact says regenerative fuel cells plus VSAT can 'supply and recharge 10KW'. Bigger company designs (Astrobotic VSAT-XL, Honeybee LUNARSABER) appeared only in search results; not used. (3) Companies: the 2021 release said NASA would later pick up to two companies for up to $7.5 million each; in 2022 it picked three. (4) Status: NASA's Nov 2024 article names only Honeybee Robotics and Astrobotic as tested in Chamber A in summer 2024; I found no NASA page about a Lockheed Martin chamber test (news sites say its array passed tests; not opened, not used). A news site says Lockheed received a 2026 selection related to vertical arrays; I found no NASA release, not used. No VSAT has flown. (5) 'Near the end of this decade' is NASA's goal, not a scheduled flight; recheck NASA's Lunar Surface Technology page before shipping. (6) Quotes were read through a page-to-text tool; the 2023 review PDF was read with a PDF text extractor, which dropped bullet characters. Lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O8",
+    "key": "laser_spectrometer",
+    "status": "verified",
+    "claim": "Curiosity's ChemCam (Chemistry and Camera), built by a U.S.-French team led by Los Alamos National Laboratory with France's space agency CNES, uses laser-induced breakdown spectroscopy. Each infrared laser pulse delivers more than a million watts for about five billionths of a second and turns a pinhead-size spot on a rock into glowing, ionized gas (plasma); ChemCam's telescope collects the light of that spark and spectrometers (three of them, recording 6,144 wavelengths of ultraviolet, visible and infrared light) analyse its spectrum to identify the elements, because different elements glow in different wavelengths, or colours. It zaps rock and soil targets up to about 23 feet (7 m) away, usually 30 pulses at each of several points. Its first shot on Mars hit the rock 'Coronation' (reported 19 Aug 2012); it passed 100,000 shots by December 2013 and fired its 1 millionth shot on sol 4281 (August 2024) at the target Royce Lake. Perseverance's SuperCam does a similar job; NASA says it can identify the chemical and mineral makeup of spots as small as a pencil point from more than 20 feet (7 m) away.",
+    "card_en": "The Curiosity rover carries a laser called ChemCam that zaps rocks up to 7 metres away and turns a pinhead-sized spot into a tiny glowing spark. Each chemical element glows in its own colours, so the light from the spark tells scientists what the rock is made of. By August 2024 ChemCam had fired its laser one million times, and the Perseverance rover carries a similar tool called SuperCam.",
+    "card_ru": "У марсохода Curiosity есть лазерный прибор ChemCam: он стреляет по камням на расстоянии до 7 метров и превращает пятнышко размером с булавочную головку в крошечную светящуюся искру. Каждый химический элемент светится своими цветами, поэтому по свету искры учёные узнают, из чего состоит камень. К августу 2024 года ChemCam выстрелил лазером миллион раз, а у марсохода Perseverance есть похожий прибор — SuperCam.",
+    "values": [
+      { "label": "ChemCam range (NASA: 'up to about 23 feet (7 meters)')", "value": 7, "unit": "m" },
+      { "label": "Power of each laser pulse", "value": "more than 1 million", "unit": "watts" },
+      { "label": "Length of each pulse (NASA: 'about five one-billionths of a second')", "value": 5, "unit": "nanoseconds" },
+      { "label": "Pulses at each point on a target (most targets)", "value": 30, "unit": "pulses" },
+      { "label": "Wavelengths recorded by ChemCam's three spectrometers", "value": 6144, "unit": "wavelengths (UV, visible, infrared)" },
+      { "label": "First laser shots on Mars, rock 'Coronation' (JPL release date; 30 pulses in 10 seconds)", "value": "2012-08-19", "unit": "date" },
+      { "label": "Shots fired by December 2013 (JPL)", "value": "more than 100,000", "unit": "laser shots" },
+      { "label": "1 millionth ChemCam shot (NASA blog: sol 4281, target Royce Lake, planned Monday 19 Aug)", "value": "August 2024", "unit": "date" },
+      { "label": "SuperCam distance on Perseverance (NASA: 'more than 20 feet (7 meters)')", "value": "more than 20 feet (7 m)", "unit": "distance" }
+    ],
+    "source_title": "Laser Instrument on NASA Mars Rover Tops 100,000 Zaps (NASA/JPL news, 5 Dec 2013)",
+    "source_url": "https://www.jpl.nasa.gov/news/laser-instrument-on-nasa-mars-rover-tops-100000-zaps/",
+    "quote": "The Chemistry and Camera instrument (ChemCam) uses the infrared laser to excite material in a pinhead-size spot on the target into a glowing, ionized gas, called plasma. | ChemCam observes that spark with the telescope and analyzes the spectrum of light to identify elements in the target.",
+    "extra_sources": [
+      {
+        "title": "Same JPL article (5 Dec 2013) - range, pulses, pulse power",
+        "url": "https://www.jpl.nasa.gov/news/laser-instrument-on-nasa-mars-rover-tops-100000-zaps/",
+        "quote": "Since landing on Mars in August 2012, NASA's Curiosity Mars rover has fired the laser on its Chemistry and Camera (ChemCam) instrument more than 100,000 times at rock and soil targets up to about 23 feet (7 meters) away. | Most targets get zapped at several points with 30 laser pulses at each point. | Each pulse delivers more than a million watts of power for about five one-billionths of a second."
+      },
+      {
+        "title": "PIA15103: Schematic of Laser-Induced Breakdown Spectroscopy (NASA/JPL image caption, 28 Nov 2011) - each element glows in its own colours",
+        "url": "https://www.jpl.nasa.gov/images/pia15103-schematic-of-laser-induced-breakdown-spectroscopy/",
+        "quote": "Energy from the laser excites a pinhead-size spot on the target into glowing, ionized gas called plasma. | Different elements glow in different wavelengths, or colors, as illustrated with examples from the elements aluminum and copper and from samples of basaltic rock. | ChemCam was conceived, designed and built by a U.S.-French team led by Los Alamos National Laboratory"
+      },
+      {
+        "title": "Rover's Laser Instrument Zaps First Martian Rock (NASA/JPL news, 19 Aug 2012)",
+        "url": "https://www.jpl.nasa.gov/news/rovers-laser-instrument-zaps-first-martian-rock/",
+        "quote": "Today, NASA's Mars rover Curiosity fired its laser for the first time on Mars | hit the fist-sized rock with 30 pulses of its laser during a 10-second period | The spectrometers record intensity at 6,144 different wavelengths of ultraviolet, visible and infrared light."
+      },
+      {
+        "title": "Sols 4304-4006: 12 Years, 42 Drill Holes, and Now… 1 Million ChemCam Shots! (NASA Science Curiosity blog, written by Susanne Schwenzer, 13 Sep 2024)",
+        "url": "https://science.nasa.gov/blog/sols-4304-4006-12-years-42-drill-holes-and-now-1-million-chemcam-shots/",
+        "quote": "On Monday, 19th August the ChemCam team at CNES in France planned the 1 millionth shot and Curiosity executed it on the target Royce Lake on sol 4281 on Mars. | are now running the instrument for over 12 years!"
+      },
+      {
+        "title": "Perseverance Science Instruments (NASA Science, page last updated 27 Oct 2026) - SuperCam",
+        "url": "https://science.nasa.gov/mission/mars-2020-perseverance/science-instruments/",
+        "quote": "examines rocks and soils with a camera, laser, and spectrometers | It can identify the chemical and mineral makeup of areas on Mars | as small as a pencil point | from a distance of more than 20 feet (7 meters)"
+      }
+    ],
+    "notes": "Status 'verified'. (1) 'Each element gives its own light lines' is right; NASA's wording is 'Different elements glow in different wavelengths, or colors'. (2) Shot count: NASA's Curiosity blog says the 1 millionth shot was executed on sol 4281 on the target Royce Lake, planned on Monday 19 August 2024; CNES and Thales (search results only, not opened) say it was fired on 21 Aug 2024. Say 'a million times by August 2024' or 'more than a million times'. I found no newer NASA count. The blog's title on NASA's page prints 'Sols 4304-4006' (a typo for 4304-4306). (3) SuperCam distance: NASA's page pairs 'more than 20 feet' with '(7 meters)', but 20 feet is 6.1 m and 7 m is 23 feet (my conversion); a later NASA release (seen only in a search result) says 21 feet (6.5 m). Give ChemCam's 7 m on the card and no exact number for SuperCam. (4) The first-shot date is the JPL release date ('Today ...'). (5) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O9",
+    "key": "phobos_eclipse",
+    "status": "verified",
+    "claim": "NASA's Perseverance rover filmed Phobos, Mars' potato-shaped moon, crossing the face of the Sun with its Mastcam-Z camera on 2 April 2022, the mission's 397th Martian day (sol). The eclipse lasted a little over 40 seconds, much shorter than a typical solar eclipse by Earth's Moon; NASA calls it the most zoomed-in, highest-frame-rate observation of a Phobos solar eclipse ever taken from the Martian surface. Phobos is getting closer to Mars and is destined to crash into the planet in tens of millions of years. Alternative: on 31 January 2014 (sol 529), about 80 minutes after sunset, Curiosity photographed Earth and the Moon in the Martian evening sky, when Earth was about 99 million miles (160 million km) from Mars.",
+    "card_en": "Mars has a small, potato-shaped moon called Phobos. On 2 April 2022 the Perseverance rover filmed Phobos sliding across the Sun: this Martian solar eclipse lasted a little over 40 seconds. Phobos is slowly getting closer to Mars and will crash into it in tens of millions of years.",
+    "card_ru": "У Марса есть маленькая луна Фобос, похожая на картофелину. 2 апреля 2022 года марсоход Perseverance снял, как Фобос проплывает по диску Солнца: это марсианское солнечное затмение длилось чуть больше 40 секунд. Фобос медленно приближается к Марсу и через десятки миллионов лет упадёт на него.",
+    "values": [
+      { "label": "Date Perseverance filmed the Phobos eclipse (NASA/JPL; one later NASA caption says 1 April)", "value": "2022-04-02", "unit": "date" },
+      { "label": "Martian day of the mission", "value": 397, "unit": "sol" },
+      { "label": "Length of the eclipse (NASA: 'a little over 40 seconds')", "value": "a little over 40", "unit": "seconds" },
+      { "label": "When Phobos will crash into Mars (JPL; APOD says 'within the next 50 million years')", "value": "in tens of millions of", "unit": "years" },
+      { "label": "Alternative card: Curiosity photographs Earth and the Moon from Mars", "value": "2014-01-31 (sol 529)", "unit": "date" },
+      { "label": "Time after sunset of that photo", "value": 80, "unit": "minutes (about)" },
+      { "label": "Earth-Mars distance at that moment (NASA)", "value": 99, "unit": "million miles (160 million km)" }
+    ],
+    "source_title": "NASA's Perseverance Rover Captures Video of Solar Eclipse on Mars (NASA/JPL news, 20 Apr 2022)",
+    "source_url": "https://www.jpl.nasa.gov/news/nasas-perseverance-rover-captures-video-of-solar-eclipse-on-mars/",
+    "quote": "Captured with Perseverance’s next-generation Mastcam-Z camera on April 2, the 397th Martian day, or sol, of the mission, the eclipse lasted a little over 40 seconds – much shorter than a typical solar eclipse involving Earth’s Moon.",
+    "extra_sources": [
+      {
+        "title": "Same JPL article (20 Apr 2022) - potato shape, record observation, Phobos's fate",
+        "url": "https://www.jpl.nasa.gov/news/nasas-perseverance-rover-captures-video-of-solar-eclipse-on-mars/",
+        "quote": "NASA’s Perseverance Mars rover has captured dramatic footage of Phobos, Mars’ potato-shaped moon, crossing the face of the Sun. | It’s the most zoomed-in, highest-frame-rate observation of a Phobos solar eclipse ever taken from the Martian surface. | Scientists already know that Phobos is doomed: The moon is getting closer to the Martian surface and is destined to crash into the planet in tens of millions of years."
+      },
+      {
+        "title": "APOD: 2022 May 9 - A Martian Eclipse: Phobos Crosses the Sun (NASA Science)",
+        "url": "https://science.nasa.gov/image-article/apod-2022-may-9-a-martian-eclipse-phobos-crosses-the-sun/",
+        "quote": "the transit really took about 40 seconds | is expected to break up and crash into Mars within the next 50 million years."
+      },
+      {
+        "title": "Eclipse on Earth, Exploration on Mars (NASA Science, 12 Oct 2023) - caption with a DIFFERENT date",
+        "url": "https://science.nasa.gov/missions/mars-2020-perseverance/eclipse-on-earth-exploration-on-mars/",
+        "quote": "Perseverance Rover Sees Solar Eclipse on Mars: A transit of Phobos captured by Mastcam-Z on April 1st, 2022 (Sol 397)."
+      },
+      {
+        "title": "PIA17936: Bright 'Evening Star' Seen from Mars is Earth (NASA/JPL image, 6 Feb 2014) - the alternative card",
+        "url": "https://www.jpl.nasa.gov/images/pia17936-bright-evening-star-seen-from-mars-is-earth/",
+        "quote": "Researchers used the left eye camera of Curiosity's Mast Camera (Mastcam) | to capture this scene about 80 minutes after sunset on the 529th Martian day, or sol | The distance between Earth and Mars when Curiosity took the photo was about 99 million miles (160 million kilometers). | could easily see Earth and the moon as two distinct, bright 'evening stars.'"
+      }
+    ],
+    "notes": "Status 'verified'. (1) Date: NASA/JPL's release says 2 April 2022 (sol 397); a later NASA Science caption says 'April 1st, 2022 (Sol 397)'. Use 2 April 2022, which the release and APOD support. (2) Duration: JPL 'a little over 40 seconds'; APOD 'about 40 seconds'. (3) Phobos's fate: JPL 'in tens of millions of years'; APOD 'within the next 50 million years'. Use 'tens of millions of years'. (4) Size: JPL says Phobos is 'about 157 times smaller than Earth's Moon', APOD '150 times smaller' and '11.5 kilometers across'; they disagree, so the card gives no size number. (5) Alternative card (Curiosity, 31 Jan 2014): 99 million miles is about 159 million km by my conversion; NASA rounds it to 160 million km. (6) Earlier Phobos eclipses were imaged by Spirit and Opportunity (2004) and Curiosity; the card does not say 'first'. (7) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O10",
+    "key": "suit_oxygen",
+    "status": "corrected",
+    "claim": "The space station spacesuit (EMU) has a backpack (Primary Life Support System, PLSS) that keeps the astronaut at a safe temperature, provides oxygen and removes carbon dioxide and humidity. NASA's Inspector General (2017) says it provides oxygen 'for up to 7 hours' and calls 7 hours the EMU's maximum per spacewalk; a NASA-hosted operations briefing (2014) says the suit carries consumables for a spacewalk of 7 hours at most (15 minutes out, 6 hours of work, 15 minutes back in, 30 minutes of reserve). If the backpack fails, a separate secondary oxygen pack gives at least 30 minutes of emergency oxygen. NASA's spacesuit page says spacewalks typically last six to eight hours. A 2023 conference paper on NASA's server gives the ISS suit's capacity as 8 hours nominally (longest use 8.93 hours, about 8 h 56 min). Apollo 15-17 suits: primary life support 'certified' for 7 hours (longest use 7.62 hours) with a 30-minute backup (the Oxygen Purge System); the longest Apollo moonwalk, Apollo 17's second, lasted 7 hours 37 minutes (NASA).",
+    "card_en": "A spacesuit backpack works like a tiny spaceship: it gives the astronaut oxygen, keeps them cool and cleans the air they breathe out. The space station suit carries oxygen for about 7 hours, plus an emergency pack with 30 more minutes, and spacewalks usually last 6 to 8 hours. On Apollo 17 in 1972, one moonwalk lasted 7 hours and 37 minutes.",
+    "card_ru": "Рюкзак скафандра похож на крошечный космический корабль: он даёт астронавту кислород, не даёт ему перегреться и очищает выдыхаемый воздух. В скафандре для космической станции кислорода хватает примерно на 7 часов, и ещё есть аварийный запас на 30 минут, а выходы в открытый космос обычно длятся 6–8 часов. В 1972 году в полёте Apollo 17 одна прогулка по Луне длилась 7 часов 37 минут.",
+    "values": [
+      { "label": "ISS suit backpack oxygen supply (NASA Inspector General, 2017)", "value": "up to 7", "unit": "hours" },
+      { "label": "Maximum spacewalk the ISS suit's consumables support (NASA-hosted briefing, 2014)", "value": 7, "unit": "hours" },
+      { "label": "Emergency secondary oxygen pack", "value": 30, "unit": "minutes (briefing: 'a minimum of 30 minutes')" },
+      { "label": "Typical spacewalk length (NASA spacesuit page)", "value": "6 to 8", "unit": "hours" },
+      { "label": "ISS suit nominal capacity / longest use (2023 conference paper on NTRS; CONFLICTS with the 7 hours above)", "value": "8 / 8.93", "unit": "hours" },
+      { "label": "Time an astronaut may wear the suit on a spacewalk day (NASA Inspector General)", "value": "9 to 10", "unit": "hours" },
+      { "label": "Apollo 15-17 suit primary life support, certified (2023 paper)", "value": 7, "unit": "hours" },
+      { "label": "Apollo 15-17 longest use (2023 paper; 7.62 h = 7 h 37 min, my conversion)", "value": 7.62, "unit": "hours" },
+      { "label": "Apollo 15-17 backup life support (Oxygen Purge System), certified (2023 paper)", "value": 30, "unit": "minutes" },
+      { "label": "Apollo 17 second moonwalk (NASA Mission Details)", "value": "7 h 37 min", "unit": "duration" },
+      { "label": "Apollo 17 total of three moonwalks (NASA Mission Details)", "value": "22 h 4 min", "unit": "duration" }
+    ],
+    "source_title": "NASA's Management and Development of Spacesuits (NASA Office of Inspector General, Report IG-17-018, 26 Apr 2017)",
+    "source_url": "https://oig.nasa.gov/docs/IG-17-018.pdf",
+    "quote": "The PLSS is a backpack-like structure with components that perform a variety of functions required to keep an astronaut alive during an EVA, including maintaining body temperature, providing oxygen for up to 7 hours, and removing carbon dioxide and humidity that build up inside the suit.",
+    "extra_sources": [
+      {
+        "title": "Same OIG report - the 30-minute secondary oxygen pack, the 7-hour maximum, time in the suit",
+        "url": "https://oig.nasa.gov/docs/IG-17-018.pdf",
+        "quote": "In the event of PLSS failure, astronauts maintain 30 minutes of oxygen in a secondary oxygen pack located beneath the PLSS on the astronaut's back. | an improvement over the current EMU's 7 hour per EVA maximum | Because a typical EVA can result in an astronaut wearing the EMU between 9 and 10 hours"
+      },
+      {
+        "title": "Extravehicular Activity (EVA) Hardware & Operations Overview (United Space Alliance briefing for UTMB Galveston, 1 Jul 2014; NTRS 20140009556)",
+        "url": "https://ntrs.nasa.gov/api/citations/20140009556/downloads/20140009556.pdf",
+        "quote": "EMU provides consumables to support an EVA of 7 hours maximum duration. | 15 minutes for egress | 6 hours for useful work | 15 minutes for ingress | 30 minutes for reserve | Secondary Oxygen Package (SOP) - Provides a minimum of 30 minutes of emergency O2 in open-loop purge mode"
+      },
+      {
+        "title": "Spacesuits (NASA, page last updated 18 Apr 2025)",
+        "url": "https://www.nasa.gov/suits-and-rovers/spacesuits/",
+        "quote": "Spacewalks are some of the most physically and mentally demanding tasks an astronaut can do, with each excursion typically six to eight hours in duration."
+      },
+      {
+        "title": "Technology Infusion in U.S. Spacesuits - A Comparative System Analysis (C. Chullen, I. Pena, H. Chen, Stevens Institute of Technology; 2023 Conference on Systems Engineering Research; NTRS 20230001969)",
+        "url": "https://ntrs.nasa.gov/api/citations/20230001969/downloads/CSER_2023_paper_6287%20Final.pdf",
+        "quote": "The EVA spacesuit (Apollo 15-17) boasted a primary life support capability of 7 hours certified (longest use 7.62 hours) and a backup life support capability of 30 minutes certified, with an operating pressure of 3.7 psi (25.5 kPa). | The operation capacity was 8 hours nominally with the longest used at 8.93 hours. The emergency backup oxygen system was certified at 30 minutes."
+      },
+      {
+        "title": "Apollo 17: Mission Details (NASA, updated 29 Sep 2023)",
+        "url": "https://www.nasa.gov/missions/apollo/apollo-17-mission-details/",
+        "quote": "The second EVA began at 11:28:06 p.m. Dec. 12, and lasted seven hours, 37 minutes, ending at at 7:05:02 a.m. Dec. 13. | Three extravehicular activities, or EVAs, lasted a total of 22 hours, four minutes on the lunar surface."
+      }
+    ],
+    "notes": "Status 'corrected'. (1) ISS suit: the draft's 'about 8 hours' is not what NASA's official sources I opened say. NASA's Inspector General (2017) says the backpack provides oxygen 'for up to 7 hours' and calls 7 hours 'the current EMU's 7 hour per EVA maximum'; a NASA-hosted 2014 operations briefing says 'an EVA of 7 hours maximum duration'. Only a 2023 conference paper on NASA's server (Stevens Institute authors) says '8 hours nominally' (longest 8.93 hours). NASA's public spacesuit page says spacewalks are 'typically six to eight hours', so real spacewalks can run past 7 hours. Safe card wording: 'oxygen for about 7 hours, plus a 30-minute emergency supply; spacewalks usually last 6 to 8 hours'. (2) The 30-minute reserve is confirmed (OIG: '30 minutes of oxygen in a secondary oxygen pack'; briefing: 'a minimum of 30 minutes'). (3) Apollo 15-17: '7 hours certified (longest use 7.62 hours)' and a 30-minute backup come from the 2023 paper; 7.62 hours is 7 h 37 min (my conversion), which matches NASA's Apollo 17 Mission Details for the second moonwalk. NASA's Apollo Lunar Surface Journal pages on the Apollo backpack and the Oxygen Purge System returned 'not found' to my tool, so I could not check the Apollo backpack numbers on an official NASA page; keep the card to the moonwalk length (7 h 37 min), which IS on a NASA page. (4) NASA's Apollo 17 page prints 'at at' (a typo on NASA's page). (5) NASA's new commercial spacesuits (Axiom) were not checked. (6) The OIG report, the 2014 briefing and the 2023 paper were read with a PDF text extractor; the NASA pages through a page-to-text tool. Lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O11",
+    "key": "lunar_drill",
+    "status": "verified",
+    "claim": "The Apollo Lunar Surface Drill was a battery-powered rotary-percussion drill (280 rotations and 2,270 blows per minute). It was flown on Apollo 13, 15, 16 and 17 (Apollo 13 did not land, so it was used on Apollo 15, 16 and 17) so that one astronaut could drill two holes for heat-flow probes (planned 3 m deep) and collect a 2-3 m deep core of lunar soil in hollow drill stems about 40 cm long. NASA's lunar sample curator lists the deep drill cores as 236 cm (Apollo 15), 224 cm (Apollo 16) and 305 cm (Apollo 17), and says drilling was shown to be possible down to 3 m. Curiosity's drill makes holes 0.63 inch (1.6 cm) wide: its first sample hole, in the rock 'John Klein' on 8 Feb 2013 (sol 182), was 2.5 inches (6.4 cm) deep - the first time any robot drilled into a rock to collect a sample on Mars - and the 'Windjana' hole (5 May 2014) was about 2.6 inches (6.5 cm) deep.",
+    "card_en": "On the last three Apollo missions, astronauts dug into the Moon with a battery-powered drill that spun and hammered at the same time. Its hollow tubes brought back columns of Moon soil 2 to 3 metres long. The Curiosity rover's drill on Mars makes much smaller holes: 1.6 cm wide and about 6.5 cm deep.",
+    "card_ru": "В последних трёх полётах Apollo астронавты бурили Луну электродрелью с батареей, которая одновременно вращалась и стучала, как перфоратор. Её полые трубки достали столбики лунного грунта длиной 2–3 метра. Бур марсохода Curiosity делает на Марсе отверстия гораздо меньше: шириной 1,6 см и глубиной около 6,5 см.",
+    "values": [
+      { "label": "Apollo drill speed", "value": 280, "unit": "rotations per minute" },
+      { "label": "Apollo drill hammer blows", "value": 2270, "unit": "blows per minute" },
+      { "label": "Apollo missions that carried the drill (used on 15, 16, 17)", "value": "Apollo 13, 15, 16, 17", "unit": "missions" },
+      { "label": "Depth of the deep core (NASA ALSJ)", "value": "2 to 3", "unit": "m" },
+      { "label": "Planned depth of the heat-flow holes (NASA ALSJ)", "value": 3, "unit": "m" },
+      { "label": "Length of each drill stem segment (NASA curator)", "value": 40, "unit": "cm" },
+      { "label": "Deep drill core depth, Apollo 15 / 16 / 17 (NASA curator synopsis table; other NASA documents differ, see notes)", "value": "236 / 224 / 305", "unit": "cm" },
+      { "label": "Curiosity drill hole width", "value": 1.6, "unit": "cm (0.63 inch)" },
+      { "label": "Depth of Curiosity's first sample hole, 'John Klein', 8 Feb 2013 (sol 182)", "value": 6.4, "unit": "cm (2.5 inches)" },
+      { "label": "Depth of the 'Windjana' hole, 5 May 2014 (sol 621)", "value": 6.5, "unit": "cm (about 2.6 inches)" }
+    ],
+    "source_title": "Drilling Tasks ('Working on the Moon' pages on NASA's Apollo Lunar Surface Journal site, last revised 15 Mar 2014)",
+    "source_url": "https://www.nasa.gov/wp-content/uploads/static/history/alsj/WOTM/WOTM-Drilling.html",
+    "quote": "The Apollo Lunar Surface Drill was flown on Apollo 13, 15, 16, and 17 so that one member of each crew could emplace heat flow probes in two holes drilled to 3 meter depth; and collect a 2-3 m deep core of lunar material.",
+    "extra_sources": [
+      {
+        "title": "Same ALSJ page - battery power and speed",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/alsj/WOTM/WOTM-Drilling.html",
+        "quote": "The battery-powered, rotary percussion drill operated speeds (280 rotations per minute, 2270 blows per minute) low enough that cooling of the bit was not required."
+      },
+      {
+        "title": "Synopsis of Deep Lunar Drill Strings (NASA JSC Lunar Sample Compendium, C. Meyer 2007, DRAFT)",
+        "url": "https://curator.jsc.nasa.gov/lunar/lsc/drillcore.pdf",
+        "quote": "The Apollo drilling experience was successful – samples were collected and it was shown that drilling can be done, down to 3 meters. | The drill was also used to emplace heat flow probes (2 each site/~2 m deep). | Sample # ... Apollo 15 Apollo 16 Apollo 17 | depth (cm) ... 236 224 305"
+      },
+      {
+        "title": "NASA Curiosity Rover Collects First Martian Bedrock Sample (NASA/JPL news, 9 Feb 2013)",
+        "url": "https://www.jpl.nasa.gov/news/nasa-curiosity-rover-collects-first-martian-bedrock-sample/",
+        "quote": "The fresh hole, about 0.63 inch (1.6 centimeters) wide and 2.5 inches (6.4 centimeters) deep | The drilling took place on Feb. 8, 2013, or Sol 182 | This is the first time any robot has drilled into a rock to collect a sample on Mars."
+      },
+      {
+        "title": "Sample-Collection Drill Hole on Martian Sandstone Target 'Windjana' (NASA Science, 6 May 2014)",
+        "url": "https://science.nasa.gov/resource/sample-collection-drill-hole-on-martian-sandstone-target-windjana/",
+        "quote": "Each hole is 0.63 inch (1.6 centimeters) in diameter. | The full-depth hole is about 2.6 inches (6.5 centimeters) deep | drilled during the 621st Martian day, or sol, of Curiosity's work on Mars (May 5, 2014)"
+      }
+    ],
+    "notes": "Status 'verified': both draft figures (Apollo cores 2-3 m; Curiosity 1.6 cm wide, about 6.5 cm deep) are confirmed. (1) Core lengths differ between NASA curator documents: the 2007 synopsis table gives 236 cm (Apollo 15), 224 cm (Apollo 16) and 305 cm (Apollo 17); the Apollo 15 core's own curator file is titled '242 cm', and an Apollo 17 report gives a 292 cm string length (both seen only in search results, not opened). Use '2 to 3 m' or 'up to about 3 m'. (2) Heat-flow holes: planned to 3 m; the curator synopsis says the probes went about 2 m deep, the second Apollo 15 probe broke and the Apollo 16 commander tripped over the cable, so do not say all holes reached 3 m. (3) The drill's builder (search results name Martin Marietta and Black & Decker) and its battery type were not on the NASA pages I opened; not used. (4) Curiosity's depth: 6.4 cm (2.5 in) at 'John Klein', about 6.5 cm (2.6 in) at 'Windjana'; NASA's conversions are rounded (2.5 in is 6.35 cm, 2.6 in is 6.6 cm). 'About 6.5 cm' is safe. (5) Quotes were read through a page-to-text tool; the curator PDF was read with a PDF text extractor that flattened the table (the '...' marks my skips between table cells, and the dash in 'successful – samples' was restored). Lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O12",
+    "key": "regolith_bricks",
+    "status": "verified",
+    "claim": "Best-sourced example: on 3 May 2017 ESA reported that bricks had been 3D printed out of simulated moondust using concentrated sunlight, at the solar furnace of the DLR German Aerospace Center in Cologne. As a baseline, 147 curved mirrors focus sunlight into a high-temperature beam that melts the soil grains together; the 3D printer baked successive 0.1 mm layers of moondust at 1000°C, and a 20 x 10 x 3 cm brick took around five hours. The bricks have the equivalent strength of gypsum. The simulant was a commercially available simulated lunar soil based on volcanic material from Earth, and the test ran in normal air (standard atmospheric conditions), not in lunar vacuum. ESA notes that only the 3D printer and a solar concentrator would need to go to the Moon (an earlier method needed a binding salt). NASA is also funding this kind of work: Mason, a NASA Tipping Point investment with Redwire Space, combines a grader, compactor and microwave emitter that removes rocks, compacts loose regolith and melts or sinters it into a solid surface for landing pads, roads and habitat foundations.",
+    "card_en": "Bricks for a Moon base could be made from Moon dust and sunshine. In 2017 a team in Europe used 147 curved mirrors to focus sunlight and bake look-alike Moon dust at 1000 °C, one layer of 0.1 mm at a time. A brick 20 × 10 × 3 cm took about five hours and came out as strong as gypsum (plaster).",
+    "card_ru": "Кирпичи для лунной базы можно сделать из лунной пыли и солнечного света. В 2017 году европейские учёные собрали солнечные лучи с помощью 147 изогнутых зеркал и запекали искусственную лунную пыль при 1000 °C, слой за слоем толщиной по 0,1 мм. Кирпич размером 20 × 10 × 3 см печатался около пяти часов и получился прочным, как гипс.",
+    "values": [
+      { "label": "Date of ESA's article", "value": "2017-05-03", "unit": "date" },
+      { "label": "Brick size", "value": "20 x 10 x 3", "unit": "cm" },
+      { "label": "Time to print one brick", "value": "around 5", "unit": "hours" },
+      { "label": "Layer thickness", "value": 0.1, "unit": "mm" },
+      { "label": "Baking temperature", "value": 1000, "unit": "degrees C" },
+      { "label": "Curved mirrors focusing the sunlight (baseline setup, DLR Cologne)", "value": 147, "unit": "mirrors" },
+      { "label": "Strength of the bricks (ESA)", "value": "equivalent to gypsum", "unit": "comparison" },
+      { "label": "Conditions of the test", "value": "standard atmospheric conditions (not lunar vacuum)", "unit": "conditions" }
+    ],
+    "source_title": "Printing bricks from moondust using the Sun's heat (ESA, Enabling & Support / Space Engineering & Technology, 3 May 2017)",
+    "source_url": "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Printing_bricks_from_moondust_using_the_Sun_s_heat",
+    "quote": "We can complete a 20 x 10 x 3 cm brick for building in around five hours.",
+    "extra_sources": [
+      {
+        "title": "Same ESA article - opening sentence, mirrors, layers and temperature",
+        "url": "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Printing_bricks_from_moondust_using_the_Sun_s_heat",
+        "quote": "Bricks have been 3D printed out of simulated moondust using concentrated sunlight – proving in principle that future lunar | As a baseline, 147 curved mirrors focus sunlight into a high-temperature beam to melt the soil grains together. | to bake successive 0.1 mm layers of moondust at 1000°C. | The solar furnace at the DLR German Aerospace Center facility in Cologne has two working setups."
+      },
+      {
+        "title": "Same ESA article - strength, simulant, conditions, what must go to the Moon",
+        "url": "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Printing_bricks_from_moondust_using_the_Sun_s_heat",
+        "quote": "The resulting bricks have the equivalent strength of gypsum, and are set to undergo detailed mechanical testing. | commercially available simulated lunar soil based on terrestrial volcanic material | standard atmospheric conditions, but RegoLight will probe the printing of bricks in representative lunar conditions. | The new technique calls for only the 3D printer plus solar concentrator to be conveyed to the Moon. | required a binding salt"
+      },
+      {
+        "title": "Lunar Surface Technology (NASA, page last updated 5 Nov 2026) - Mason, microwave sintering of regolith",
+        "url": "https://www.nasa.gov/lunar-surface-technology/",
+        "quote": "Mason, a NASA Tipping Point investment with Redwire Space, | is regolith manufacturing technology designed to develop a grader, compactor, and microwave emitter into a scalable platform | that removes rocks, compacts loose regolith, and melts or sinters regolith into a solid surface."
+      }
+    ],
+    "notes": "Status 'verified': ESA's 2017 solar-sintering test is real and is the best-sourced fact; NASA has no page on it, so ESA is the primary source here. (1) Date: ESA's article is dated 3 May 2017; ESA's related video page (from March 2017) returned 'not found' to my tool. (2) Limits to keep on the card: the bricks were printed in normal air, not in lunar vacuum, from an Earth-made simulant; ESA said the follow-up RegoLight project would test lunar conditions (I did not check its results). 'As strong as gypsum' is ESA's comparison; ESA said detailed mechanical tests were still to come. (3) Wording: ESA says the mirrors 'melt the soil grains together' and the printer 'bakes' layers; 'sintering' (heating powder until the grains fuse) is the general technical word, not ESA's word on this page. A xenon-lamp solar simulator was also used when the weather was bad (search result summary; the fetched article mentions 'two working setups'). (4) NASA work: Mason (NASA Tipping Point with Redwire Space) uses microwaves to 'melt or sinter' regolith into a solid surface for landing pads, roads and habitat foundations; this is a technology plan, I found no test results. Regolith 'concrete' was not checked. (5) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  },
+  {
+    "id": "O13",
+    "key": "moon_metal",
+    "status": "verified",
+    "claim": "Lunar regolith is made of the same major rock-forming elements as Earth's rocks: oxygen, silicon, aluminum, calcium, magnesium and iron. In the highlands, plagioclase feldspar accumulated in a rock called anorthosite; a 1979 NASA JSC assessment says the plagioclase mineral anorthite, containing 19% aluminum and 20% silicon, can be concentrated from some highland soils where it makes up to 60%. The mare basalts contain ilmenite, an iron-titanium oxide; ilmenite containing 32% titanium and 37% iron can be concentrated from some mare soils, where it makes up to 10%. Impacts left very-fine-grained droplets or spheres of iron metal (Fe0) in the glass of lunar soil, typically 4-33 nanometres in size ('nanophase iron'); micrometeorite impacts also make thin glassy rims on grains that contain nanophase iron. NASA projects aim to get metals and oxygen from regolith (Molten Regolith Electrolysis; Blue Alchemist, which aims to produce silicon solar cells, aluminum wires, oxygen, iron and slag), and carbothermal oxygen production leaves a slag that contains the reduced metals. On Mars, NASA says iron minerals in the dirt oxidize, or rust, which makes the surface look red.",
+    "card_en": "Moon soil is made of the same main elements as rocks on Earth, including the metals aluminium and iron. The highlands are rich in a mineral full of aluminium, the dark lava plains contain ilmenite, made of iron, titanium and oxygen, and tiny meteorite hits have even left specks of iron metal, far too small to see. Mars looks red because iron in its dust has rusted.",
+    "card_ru": "Лунный грунт состоит из тех же главных элементов, что и камни на Земле, в том числе из металлов — алюминия и железа. На лунных возвышенностях много минерала, богатого алюминием, в тёмных лавовых равнинах есть ильменит — минерал из железа, титана и кислорода, а крошечные метеориты при ударах даже оставили в пыли частички металлического железа, слишком маленькие, чтобы их разглядеть. Марс выглядит красным, потому что железо в его пыли заржавело.",
+    "values": [
+      { "label": "Major elements of lunar regolith (NASA 2024 simulant guide)", "value": "oxygen, silicon, aluminum, calcium, magnesium, iron", "unit": "elements" },
+      { "label": "Aluminum in anorthite concentrated from highland soils (NASA JSC, 1979)", "value": 19, "unit": "percent" },
+      { "label": "Share of anorthite in some highland soils", "value": "up to 60", "unit": "percent" },
+      { "label": "Titanium in ilmenite concentrated from mare soils", "value": 32, "unit": "percent" },
+      { "label": "Iron in that ilmenite", "value": 37, "unit": "percent" },
+      { "label": "Share of ilmenite in some mare soils", "value": "up to 10", "unit": "percent" },
+      { "label": "Size of iron-metal droplets in lunar soil glass ('nanophase iron')", "value": "4-33", "unit": "nm (billionths of a metre)" }
+    ],
+    "source_title": "Lunar Regolith Simulant User's Guide, Revision A (NASA/TM-20240011783; Slabic, Gruener, Kovtun, Rickman et al.; NASA JSC/MSFC, October 2024)",
+    "source_url": "https://ntrs.nasa.gov/api/citations/20240011783/downloads/Lunar_Regolith_Simulant_Users_Guide_Rev_A_28OCT.pdf",
+    "quote": "Though the lunar regolith is made up of the same major rock forming chemical elements as the Earth (i.e., oxygen, silicon, aluminum, calcium, magnesium, and iron)",
+    "extra_sources": [
+      {
+        "title": "Same NASA guide (Oct 2024) - anorthosite and ilmenite",
+        "url": "https://ntrs.nasa.gov/api/citations/20240011783/downloads/Lunar_Regolith_Simulant_Users_Guide_Rev_A_28OCT.pdf",
+        "quote": "The plagioclase feldspar at the surface primarily accumulated in a rock known as anorthosite. | an iron-titanium oxide mineral known as ilmenite is also an important secondary mineral in the lavas."
+      },
+      {
+        "title": "Same NASA guide - tiny iron metal made by impacts",
+        "url": "https://ntrs.nasa.gov/api/citations/20240011783/downloads/Lunar_Regolith_Simulant_Users_Guide_Rev_A_28OCT.pdf",
+        "quote": "the presence of very-fine-grained, single-domain Fe0 metal droplets or spheres in the glass (Heiken et al., 1991). These tiny blebs are typically 4-33 nm in size (hence the common term \"nanophase Fe\") | Micrometeorite impacts have also been found to create patinas, or thin glassy rims, on individual grains that include nanophase iron, even on plagioclase grains (Keller et al., 2000)."
+      },
+      {
+        "title": "A geologic assessment of potential lunar ores (D. S. McKay and R. J. Williams, NASA JSC, 1979; NTRS 19790024068, abstract)",
+        "url": "https://ntrs.nasa.gov/citations/19790024068",
+        "quote": "Anorthie containing 19 percent aluminum and 20 percent silicon can be concentrated from some highland soils where it is present in amounts up to 60 percent. | Ilmenite containing 32 percent titanium and 37 percent iron can be concentrated from some mare soils where it is present in amounts up to 10 percent. | Although bulk lunar soil is not a suitable feedstock for extracting metals"
+      },
+      {
+        "title": "Lunar Surface Technology (NASA, page last updated 5 Nov 2026) - getting metals from regolith",
+        "url": "https://www.nasa.gov/lunar-surface-technology/",
+        "quote": "NASA's MRE is a technology developed to extract oxygen and metals from minerals in lunar regolith. | producing silicon solar cells, aluminum wires, oxygen, iron, and slag in lunar environmental conditions."
+      },
+      {
+        "title": "Environmental Testing of a Fully Automated Carbothermal Reactor for Lunar Oxygen Production (ICES-2025-200; NTRS 20250004151) - metals left in the slag",
+        "url": "https://ntrs.nasa.gov/api/citations/20250004151/downloads/Carbothermal_Paper_Final.pdf",
+        "quote": "resulting in the production of oxygen as carbon monoxide and carbon dioxide, and a slag byproduct that contains the reduced metals."
+      },
+      {
+        "title": "Mars: Facts (NASA Science, page last updated 10 Jul 2026) - why Mars is red",
+        "url": "https://science.nasa.gov/mars/facts/",
+        "quote": "iron minerals in the Martian dirt oxidize, or rust, causing the surface to look red. | This dust gets kicked up into the atmosphere and from a distance makes the planet appear mostly red. | At the surface, we see colors such as brown, gold, and tan."
+      }
+    ],
+    "notes": "Status 'verified', with one clarification. (1) The draft's 'tiny native iron beads from meteorite impacts' is right in kind, but NASA's guide says these droplets are 'typically 4-33 nm in size', i.e. billionths of a metre: far too small to see or pick up. Write 'specks of iron metal too small to see', and do not show the player collecting iron beads. (2) Aluminum: the 1979 NASA abstract names the plagioclase mineral anorthite (the NTRS abstract misspells it 'Anorthie'); NASA's 2024 guide says highland plagioclase 'accumulated in a rock known as anorthosite'. The card says 'a mineral full of aluminium' to avoid the anorthite/anorthosite confusion. (3) The same 1979 abstract warns that 'bulk lunar soil is not a suitable feedstock for extracting metals' unless minerals such as anorthite and ilmenite are separated first; NASA's MRE and Blue Alchemist pages describe plans, not working factories. (4) 'Dark lava plains' (the maria) and 'highlands' are standard terms; NASA's guide calls the mare rocks basalts that erupted as lava. (5) Mars: NASA's wording is 'iron minerals in the Martian dirt oxidize, or rust'. A 2025 Nature Communications study (Valantinas et al.) argues the red dust's iron oxide is mostly water-bearing ferrihydrite rather than hematite; I saw it only in search results and did not use it, so the card keeps NASA's 'rust'. (6) Card spelling 'aluminium' follows the game's British spelling; NASA sources say 'aluminum'. (7) The NASA guide was read with a PDF text extractor; other pages through a page-to-text tool. Lines joined with ' | ' are separate passages from the same source; typographic characters may differ from the original."
+  }
+]

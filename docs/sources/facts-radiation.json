@@ -1,0 +1,1262 @@
+[
+  {
+    "id": "R1",
+    "status": "verified",
+    "claim": "Curiosity's RAD instrument measured an average dose-equivalent rate of about 0.64-0.67 mSv per day on the Mars surface (Gale Crater, August 2012 to June 2013) and about 1.8 mSv per day inside the spacecraft during the 2011-2012 cruise to Mars.",
+    "values": [
+      {
+        "label": "Mars surface, average dose equivalent rate, Aug 2012-Jun 2013 (NASA/JPL release)",
+        "value": 0.67,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Mars surface, GCR dose equivalent rate (Hassler et al. 2014, Science)",
+        "value": 0.64,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cruise to Mars, average GCR dose equivalent rate (NASA/JPL release)",
+        "value": 1.8,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cruise to Mars, GCR dose equivalent rate (Zeitlin et al. 2013, Science)",
+        "value": 1.84,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cruise to Mars, revised GCR dose equivalent rate (Zeitlin et al. 2019 reanalysis, as quoted by Guo et al. 2021)",
+        "value": 1.58,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Shortest round trip, cruise only, dose equivalent (Zeitlin et al. 2013 abstract: 0.66 +/- 0.12)",
+        "value": 0.66,
+        "unit": "Sv"
+      },
+      {
+        "label": "Projected total for a round-trip human Mars mission at the same point of the solar cycle (NASA/JPL: 'on the order of')",
+        "value": 1000,
+        "unit": "mSv"
+      }
+    ],
+    "source_title": "NASA Curiosity: First Mars Age Measurement and Human Exploration Help (NASA/JPL news release, Dec. 9, 2013)",
+    "source_url": "https://www.jpl.nasa.gov/news/nasa-curiosity-first-mars-age-measurement-and-human-exploration-help/",
+    "quote": "Cosmic rays from outside our solar system and energetic particles from the sun bombarded the surface at Gale Crater with an average of 0.67 millisieverts per day from August 2012 to June 2013",
+    "extra_sources": [
+      {
+        "title": "Data From NASA Rover's Voyage to Mars Aids Planning (NASA/JPL release, May 30, 2013) - cruise value 1.8 mSv/day",
+        "url": "https://www.jpl.nasa.gov/news/data-from-nasa-rovers-voyage-to-mars-aids-planning/"
+      },
+      {
+        "title": "Hassler et al. 2014, Mars' Surface Radiation Environment Measured with the Mars Science Laboratory's Curiosity Rover, Science 343:1244797",
+        "url": "https://doi.org/10.1126/science.1244797"
+      },
+      {
+        "title": "Zeitlin et al. 2013, Measurements of Energetic Particle Radiation in Transit to Mars on the Mars Science Laboratory, Science 340:1080",
+        "url": "https://doi.org/10.1126/science.1235989"
+      },
+      {
+        "title": "Guo et al. 2021, Radiation environment for future human exploration on the surface of Mars (open access review; revised cruise value)",
+        "url": "https://link.springer.com/article/10.1007/s00159-021-00136-5"
+      },
+      {
+        "title": "Open-access paper repeating the published 1.84 and 0.64 mSv/day values (npj Microgravity 2023)",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9883222/"
+      },
+      {
+        "title": "NASA Photojournal PIA17601, Radiation Exposure Comparisons with Mars Trip Calculation",
+        "url": "https://science.nasa.gov/photojournal/radiation-exposure-comparisons-with-mars-trip-calculation/"
+      },
+      {
+        "title": "SwRI press release, Dec. 9, 2013 (same 0.67 and 1.8 mSv/day figures, quoted from Don Hassler)",
+        "url": "https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars"
+      }
+    ],
+    "notes": "Draft was right. Two versions of the surface number exist: NASA/JPL and SwRI press material say 0.67 mSv/day; the Science paper (Hassler et al. 2014) reports 0.64 +/- 0.12 mSv/day. For the cruise NASA says 1.8 mSv/day ('The RAD data showed the Curiosity rover was exposed to an average of 1.8 milliSieverts of GCR per day on its journey to Mars'); the paper reports 1.84 +/- 0.33. Guo et al. 2021 state the cruise value was later revised down about 15% to 1.58 +/- 0.22 mSv/day (Zeitlin et al. 2019 reanalysis). The two Science papers are paywalled: I read only their abstracts; the central values 0.64 and 1.84 were confirmed in an open-access paper that cites them, the +/- uncertainties come from secondary citations. Safest wording for the game: 'about 0.67 mSv a day on Mars, about 1.8 mSv a day on the way there (NASA/JPL, 2013)'. PIA17601 breaks the ~1 sievert mission into 180 days out, 500 days on the surface and 180 days back, with roughly equal contributions from the three stages."
+  },
+  {
+    "id": "R2",
+    "status": "verified",
+    "claim": "RAD's absorbed dose rate on the Mars surface was about 0.2 mGy per day around solar maximum (late 2012 to early 2015) and rose to about 0.32 mGy per day in the deep solar minimum of 2019-2020, so the cosmic-ray dose is higher at solar minimum.",
+    "values": [
+      {
+        "label": "Surface absorbed dose rate, late 2012 to early 2015 (around the weak Solar Cycle 24 maximum)",
+        "value": 0.2,
+        "unit": "mGy/day"
+      },
+      {
+        "label": "Surface GCR absorbed dose rate, Aug 2012-Jun 2013 (NASA Photojournal PIA17600: 'about 210 micrograys per day')",
+        "value": 0.21,
+        "unit": "mGy/day"
+      },
+      {
+        "label": "Surface absorbed dose rate, deep solar minimum 2019-2020",
+        "value": 0.32,
+        "unit": "mGy/day"
+      },
+      {
+        "label": "Long-term increase of surface GCR radiation from 2012 to the 2019-2020 solar minimum",
+        "value": 50,
+        "unit": "percent"
+      },
+      {
+        "label": "Modelled surface dose equivalent rate across solar activity levels, low end",
+        "value": 0.25,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Modelled surface dose equivalent rate across solar activity levels, high end",
+        "value": 0.95,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cruise-phase GCR absorbed dose rate in tissue-equivalent plastic (Zeitlin et al. 2019 reanalysis)",
+        "value": 0.461,
+        "unit": "mGy/day"
+      }
+    ],
+    "source_title": "Guo et al. 2021, Radiation environment for future human exploration on the surface of Mars: the current understanding based on MSL/RAD dose measurements, Astron Astrophys Rev 29, 8 (open access)",
+    "source_url": "https://link.springer.com/article/10.1007/s00159-021-00136-5",
+    "quote": "The E dose rate was around 200 µGy/day from late 2012 until early 2015 and slowly and steadily increased [...] until it flattened at around 320 µGy/day during the deep solar minimum of 2019–2020.",
+    "extra_sources": [
+      {
+        "title": "NASA Photojournal PIA17600, Radiation Measurements on Mars (Dec. 9, 2013)",
+        "url": "https://science.nasa.gov/photojournal/radiation-measurements-on-mars/"
+      },
+      {
+        "title": "How NASA Will Protect Astronauts From Space Radiation at the Moon (NASA, Aug. 7, 2019) - why cosmic rays are stronger at solar minimum",
+        "url": "https://science.nasa.gov/science-research/heliophysics/how-nasa-will-protect-astronauts-from-space-radiation-at-the-moon/"
+      }
+    ],
+    "notes": "Draft range 0.2-0.3 mGy/day is right; best numbers are 0.20-0.21 mGy/day near solar maximum and about 0.32 mGy/day at solar minimum (the same paper also says 'average dose rate of ~300 µGy/day during solar minimum of Cycle 24'). The abstract says: 'Over the long term, the Mars's surface GCR radiation increased by about 50% due to the declining solar activity and the weakening heliospheric magnetic field.' These are absorbed doses (gray) measured in RAD's plastic 'E' detector; they are not sieverts, so do not add them to the mSv numbers in R1. The Cycle 24 maximum was unusually weak, so a stronger solar maximum would give a lower dose than 0.2 mGy/day."
+  },
+  {
+    "id": "R3",
+    "status": "verified",
+    "claim": "A solar storm on 20 May 2024 (flare later estimated at X12) gave Curiosity's RAD its biggest radiation surge since landing: 8,100 micrograys, which NASA compares to 30 chest X-rays; Curiosity's navigation cameras showed white streaks and specks ('snow') and MAVEN saw auroras over Mars.",
+    "values": [
+      {
+        "label": "Radiation dose an astronaut next to Curiosity would have received in the 20 May 2024 event",
+        "value": 8100,
+        "unit": "micrograys"
+      },
+      {
+        "label": "NASA's comparison for that dose",
+        "value": 30,
+        "unit": "chest X-rays"
+      },
+      {
+        "label": "Estimated class of the 20 May 2024 flare (from Solar Orbiter data)",
+        "value": 12,
+        "unit": "X-class (X12)"
+      },
+      {
+        "label": "Years since Curiosity's landing at the time of the release",
+        "value": 12,
+        "unit": "years"
+      }
+    ],
+    "source_title": "NASA Watches Mars Light Up During Epic Solar Storm (NASA/JPL news release 2024-080, June 10, 2024)",
+    "source_url": "https://www.jpl.nasa.gov/news/nasa-watches-mars-light-up-during-epic-solar-storm",
+    "quote": "If astronauts had been standing next to NASA’s Curiosity Mars rover at the time, they would have received a radiation dose of 8,100 micrograys — equivalent to 30 chest X-rays.",
+    "extra_sources": [
+      {
+        "title": "Same article on nasa.gov",
+        "url": "https://www.nasa.gov/missions/maven/nasa-watches-mars-light-up-during-epic-solar-storm/"
+      }
+    ],
+    "notes": "All parts verified in the same release. Biggest surge: 'While not deadly, it was the biggest surge measured by Curiosity's Radiation Assessment Detector, or RAD, since the rover landed 12 years ago.' Cameras: 'black-and-white images from Curiosity's navigation cameras danced with \"snow\" — white streaks and specks caused by charged particles hitting the cameras.' MAVEN: it 'captured another effect of the recent solar activity: glowing auroras over the planet', and 'This was the largest solar energetic particle event that MAVEN has ever seen'. The event date is 20 May 2024; the release date is 10 June 2024. 8,100 micrograys = 8.1 mGy (absorbed dose). Warning: NASA's '30 chest X-rays' implies about 0.27 mGy per X-ray, which does not match the 0.1 mSv per chest X-ray in R8 - quote NASA's sentence as written instead of recalculating it."
+  },
+  {
+    "id": "R4",
+    "status": "verified",
+    "claim": "The solar event of 11 September 2017 produced radiation levels on the Mars surface more than double any that Curiosity's RAD had measured before, and a global aurora more than 25 times brighter than any MAVEN had previously seen.",
+    "values": [
+      {
+        "label": "Surface radiation level compared with any earlier RAD measurement since 2012 ('more than double')",
+        "value": 2,
+        "unit": "times"
+      },
+      {
+        "label": "Aurora brightness compared with any previously seen by MAVEN ('more than')",
+        "value": 25,
+        "unit": "times"
+      },
+      {
+        "label": "Duration of the high RAD readings ('more than two days')",
+        "value": 2,
+        "unit": "days"
+      }
+    ],
+    "source_title": "Large Solar Storm Sparks Global Aurora and Doubles Radiation Levels on the Martian Surface (NASA/JPL news release, Sept. 29, 2017)",
+    "source_url": "https://www.jpl.nasa.gov/news/large-solar-storm-sparks-global-aurora-and-doubles-radiation-levels-on-the-martian-surface/",
+    "quote": "The solar event on Sept. 11, 2017 sparked a global aurora at Mars more than 25 times brighter than any previously seen by the MAVEN orbiter",
+    "extra_sources": [
+      {
+        "title": "Guo et al. 2021 review (calls the 10 Sept 2017 event the first solar particle event seen at the surface of two planets)",
+        "url": "https://link.springer.com/article/10.1007/s00159-021-00136-5"
+      }
+    ],
+    "notes": "Draft was right; NASA's exact wording is 'more than double' and 'more than 25 times'. Second sentence of the release: 'It produced radiation levels on the surface more than double any previously measured by the Curiosity rover's Radiation Assessment Detector, or RAD, since that mission's landing in 2012. The high readings lasted more than two days.' MAVEN's ultraviolet images of the aurora are from 12 and 13 September 2017."
+  },
+  {
+    "id": "R5",
+    "status": "corrected",
+    "claim": "The solar eruption of 28 October 2021 (an X1 flare) was the first solar particle event measured at the same time on the surfaces of Earth (ground neutron monitors), the Moon (China's Chang'E-4 lander) and Mars (NASA's Curiosity rover); NASA's Lunar Reconnaissance Orbiter measured it from lunar orbit, not from the surface.",
+    "values": [
+      {
+        "label": "Flare class on 28 Oct 2021 (peak 15:35 UTC, active region 12887, NASA DONKI record)",
+        "value": 1.0,
+        "unit": "X-class (X1.0)"
+      },
+      {
+        "label": "Dose in lunar orbit measured by NASA's Lunar Reconnaissance Orbiter",
+        "value": 31,
+        "unit": "mGy"
+      },
+      {
+        "label": "Dose in Mars orbit measured by ESA's ExoMars Trace Gas Orbiter",
+        "value": 9,
+        "unit": "mGy"
+      },
+      {
+        "label": "Dose on the Mars surface measured by Curiosity",
+        "value": 0.3,
+        "unit": "mGy"
+      },
+      {
+        "label": "Number of this ground level enhancement since records began in the 1940s (GLE73)",
+        "value": 73,
+        "unit": "count"
+      },
+      {
+        "label": "Radiation dose above which radiation sickness may begin (ESA article)",
+        "value": 700,
+        "unit": "mGy"
+      }
+    ],
+    "source_title": "Giant solar eruption felt on Earth, Moon and Mars (ESA, 2 August 2023)",
+    "source_url": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/Exploration/ExoMars/Giant_solar_eruption_felt_on_Earth_Moon_and_Mars",
+    "quote": "This marks the first time that a solar event was measured simultaneously on the surfaces of Earth, the Moon and Mars",
+    "extra_sources": [
+      {
+        "title": "Guo et al. 2023, The First Ground Level Enhancement Seen on Three Planetary Surfaces: Earth, Moon, and Mars, Geophysical Research Letters 50(15)",
+        "url": "https://doi.org/10.1029/2023GL103069"
+      },
+      {
+        "title": "NASA Solar Cycle 25 blog, Sun Releases Significant Solar Flare (Oct. 28, 2021): 'This flare is classified as an X1-class flare.'",
+        "url": "https://science.nasa.gov/blogs/solar-cycle-25/2021/10/28/sun-releases-significant-solar-flare/"
+      },
+      {
+        "title": "NASA DONKI record of the X1.0 flare",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/18096/-1"
+      }
+    ],
+    "notes": "What was wrong in the draft: the Moon SURFACE measurement came from the Chang'E-4 lander (its LND instrument), not from LRO. LRO was in lunar ORBIT; ESA writes 'the dose in lunar orbit, measured by NASA's Lunar Reconnaissance Orbiter, was only 31 milligray' and does not name the CRaTER instrument. ESA lists the fleet as ESA's ExoMars Trace Gas Orbiter, NASA's Curiosity Mars rover, the CNSA Chang'e-4 Moon lander, NASA's Lunar Reconnaissance Orbiter and DLR's Eu:CROPIS Earth orbiter. ESA's point for the game: Mars's thin atmosphere cut the dose 30 times (9 mGy in orbit vs 0.3 mGy on the ground). I found no NASA web page about this result; the primary sources are the ESA article and the GRL paper."
+  },
+  {
+    "id": "R6",
+    "status": "verified",
+    "claim": "NASA's career radiation limit is an effective dose of less than 600 mSv for every astronaut, whatever their age or sex (NASA-STD-3001 Volume 1 Revision C, requirement V1 4030); the short-term limits include 250 mGy-Eq to the blood-forming organs in any 30 days.",
+    "values": [
+      {
+        "label": "Career effective dose limit [V1 4030]",
+        "value": 600,
+        "unit": "mSv"
+      },
+      {
+        "label": "Blood-forming organs, 30-day limit (Table 4.8-1)",
+        "value": 250,
+        "unit": "mGy-Eq"
+      },
+      {
+        "label": "Blood-forming organs, 1-year limit (Table 4.8-1)",
+        "value": 500,
+        "unit": "mGy-Eq"
+      },
+      {
+        "label": "Skin, 30-day limit (Table 4.8-1)",
+        "value": 1500,
+        "unit": "mGy-Eq"
+      },
+      {
+        "label": "Lens of the eye, 30-day limit (Table 4.8-1)",
+        "value": 1000,
+        "unit": "mGy-Eq"
+      },
+      {
+        "label": "Design limit for the reference solar particle event (sum of the October 1989 events) [V1 4031]",
+        "value": 250,
+        "unit": "mSv"
+      },
+      {
+        "label": "Design limit for cosmic-ray dose rate in habitats used more than 60 days, free space [V1 4033]",
+        "value": 1.3,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Design limit for cosmic-ray dose rate in habitats used more than 60 days, planetary surface [V1 4033]",
+        "value": 0.9,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Limit for extra dose from nuclear technologies (reactors, radioisotope power) [V1 4032]",
+        "value": 20,
+        "unit": "mSv per mission year"
+      },
+      {
+        "label": "Mean risk of cancer death above baseline that the 600 mSv limit is meant to stay under",
+        "value": 3,
+        "unit": "percent"
+      }
+    ],
+    "source_title": "NASA-STD-3001, NASA Spaceflight Human-System Standard, Volume 1: Crew Health, Revision C (approved 2023-09-15)",
+    "source_url": "https://standards.nasa.gov/sites/default/files/standards/NASA/C//nasa-std-3001-vol-1-rev-c-signature.pdf",
+    "quote": "An individual crewmember's total career effective radiation dose due to spaceflight radiation exposure shall be less than 600 mSv. This limit is universal for all ages and sexes.",
+    "extra_sources": [
+      {
+        "title": "NASA OCHMO Technical Brief OCHMO-TB-020, Design for Ionizing Radiation Protection",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/03/radiation-protection-technical-brief-ochmo.pdf"
+      },
+      {
+        "title": "NASA Lifetime Surveillance of Astronaut Health Newsletter, October 2023 (space radiation issue)",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/10/lsah-newsletter-2023-vol28-issue2.pdf"
+      }
+    ],
+    "notes": "Draft was right. The 600 mSv limit is in Revision B (cited by NASA's 2022 technical brief) and unchanged in Revision C (2023), the version read here. There is no single '30-day limit in mSv': the 30-day and 1-year limits are per organ, in milligray-equivalent (Table 4.8-1, 'Dose Limits for Career/Non-Cancer Effects'). The solar-storm rule [V1 4031] is a design requirement: 'The program shall protect crewmembers from exposure to the design reference solar particle event (SPE) environment proton energy spectrum (sum of the October 1989 events) to less than an effective dose of 250 mSv.' The OCHMO brief paraphrases it as '250 mSv per event'."
+  },
+  {
+    "id": "R7",
+    "status": "corrected",
+    "claim": "ISS crews receive roughly 0.2-0.5 mSv of effective dose per day (NASA often says 'on the order of 0.5 mSv/day'), which adds up to about 40-90 mSv in a typical six-month stay; an older NASA educator guide gives 80 mSv (solar maximum) to 160 mSv (solar minimum).",
+    "values": [
+      {
+        "label": "ISS effective dose rate, low end (NASA JSC paper, 2025)",
+        "value": 0.2,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "ISS effective dose rate, high end (NASA JSC paper, 2025)",
+        "value": 0.5,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "ISS dose rate 'on the order of' (NASA LSAH Newsletter, Oct 2023)",
+        "value": 0.5,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Typical six-month ISS mission, low end (NASA JSC paper, 2025)",
+        "value": 40,
+        "unit": "mSv"
+      },
+      {
+        "label": "Typical six-month ISS mission, high end (NASA JSC paper, 2025)",
+        "value": 90,
+        "unit": "mSv"
+      },
+      {
+        "label": "Six-month ISS stay at solar maximum (NASA educator guide, 2008)",
+        "value": 80,
+        "unit": "mSv"
+      },
+      {
+        "label": "Six-month ISS stay at solar minimum (NASA educator guide, 2008)",
+        "value": 160,
+        "unit": "mSv"
+      },
+      {
+        "label": "Average skin dose rate on the ISS (NASA LSAH Newsletter, Oct 2023)",
+        "value": 0.2,
+        "unit": "mGy/day"
+      },
+      {
+        "label": "Dose equivalent measured inside the ISS in early 2019 by the DOSIS 3D instruments (Zhang et al. 2020)",
+        "value": 731,
+        "unit": "microsieverts/day"
+      },
+      {
+        "label": "Highest career totals for U.S. astronauts, low end of NASA's estimate",
+        "value": 240,
+        "unit": "mSv"
+      },
+      {
+        "label": "Highest career totals for U.S. astronauts, high end of NASA's estimate",
+        "value": 290,
+        "unit": "mSv"
+      }
+    ],
+    "source_title": "Simonsen, Zawaski and Weeks (NASA Johnson Space Center), Moon 2 Mars Space Radiation Protection 'Buying Down' Risks to Crew, AIAA ASCEND conference paper, NTRS document 20250006168",
+    "source_url": "https://ntrs.nasa.gov/citations/20250006168",
+    "quote": "On the International Space Station (ISS), effective doses accumulate at a rate of approximately 0.2 to 0.5 mSv/day, averaging between ~40 and 90 mSv during a typical six-month mission",
+    "extra_sources": [
+      {
+        "title": "NASA Lifetime Surveillance of Astronaut Health Newsletter, October 2023: 'astronauts on the International Space Station (ISS) receive doses in the order of 0.5 mSv/day'",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/10/lsah-newsletter-2023-vol28-issue2.pdf"
+      },
+      {
+        "title": "NASA educator guide, Space Faring: The Radiation Challenge (EP-2008-08-116-MSFC) - the 80 and 160 mSv figures",
+        "url": "https://www.nasa.gov/wp-content/uploads/2017/04/radiationchallenge.pdf"
+      },
+      {
+        "title": "Zhang et al. 2020, Science Advances (ISS 731 microsieverts/day measured in the same period as Chang'E-4)",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7518862/"
+      }
+    ],
+    "notes": "What changed: I could not find the draft range '0.3-0.8 mSv/day' on any NASA page, so it is replaced by NASA's own wording (0.2-0.5 mSv/day; 'on the order of 0.5 mSv/day'). The '80-160 mSv per six months' pair is real NASA text but comes from a 2008 educator guide ('an average of 80 mSv for a six-month stay at solar maximum ... and an average of 160 mSv for a six-month stay at solar minimum'); NASA's current estimate is lower, about 40-90 mSv. Pick one pair and cite it; do not mix them. The 731 microsieverts/day value is a measured dose equivalent, a different quantity from the effective dose NASA uses for limits."
+  },
+  {
+    "id": "R8",
+    "status": "verified",
+    "claim": "A chest X-ray is about 0.1 mSv (NASA: 1 mSv is about 10 chest X-rays), and natural background radiation averages about 2.4 mSv per year worldwide and about 3 mSv per year in the United States.",
+    "values": [
+      {
+        "label": "One adult chest X-ray (RadiologyInfo.org, ACR/RSNA)",
+        "value": 0.1,
+        "unit": "mSv"
+      },
+      {
+        "label": "Chest X-rays equivalent to 1 mSv (NASA Human Research Program page)",
+        "value": 10,
+        "unit": "chest X-rays per mSv"
+      },
+      {
+        "label": "Average natural background radiation on Earth (NASA LSAH Newsletter citing UNSCEAR 2008)",
+        "value": 2.4,
+        "unit": "mSv/year"
+      },
+      {
+        "label": "Average natural background radiation in the United States (RadiologyInfo.org)",
+        "value": 3,
+        "unit": "mSv/year"
+      },
+      {
+        "label": "Average total dose per person in the United States, natural plus medical and other sources (EPA, NCRP Report 160)",
+        "value": 6.2,
+        "unit": "mSv/year"
+      },
+      {
+        "label": "Single chest X-ray film (PA view) in the FDA table - a lower value some NASA pages also use",
+        "value": 0.02,
+        "unit": "mSv"
+      },
+      {
+        "label": "Natural background equal to one chest X-ray (RadiologyInfo.org)",
+        "value": 10,
+        "unit": "days"
+      }
+    ],
+    "source_title": "Why Space Radiation Matters (NASA Human Research Program)",
+    "source_url": "https://www.nasa.gov/missions/analog-field-testing/why-space-radiation-matters/",
+    "quote": "1 mSv of ionizing radiation is equivalent to about 10 chest x-rays.",
+    "extra_sources": [
+      {
+        "title": "NASA Lifetime Surveillance of Astronaut Health Newsletter, October 2023: 'the average radiation background on Earth is about 2.4 mSv/year'",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/10/lsah-newsletter-2023-vol28-issue2.pdf"
+      },
+      {
+        "title": "RadiologyInfo.org (ACR/RSNA), Radiation Dose from X-Ray and CT Exams: chest X-ray 0.1 mSv; about 3 mSv per year natural background in the U.S.",
+        "url": "https://www.radiologyinfo.org/en/info/safety-xray"
+      },
+      {
+        "title": "U.S. EPA, Radiation Sources and Doses: average annual dose per person in the U.S. is 6.2 millisieverts",
+        "url": "https://www.epa.gov/radiation/radiation-sources-and-doses"
+      },
+      {
+        "title": "U.S. FDA, What are the Radiation Risks from CT? (Table 1: chest x-ray, PA film, 0.02 mSv)",
+        "url": "https://www.fda.gov/radiation-emitting-products/medical-x-ray-imaging/what-are-radiation-risks-ct"
+      }
+    ],
+    "notes": "Draft was right, with one trap: NASA is not consistent about chest X-rays. This NASA page says 1 mSv is about 10 chest X-rays (0.1 mSv each); the JPL Mars release of Dec. 2013 says 'a typical chest X-ray is about 0.02 millisievert'; a 2008 NASA educator guide says 1 mSv is about three chest X-rays; the 2024 JPL release equates 8,100 micrograys with 30 chest X-rays. Use 0.1 mSv everywhere in the game and cite this page plus RadiologyInfo.org, and quote NASA's own comparisons only verbatim. The 6.2 mSv/year U.S. figure includes medical exposure; natural background alone is about half of it. NRC and CDC pages could not be opened by my client (HTTP 403), so they are not cited."
+  },
+  {
+    "id": "R9",
+    "status": "verified",
+    "claim": "China's Chang'E-4 lander instrument LND measured an average dose equivalent of 1,369 microsieverts per day on the Moon's surface in early 2019 - about 2.6 times the cosmic-ray dose inside the ISS at the same time; NASA's own planning figure for the lunar surface is about 0.5 mSv of effective dose per day.",
+    "values": [
+      {
+        "label": "Chang'E-4 LND average dose equivalent on the lunar surface (2019, solar minimum)",
+        "value": 1369,
+        "unit": "microsieverts/day"
+      },
+      {
+        "label": "ISS dose equivalent in the same period (DOSIS 3D), all sources",
+        "value": 731,
+        "unit": "microsieverts/day"
+      },
+      {
+        "label": "ISS dose equivalent in the same period, galactic cosmic rays only",
+        "value": 523,
+        "unit": "microsieverts/day"
+      },
+      {
+        "label": "Moon surface compared with the ISS cosmic-ray-only dose (1369 / 523)",
+        "value": 2.6,
+        "unit": "times"
+      },
+      {
+        "label": "LND average total absorbed dose rate in silicon",
+        "value": 13.2,
+        "unit": "microgray/hour"
+      },
+      {
+        "label": "NASA LRO CRaTER dose rate on 2 Feb 2019, converted to water and to the lunar surface (reported in the same paper)",
+        "value": 13.29,
+        "unit": "microgray/hour"
+      },
+      {
+        "label": "NASA projection for the lunar surface ('on the order of', LSAH Newsletter Oct 2023)",
+        "value": 0.5,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "NASA Langley design value: cosmic-ray effective dose on the lunar surface with no shielding (range 0.3-0.7 over the solar cycle)",
+        "value": 0.51,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "NASA design limit for surface habitats used more than 60 days (NASA-STD-3001 [V1 4033])",
+        "value": 0.9,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "NASA projected skin dose rate for a 30-day Artemis III lunar landing mission (male phantom)",
+        "value": 0.32,
+        "unit": "mGy/day"
+      }
+    ],
+    "source_title": "Zhang et al. 2020, First measurements of the radiation dose on the lunar surface, Science Advances 6(39): eaaz1334 (open access)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7518862/",
+    "quote": "LND measured an average dose equivalent of 1369 μSv/day on the surface of the Moon.",
+    "extra_sources": [
+      {
+        "title": "Publisher DOI for Zhang et al. 2020",
+        "url": "https://doi.org/10.1126/sciadv.aaz1334"
+      },
+      {
+        "title": "NASA Lifetime Surveillance of Astronaut Health Newsletter, October 2023: 'on the lunar surface, the dose is projected to be on the order of 0.5 mSv/day (the moon provides some protection)'",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/10/lsah-newsletter-2023-vol28-issue2.pdf"
+      },
+      {
+        "title": "NASA Langley, Design Analysis for Lunar Safe Haven Concepts (AIAA SciTech 2022), NTRS 20210024725, Table 1",
+        "url": "https://ntrs.nasa.gov/citations/20210024725"
+      },
+      {
+        "title": "NASA-STD-3001 Volume 1 Revision C",
+        "url": "https://standards.nasa.gov/sites/default/files/standards/NASA/C//nasa-std-3001-vol-1-rev-c-signature.pdf"
+      }
+    ],
+    "notes": "The draft numbers are exactly what the paper says. Two cautions. (1) '2.6 times the ISS' compares the Moon with the cosmic-ray part of the ISS dose only: 'the daily GCR dose equivalent on the surface of the Moon is around a factor of 2.6 higher than the dose inside the ISS'; against the full ISS dose (731) it is about 1.9 times. (2) It was measured at solar minimum, so the authors call it an upper limit for quiet-Sun conditions. UNVERIFIED part: I found no NASA page that quotes 1,369 microsieverts/day. Best NASA-citable number for 'a day on the Moon': about 0.5 mSv/day effective dose (LSAH Newsletter; NASA Langley gives 0.51 mSv/day unshielded, 0.3-0.7 depending on the solar cycle). The NASA figure is lower than the Chang'E-4 one mainly because it is an effective dose inside the body, while LND reports a dose equivalent behind thin shielding. The only NASA measurement I can cite is LRO CRaTER's 13.29 microgray/hour (about 0.32 mGy/day absorbed dose), as reported in the Chang'E-4 paper."
+  },
+  {
+    "id": "R10",
+    "status": "corrected",
+    "claim": "NASA's 2005 article 'Sickening Solar Flares' says a moonwalker caught in the August 1972 solar storm might have absorbed 400 rem, while an Apollo command module would have cut that to less than 35 rem at the astronaut's blood-forming organs.",
+    "values": [
+      {
+        "label": "Estimated dose to a moonwalker caught in the August 1972 storm",
+        "value": 400,
+        "unit": "rem"
+      },
+      {
+        "label": "Same dose in SI units (1 rem = 10 mSv)",
+        "value": 4000,
+        "unit": "mSv"
+      },
+      {
+        "label": "Dose at the blood-forming organs inside an Apollo command module ('less than')",
+        "value": 35,
+        "unit": "rem"
+      },
+      {
+        "label": "Same in SI units ('less than')",
+        "value": 350,
+        "unit": "mSv"
+      },
+      {
+        "label": "Sudden dose at which half of exposed people would die within 60 days without medical care",
+        "value": 300,
+        "unit": "rem"
+      },
+      {
+        "label": "Estimated dose to a moonwalker in a space suit during the 20 January 2005 storm",
+        "value": 50,
+        "unit": "rem"
+      },
+      {
+        "label": "Shielding of an Apollo command module hull, low end",
+        "value": 7,
+        "unit": "g/cm2"
+      },
+      {
+        "label": "Shielding of an Apollo command module hull, high end",
+        "value": 8,
+        "unit": "g/cm2"
+      },
+      {
+        "label": "Shielding of a typical space suit",
+        "value": 0.25,
+        "unit": "g/cm2"
+      },
+      {
+        "label": "Shielding future moonbase storm shelters may exceed",
+        "value": 20,
+        "unit": "g/cm2"
+      }
+    ],
+    "source_title": "Sickening Solar Flares (Science@NASA, January 27, 2005) - Internet Archive copy of the original science.nasa.gov page",
+    "source_url": "https://web.archive.org/web/20160101235659/http://science.nasa.gov/science-news/science-at-nasa/2005/27jan_solarflares",
+    "quote": "An Apollo command module with its aluminum hull would have attenuated the 1972 storm from 400 rem to less than 35 rem at the astronaut's blood-forming organs.",
+    "extra_sources": [
+      {
+        "title": "NASA STEREO Science Writer's Guide (PDF on nasa.gov) - reprints the article as 'Feature 3: Sickening Solar Flares'",
+        "url": "https://www.nasa.gov/wp-content/uploads/2015/03/139023main_stereo_science_guide.pdf"
+      },
+      {
+        "title": "Older Internet Archive copy (2009) at the original 2005 address",
+        "url": "https://web.archive.org/web/20090327235209/http://science.nasa.gov/headlines/y2005/27jan_solarflares.htm"
+      }
+    ],
+    "notes": "Two corrections. (1) Wording: not 'about 35 rem' but 'less than 35 rem at the astronaut's blood-forming organs'. (2) URL: the article is no longer live. https://science.nasa.gov/science-news/science-at-nasa/2005/27jan_solarflares now redirects to an unrelated page ('Weather on the Moon'), so cite the archived copy or the nasa.gov STEREO guide PDF, which contains the same sentences. The 400 rem sentence reads: 'Cucinotta estimates that a moonwalker caught in the August 1972 storm might have absorbed 400 rem.' These are estimates by Francis Cucinotta, then NASA's radiation health officer at Johnson Space Center, not measurements. The storm came from a sunspot that appeared on 2 August 1972 and erupted for about 10 days, between Apollo 16 (April) and Apollo 17 (December)."
+  },
+  {
+    "id": "R11",
+    "status": "verified",
+    "claim": "Solar energetic particles move at nearly the speed of light, so the fastest ones reach Earth and the Moon within minutes to tens of minutes of an eruption, and NASA says some arrive in less than an hour - leaving very little warning time.",
+    "values": [
+      {
+        "label": "Travel time for some solar energetic particles from the Sun to Earth ('less than', NASA 2019)",
+        "value": 1,
+        "unit": "hour"
+      },
+      {
+        "label": "Sun-Earth distance in the same NASA sentence",
+        "value": 93,
+        "unit": "million miles"
+      },
+      {
+        "label": "Sun-Earth distance in the NOAA sentence ('10's of minutes or less')",
+        "value": 150,
+        "unit": "million km"
+      },
+      {
+        "label": "Warning time shown possible in a 2017 NASA/NCAR study using a ground-based coronagraph ('about')",
+        "value": 45,
+        "unit": "minutes"
+      },
+      {
+        "label": "Time Orion's crew needs to build the storm shelter after a warning ('within')",
+        "value": 1,
+        "unit": "hour"
+      },
+      {
+        "label": "Delay of the slower coronal mass ejection cloud in the January 2005 storm",
+        "value": 36,
+        "unit": "hours"
+      }
+    ],
+    "source_title": "How NASA Will Protect Astronauts From Space Radiation at the Moon (NASA, Aug. 7, 2019)",
+    "source_url": "https://science.nasa.gov/science-research/heliophysics/how-nasa-will-protect-astronauts-from-space-radiation-at-the-moon/",
+    "quote": "SEPs are almost all protons, flung at such high speeds that some reach Earth, 93 million miles away, in less than an hour.",
+    "extra_sources": [
+      {
+        "title": "NOAA Space Weather Prediction Center, Solar Radiation Storm: 'the protons can traverse the 150 million km from sun to Earth in just 10's of minutes or less'",
+        "url": "https://www.spaceweather.gov/phenomena/solar-radiation-storm"
+      },
+      {
+        "title": "NASA Scientists Demonstrate Technique to Improve Particle Warnings that Protect Astronauts (NASA, Mar. 2, 2017)",
+        "url": "https://www.nasa.gov/general/nasa-scientists-demonstrate-technique-to-improve-particle-warnings-that-protect-astronauts/"
+      },
+      {
+        "title": "NASA Watches Mars Light Up During Epic Solar Storm (JPL, June 10, 2024): charged particles reached Mars 'in just tens of minutes'",
+        "url": "https://www.jpl.nasa.gov/news/nasa-watches-mars-light-up-during-epic-solar-storm"
+      },
+      {
+        "title": "Sickening Solar Flares (Science@NASA, 2005, archived): protons 'reached the Earth-Moon system minutes after the flare'",
+        "url": "https://web.archive.org/web/20160101235659/http://science.nasa.gov/science-news/science-at-nasa/2005/27jan_solarflares"
+      }
+    ],
+    "notes": "The 'tens of minutes' part of the draft is well supported. I did not find a NASA or NOAA sentence saying 'a few hours' for the first particles; the sources say minutes, tens of minutes, or less than an hour, and the storm then lasts hours to days (NASA 2005: 'the beginning of a days-long proton storm'). The 2017 NASA article: SEPs 'can move at nearly the speed of light — so their total travel time can be less than an hour from the time they're accelerated near the sun to when they reach Earth', and the information needed for a warning 'was available about 45 minutes before the particles arrived at Earth'. For game design: the flash of light arrives first, the particles minutes later, the slow cloud (CME) a day or more later."
+  },
+  {
+    "id": "R12",
+    "status": "verified",
+    "claim": "NASA's shielding strategy is to put existing mass between the crew and the radiation: on the Moon astronauts could pile lunar soil (regolith) over their shelters, and in Orion the crew builds a temporary storm shelter from stowage bags within about an hour.",
+    "values": [
+      {
+        "label": "Time for the Orion crew to build the shelter after a warning ('within')",
+        "value": 1,
+        "unit": "hour"
+      },
+      {
+        "label": "Longest time the crew may need to stay inside the shelter ('as long as')",
+        "value": 24,
+        "unit": "hours"
+      },
+      {
+        "label": "NASA-STD-3001 recommended storm shielding around each crewmember, on a Moon or Mars surface (water equivalent)",
+        "value": 10,
+        "unit": "cm"
+      },
+      {
+        "label": "Same, beyond low Earth orbit, missions shorter than 6 months",
+        "value": 15,
+        "unit": "cm"
+      },
+      {
+        "label": "Same, beyond low Earth orbit, missions longer than 6 months",
+        "value": 20,
+        "unit": "cm"
+      },
+      {
+        "label": "NASA Langley Lunar Safe Haven: minimum (threshold) regolith cover",
+        "value": 3,
+        "unit": "m"
+      },
+      {
+        "label": "NASA Langley Lunar Safe Haven: goal regolith cover",
+        "value": 7,
+        "unit": "m"
+      },
+      {
+        "label": "Cosmic-ray dose behind 0 m of regolith (can range 0.3-0.7 with the solar cycle)",
+        "value": 0.51,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cosmic-ray dose behind 0.12 m of regolith (20 g/cm2; 'Meets typical SPE requirement')",
+        "value": 0.46,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cosmic-ray dose behind 0.59 m of regolith (100 g/cm2)",
+        "value": 0.42,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cosmic-ray dose behind 1.2 m of regolith (200 g/cm2)",
+        "value": 0.34,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cosmic-ray dose behind 2.9 m of regolith (500 g/cm2; about the 50 mSv/year radiation-worker limit)",
+        "value": 0.12,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cosmic-ray dose behind 5.9 m of regolith (1000 g/cm2)",
+        "value": 0.08,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Cosmic-ray dose behind 7.0 m of regolith (1200 g/cm2; 'About equal to Earth background')",
+        "value": 0.015,
+        "unit": "mSv/day"
+      },
+      {
+        "label": "Annual dose under three metres of regolith ('approximate')",
+        "value": 50,
+        "unit": "mSv/year"
+      },
+      {
+        "label": "Annual dose under seven metres of regolith ('approximately equivalent to Earth background levels')",
+        "value": 5,
+        "unit": "mSv/year"
+      }
+    ],
+    "source_title": "Scientists and Engineers Evaluate Orion Radiation Protection Plan (NASA, Sept. 22, 2016)",
+    "source_url": "https://www.nasa.gov/missions/artemis/orion/scientists-and-engineers-evaluate-orion-radiation-protection-plan/",
+    "quote": "If the warning were to sound, the crew would create the shelter within an hour and in some cases would need to stay inside for as long as 24 hours.",
+    "extra_sources": [
+      {
+        "title": "How NASA Will Protect Astronauts From Space Radiation at the Moon (NASA, Aug. 7, 2019): 'On the Moon, astronauts could pile lunar soil, or regolith, over their shelters'",
+        "url": "https://science.nasa.gov/science-research/heliophysics/how-nasa-will-protect-astronauts-from-space-radiation-at-the-moon/"
+      },
+      {
+        "title": "NASA-STD-3001 Volume 1 Revision C, Table 4.8-4, Recommended Shielding Guidelines for SPEs",
+        "url": "https://standards.nasa.gov/sites/default/files/standards/NASA/C//nasa-std-3001-vol-1-rev-c-signature.pdf"
+      },
+      {
+        "title": "NASA Langley, Design Analysis for Lunar Safe Haven Concepts (AIAA SciTech 2022), NTRS 20210024725 - Table 1, regolith thickness versus dose",
+        "url": "https://ntrs.nasa.gov/citations/20210024725"
+      },
+      {
+        "title": "NASA Langley, Protecting Crew and Surface Systems with a Long-Duration Lunar Safe Haven (AIAA ASCEND 2021), NTRS 20210022066",
+        "url": "https://ntrs.nasa.gov/citations/20210022066"
+      }
+    ],
+    "notes": "Verified, and there are real numbers for the game's trade-off. Orion: 'the crew will use stowage bags on board Orion to create a dense shelter'; the bags hold 'supplies, food and water'. Regolith: the NASA Langley papers say 'regolith offers excellent shielding properties at thicknesses of 3 to 7 m' and that 'three meters of regolith results in an approximate annual dose of 50 mSv ... Seven meters of regolith give an annual dose approximately equivalent to Earth background levels, ~5 mSv.' The regolith table is a design guideline from a NASA conference paper, for cosmic rays only, not an agency requirement; the paper warns that a full transport analysis is needed for accurate numbers. The key lesson is non-linear: 12 cm of soil 'Meets typical SPE requirement' (solar storms) but barely lowers the cosmic-ray dose (0.51 to 0.46 mSv/day); it takes about 3 m to cut it to a quarter. Water: NASA-STD-3001 states storm shielding in centimetres of water equivalent, and the Lunar Safe Haven paper says 'high hydrogen-content materials like polyethylene or water are more effective shielding materials per mass' but are less dense than regolith, while using local regolith 'greatly reduces the delivery mass to surface needed'."
+  },
+  {
+    "id": "R13",
+    "status": "corrected",
+    "claim": "Artemis I (2022) flew 5,600 passive and 34 active radiation sensors in Orion, including the MARE phantoms Helga and Zohar (Zohar wore the AstroRad vest); a 2024 Nature paper found up to a fourfold difference in dose rate between the most and least shielded places in Orion; Artemis II then flew four astronauts around the Moon on 1-10 April 2026.",
+    "values": [
+      {
+        "label": "Passive radiation sensors on Artemis I",
+        "value": 5600,
+        "unit": "sensors"
+      },
+      {
+        "label": "Active radiation detectors on Artemis I",
+        "value": 34,
+        "unit": "detectors"
+      },
+      {
+        "label": "Artemis I mission length",
+        "value": 25.5,
+        "unit": "days"
+      },
+      {
+        "label": "Largest difference in dose rate between most and least shielded locations (Van Allen proton belt pass)",
+        "value": 4,
+        "unit": "times"
+      },
+      {
+        "label": "Dose rate at the most shielded sensor (behind the Helga phantom)",
+        "value": 69,
+        "unit": "microgray/minute"
+      },
+      {
+        "label": "Dose rate at the least shielded sensor (HERA HSU2, crew cabin wall)",
+        "value": 287,
+        "unit": "microgray/minute"
+      },
+      {
+        "label": "Dose rate in the storm shelter (HERA HSU1) during the same pass",
+        "value": 134,
+        "unit": "microgray/minute"
+      },
+      {
+        "label": "Measured storm shelter benefit compared with the crew cabin wall",
+        "value": 2,
+        "unit": "times"
+      },
+      {
+        "label": "Simulated October 1989 solar storm: peak dose rate in the crew cabin",
+        "value": 414,
+        "unit": "microgray/minute"
+      },
+      {
+        "label": "Simulated October 1989 solar storm: peak dose rate in the storm shelter",
+        "value": 95,
+        "unit": "microgray/minute"
+      },
+      {
+        "label": "Largest total dose equivalent in the storm shelter for a large solar particle event ('at most')",
+        "value": 150,
+        "unit": "mSv"
+      },
+      {
+        "label": "Drop in dose rate when Orion changed orientation in the proton belt ('around')",
+        "value": 50,
+        "unit": "percent"
+      },
+      {
+        "label": "Artemis II farthest distance from Earth",
+        "value": 252756,
+        "unit": "miles"
+      },
+      {
+        "label": "Artemis II total distance flown",
+        "value": 695081,
+        "unit": "miles"
+      },
+      {
+        "label": "Artemis II closest approach above the lunar surface",
+        "value": 4067,
+        "unit": "miles"
+      },
+      {
+        "label": "HERA radiation sensors inside Orion on Artemis II",
+        "value": 6,
+        "unit": "sensors"
+      },
+      {
+        "label": "NASA pre-flight projection of skin dose for a 10-day Artemis II (male phantom; female phantom 7.61)",
+        "value": 6.97,
+        "unit": "mGy"
+      },
+      {
+        "label": "Artemis I measured absorbed dose in water over 25.45 days (NASA LSAH Newsletter)",
+        "value": 10.18,
+        "unit": "mGy"
+      }
+    ],
+    "source_title": "George et al. 2024, Space radiation measurements during the Artemis I lunar mission, Nature 634, 48-52 (open access, published 18 September 2024)",
+    "source_url": "https://www.nature.com/articles/s41586-024-07927-7",
+    "quote": "Measurements of the inner proton belt show an up to fourfold difference in dose rates between the most (M-42 SN127: 69 µGy min−1) and the two least shielded locations",
+    "extra_sources": [
+      {
+        "title": "Artemis I Radiation Measurements Validate Orion Safety for Astronauts (NASA, Oct. 9, 2024)",
+        "url": "https://www.nasa.gov/centers-and-facilities/johnson/artemis-i-radiation-measurements-validate-orion-safety-for-astronauts/"
+      },
+      {
+        "title": "Artemis I Space Radiation Research to Help Moon, Mars Explorers (NASA, Feb. 23, 2022) - Helga, Zohar, MARE, AstroRad",
+        "url": "https://www.nasa.gov/general/artemis-i-space-radiation-research-to-help-moon-mars-explorers/"
+      },
+      {
+        "title": "NASA Welcomes Record-Setting Artemis II Moonfarers Back to Earth (NASA release 26-030, Apr. 10, 2026)",
+        "url": "https://www.nasa.gov/news-release/nasa-welcomes-record-setting-artemis-ii-moonfarers-back-to-earth/"
+      },
+      {
+        "title": "Artemis II Crew Both Subjects and Scientists in NASA Deep Space Research (NASA, Sept. 11, 2025) - radiation sensors on Artemis II",
+        "url": "https://www.nasa.gov/general/artemis-ii-crew-both-subjects-and-scientists-in-nasa-deep-space-research/"
+      },
+      {
+        "title": "NASA Lifetime Surveillance of Astronaut Health Newsletter, October 2023 - Apollo vs. Artemis dose table",
+        "url": "https://www.nasa.gov/wp-content/uploads/2023/10/lsah-newsletter-2023-vol28-issue2.pdf"
+      }
+    ],
+    "notes": "Correction to the draft: the 'up to 4x' is not 'storm shelter versus the rest'. Measured during the pass through the Van Allen proton belt, the fourfold gap is between the most shielded sensor (on the back of the Helga phantom) and the two least shielded ones on the cabin wall. The storm shelter itself measured about 2 times better than the cabin wall (287 versus 134 microgray/minute). The 4 times for the shelter comes from a simulation of the October 1989 solar storm (414 versus 95 microgray/minute). Safe wording: 'where you sit in Orion can change your dose rate up to four times'. Helga and Zohar: NASA says 'Zohar will wear a radiation protection vest, called AstroRad, while Helga will not'. Artemis II: flew. Launch at 6:35 p.m. (Eastern time) on 1 April 2026 from Launch Pad 39B at Kennedy Space Center; splashdown 5:07 p.m. PDT on 10 April 2026 off San Diego; crew Reid Wiseman (commander), Victor Glover (pilot), Christina Koch and CSA astronaut Jeremy Hansen (mission specialists); Orion was named Integrity. Radiation facts published by NASA before the flight: six HERA sensors, a Crew Active Dosimeter in each astronaut's pocket (first use beyond Earth orbit) and DLR's M-42 EXT sensor. UNVERIFIED: the dose the Artemis II crew actually received - I found no NASA figure; a '12 mSv' number on a non-NASA site could not be confirmed. The 6.97-7.61 mGy value is a 2023 pre-flight projection, not a measurement."
+  },
+  {
+    "id": "R14",
+    "status": "verified",
+    "claim": "The Sun's activity rises and falls in a cycle of roughly 11 years; on 15 October 2024 NASA, NOAA and the Solar Cycle Prediction Panel announced that the Sun had reached the solar maximum period of Solar Cycle 25; galactic cosmic rays get in more easily at solar minimum.",
+    "values": [
+      {
+        "label": "Length of the solar cycle ('roughly')",
+        "value": 11,
+        "unit": "years"
+      },
+      {
+        "label": "Peak monthly smoothed sunspot number of Solar Cycle 25, reached in October 2024 (SILSO, Royal Observatory of Belgium)",
+        "value": 161,
+        "unit": "sunspot number"
+      },
+      {
+        "label": "Cosmic rays striking a golf-ball-sized volume of space each second ('some')",
+        "value": 90,
+        "unit": "particles/second"
+      }
+    ],
+    "source_title": "NASA, NOAA: Sun Reaches Maximum Phase in 11-Year Solar Cycle (NASA, Oct. 15, 2024)",
+    "source_url": "https://science.nasa.gov/science-research/heliophysics/nasa-noaa-sun-reaches-maximum-phase-in-11-year-solar-cycle/",
+    "quote": "representatives from NASA, the National Oceanic and Atmospheric Administration (NOAA), and the international Solar Cycle Prediction Panel announced that the Sun has reached its solar maximum period, which could continue for the next year.",
+    "extra_sources": [
+      {
+        "title": "How NASA Will Protect Astronauts From Space Radiation at the Moon (NASA, Aug. 7, 2019) - cosmic rays and the solar cycle",
+        "url": "https://science.nasa.gov/science-research/heliophysics/how-nasa-will-protect-astronauts-from-space-radiation-at-the-moon/"
+      },
+      {
+        "title": "STCE / SILSO: Solar Cycle 25 reached its maximum in October 2024",
+        "url": "https://stce.be/content/solar-cycle-25-reached-its-maximum-october-2024"
+      }
+    ],
+    "notes": "Draft was right. Cycle length: 'Roughly every 11 years, at the height of the solar cycle, the Sun's magnetic poles flip'. NASA quote for cosmic rays (2019 article): 'In the relative calm of solar minimum, cosmic rays easily infiltrate the Sun's magnetic field. But during solar maximum, the Sun's magnetic bubble strengthens with increased solar activity, turning away some of the galactic visitors who come knocking.' The October 2024 announcement was about the maximum PERIOD, not the peak month; NOAA's Elsayed Talaat said the peak month 'will not be identified for months or years'. Later, the Belgian sunspot data centre SILSO reported that the smoothed sunspot number peaked in October 2024 at 161 (not a NASA or NOAA statement). Trade-off for the game: solar maximum means more solar storms but fewer cosmic rays; solar minimum is the reverse."
+  },
+  {
+    "id": "R15",
+    "status": "verified",
+    "claim": "The strongest flare of Solar Cycle 25 so far is the X9.0 of 3 October 2024, ahead of the X8.7 of 14 May 2024 and the X8.1 of 1 February 2026; the 10-11 May 2024 geomagnetic storm reached G5, a level not seen since 2003; an X5.1 flare on 11 November 2025 was followed by a G4 storm on 12 November 2025; and 19 January 2026 brought an S4 solar radiation storm (first since October 2003) with a G4 storm.",
+    "values": [
+      {
+        "label": "3 Oct 2024, peak 12:18 UTC, region 3842 - strongest flare of Solar Cycle 25",
+        "value": 9.0,
+        "unit": "X-class (X9.0)"
+      },
+      {
+        "label": "14 May 2024, peak 16:51 UTC, region 3664",
+        "value": 8.7,
+        "unit": "X-class (X8.7)"
+      },
+      {
+        "label": "1 Feb 2026, peak 23:57 UTC, region 4366 - third strongest of the cycle",
+        "value": 8.1,
+        "unit": "X-class (X8.1)"
+      },
+      {
+        "label": "10 May 2024, peak 9:23 p.m. EDT - strongest flare of the 7-11 May 2024 storm period",
+        "value": 5.8,
+        "unit": "X-class (X5.8)"
+      },
+      {
+        "label": "11 Nov 2025, peak 10:04 UTC, region 4274",
+        "value": 5.1,
+        "unit": "X-class (X5.1)"
+      },
+      {
+        "label": "4 Feb 2026, peak 12:13 UTC, region 4366",
+        "value": 4.2,
+        "unit": "X-class (X4.2)"
+      },
+      {
+        "label": "14 Nov 2025, peak 08:30 UTC, region 4274",
+        "value": 4.0,
+        "unit": "X-class (X4.0)"
+      },
+      {
+        "label": "18 Jan 2026, peak 18:09 UTC, region 4341 - flare before the S4 radiation storm",
+        "value": 1.9,
+        "unit": "X-class (X1.9)"
+      },
+      {
+        "label": "Geomagnetic storm 10-11 May 2024 (G5 first observed 6:54 p.m. EDT on 10 May)",
+        "value": 5,
+        "unit": "G-scale (G5, extreme)"
+      },
+      {
+        "label": "Geomagnetic storm 12 Nov 2025 (G4 reached 01:20 UTC)",
+        "value": 4,
+        "unit": "G-scale (G4, severe)"
+      },
+      {
+        "label": "Geomagnetic storm 19 Jan 2026 (G4 first reached 19:38 UTC)",
+        "value": 4,
+        "unit": "G-scale (G4, severe)"
+      },
+      {
+        "label": "Solar radiation storm 19 Jan 2026 (reported 18:54 UTC) - first S4 since October 2003",
+        "value": 4,
+        "unit": "S-scale (S4, severe)"
+      },
+      {
+        "label": "Solar radiation storm in progress on 11 Nov 2025",
+        "value": 2,
+        "unit": "S-scale (S2, moderate)"
+      }
+    ],
+    "source_title": "NASA, NOAA: Sun Reaches Maximum Phase in 11-Year Solar Cycle (NASA, Oct. 15, 2024)",
+    "source_url": "https://science.nasa.gov/science-research/heliophysics/nasa-noaa-sun-reaches-maximum-phase-in-11-year-solar-cycle/",
+    "quote": "The most powerful flare of the solar cycle so far was an X9.0 on Oct. 3",
+    "extra_sources": [
+      {
+        "title": "NASA Solar Cycle 25 blog, Oct. 3, 2024: 'This flare is classified as an X9.0 flare.'",
+        "url": "https://science.nasa.gov/blogs/solar-cycle-25/2024/10/03/sun-releases-strong-solar-flare-6/"
+      },
+      {
+        "title": "How NASA Tracked the Most Intense Solar Storm in Decades (NASA, May 16, 2024) - G5 'hasn't been seen since 2003'; X8.7 on May 14",
+        "url": "https://science.nasa.gov/science-research/heliophysics/how-nasa-tracked-the-most-intense-solar-storm-in-decades/"
+      },
+      {
+        "title": "NOAA SWPC, G5 Conditions Observed! (May 10, 2024)",
+        "url": "https://www.spaceweather.gov/news/g5-conditions-observed"
+      },
+      {
+        "title": "NOAA SWPC, Veteran's Day fireworks! X5.1 flare (R3-Strong) from Region 4274 (Nov. 11, 2025)",
+        "url": "https://www.spaceweather.gov/news/veterans-day-fireworks-x51-flare-r3-strong-region-4274"
+      },
+      {
+        "title": "NOAA SWPC, G4 (Severe) Storm Levels Reached! (Nov. 12, 2025)",
+        "url": "https://www.spaceweather.gov/news/g4-severe-storm-levels-reached"
+      },
+      {
+        "title": "NOAA SWPC, S4 (Severe) Solar Radiation Storm in Progress, January 19th, 2026",
+        "url": "https://www.spaceweather.gov/news/s4-severe-solar-radiation-storm-progress-january-19th-2026"
+      },
+      {
+        "title": "NOAA SWPC, G4 (Severe) Geomagnetic Storm Levels Reached 19 Jan, 2026",
+        "url": "https://www.spaceweather.gov/news/g4-severe-geomagnetic-storm-levels-reached-19-jan-2026"
+      },
+      {
+        "title": "NOAA SWPC, UPDATE! An X8.1 (Strong) flare from Region 4366 (Feb. 2, 2026)",
+        "url": "https://www.spaceweather.gov/news/update-x81-strong-flare-region-4366"
+      },
+      {
+        "title": "NASA Solar Cycle 25 blog, Sun Releases 4 Strong Solar Flares (Feb. 2, 2026) - X1.0, X8.1, X2.8, X1.6",
+        "url": "https://science.nasa.gov/blogs/solar-cycle-25/2026/02/02/sun-releases-4-strong-solar-flares/"
+      },
+      {
+        "title": "NASA DONKI record: X9.0 flare of 3 Oct 2024",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/33693/-1"
+      },
+      {
+        "title": "NASA DONKI record: X8.1 flare of 1 Feb 2026",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/44361/-1"
+      },
+      {
+        "title": "NASA DONKI record: X5.1 flare of 11 Nov 2025",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/42610/-1"
+      },
+      {
+        "title": "SpaceWeatherLive, top 50 solar flares of Solar Cycle 25 (third-party ranking, used only as a cross-check)",
+        "url": "https://www.spaceweatherlive.com/en/solar-activity/top-50-solar-flares/solar-cycle/25.html"
+      }
+    ],
+    "notes": "All draft items check out, and one event was missing: the X8.1 flare of 1 February 2026 (6:57 p.m. ET; 23:57 UTC), now the third strongest of the cycle. Exact NOAA wording for the radiation storm: the storm 'has intensified to Severe (S4) on the NOAA Space Weather Scales' and 'This significant level has not been observed since October, 2003.' Exact NASA wording for May 2024: 'a rating of G5 — the highest level on the geomagnetic storm scale, and one that hasn't been seen since 2003.' The X5.1 flare was followed by a G4 WATCH and the G4 level was actually reached at 01:20 UTC on 12 Nov 2025; NASA's DONKI lists a maximum Kp of 8.67 for both the 12 Nov 2025 and the 19 Jan 2026 storms, so neither reached G5. 'X9.0 is still the strongest of the cycle' was checked on 11 November 2026 against the SpaceWeatherLive ranking, which is not a NASA or NOAA page. The 20 May 2024 X12 flare in R3 is an estimate from Solar Orbiter data, not an Earth-side GOES measurement (DONKI lists no X-class flare on that date), so it is not in these lists. Flare times are UTC; the X9.0 peaked at 8:18 a.m. Eastern time."
+  },
+  {
+    "id": "R16",
+    "status": "verified",
+    "claim": "Without countermeasures, astronauts' weight-bearing bones lose on average 1% to 1.5% of their mineral density per month in space; ISS crews exercise about two hours a day; and NASA's Twins Study (Scott Kelly, 340 days in space, compared with his twin Mark on Earth) found that most changes returned to normal after landing.",
+    "values": [
+      {
+        "label": "Bone mineral density loss per month in weight-bearing bones, low end",
+        "value": 1.0,
+        "unit": "percent/month"
+      },
+      {
+        "label": "Bone mineral density loss per month in weight-bearing bones, high end",
+        "value": 1.5,
+        "unit": "percent/month"
+      },
+      {
+        "label": "Average daily exercise of ISS crews",
+        "value": 2,
+        "unit": "hours/day"
+      },
+      {
+        "label": "Scott Kelly's time in space in the Twins Study",
+        "value": 340,
+        "unit": "days"
+      },
+      {
+        "label": "Share of Scott Kelly's gene-expression changes that returned to baseline after landing ('about')",
+        "value": 91.3,
+        "unit": "percent"
+      },
+      {
+        "label": "Research teams in the Twins Study",
+        "value": 10,
+        "unit": "teams"
+      }
+    ],
+    "source_title": "The Human Body in Space (NASA Human Research Program, Feb. 2, 2021; page last updated May 26, 2026)",
+    "source_url": "https://www.nasa.gov/humans-in-space/the-human-body-in-space/",
+    "quote": "weight-bearing bones lose on average 1% to 1.5% of mineral density per month during spaceflight.",
+    "extra_sources": [
+      {
+        "title": "Counteracting Bone and Muscle Loss in Microgravity (NASA, Dec. 1, 2023): 'Crews exercise for an average of two hours a day.'",
+        "url": "https://www.nasa.gov/missions/station/iss-research/counteracting-bone-and-muscle-loss-in-microgravity/"
+      },
+      {
+        "title": "NASA's Twins Study Results Published in Science Journal (NASA, Apr. 11, 2019)",
+        "url": "https://www.nasa.gov/humans-in-space/nasas-twins-study-results-published-in-science-journal/"
+      },
+      {
+        "title": "NASA Twins Study FAQs: 'While Scott Kelly spent 340 days in space his brother Mark Kelly was on Earth.'",
+        "url": "https://www.nasa.gov/humans-in-space/twins-study/faqs-nasa-twins-study/"
+      }
+    ],
+    "notes": "Draft was right. A second NASA page words the bone figure as 'roughly 1% less dense' for every month in space 'if they don't take precautions'. Twins Study headline findings, in NASA's words: gene expression - 'Most of these changes (about 91.3%) reverted to baseline after he returned to Earth; however, a small subset persisted after six months'; telomeres - 'Scott experienced a change in telomere length dynamics during spaceflight and within days of landing'; immune system - Scott got a flu vaccine in space and 'Scott's body reacted appropriately to the vaccine'; thinking - 'Scott's cognitive performance ... remained largely unchanged during his time in space'; blood vessels - 'indications of inflammation and carotid artery wall thickening'; gut bacteria - 'profoundly different during flight from preflight'. NASA's summary also lists what stayed changed at the end of the study: 'a small subset of changes in gene expression, telomere dynamics, DNA disruption, carotid artery thickening, ocular changes, and some cognitive functions'. It is a study of one pair of twins, so present the findings as examples rather than general rules (my caution, not a NASA quote)."
+  },
+  {
+    "id": "R17",
+    "status": "verified",
+    "claim": "NASA's Open Science Data Repository (OSDR) is NASA's free, open archive of space-biology data - omics, physiological, behavioural and environmental-telemetry data from spaceflight and ground experiments on humans, animals, plants and microbes.",
+    "datasets": [
+      {
+        "category": "a - plants grown on the ISS (Veggie)",
+        "id": "OSD-267",
+        "title": "Microbiological and nutritional analysis of lettuce crops grown on the International Space Station-VEG01A",
+        "finding": "Red romaine lettuce ('Outredgeous') grown in the Veggie chamber on the ISS tested negative for the screened human pathogens; the study concluded leafy crops can provide safe, edible fresh food for astronauts.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-267"
+      },
+      {
+        "category": "a - plants grown on the ISS (Veggie)",
+        "id": "OSD-767",
+        "title": "Stress and light spectral quality influence the transcriptome of a tomato crop on the International Space Station",
+        "finding": "Tomato ('Red Robin') grown in Veggie (VEG-05, 2022-2023) under red-rich or blue-rich light showed gene-activity changes caused by both spaceflight and the light colour.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-767"
+      },
+      {
+        "category": "a - plants in Moon soil (ground study, bonus for a Moon outpost)",
+        "id": "OSD-476",
+        "title": "Plants grown in Apollo lunar regolith present stress-associated transcriptomes that inform prospects for lunar exploration",
+        "finding": "Arabidopsis plants germinated and grew in real Apollo 11, 12 and 17 Moon soil, but developed slowly and showed stress - lunar regolith can grow plants but is 'not benign'.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-476"
+      },
+      {
+        "category": "b - space radiation (plants)",
+        "id": "OSD-658",
+        "title": "Simulated Galactic Cosmic Ray Exposure Activates Dose-Dependent DNA Repair Response and Downregulates Glucosinolate Pathway in Arabidopsis Seedlings",
+        "finding": "Seedlings exposed to simulated galactic cosmic rays (40 or 80 cGy at the NASA Space Radiation Laboratory) showed dose-dependent changes in gene activity, with DNA-repair pathways switched on.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-658"
+      },
+      {
+        "category": "b - space radiation dosimetry (OSDR tool, no OSD number)",
+        "id": "OSDR Environmental Data App (EDA)",
+        "title": "Environmental Data App - ISS cabin telemetry and radiation data for spaceflight missions",
+        "finding": "Shows the radiation doses (galactic cosmic rays, South Atlantic Anomaly, total accumulated) together with temperature, humidity and CO2 recorded on the ISS during Rodent Research, APEX and VEG-01C missions.",
+        "url": "https://visualization.osdr.nasa.gov/eda/"
+      },
+      {
+        "category": "c - rodent muscle loss (Moon gravity)",
+        "id": "OSD-714",
+        "title": "Lunar gravity prevents skeletal muscle atrophy but not myofiber type shift in mice",
+        "finding": "In mice housed in an artificial-gravity system on the ISS, Moon gravity (1/6 g) prevented the soleus (calf) muscle wasting seen in microgravity, but not the change in muscle-fibre type.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-714"
+      },
+      {
+        "category": "c - rodent bone and muscle loss",
+        "id": "OSD-342",
+        "title": "Targeting myostatin/activin A protects against skeletal muscle and bone loss during spaceflight [plasma proteomics]",
+        "finding": "Normal mice lost significant muscle and bone mass during 33 days in microgravity (Rodent Research-19); blocking the myostatin/activin A signal increased muscle and bone mass.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-342"
+      },
+      {
+        "category": "c - rodent bone loss",
+        "id": "OSD-417",
+        "title": "Specific Host Metabolite and Gut Microbiome Alterations Are Associated with Bone-loss During Spaceflight",
+        "finding": "In Rodent Research-5 mice, changes in gut bacteria and blood metabolites went together with the loss of bone mineral density seen in flight.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-417"
+      },
+      {
+        "category": "d - Inspiration4 astronaut data",
+        "id": "OSD-569",
+        "title": "Whole Blood Measurements from the SpaceX Inspiration4 Mission (RNA-seq, epitranscriptome, WGS, clonal hematopoiesis, CBC)",
+        "finding": "Blood samples from the four private astronauts of the 3-day Inspiration4 flight (16-18 September 2021), taken before and after flight; the linked paper reports spaceflight-associated increases in the RNA mark m6A.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-569"
+      },
+      {
+        "category": "d - Inspiration4 astronaut data",
+        "id": "OSD-570",
+        "title": "SpaceX Inspiration4 PBMC Profiling: snRNA-seq, snATAC-seq, and T-cell and B-cell repertoire profiling",
+        "finding": "Single-cell profiles of the Inspiration4 crew's immune blood cells before and after flight; the linked paper reports conserved, cell-type-specific and sex-specific responses to spaceflight.",
+        "url": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-570"
+      }
+    ],
+    "source_title": "Open Science Data Repository (OSDR) - NASA Biological and Physical Sciences",
+    "source_url": "https://science.nasa.gov/biological-physical/data/osdr/",
+    "quote": "NASA’s Open Science Data Repository (OSDR) enables the reuse of comprehensive, multi-modal space life science data—including omics, physiological, phenotypic, behavioral, and environmental telemetry—to advance basic and applied research as well as operational outcomes for human space exploration.",
+    "extra_sources": [
+      {
+        "title": "OSDR repository search",
+        "url": "https://osdr.nasa.gov/bio/repo/search"
+      },
+      {
+        "title": "OSDR search API example used for this check",
+        "url": "https://osdr.nasa.gov/osdr/data/search?term=veggie&type=cgene"
+      },
+      {
+        "title": "OSDR study metadata API example (OSD-267)",
+        "url": "https://osdr.nasa.gov/osdr/data/osd/meta/267"
+      },
+      {
+        "title": "OSDR Tutorials: Use the RadLab Portal and Data API (radiation data from multiple spacecraft and sensors)",
+        "url": "https://osdr-tutorials.readthedocs.io/en/latest/pages/guides/radlab_portal.html"
+      }
+    ],
+    "notes": "The nine OSD-numbered entries were confirmed through the OSDR API on 11 November 2026: titles are copied from the 'Study Title' field and each finding is a plain-English summary of the study description stored in OSDR (the Environmental Data App entry was read from its own page). The study pages are JavaScript apps, so a simple fetch returns an empty shell; use the metadata API (https://osdr.nasa.gov/osdr/data/osd/meta/<number>) to read them in code. Sister datasets: OSD-268 (VEG-01B) and OSD-269 (VEG-03A) for lettuce; OSD-572 and OSD-573 (microbial swabs), OSD-571 (plasma) and OSD-630 (stool) for Inspiration4; OSD-210 (seeds flown on an Antarctic balloon to sample cosmic-ray damage); OSD-581 (ryegrass on Mars soil simulant). OSDR has no OSD-numbered 'dosimetry' dataset that I could find: radiation dose data sit in two OSDR tools, the Environmental Data App (listed above) and the RadLab portal (https://visualization.osdr.nasa.gov/radlab/), which returned HTTP 500 when I tried it, so its content is unverified."
+  },
+  {
+    "id": "R18",
+    "status": "verified",
+    "claim": "DONKI (Space Weather Database Of Notifications, Knowledge, Information) is an online catalogue of space-weather events with a free web API, run by the Community Coordinated Modeling Center (CCMC) at NASA's Goddard Space Flight Center and filled mainly by NASA's Moon to Mars Space Weather Analysis Office; CCMC asks users to acknowledge CCMC and gives a sample sentence.",
+    "values": [],
+    "source_title": "CCMC DONKI System (Community Coordinated Modeling Center, NASA Goddard Space Flight Center)",
+    "source_url": "https://ccmc.gsfc.nasa.gov/tools/DONKI/",
+    "quote": "The CCMC Space Weather Database Of Notifications, Knowledge, Information (DONKI) system is a comprehensive on-line tool for space weather forecasters, scientists, and the general space science community.",
+    "extra_sources": [
+      {
+        "title": "CCMC Publications Policy (sample acknowledgement text)",
+        "url": "https://ccmc.gsfc.nasa.gov/publication-policy/"
+      },
+      {
+        "title": "DONKI web application (new address since 30 September 2026)",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/"
+      },
+      {
+        "title": "DONKI API documentation",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/api/"
+      },
+      {
+        "title": "Working API example: flares on 3 October 2024 (returns the X9.0 flare)",
+        "url": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-10-03&endDate=2024-10-03"
+      }
+    ],
+    "notes": "Yes, there is a requested acknowledgement. CCMC Publications Policy: if results from CCMC tools/systems '(e.g., DONKI, Scoreboards, Kamodo, etc.) are used in a scientific publication or presentation', CCMC requests an acknowledgement, with this sample text: \"We acknowledge the Community Coordinated Modeling Center (CCMC) at Goddard Space Flight Center for the use of the [SOFTWARE TOOL/SYSTEM NAME], [URL OF THE TOOL ON THE CCMC WEBSITE].\" The DONKI page adds 'Rules-of-the-Road': 'CCMC requests that event and validation studies with data from DONKI be performed with the knowledge and collaboration of the submitting forecasters/researchers, model developers, and CCMC', and a caution that the data 'should be considered only as prototyping quality and in research context'. Who runs it: the page says 'The Moon to Mars Space Weather Analysis Office (2020-present), CCMC (2010-2020) and other entities provide data to DONKI as a courtesy to the community.' Important for the game code: on 30 September 2026 DONKI moved to new addresses. The page says 'Replacing kauai.ccmc.gsfc.nasa.gov with ccmc.gsfc.nasa.gov in existing links will route directly without modification.' On 11 November 2026 the new address answered correctly, the old kauai address did not connect, and https://api.nasa.gov/DONKI/FLR with DEMO_KEY returned HTTP 404 once and then a rate-limit error, so test the api.nasa.gov route before relying on it. A suggested credit line for the game, filled in from CCMC's template: 'We acknowledge the Community Coordinated Modeling Center (CCMC) at Goddard Space Flight Center for the use of DONKI, https://ccmc.gsfc.nasa.gov/tools/DONKI/.'"
+  }
+]

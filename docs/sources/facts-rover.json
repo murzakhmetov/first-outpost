@@ -1,0 +1,313 @@
+[
+  {
+    "id": "V1",
+    "key": "apollo_lrv",
+    "status": "corrected",
+    "claim": "Three Lunar Roving Vehicles (LRVs, 'lunar rovers') were driven on the Moon, one on each of Apollo 15 (David Scott and Jim Irwin, 1971), Apollo 16 (John Young and Charles Duke, 1972) and Apollo 17 (Gene Cernan and Harrison Schmitt, 1972). NASA calls it a battery-powered vehicle. It was folded up and stored in a bay of the lander (the lunar module). Each of its four wheels had its own electric drive (a 0.25 horsepower motor), and it ran on two 36-volt silver-zinc batteries that could not be recharged. NASA gives its mass as 210 kg and its estimated top speed as about 8 mph (about 13 km/h). Total distance driven: Apollo 15 about 28 km (27.8 km), Apollo 16 26.7 km, Apollo 17 about 36 km (35.9 km, but see notes: other NASA pages disagree). Mission rules kept the crews within 6 miles (about 10 km) of the lander, the distance they could walk back in a pinch; the farthest the rover actually got from the lander was 5.0 km (Apollo 15), 4.5 km (Apollo 16) and 7.6 km (Apollo 17).",
+    "values": [
+      { "label": "Missions that drove an LRV on the Moon", "value": "Apollo 15, Apollo 16, Apollo 17", "unit": "missions" },
+      { "label": "Years (NASA History, 2021: 'between 1971 and 1972')", "value": "1971-1972", "unit": "years" },
+      { "label": "Apollo 15: launch / three moonwalks / splashdown (NASA Mission Details)", "value": "launch 26 Jul 1971; moonwalks 31 Jul, 1 Aug, 2 Aug; splashdown 7 Aug", "unit": "dates, 1971" },
+      { "label": "Apollo 16: launch / landing / splashdown (NASA Mission Details)", "value": "launch 16 Apr 1972; landing 20 Apr; splashdown 27 Apr", "unit": "dates, 1972" },
+      { "label": "Apollo 17: launch / landing / splashdown (NASA Mission Details)", "value": "launch 7 Dec 1972; landing 11 Dec; splashdown 19 Dec", "unit": "dates, 1972" },
+      { "label": "Wheels, each with its own electric drive motor (NSSDCA also lists 2 steering motors)", "value": 4, "unit": "wheels / drive motors" },
+      { "label": "Power of each wheel motor", "value": 0.25, "unit": "hp" },
+      { "label": "Batteries (silver-zinc potassium hydroxide, non-rechargeable)", "value": "2 x 36 V, 121 amp-hr", "unit": "batteries" },
+      { "label": "Mass of the vehicle (NASA says 'mass', not 'weight on Earth')", "value": 210, "unit": "kg" },
+      { "label": "Estimated top speed (NASA APOD wording is 8 mph; the km/h is my conversion, 8 x 1.609 = 12.9)", "value": 8, "unit": "mph (about 13 km/h)" },
+      { "label": "Apollo 15 total distance driven (NSSDCA; NASA's Apollo 15 Mission Details page says 17.5 miles, about 28 km)", "value": 27.8, "unit": "km" },
+      { "label": "Apollo 16 total distance driven (NSSDCA; NASA Mission Details says 16.6 miles)", "value": 26.7, "unit": "km" },
+      { "label": "Apollo 17 total distance driven (NSSDCA; other NASA pages differ, see notes)", "value": 35.9, "unit": "km" },
+      { "label": "Apollo 15 maximum range from the lunar module (NSSDCA)", "value": 5.0, "unit": "km" },
+      { "label": "Apollo 16 maximum range from the lunar module (NSSDCA)", "value": 4.5, "unit": "km" },
+      { "label": "Apollo 17 greatest range from the lunar module (NSSDCA)", "value": 7.6, "unit": "km" },
+      { "label": "Mission-rule limit on distance from the lunar module, 'the distance we could walk back in a pinch' (NASA SP-350); km is my conversion, 6 x 1.609", "value": 6, "unit": "miles (about 9.7 km)" }
+    ],
+    "source_title": "The Apollo Lunar Roving Vehicle (NASA NSSDCA; page 'Last Updated: 19 May 2016')",
+    "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+    "quote": "Three LRVs were driven on the Moon, one on Apollo 15 by astronauts David Scott and Jim Irwin, one on Apollo 16 by John Young and Charles Duke, and one on Apollo 17 by Gene Cernan and Harrison Schmitt.",
+    "extra_sources": [
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - batteries (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "Power was provided by two 36-volt silver-zinc potassium hydroxide non-rechargeable batteries with a capacity of 121 amp-hr."
+      },
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - wheel motors (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "Each wheel had its own electric drive, a DC series wound 0.25 hp motor capable of 10,000 rpm, | A T-shaped hand controller situated between the two seats controlled the four drive motors, two steering motors and brakes."
+      },
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - folding (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "a 3 part chassis which was hinged in the center so it could be folded up and hung in the Lunar Module quad 1 bay. | The rover was folded and stored in quad 1 with the underside of the chassis facing out."
+      },
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - mass (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "The Lunar Roving Vehicle had a mass of 210 kg"
+      },
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - wheels (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "The wheels consisted of a spun aluminum hub and an 81.8 cm diameter, 23 cm wide tire made of zinc coated woven 0.083 cm diameter steel strands attached to the rim and discs of formed aluminum."
+      },
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - total distance driven (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "On Apollo 15 the LRV was driven a total of 27.8 km in 3 hours, 2 minutes of driving time. | On Apollo 16 the vehicle traversed 26.7 km in 3 hours 26 minutes of driving. | On Apollo 17 the rover went 35.9 km in 4 hours 26 minutes total drive time."
+      },
+      {
+        "title": "NSSDCA, The Apollo Lunar Roving Vehicle - maximum range from the lunar module (same page)",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo_lrv.html",
+        "quote": "The longest single traverse was 12.5 km and the maximum range from the LM was 5.0 km. | The longest traverse was 11.6 km and the LRV reached a distance of 4.5 km from the LM. | The longest traverse was 20.1 km and the greatest range from the LM was 7.6 km."
+      },
+      {
+        "title": "Apollo Expeditions to the Moon (NASA SP-350), Chapter 14, Appendix II 'Touring the Moon' - the walk-back rule",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/SP-350/ch-14-8.html",
+        "quote": "Mission rules restricted us from going more than 6 miles from the LM - the distance we could walk back in a pinch - but even so the area that could be investigated was ten times greater than before."
+      },
+      {
+        "title": "Apollo Expeditions to the Moon (NASA SP-350), same page - batteries and motors",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/SP-350/ch-14-8.html",
+        "quote": "Power for the Rover came from two 36-volt silver-zinc batteries driving an independent 1/4-hp motor in each wheel."
+      },
+      {
+        "title": "Apollo Expeditions to the Moon (NASA SP-350), same page - folding (figure caption)",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/SP-350/ch-14-8.html",
+        "quote": "Folded up to fit within its storage bay in the LM descent stage, the little car was designed so that it almost assembled itself."
+      },
+      {
+        "title": "Apollo Expeditions to the Moon (NASA SP-350), same page - crew-reported speed on level ground",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/SP-350/ch-14-8.html",
+        "quote": "On the level we averaged close to our top speed of 7 mph."
+      },
+      {
+        "title": "50 Years Ago, First Apollo Astronauts to Drive on the Moon Took Final Cruise (NASA History, Erin Mahoney, 2 Aug 2021)",
+        "url": "https://www.nasa.gov/history/50-years-ago-first-apollo-astronauts-to-drive-on-the-moon-took-final-cruise",
+        "quote": "During each of the last three Apollo missions, between 1971 and 1972, a battery powered LRV provided transportation for two crew members and supplies several miles beyond the landing site."
+      },
+      {
+        "title": "APOD: 2004 June 5 - Apollo 17's Lunar Rover (NASA Science; page last updated 29 Jul 2026) - top speed",
+        "url": "https://science.nasa.gov/image-article/apod-2004-june-5-apollo-17s-lunar-rover/",
+        "quote": "Powered by four 1/4 horsepower electric motors, one for each wheel, this rover was driven a total of about 18 miles across the lunar surface. Its estimated top speed was a blazing 8 miles per hour."
+      },
+      {
+        "title": "Reinventing the Wheel (NASA Glenn Research Center, page updated 26 Oct 2017) - NASA wording 'wire mesh wheels' (host www3.nasa.gov, not on the main-source host list)",
+        "url": "https://www3.nasa.gov/specials/wheels/",
+        "quote": "The last NASA vehicle to visit the Moon was the Lunar Roving Vehicle. This manned vehicle used four large flexible wire mesh wheels with stiff inner frames to prevent over-deflection."
+      },
+      {
+        "title": "Apollo 15: Mission Details (NASA, updated 29 Sep 2023)",
+        "url": "https://www.nasa.gov/missions/apollo/apollo-15-mission-details/",
+        "quote": "During three periods of extravehicular activity, or EVA, on July 31, and Aug. 1 and 2, Scott and Irwin completed a record 18 hours, 37 minutes of exploration, traveled 17.5 miles in the first car that humans have ever driven on the moon"
+      },
+      {
+        "title": "Apollo 16: Mission Details (NASA, updated 29 Sep 2023)",
+        "url": "https://www.nasa.gov/missions/apollo/apollo-16-mission-details/",
+        "quote": "Apollo 16 lifted off at 12:54 p.m. EST April 16, 1972, from Launch Complex 39 at Kennedy Space Center in Florida. | Young and Duke collected 209 pounds of samples and drove the rover 16.6 miles."
+      },
+      {
+        "title": "Apollo 17: Mission Details (NASA, updated 29 Sep 2023) - battery-powered LRV and a CONFLICTING distance",
+        "url": "https://www.nasa.gov/missions/apollo/apollo-17-mission-details/",
+        "quote": "and by the use of the battery-powered Lunar Roving Vehicle, or LRV. | The lunar rover vehicle traversed a total of 30.5 kilometers."
+      },
+      {
+        "title": "50 Years Ago: Apollo 17 Lands at Taurus-Littrow (NASA History, 12 Dec 2022) - another Apollo 17 distance",
+        "url": "https://www.nasa.gov/history/50-years-ago-apollo-17-lands-at-taurus-littrow/",
+        "quote": "and conducted three surface excursions totaling 22 hours, driving the third Lunar Roving Vehicle for 22.2 miles."
+      },
+      {
+        "title": "LRV Performance (incomplete), 'Working on the Moon' pages on NASA's Apollo Lunar Surface Journal site - quotes the Apollo 15 Pilot's Report",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/alsj/WOTM/WOTM-LRVPerformance.html",
+        "quote": "The velocity of the rover on the level surface reached a maximum of 13 kilometers (7 miles) per hour."
+      },
+      {
+        "title": "Apollo Lunar Roving Vehicle as Traversed Performance Metrics (NTRS record 20250011301, LPSC abstract, March 2026; host ntrs.nasa.gov, not on the main-source host list)",
+        "url": "https://ntrs.nasa.gov/citations/20250011301",
+        "quote": "The LRV could theoretically achieve speeds of 9 – 13 km/hr (2.5 – 3.6 m/s). | The Apollo 16 mission report states the LRV achieved speeds up to 14 km/hr (3.8 m/s) [1]."
+      }
+    ],
+    "notes": "Corrections to the draft. (1) Apollo 17 distance: the draft's '35 km' is not what NSSDCA says; NSSDCA says 35.9 km (about 36 km). NASA pages DISAGREE on this number: NSSDCA 35.9 km; NASA History 2022 '22.2 miles' (about 35.7 km); NASA History 2021 'nearly 22.5 miles'; NASA's Apollo 17 Mission Details page 30.5 km; the APOD page 'about 18 miles'. Best choice: 'about 36 km (22 miles)' sourced to NSSDCA, or avoid an exact figure. (2) Apollo 15: '27.9 km' was not found on any page I could open; NSSDCA says 27.8 km and NASA's Apollo 15 Mission Details says 17.5 miles (about 28 km), so say 'about 28 km'. That same Apollo 15 page also has a record-list line 'maximum radial distance traveled on the lunar surface away from the spacecraft of about 17.5 miles'; it contradicts NSSDCA's 5.0 km maximum range, so do NOT use it for distance from the lander. (3) Walk-back rule: NASA SP-350 says mission rules kept crews within 6 miles (about 10 km) of the LM, 'the distance we could walk back in a pinch'. 'In a pinch' is NASA's wording; 'if the rover failed' is my paraphrase. The farthest actual range was 7.6 km (Apollo 17), under the limit. I could not open NASA's Apollo Lunar Surface Journal pages (they redirect to its landing page for my tool), so I could not see how the walk-back limit was calculated. (4) Top speed: 'about 13 km/h (8 mph)' is NASA's ESTIMATED top speed (APOD). NASA pages differ: SP-350 'top speed of 7 mph'; the ALSJ page quoting the Apollo 15 Pilot's Report says '13 kilometers (7 miles) per hour' (internally inconsistent, 13 km is about 8 miles); a 2026 NASA abstract says design 9-13 km/h and up to 14 km/h on Apollo 16; downhill the crews went faster (see V2). Safe wording: 'about 13 km/h on level ground'. (5) Mass: NASA's NSSDCA sentence says 'mass of 210 kg'; the words 'on Earth' are not in it (mass is the same on the Moon; the weight would be about one sixth there). (6) Wheels: NSSDCA says 'woven ... steel strands'; the words 'wire mesh' are NASA wording only on a NASA Glenn page (www3.nasa.gov/specials/wheels/), so 'wire mesh wheels' is OK to use with that source. (7) 'Four electric motors': NSSDCA says 'four drive motors' (one per wheel) plus two steering motors. (8) The NSSDCA page is dated 2016. (9) Quotes were read through a page-to-text tool and tool limits force short quotes, so lines joined with ' | ' are separate sentences from the same page; typographic characters (curly quotes, dashes) may differ from the live page."
+  },
+  {
+    "id": "V2",
+    "key": "apollo_lrv_speed",
+    "status": "corrected",
+    "claim": "NASA's own history article says the Apollo 17 crew, Gene Cernan and Harrison Schmitt, set a lunar speed record of 18 km/h while driving downhill, on their way back to the lander on the third moonwalk. NASA's book Apollo Expeditions to the Moon says that going down the Lee-Lincoln scarp (a feature at the Apollo 17 landing site, per NASA Science) the crew set 'an informal lunar speed record for four-wheeled vehicles of 11 mph' (18 km/h is about 11.2 mph). The Apollo 16 crew had already radioed 17 km/h as 'a new world's speed record'.",
+    "values": [
+      { "label": "Record speed stated by NASA History for Apollo 17 (driving downhill)", "value": 18, "unit": "km/h" },
+      { "label": "Same speed in mph (my conversion, 18 / 1.609; NASA's SP-350 book says 11 mph)", "value": 11.2, "unit": "mph" },
+      { "label": "NASA SP-350 wording of the record (informal, for four-wheeled vehicles)", "value": 11, "unit": "mph" },
+      { "label": "Earlier call-out by the Apollo 16 crew on their third moonwalk (ALSJ transcript; I could not confirm which astronaut said it)", "value": 17, "unit": "km/h" },
+      { "label": "Moonwalk on which the NASA History article places the 18 km/h record", "value": "third (final) moonwalk, on the way back to the lunar module", "unit": "moonwalk" }
+    ],
+    "source_title": "50 Years Ago: Apollo 17 Lands at Taurus-Littrow (NASA History, published 12 Dec 2022, updated 21 Sep 2023)",
+    "source_url": "https://www.nasa.gov/history/50-years-ago-apollo-17-lands-at-taurus-littrow/",
+    "quote": "Due to timeline constraints, MCC decided to cancel the Station 10 stop, so Cernan and Schmitt headed directly back to the LM. Driving downhill, they set a lunar speed record of 18 km/h.",
+    "extra_sources": [
+      {
+        "title": "Same NASA History article - Cernan as driver at the end of the third moonwalk (the article does not say who was at the controls at the moment of the record)",
+        "url": "https://www.nasa.gov/history/50-years-ago-apollo-17-lands-at-taurus-littrow/",
+        "quote": "While Schmitt walked out to the ALSEP site for some housekeeping chores, Cernan drove the Rover to its final resting place,"
+      },
+      {
+        "title": "Apollo Expeditions to the Moon (NASA SP-350), Chapter 14, Appendix II 'Touring the Moon'",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/SP-350/ch-14-8.html",
+        "quote": "Once, going down the Lee-Lincoln scarp, we set an informal lunar speed record for four-wheeled vehicles of 11 mph."
+      },
+      {
+        "title": "Lee Lincoln Scarp at the Apollo 17 Landing Site (NASA Science, published 16 Jun 2025) - the scarp belongs to the Apollo 17 site",
+        "url": "https://science.nasa.gov/resource/lee-lincoln-scarp-at-the-apollo-17-landing-site/",
+        "quote": "The scarp is at the western end of the Taurus-Littrow valley, the landing site of Apollo 17, and was explored by the astronauts on their second moonwalk."
+      },
+      {
+        "title": "LRV Performance (incomplete), 'Working on the Moon' pages on NASA's Apollo Lunar Surface Journal site - Apollo 16 call-out",
+        "url": "https://www.nasa.gov/wp-content/uploads/static/history/alsj/WOTM/WOTM-LRVPerformance.html",
+        "quote": "We've just set a new world's speed record, Houston; 17 kilometers an hour on the Moon."
+      },
+      {
+        "title": "Apollo 17: Mission Details (NASA) - dates of the third moonwalk (times are EST)",
+        "url": "https://www.nasa.gov/missions/apollo/apollo-17-mission-details/",
+        "quote": "The final EVA began at 10:25:48 p.m. Dec. 13, and ended at 5:40:56 a.m. Dec. 14."
+      }
+    ],
+    "notes": "Status 'corrected': the core is confirmed on a NASA page, but the wording must change. (1) Who: NASA History says 'they' (Cernan and Schmitt); it does not name Cernan alone as setting the record. Cernan is named as driver elsewhere in the same article, so 'Cernan and Schmitt' or 'the Apollo 17 crew' is the safe wording. (2) 'Unofficial': NASA History states the record without a qualifier; the word 'informal' is NASA's, from SP-350, and SP-350 does not name the astronaut or the mission in that sentence (it ties it to the Lee-Lincoln scarp, which NASA Science places at the Apollo 17 site). (3) '11.2 mph' is my arithmetic from 18 km/h; NASA's book says 11 mph and the NASA History article gives only km/h. (4) WHERE it happened is unclear in NASA sources: the NASA History article puts it on the third moonwalk heading back to the LM; NASA Science says the crew explored the Lee-Lincoln scarp on the second moonwalk, and SP-350 ties the 11 mph run to that scarp. Do not state which moonwalk or place on the card. (5) Do not say 'the first' or 'the only' record: on a NASA ALSJ transcript page the Apollo 16 crew radioed a 'new world's speed record' of 17 km/h on their third moonwalk (the page's own surrounding text points to John Young as speaker, but I did not see a speaker label on that exact line). (6) Non-NASA pages (Guinness World Records, Wikipedia, a Fox News piece) name Cernan, 18 km/h = 11.2 mph and the word 'unofficial'; I saw them only as search results, did not open them and did not use them. NASA's Apollo Lunar Surface Journal pages that discuss the record could not be opened by my tool (they redirect to its landing page), so I could not check the original transcript. (7) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same page; typographic characters may differ from the live page."
+  },
+  {
+    "id": "V3",
+    "key": "ltv",
+    "status": "corrected",
+    "claim": "NASA says its Lunar Terrain Vehicle (LTV) is a new rover for Artemis astronauts exploring the Moon's South Pole region, so they can go farther and do more science than before. It will work like a cross between an Apollo-style lunar rover (astronauts drive it) and a Mars-style uncrewed rover: between crew missions it can be operated remotely (NASA's October 2026 update says remotely operated from Earth) to carry cargo and science payloads to new landing sites and to map the surface before crews arrive. NASA plans to contract the LTV as a service from industry instead of owning it. Contract status: in April 2024 NASA selected Intuitive Machines, Lunar Outpost and Venturi Astrolab for year-long feasibility studies; on 26 May 2026 NASA awarded Astrolab ($219 million) and Lunar Outpost ($220 million) to build and deliver the first phase of LTVs, to reach the lunar surface by 2028; as of 20 Oct 2026 NASA says both companies are on schedule to deliver flight-ready hardware to NASA at the end of 2027.",
+    "values": [
+      { "label": "NASA LTV page last updated", "value": "2026-10-20", "unit": "date" },
+      { "label": "First selection: three companies for year-long feasibility studies (NASA release, 3 Apr 2024)", "value": "Intuitive Machines, Lunar Outpost, Venturi Astrolab", "unit": "companies" },
+      { "label": "Maximum value of the whole LTV Services contract, all awards (2024 release)", "value": 4.6, "unit": "billion USD" },
+      { "label": "Later award date: Phase 1 task orders (NASA release, Washington, 26 May 2026)", "value": "2026-05-26", "unit": "date" },
+      { "label": "Award to Astrolab for the first phase of LTVs (rover CLV-1)", "value": 219, "unit": "million USD" },
+      { "label": "Award to Lunar Outpost for the first phase of LTVs (rover Pegasus)", "value": 220, "unit": "million USD" },
+      { "label": "Target for LTVs on the lunar surface (CLPS delivery to the South Pole region)", "value": 2028, "unit": "year" },
+      { "label": "Flight-ready hardware to be delivered to NASA (20 Oct 2026 update)", "value": "end of 2027", "unit": "date" },
+      { "label": "Distance LTVs are expected to be remotely driven per day before crews arrive (20 Oct 2026 update)", "value": 3.7, "unit": "miles (6 km) per day" },
+      { "label": "Astrolab CLV-1: design speed on level terrain (May 2026 release)", "value": "more than 6", "unit": "mph" },
+      { "label": "Lunar Outpost Pegasus: driving speed (May 2026 release)", "value": "more than 9", "unit": "mph" }
+    ],
+    "source_title": "Lunar Terrain Vehicle (NASA, 'Page Last Updated: Oct 20, 2026')",
+    "source_url": "https://www.nasa.gov/moonbase/lunar-terrain-vehicle/",
+    "quote": "As astronauts explore the South Pole region of the Moon during Artemis missions, they will be able to go farther and conduct more science than ever before thanks to a new lunar terrain vehicle.",
+    "extra_sources": [
+      {
+        "title": "NASA LTV page, Quick Facts - crewed and uncrewed",
+        "url": "https://www.nasa.gov/moonbase/lunar-terrain-vehicle/",
+        "quote": "The LTV will function like a cross between an Apollo-style lunar rover and a Mars-style uncrewed rover."
+      },
+      {
+        "title": "NASA LTV page, Quick Facts - remote operation between crews",
+        "url": "https://www.nasa.gov/moonbase/lunar-terrain-vehicle/",
+        "quote": "The LTV also can be operated remotely to transport cargo and science payloads to new landing sites between crew missions, enabling significant science returns by combining the best of human and robotic exploration."
+      },
+      {
+        "title": "NASA LTV page - Apollo comparison and NASA's buying model",
+        "url": "https://www.nasa.gov/moonbase/lunar-terrain-vehicle/",
+        "quote": "As the Lunar Roving Vehicle did for the Apollo Program, the LTV will greatly expand human reach and scientific research on the Moon for future surface missions. | Instead of owning the vehicle, NASA plans to contract it as a service from industry. | The LTV will be the ultimate lunar surface terrain vehicle with advanced power management, autonomous driving,"
+      },
+      {
+        "title": "NASA Provides Progress Update on Moon Base Rovers (NASA, published 20 Oct 2026)",
+        "url": "https://www.nasa.gov/missions/moon-base/nasa-provides-progress-update-on-moon-base-rovers/",
+        "quote": "NASA awarded Astrolab and Lunar Outpost task orders to build the first phase of Moon Base rovers capable of carrying crew, called lunar terrain vehicles (LTVs), that will be delivered to the Moon ahead of crewed Artemis missions."
+      },
+      {
+        "title": "Same NASA update, 20 Oct 2026 - uncrewed phase",
+        "url": "https://www.nasa.gov/missions/moon-base/nasa-provides-progress-update-on-moon-base-rovers/",
+        "quote": "The LTVs will be remotely operated from Earth, traversing up to 3.7 miles (6 kilometers) a day, mapping the lunar surface to help scientists produce high-resolution maps of the region, prior to crew arriving on future missions."
+      },
+      {
+        "title": "Same NASA update, 20 Oct 2026 - crewed phase and South Pole",
+        "url": "https://www.nasa.gov/missions/moon-base/nasa-provides-progress-update-on-moon-base-rovers/",
+        "quote": "During missions on the lunar surface, Artemis astronauts will drive the LTVs as they explore geologically diverse areas of the lunar South Pole region, gathering geology samples to bring back to Earth for scientists to study."
+      },
+      {
+        "title": "Same NASA update, 20 Oct 2026 - schedule",
+        "url": "https://www.nasa.gov/missions/moon-base/nasa-provides-progress-update-on-moon-base-rovers/",
+        "quote": "Both companies are on schedule to deliver the flight-ready hardware to NASA at the end of 2027. | NASA awarded Blue Origin a task order to deliver the LTVs to the lunar South Pole region by 2028 through the agency's CLPS (Commercial Lunar Payload Services) initiative."
+      },
+      {
+        "title": "NASA Provides Update on Moon Base Rovers, Landers, Missions (NASA release, Washington, 26 May 2026) - the later award",
+        "url": "https://www.nasa.gov/news-release/nasa-provides-update-on-moon-base-rovers-landers-missions/",
+        "quote": "NASA has awarded Astrolab $219 million and Lunar Outpost $220 million to build and deliver the first phase of LTVs. | Awarded under the Phase 1 High Achievability Mission task orders of the Lunar Terrain Vehicle Services contract, these firm-fixed-price, performance-based milestones will enable NASA to deploy crewed and uncrewed mobility systems to the lunar surface by 2028 through the agency's CLPS (Commercial Lunar Payload Services) initiative."
+      },
+      {
+        "title": "Same 26 May 2026 release - the two vehicles",
+        "url": "https://www.nasa.gov/news-release/nasa-provides-update-on-moon-base-rovers-landers-missions/",
+        "quote": "Astrolab's Crewed Lunar Vehicle, or CLV-1, adapted from the company's FLEX architecture, is a crewed rover designed to transport astronauts, carry supplies, and support remote operations, with a compact stowed configuration, a mass of about 2,000 pounds, and the ability to reach more than 6 mph on level terrain. | Operational for up to a year and capable of manual, autonomous, or teleoperated driving at speeds more than 9 mph,"
+      },
+      {
+        "title": "Same 26 May 2026 release - what happens next",
+        "url": "https://www.nasa.gov/news-release/nasa-provides-update-on-moon-base-rovers-landers-missions/",
+        "quote": "Over the next 18 months, the selected providers will finalize rover designs, conduct crewed evaluations, | NASA will expand opportunities for additional vendors through on-ramp competitions,"
+      },
+      {
+        "title": "NASA Awards Moon Base Transportation, Technology, Science Projects (NASA release, 7 Nov 2026)",
+        "url": "https://www.nasa.gov/news-release/nasa-awards-moon-base-transportation-technology-science-projects/",
+        "quote": "The award expands the task order awarded in May 2026 to deliver two lunar terrain vehicles to the Moon."
+      },
+      {
+        "title": "NASA Selects Companies to Advance Moon Mobility for Artemis Missions (NASA release, 3 Apr 2024) - the earlier selection",
+        "url": "https://www.nasa.gov/news-release/nasa-selects-companies-to-advance-moon-mobility-for-artemis-missions/",
+        "quote": "NASA has selected Intuitive Machines, Lunar Outpost, and Venturi Astrolab to advance capabilities for a lunar terrain vehicle (LTV) that Artemis astronauts will use to travel around the lunar surface, conducting scientific research during the agency's Artemis campaign at the Moon and preparing for human missions to Mars. | Each provider will begin with a feasibility task order, which will be a year-long special study | NASA anticipates making an award to only one provider for the demonstration. | The LTV will be able to handle the extreme conditions at the Moon's South Pole | NASA intends to begin using the LTV for crewed operations during Artemis V. | The indefinite-delivery/indefinite-quantity, milestone-based Lunar Terrain Vehicle Services contract with firm-fixed-price task orders has a combined maximum potential value of $4.6 billion for all awards."
+      }
+    ],
+    "notes": "Corrections to the draft. (1) 'Drive itself': NASA's wording is 'operated remotely' (remotely operated from Earth) between crew missions; NASA does list 'autonomous driving' among the LTV's technologies, and the May 2026 release says Pegasus is capable of 'manual, autonomous, or teleoperated driving'. Say 'remote-controlled from Earth', not 'drives itself'. (2) 'NASA wants': NASA has now made awards (26 May 2026, Astrolab and Lunar Outpost; the 7 Nov 2026 release says a later award expands that task order to deliver two LTVs), so 'NASA is buying/has chosen' is more accurate than 'wants'. (3) Contract history: the April 2024 release said NASA expected to award the demonstration mission to ONLY ONE provider and to start crewed use at Artemis V; the May 2026 awards went to two companies and the current pages say 'by 2028'. Do not use the 2024 'Artemis V' or 'one provider' statements. (4) The 2026 pages name only Astrolab and Lunar Outpost for LTVs. Intuitive Machines appears in the 26 May 2026 release only as the maker of a lander (Nova-C Trinity); I found no NASA page saying what became of its LTV bid, so do not claim it lost or withdrew. (5) The 2024 release says 'Venturi Astrolab' and the 2026 pages say 'Astrolab'; no NASA page I read states they are the same company, so use the name from the page you cite. (6) NASA's current LTV pages live under 'Moon Base' (nasa.gov/moonbase/..., 'Moon Base rovers') but still say 'Artemis missions' and 'Artemis astronauts'. (7) The LTV page itself gives no delivery year; '2028' comes from the 26 May and 20 Oct 2026 pages. (8) The 6 mph and 9 mph figures and the 2,000 pounds are NASA's description of the companies' designs, not flown results; NASA's 20 Oct 2026 update still talks about design reviews, drivable mockups and flight-ready hardware due at the end of 2027, so no LTV is on the Moon yet. (9) The latest NASA LTV items I found are the progress update of 20 Oct 2026 and the release of 7 Nov 2026 that expands the May task order; a later item could exist, so recheck NASA's LTV page before shipping. (10) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same page; typographic characters (for example non-breaking hyphens in 'CLV-1') may differ from the live page."
+  },
+  {
+    "id": "V4",
+    "key": "curiosity_speed",
+    "status": "corrected",
+    "claim": "NASA says Curiosity has a top speed on hard, flat ground of 4 centimeters (1.5 inches) per second, and its average is likely half that. 4 cm per second is about 0.14 km/h or 0.09 mph (my conversion). Curiosity landed in Gale Crater in 2012 and, as of 11 October 2026, had driven more than 38 km (more than 23.65 miles) in total (NASA/JPL, 12 Oct 2026). The draft's 'more than 30 km' is out of date.",
+    "values": [
+      { "label": "Top speed on hard, flat ground (NASA wording: 1.5 inches (4 centimeters) per second)", "value": 4, "unit": "cm per second" },
+      { "label": "Same top speed in km/h (my conversion, 4 cm/s x 3.6)", "value": 0.144, "unit": "km/h" },
+      { "label": "Same top speed in mph (my conversion, 4 cm/s x 2.237)", "value": 0.09, "unit": "mph" },
+      { "label": "Average speed (NASA: 'likely half that'; the 2 cm/s is my arithmetic)", "value": 2, "unit": "cm per second" },
+      { "label": "Total distance driven since the 2012 landing, as of 11 Oct 2026 (NASA/JPL release 12 Oct 2026)", "value": 38.07, "unit": "km (23.65 miles)" },
+      { "label": "Landing date (NASA Science mission page, 'Launch / Landing: Nov. 26, 2011 / Aug. 6, 2012')", "value": "2012-08-06", "unit": "date" },
+      { "label": "Apollo rover estimated top speed divided by Curiosity top speed (my arithmetic, 13 km/h / 0.144 km/h)", "value": 90, "unit": "times faster" }
+    ],
+    "source_title": "Learn About Me: Curiosity (NASA Mars, interactive page, section '\"Legs\" and Wheels (Mobility System)'; page shows no date)",
+    "source_url": "https://mars.nasa.gov/multimedia/interactives/learncuriosity/index-2.html",
+    "quote": "Curiosity has a top speed on hard, flat ground of 1.5 inches (4 centimeters) per second, but its average is likely half that.",
+    "extra_sources": [
+      {
+        "title": "NASA's Perseverance Sets Off-World Record for Total Distance Driven (NASA/JPL release, 12 Oct 2026) - Curiosity odometry",
+        "url": "https://www.jpl.nasa.gov/news/nasas-perseverance-sets-off-world-record-for-total-distance-driven/",
+        "quote": "The agency's Curiosity rover, which landed in Gale Crater in 2012 and remains hard at work, has logged more than 23.65 miles (38.07 kilometers)."
+      },
+      {
+        "title": "Same JPL release - the date of the figure (photo caption)",
+        "url": "https://www.jpl.nasa.gov/news/nasas-perseverance-sets-off-world-record-for-total-distance-driven/",
+        "quote": "the figures shown for those two are distances driven as of Oct. 11, 2026."
+      },
+      {
+        "title": "Same release on NASA Science (published 12 Oct 2026, updated 13 Oct 2026)",
+        "url": "https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/",
+        "quote": "has logged more than 23.65 miles (38.07 kilometers) | the figures shown for those two are distances driven as of Oct. 11, 2026."
+      },
+      {
+        "title": "Building Curiosity: Rover Rocks Rocker-Bogie (NASA/JPL video page, 16 Sep 2010) - transcript",
+        "url": "https://www.jpl.nasa.gov/videos/building-curiosity-rover-rocks-rocker-bogie/",
+        "quote": "What you saw in that test was actually top speed of the rover, about four centimeters per second. | Or put it another way, it takes about 40 minutes to go the length of a football field."
+      },
+      {
+        "title": "NASA Orbiter Spots Curiosity Rover Making Tracks to Next Science Stop (NASA/JPL, 24 Apr 2025) - NASA's own rounded mph figure",
+        "url": "https://www.jpl.nasa.gov/news/nasa-orbiter-spots-curiosity-rover-making-tracks-to-next-science-stop/",
+        "quote": "They represent roughly 11 drives starting on Feb. 2 as Curiosity trucked along at a top speed of 0.1 mph (0.16 kph)"
+      },
+      {
+        "title": "Mars Science Laboratory: Curiosity Rover (NASA Science mission page, last updated 29 Sep 2026) - landing date",
+        "url": "https://science.nasa.gov/mission/msl-curiosity/",
+        "quote": "Nov. 26, 2011 / Aug. 6, 2012"
+      }
+    ],
+    "notes": "Corrections to the draft. (1) '4 cm per second' is confirmed by NASA ('1.5 inches (4 centimeters) per second', 'hard, flat ground', 'average is likely half that'). (2) '0.09 mph' is NOT on any NASA page I opened; it is a conversion (4 cm/s = 0.0895 mph = 0.144 km/h). A 2025 JPL news item rounds Curiosity's speed to 'a top speed of 0.1 mph (0.16 kph)' for drives early that year, so do not print both numbers side by side without saying which is which. (3) 'More than 30 km' is out of date: NASA/JPL says more than 38 km (23.65 miles) as of 11 Oct 2026. The figure grows with every drive; the freshest NASA figure is on NASA's interactive 'Curiosity Rover Location Map' page, which my text tool cannot read (a search snippet showed 23.78 miles / 38.26 km for Sol 5069, about 9 Nov 2026; not opened, not used). If the card is shipped as a static string, say 'more than 38 km (as of October 2026)'. (4) 'Top speed' is for hard, flat ground; real drives are slower (average likely half). Only Curiosity was checked: do not generalize to 'Mars rovers' without checking Perseverance and others. (5) The 'Learn About Me' page is undated. (6) The '90 times' comparison is my arithmetic from NASA's estimated Apollo top speed (about 13 km/h) and Curiosity's 4 cm/s, comparing an estimated top speed on the Moon with a top speed on hard, flat ground on Mars; if it is kept at all, say 'roughly 90 times slower' and not a rounder number. (7) Quotes were read through a page-to-text tool; lines joined with ' | ' are separate passages from the same page; typographic characters may differ from the live page."
+  }
+]

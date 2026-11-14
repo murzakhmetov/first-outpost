@@ -1,0 +1,332 @@
+{
+  "img-curiosity-selfie": {
+    "title": "Curiosity's Selfie at Mont Mercou",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "page": "https://images.nasa.gov/details/PIA24543",
+    "date": "2021-03-30"
+  },
+  "img-mars-sunset": {
+    "title": "Sunset in Mars Gale Crater",
+    "credit": "NASA/JPL-Caltech/MSSS/Texas A&M Univ.",
+    "page": "https://images.nasa.gov/details/PIA19400",
+    "date": "2015-05-08"
+  },
+  "img-insight-dust": {
+    "title": "InSight's Final Selfie",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA25287",
+    "date": "2022-05-23"
+  },
+  "img-moxie": {
+    "title": "MOXIE All Tucked In",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA24203",
+    "date": "2021-01-19"
+  },
+  "img-solar-flare": {
+    "title": "Major Solar Flare",
+    "credit": "NASA/GSFC/Solar Dynamics Observatory",
+    "page": "https://images.nasa.gov/details/PIA21949",
+    "date": "2017-09-11"
+  },
+  "img-veggie-lettuce": {
+    "title": "iss055e000821",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss055e000821",
+    "date": "2018-03-03"
+  },
+  "img-zinnia": {
+    "title": "Zinnia flower in Columbus module",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss046e017198",
+    "date": "2016-01-22"
+  },
+  "img-orion-earth-moon": {
+    "title": "Artemis I Flight Day 13: Orion, Earth, and Moon",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/art001e000672",
+    "date": "2022-11-28"
+  },
+  "img-lunar-south-pole": {
+    "title": "The Lunar South Pole",
+    "credit": "NASA/GSFC/Arizona State University",
+    "page": "https://images.nasa.gov/details/PIA13523",
+    "date": "2010-09-27"
+  },
+  "img-earthrise": {
+    "title": "Apollo 8 Mission image, Earth over the horizon of the moon",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as08-14-2383",
+    "date": "1968-12-24"
+  },
+  "img-apollo13-mailbox": {
+    "title": "Interior view of \"mail box\" for purging carbon dioxide from Lunar Module",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as13-62-8929",
+    "date": "1970-04-14"
+  },
+  "img-helga-zohar": {
+    "title": "Artemis I MARES Payloads - Install into Crew Module",
+    "credit": "NASA/Frank Michaux",
+    "page": "https://images.nasa.gov/details/KSC-20220808-PH-FMX01_0014",
+    "date": "2022-08-08"
+  },
+  "img-perseverance-sample": {
+    "title": "WATSON Documents First Sample on the Martian Surface",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "page": "https://images.nasa.gov/details/PIA25663",
+    "date": "2022-12-21"
+  },
+  "img-apollo-moonwalk": {
+    "title": "Astronaut Harrison Schmitt retrieving lunar samples during EVA",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as17-145-22165",
+    "date": "1972-12-12"
+  },
+  "img-curiosity-storm-specks": {
+    "title": "Curiosity Sees Streaks and Specks During 2024 Solar Storm",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA26302",
+    "date": "2024-06-10"
+  },
+  "img-mars-aurora-2017": {
+    "title": "Solar Storm Triggers Whole-Planet Aurora at Mars",
+    "credit": "NASA/Univ. of Colorado",
+    "page": "https://images.nasa.gov/details/PIA21855",
+    "date": "2017-09-29"
+  },
+  "img-tycho-remnant": {
+    "title": "Tycho Supernova Remnant (Chandra X-ray image)",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/0301839",
+    "date": "2000-09-20"
+  },
+  "img-wearable-dosimeter": {
+    "title": "Astronaut Anne McClain wears an experimental wearable dosimeter",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss072e882087",
+    "date": "2025-04-01"
+  },
+  "img-apollo11-bootprint": {
+    "title": "Close-up view of astronauts footprint in lunar soil",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as11-40-5878",
+    "date": "1969-07-20"
+  },
+  "img-dust-storm-map": {
+    "title": "Dust Storm Covers Opportunity",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "page": "https://images.nasa.gov/details/PIA22329",
+    "date": "2018-06-10"
+  },
+  "img-fission-power-unit": {
+    "title": "Fission Surface Power Technology Demonstration Unit",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/GRC-2015-C-06315",
+    "date": "2016-11-09"
+  },
+  "img-lunar-eclipse-2025": {
+    "title": "Blood Moon lunar eclipse 2025",
+    "credit": "NASA/Eric Bordelon",
+    "page": "https://images.nasa.gov/details/MAF_20250314_LunarEclipse_composite",
+    "date": "2025-03-14"
+  },
+  "img-battery-spacewalk": {
+    "title": "Victor Glover on the battery-upgrade spacewalk",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss064e027903",
+    "date": "2021-02-01"
+  },
+  "img-lro-camera": {
+    "title": "Lunar Reconnaissance Orbiter cameras before launch",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/KSC-2009-2986",
+    "date": "2009-05-08"
+  },
+  "img-soyuz-ms09-spacewalk": {
+    "title": "Spacewalkers inspect the Soyuz MS-09",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss057e131662",
+    "date": "2018-12-11"
+  },
+  "img-water-recovery": {
+    "title": "Astronaut Suni Williams replaces particulate filters on the water recovery system",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss072e143163",
+    "date": "2024-11-01"
+  },
+  "img-iss-meal": {
+    "title": "Jessica Watkins eats a meal on the Space Station",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss068e008036",
+    "date": "2022-10-04"
+  },
+  "img-mars2020-launch": {
+    "title": "Mars 2020 Liftoff",
+    "credit": "NASA/Frank Michaux",
+    "page": "https://images.nasa.gov/details/KSC-20200730-PH-FMX01_0042",
+    "date": "2020-07-30"
+  },
+  "img-earth-moon-from-mars": {
+    "title": "Earth and Its Moon, as Seen From Mars",
+    "credit": "NASA/JPL-Caltech/Univ. of Arizona",
+    "page": "https://images.nasa.gov/details/PIA21260",
+    "date": "2017-01-06"
+  },
+  "img-curiosity-conjunction-day": {
+    "title": "Curiosity's Hazcams Capture a Day on Mars",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA26209",
+    "date": "2024-01-08"
+  },
+  "img-dsn-goldstone": {
+    "title": "Tracks of a Giant",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA13277",
+    "date": "2010-08-25"
+  },
+  "img-insight-sunrise": {
+    "title": "InSight Images a Sunrise on Mars",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA23201",
+    "date": "2019-05-01"
+  },
+  "img-perseverance-mic": {
+    "title": "Perseverance's Mast Microphone",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA24932",
+    "date": "2021-10-18"
+  },
+  "img-insight-seismometer": {
+    "title": "InSight's Seismometer on the Martian Surface",
+    "credit": "NASA/JPL-Caltech",
+    "page": "https://images.nasa.gov/details/PIA23177",
+    "date": "2019-04-23"
+  },
+  "img-ared-exercise": {
+    "title": "Kuipers exercises on the ARED",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss031e157839",
+    "date": "2012-06-05"
+  },
+  "img-kelly-twins": {
+    "title": "Mark and Scott Kelly talk to news media",
+    "credit": "NASA/Robert Markowitz",
+    "page": "https://images.nasa.gov/details/jsc2015e004178",
+    "date": "2015-01-19"
+  },
+  "img-rems-boom": {
+    "title": "Mars Weather-Station Tools on Rover Mast",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "page": "https://images.nasa.gov/details/PIA19164",
+    "date": "2015-04-13"
+  },
+  "img-sulfur-crystals": {
+    "title": "Curiosity Views Sulfur Crystals Within a Crushed Rock",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "page": "https://images.nasa.gov/details/PIA26309",
+    "date": "2024-07-18"
+  },
+  "img-lebanon-meteorite": {
+    "title": "Curiosity Finds Iron Meteorite on Mars",
+    "credit": "NASA/JPL-Caltech/LANL/CNES/IRAP/LPGNantes/CNRS/IAS/MSSS",
+    "page": "https://images.nasa.gov/details/PIA18387",
+    "date": "2014-07-15"
+  },
+  "img-link-outcrop": {
+    "title": "Rock Outcrops on Mars and Earth",
+    "credit": "NASA/JPL-Caltech/MSSS and PSI",
+    "page": "https://images.nasa.gov/details/PIA16189",
+    "date": "2012-09-27"
+  },
+  "img-murray-butte": {
+    "title": "Butte M9a in Murray Buttes on Mars",
+    "credit": "NASA/JPL-Caltech/MSSS",
+    "page": "https://images.nasa.gov/details/PIA20843",
+    "date": "2016-10-03"
+  },
+  "img-lobate-scarps": {
+    "title": "Lobate Scarps on the Moon",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/PIA23236",
+    "date": "2019-05-13"
+  },
+  "img-orange-soil": {
+    "title": "View of the orange soil which Apollo 17 crewmen found at Station 4 during EVA",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as17-137-20990",
+    "date": "1972-12-12"
+  },
+  "img-genesis-rock": {
+    "title": "Apollo 15 lunar sample 15415, the Genesis Rock",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/S71-42955",
+    "date": "1971-08-01"
+  },
+  "img-apollo15-rover": {
+    "title": "Lunar Roving Vehicle photographed against lunar background during EVA",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as15-88-11901",
+    "date": "1971-08-01"
+  },
+  "img-chapea-habitat": {
+    "title": "CHAPEA Mission 2 Crew Exits Habitat After Yearlong Stay",
+    "credit": "NASA/James Blair",
+    "page": "https://images.nasa.gov/details/jsc2026e424286",
+    "date": "2026-10-31"
+  },
+  "img-iss-3d-printer": {
+    "title": "Butch Wilmore with the first 3D printer in space",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss042e031282",
+    "date": "2014-12-09"
+  },
+  "img-mare-postflight": {
+    "title": "Artemis I Orion Post-Flight Payload Processing - MARE",
+    "credit": "NASA/Kim Shiflett",
+    "page": "https://images.nasa.gov/details/KSC-20230117-PH-KLS01_0037",
+    "date": "2023-01-17"
+  },
+  "img-chile-peppers": {
+    "title": "Chile Peppers on ISS",
+    "credit": "NASA/Megan McArthur",
+    "page": "https://images.nasa.gov/details/iss065e434041",
+    "date": "2021-09-30"
+  },
+  "img-apollo16-uv-camera": {
+    "title": "Apollo 16 ultraviolet camera on the Moon",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/as16-114-18439",
+    "date": "1972-04-22"
+  },
+  "img-chemcam-spark": {
+    "title": "Viewing Spark Generated by ChemCam Laser for Mars Rover",
+    "credit": "NASA/JPL-Caltech/LANL",
+    "page": "https://images.nasa.gov/details/PIA13397",
+    "date": "2010-09-21"
+  },
+  "img-phobos-eclipse": {
+    "title": "Perseverance's Mastcam-Z Captures a Phobos Solar Eclipse",
+    "credit": "NASA/JPL-Caltech/ASU/MSSS/SSI",
+    "page": "https://images.nasa.gov/details/PIA25179",
+    "date": "2022-04-20"
+  },
+  "img-emu-spacesuits": {
+    "title": "Two spacesuits in the Quest airlock",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/iss069e011698",
+    "date": "2023-05-20"
+  },
+  "img-apollo17-drill": {
+    "title": "Gene Cernan uses the Apollo Lunar Surface Drill",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/S72-55064",
+    "date": "1972-12-12"
+  },
+  "img-lunar-basalt-micrograph": {
+    "title": "Microscope view of Apollo 11 Moon rock 10022",
+    "credit": "NASA",
+    "page": "https://images.nasa.gov/details/S69-47900",
+    "date": "1969-08-28"
+  }
+}

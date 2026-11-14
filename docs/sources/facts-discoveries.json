@@ -1,0 +1,232 @@
+[
+  {
+    "id": "D1",
+    "key": "sulfur",
+    "status": "confirmed",
+    "claim": "On 30 May 2024 NASA's Curiosity rover drove over a rock in the Gediz Vallis channel on Mount Sharp and cracked it open, revealing yellow crystals. An instrument on the rover's arm later showed they are elemental (pure) sulfur - the first time this kind of sulfur has been found on Mars. Nearby the rover found a whole field of similar bright stones.",
+    "values": [
+      { "label": "Rock cracked open by the rover's wheel", "value": "2024-05-30", "unit": "date" },
+      { "label": "NASA announcement (JPL release 2024-100)", "value": "2024-07-18", "unit": "date" },
+      { "label": "Nickname of the crushed rock", "value": "Convict Lake", "unit": "name" },
+      { "label": "Width of the crushed fragments in NASA's close-up image (Mastcam, 7 June 2024, sol 4208)", "value": 13, "unit": "cm (about 5 inches)" },
+      { "label": "Height of Mount Sharp", "value": 5, "unit": "km (3 miles)" },
+      { "label": "Instrument that identified the sulfur", "value": "Alpha Particle X-ray Spectrometer (APXS)", "unit": "instrument" }
+    ],
+    "source_title": "NASA's Curiosity Rover Discovers a Surprise in a Martian Rock (NASA/JPL release 2024-100, 18 July 2024)",
+    "source_url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-discovers-a-surprise-in-a-martian-rock/",
+    "quote": "Scientists were stunned on May 30 when a rock that NASA’s Curiosity Mars rover drove over cracked open to reveal something never seen before on the Red Planet: yellow sulfur crystals.",
+    "extra_sources": [
+      { "title": "Same release, photo caption", "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-discovers-a-surprise-in-a-martian-rock/", "quote": "Using an instrument on the rover’s arm, scientists later determined these crystals are elemental sulfur — and it’s the first time this kind of sulfur has been found on the Red Planet." },
+      { "title": "Same release, on what 'pure' means", "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-discovers-a-surprise-in-a-martian-rock/", "quote": "But where past detections have been of sulfur-based minerals — in other words, a mix of sulfur and other materials — the rock Curiosity recently cracked open is made of elemental, or pure, sulfur." },
+      { "title": "Same release, project scientist Ashwin Vasavada (NASA JPL)", "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-discovers-a-surprise-in-a-martian-rock/", "quote": "“Finding a field of stones made of pure sulfur is like finding an oasis in the desert,” said Curiosity’s project scientist, Ashwin Vasavada of NASA’s Jet Propulsion Laboratory in Southern California. “It shouldn’t be there, so now we have to explain it." },
+      { "title": "Same release, on the location", "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-rover-discovers-a-surprise-in-a-martian-rock/", "quote": "Gediz Vallis channel, a groove that winds down part of the 3-mile-tall (5-kilometer-tall) Mount Sharp" },
+      { "title": "Curiosity Views Sulfur Crystals Within a Crushed Rock (NASA Photojournal PIA26309, added 18 July 2024)", "url": "https://science.nasa.gov/photojournal/curiosity-views-sulfur-crystals-within-a-crushed-rock/", "quote": "Nicknamed \"Convict Lake\" after a location in California's Sierra Nevada, this collection of fragments is about 5 inches (13 centimeters) across from left to right." },
+      { "title": "NASA's Curiosity Mars Rover Takes a Last Look at Mysterious Sulfur (NASA/JPL release 2024-160, 18 Nov 2024)", "url": "https://www.jpl.nasa.gov/news/nasas-curiosity-mars-rover-takes-a-last-look-at-mysterious-sulfur/", "quote": "Science instruments on the rover confirmed the stone was pure sulfur — something no mission has seen before on Mars." }
+    ],
+    "notes": "All parts of the draft confirmed. Be precise about 'first': Mars rovers had found plenty of sulfur before, but always bound up in minerals such as sulfates (salts that form as water evaporates); this is the first PURE sulfur. The crystals were seen at once but identified as sulfur 'later', with APXS. The 13 cm is the size of the crushed fragments in one image, not of a single crystal; NASA gives no crystal size. The stones were too small and brittle to drill, so the team drilled a larger nearby rock, 'Mammoth Lakes' (Curiosity's 41st hole). Fun fact from the same release: although people link sulfur with the smell of rotten eggs, 'elemental sulfur is odorless'. As of NASA's Nov 2024 release the cause was still a mystery: \"The team doesn't have a ready explanation for why the sulfur formed there\" (I did not look for later papers). Vasavada's quote continues: \"Discovering strange and unexpected things is what makes planetary exploration so exciting.\" The release is mirrored at nasa.gov/missions/mars-science-laboratory/curiosity-rover/nasas-curiosity-rover-discovers-a-surprise-in-a-martian-rock/; the older science.nasa.gov/missions/msl/... address returns 404."
+  },
+  {
+    "id": "D2",
+    "key": "meteorite",
+    "status": "confirmed",
+    "claim": "Curiosity has come across several iron-nickel meteorites along its route in Gale Crater, among them 'Lebanon' (photographed in 2014, about 2 m wide), 'Egg Rock' (2016, about the size of a golf ball, the first meteorite on Mars examined with a laser) and 'Cacao' (2023, about 30 cm across). Iron meteorites usually come from the metal cores of asteroids that once melted.",
+    "values": [
+      { "label": "Lebanon: image taken (sol 640)", "value": "2014-05-25", "unit": "date" },
+      { "label": "Lebanon: NASA image release (PIA18387)", "value": "2014-07-15", "unit": "date" },
+      { "label": "Lebanon: width (2014 NASA caption; a 2025 NASA blog says 1 m)", "value": 2, "unit": "m (about 2 yards)" },
+      { "label": "Egg Rock: ChemCam laser analysis", "value": "2016-10-30", "unit": "date" },
+      { "label": "Egg Rock: NASA release 2016-287", "value": "2016-11-02", "unit": "date" },
+      { "label": "Egg Rock: size", "value": "about the size of a golf ball", "unit": "size" },
+      { "label": "Egg Rock: elements found by ChemCam", "value": "iron, nickel and phosphorus", "unit": "elements" },
+      { "label": "Cacao: image taken (sol 3725)", "value": "2023-01-28", "unit": "date" },
+      { "label": "Cacao: size (estimated)", "value": 30, "unit": "cm (about 1 foot)" }
+    ],
+    "source_title": "Curiosity Mars Rover Checks Odd-looking Iron Meteorite (NASA/JPL release 2016-287, 2 Nov 2016)",
+    "source_url": "https://www.jpl.nasa.gov/news/curiosity-mars-rover-checks-odd-looking-iron-meteorite/",
+    "quote": "Laser-zapping of a globular, golf-ball-size object on Mars by NASA's Curiosity rover confirms that it is an iron-nickel meteorite fallen from the Red Planet's sky.",
+    "extra_sources": [
+      { "title": "Same release, on where iron meteorites come from", "url": "https://www.jpl.nasa.gov/news/curiosity-mars-rover-checks-odd-looking-iron-meteorite/", "quote": "Iron meteorites typically originate as core material of asteroids that melt, allowing the molten metal fraction of the asteroid's composition to sink to the center and form a core." },
+      { "title": "Curiosity Finds Iron Meteorite on Mars (NASA/JPL Photojournal PIA18387, 15 July 2014)", "url": "https://www.jpl.nasa.gov/images/pia18387-curiosity-finds-iron-meteorite-on-mars/", "quote": "Lebanon is about 2 yards or 2 meters wide (left to right, from this angle)." },
+      { "title": "Curiosity Finds a Meteorite, Cacao (NASA Science, PIA25737, 2 Feb 2023)", "url": "https://science.nasa.gov/resource/curiosity-finds-a-meteorite-cacao/", "quote": "This meteorite is estimated to be about 1 foot (30 centimeters) across." },
+      { "title": "A Stranger in Our Midst? (NASA Science blog by the Perseverance team, Candice Bedford, 2025)", "url": "https://science.nasa.gov/blog/a-stranger-in-our-midst/", "quote": "The Curiosity rover has identified many iron-nickel meteorites across its traverse in Gale crater including the 1-meter wide (about 39 inches) “Lebanon” meteorite back in 2014 and the “Cacao” meteorite spotted in 2023." }
+    ],
+    "notes": "Names, years, sizes and composition confirmed, with one conflict: the 2014 NASA image caption says Lebanon is 'about 2 yards or 2 meters wide', but a 2025 NASA blog calls it '1-meter wide'. Prefer the 2014 caption (the original measurement from the image) and keep the word 'about'; if you want to avoid the conflict, say 'one to two metres wide'. The 2014 caption calls Lebanon an 'iron meteorite' and does not mention nickel; NASA's 2025 blog groups Lebanon and Cacao among Curiosity's 'iron-nickel meteorites'. Egg Rock's 'first' is narrow: it was 'the first on Mars examined with a laser-firing spectrometer' - Spirit and Opportunity had found iron meteorites on Mars years earlier (the 2014 caption calls Lebanon 'similar in shape and luster to iron meteorites found on Mars by the previous generation of rovers, Spirit and Opportunity'), so do not say Curiosity found the first meteorite on Mars. Cacao was found in the 'sulfate-bearing unit' on Mount Sharp; its 30 cm is an estimate. Egg Rock was first noticed after an Oct. 27 drive; the release gives no sol. Origin, in the 2025 blog's words: 'iron-nickel meteorites formed in the core of large asteroids'."
+  },
+  {
+    "id": "D3",
+    "key": "stream_pebbles",
+    "status": "confirmed",
+    "claim": "In 2012, during its first 40 days on Mars, Curiosity photographed two rock outcrops, 'Hottah' and 'Link', made of gravel cemented together (a rock called conglomerate). Many of the pebbles are rounded, which happens when flowing water carries them a long way and they knock against each other; they were too big to have been moved by wind. From the pebble sizes, scientists worked out that the stream flowed at about 3 feet (about 1 m) per second - at least walking pace - and was between ankle-deep and hip-deep.",
+    "values": [
+      { "label": "NASA announcement (JPL release 2012-305)", "value": "2012-09-27", "unit": "date" },
+      { "label": "Water speed (from the size of the gravel)", "value": 0.9, "unit": "m/s (about 3 feet per second; the 2013 release says 'a meter, or three feet, per second', as a minimum)" },
+      { "label": "Water depth", "value": "between ankle-deep and hip-deep", "unit": "depth" },
+      { "label": "Size of the gravel", "value": "from a grain of sand to a golf ball", "unit": "size range" },
+      { "label": "Distance the gravel was carried (2013 estimate)", "value": "at least a few kilometres (miles)", "unit": "distance" },
+      { "label": "Science paper on these rocks (Williams et al., journal Science; NASA release 2013-181)", "value": "2013-05-30", "unit": "date" }
+    ],
+    "source_title": "NASA Rover Finds Old Streambed on Martian Surface (NASA/JPL release 2012-305, 27 Sep 2012)",
+    "source_url": "https://www.jpl.nasa.gov/news/nasa-rover-finds-old-streambed-on-martian-surface/",
+    "quote": "From the size of gravels it carried, we can interpret the water was moving about 3 feet per second, with a depth somewhere between ankle and hip deep,",
+    "extra_sources": [
+      { "title": "Same release, on the outcrops", "url": "https://www.jpl.nasa.gov/news/nasa-rover-finds-old-streambed-on-martian-surface/", "quote": "The discovery comes from examining two outcrops, called \"Hottah\" and \"Link,\" with the telephoto capability of Curiosity's mast camera during the first 40 days after landing." },
+      { "title": "Same release, Rebecca Williams (Planetary Science Institute) on shape and size", "url": "https://www.jpl.nasa.gov/news/nasa-rover-finds-old-streambed-on-martian-surface/", "quote": "The shapes tell you they were transported and the sizes tell you they couldn't be transported by wind." },
+      { "title": "Same release, on pebble sizes", "url": "https://www.jpl.nasa.gov/news/nasa-rover-finds-old-streambed-on-martian-surface/", "quote": "The gravels in conglomerates at both outcrops range in size from a grain of sand to a golf ball." },
+      { "title": "Pebbly Rocks Testify to Old Streambed on Mars (NASA/JPL release 2013-181, 30 May 2013)", "url": "https://www.jpl.nasa.gov/news/pebbly-rocks-testify-to-old-streambed-on-mars/", "quote": "At a minimum, the stream was flowing at a speed equivalent to a walking pace -- a meter, or three feet, per second -- and it was ankle-deep to hip-deep." },
+      { "title": "Same 2013 release, on how pebbles get round", "url": "https://www.jpl.nasa.gov/news/pebbly-rocks-testify-to-old-streambed-on-mars/", "quote": "The rounding indicates sustained flow. It occurs as pebbles hit each other multiple times." }
+    ],
+    "notes": "Every part of the draft confirmed. The speed-and-depth quote is by William Dietrich (University of California, Berkeley), a Curiosity co-investigator; the walking-pace wording is from the 2013 release, which calls it a minimum ('At a minimum'), so say 'at least walking pace' or 'about walking pace'. 0.9 m/s is the conversion of 3 ft/s; the 2013 release rounds to 'a meter'. Not every pebble is round: \"Some are angular, but many are rounded.\" Dietrich also said: \"This is the first time we're actually seeing water-transported gravel on Mars.\" The stones are 'cemented into a layer of conglomerate rock'; nice comparison from the 2012 release: \"Hottah looks like someone jack-hammered up a slab of city sidewalk, but it's really a tilted block of an ancient streambed.\" The site lies between the north rim of Gale Crater and the base of Mount Sharp. The 2013 paper adds a third rock, 'Goulburn', next to the landing site; flow lasted 'certainly more than weeks or months'."
+  },
+  {
+    "id": "D4",
+    "key": "murray_buttes",
+    "status": "confirmed",
+    "claim": "In August and September 2016 Curiosity drove for just over a month among the Murray Buttes on lower Mount Sharp: flat-topped hills (buttes and mesas) up to about 15 m (50 feet) high. They are eroded remains of ancient sandstone made of sand that wind piled up as moving sand dunes. Their tops are capped with rock that resists wind erosion, so they survived while the layer around them wore away.",
+    "values": [
+      { "label": "360-degree panorama taken at the entrance to the Murray Buttes", "value": "2016-08-05", "unit": "date" },
+      { "label": "Panorama taken amid the buttes (sol 1451)", "value": "2016-09-04", "unit": "date" },
+      { "label": "Last stop in the Murray Buttes, farewell images (sol 1454)", "value": "2016-09-08", "unit": "date" },
+      { "label": "Time spent driving in the Murray Buttes", "value": "just over one month", "unit": "duration" },
+      { "label": "Height of the tallest mesa NASA gives (PIA20765 / JPL release 2016-213)", "value": 15, "unit": "m (about 50 feet)" },
+      { "label": "Horizontal ledge near the top of that mesa, across (PIA20765)", "value": 60, "unit": "m (about 200 feet)" },
+      { "label": "Mesa near the centre of the sol 1451 panorama, height above the plain (PIA20840)", "value": 12, "unit": "m (about 39 feet)" },
+      { "label": "Largest butte in the sol 1451 panorama, height (PIA20840)", "value": 10, "unit": "m (about 33 feet)" },
+      { "label": "Two mesas in the sol 1434 view, heights (PIA20841, 18 Aug 2016)", "value": "8 and 10", "unit": "m (about 26 and 33 feet)" },
+      { "label": "Name of the sandstone layer", "value": "Stimson formation", "unit": "name" }
+    ],
+    "source_title": "Mars Rover Views Spectacular Layered Rock Formations (NASA/JPL release 2016-236, 9 Sep 2016)",
+    "source_url": "https://www.jpl.nasa.gov/news/mars-rover-views-spectacular-layered-rock-formations/",
+    "quote": "The Martian buttes and mesas rising above the surface are eroded remnants of ancient sandstone that originated when winds deposited sand after lower Mount Sharp had formed.",
+    "extra_sources": [
+      { "title": "Same release, project scientist Ashwin Vasavada", "url": "https://www.jpl.nasa.gov/news/mars-rover-views-spectacular-layered-rock-formations/", "quote": "Studying these buttes up close has given us a better understanding of ancient sand dunes that formed and were buried, chemically changed by groundwater, exhumed and eroded to form the landscape that we see today," },
+      { "title": "Mars Curiosity Rover Says Farewell to Murray Buttes (NASA image article)", "url": "https://www.nasa.gov/image-article/mars-curiosity-rover-says-farewell-murray-buttes/", "quote": "The layering within the sandstone is called “cross-bedding” and indicates that the sandstone was deposited by wind as migrating sand dunes." },
+      { "title": "Full-Circle Vista from NASA Mars Rover Curiosity Shows 'Murray Buttes' (NASA/JPL release 2016-213, 19 Aug 2016)", "url": "https://www.jpl.nasa.gov/news/full-circle-vista-from-nasa-mars-rover-curiosity-shows-murray-buttes/", "quote": "The buttes and mesas are capped with rock that is relatively resistant to wind erosion. This helps preserve these monumental remnants of a layer that formerly more fully covered the underlying layer that the rover is now driving on." },
+      { "title": "Same release, on size", "url": "https://www.jpl.nasa.gov/news/full-circle-vista-from-nasa-mars-rover-curiosity-shows-murray-buttes/", "quote": "The dark, flat-topped mesa seen to the left of the rover's arm is about 50 feet high and, near the top, about 200 feet wide." },
+      { "title": "Rover's Panorama of Entrance to 'Murray Buttes' on Mars (NASA Photojournal PIA20765, added 19 Aug 2016; photojournal.jpl.nasa.gov/catalog/PIA20765 redirects here)", "url": "https://science.nasa.gov/photojournal/rovers-panorama-of-entrance-to-murray-buttes-on-mars", "quote": "It stands about 50 feet (about 15 meters) high." },
+      { "title": "Rover's Panorama Taken Amid 'Murray Buttes' on Mars (NASA Photojournal PIA20840, added 3 Oct 2016; photojournal.jpl.nasa.gov/catalog/PIA20840 redirects here)", "url": "https://science.nasa.gov/photojournal/rovers-panorama-taken-amid-murray-buttes-on-mars", "quote": "The dark, flat-topped mesa near the center of the scene rises to about 39 feet (about 12 meters) above the surrounding plain." },
+      { "title": "Martian Mesas in 'Murray Buttes' Area, Sol 1434 (NASA Science, PIA20841; mars.nasa.gov/resources/8059 redirects here)", "url": "https://science.nasa.gov/resource/martian-mesas-in-murray-buttes-area-sol-1434", "quote": "The mesa on the right is about 33 feet (about 10 meters) high." }
+    ],
+    "notes": "Draft confirmed and given sizes. NASA heights for individual hills range from about 8 m to 15 m (26 to 50 feet); there is no single height for 'the Murray Buttes', so use 'up to about 15 m (50 feet)' or 'about 10 to 15 m'; any building comparison is your own. The 200-foot (60 m) figure is the ledge near the top of one mesa, not the length of the whole hill. The formation story is NASA's: wind-blown dune sand became sandstone (the 'Stimson formation') after lower Mount Sharp had formed, was buried, changed by groundwater, then exposed and eroded; an erosion-resistant cap protects each butte, 'just as is the case with many similarly shaped buttes and mesas on Earth' (PIA20840). NASA compares the scenery to the U.S. Southwest and National Parks. The farewell image caption gives the date 'Sept. 8, 2016, the 1,454th Martian day, or sol'."
+  },
+  {
+    "id": "D5",
+    "key": "shrinking_moon",
+    "status": "confirmed",
+    "claim": "The Moon is slowly shrinking as its still-hot interior cools: over the last several hundred million years it has got more than about 50 m (150 feet) 'skinnier'. Just as a grape wrinkles as it shrinks down to a raisin, the Moon gets wrinkles - but its crust is brittle, so it cracks, and one piece of crust is pushed up over the next. This makes small stair-step cliffs called fault scarps, typically tens of metres high and a few kilometres long. Shrinking may still be causing moonquakes: seismometers left by Apollo astronauts recorded 28 shallow moonquakes between 1969 and 1977, from about magnitude 2 to around 5. A NASA-funded study published in January 2024 placed the strongest shallow moonquake Apollo recorded in the south-polar region, where young faults lie near places Artemis astronauts may land - one of them inside a candidate landing region.",
+    "values": [
+      { "label": "How much 'skinnier' the Moon has got (NASA: 'more than about')", "value": 50, "unit": "m (150 feet)" },
+      { "label": "Time span of that shrinking", "value": "the last several hundred million years", "unit": "time" },
+      { "label": "Typical height of a fault scarp", "value": "tens of metres (yards)", "unit": "height" },
+      { "label": "Typical length of a fault scarp", "value": "a few miles (several kilometres)", "unit": "length" },
+      { "label": "Shallow moonquakes recorded by the four longer-lived Apollo seismometers, 1969-1977", "value": 28, "unit": "moonquakes" },
+      { "label": "Magnitude range of those quakes (Richter scale)", "value": "about 2 to around 5", "unit": "magnitude" },
+      { "label": "Fault scarps imaged by LRO's camera by 2019", "value": 3500, "unit": "scarps (more than)" },
+      { "label": "NASA release on the 2019 study (Nature Geoscience)", "value": "2019-05-13", "unit": "date" },
+      { "label": "South-pole study published (Planetary Science Journal, lead author Tom Watters)", "value": "2024-01-25", "unit": "date" },
+      { "label": "Candidate landing region with a modelled young fault scarp", "value": "de Gerlache Rim 2", "unit": "name" }
+    ],
+    "source_title": "Shrinking Moon May Be Generating Moonquakes (NASA news release, by William Steigerwald, 13 May 2019)",
+    "source_url": "https://www.nasa.gov/news-release/shrinking-moon-may-be-generating-moonquakes/",
+    "quote": "The Moon is shrinking as its interior cools, getting more than about 150 feet (50 meters) skinnier over the last several hundred million years.",
+    "extra_sources": [
+      { "title": "Same release, the grape and raisin (NASA's own wording)", "url": "https://www.nasa.gov/news-release/shrinking-moon-may-be-generating-moonquakes/", "quote": "Just as a grape wrinkles as it shrinks down to a raisin, the Moon gets wrinkles as it shrinks." },
+      { "title": "Same release, on the brittle crust", "url": "https://www.nasa.gov/news-release/shrinking-moon-may-be-generating-moonquakes/", "quote": "Unlike the flexible skin on a grape, the Moon’s surface crust is brittle, so it breaks as the Moon shrinks, forming “thrust faults” where one section of crust is pushed up over a neighboring part." },
+      { "title": "Same release, on the size of the scarps", "url": "https://www.nasa.gov/news-release/shrinking-moon-may-be-generating-moonquakes/", "quote": "These fault scarps resemble small stair-step shaped cliffs when seen from the lunar surface, typically tens of yards (meters) high and extending for a few miles (several kilometers)." },
+      { "title": "Same release, on Apollo moonquakes", "url": "https://www.nasa.gov/news-release/shrinking-moon-may-be-generating-moonquakes/", "quote": "The Apollo 11 seismometer operated only for three weeks, but the four remaining recorded 28 shallow moonquakes – the type expected to be produced by these faults – from 1969 to 1977. The quakes ranged from about 2 to around 5 on the Richter scale." },
+      { "title": "Shrinking Moon Causing Moonquakes and Faults Near Lunar South Pole (NASA, by William Steigerwald, 25 Jan 2024)", "url": "https://www.nasa.gov/solar-system/moon/shrinking-moon-causing-moonquakes-and-faults-near-lunar-south-pole/", "quote": "The strongest recorded shallow moonquake had an epicenter in the south-polar region." },
+      { "title": "Same 2024 article, on the landing region", "url": "https://www.nasa.gov/solar-system/moon/shrinking-moon-causing-moonquakes-and-faults-near-lunar-south-pole/", "quote": "One young thrust-fault scarp, located within the de Gerlache Rim 2, an Artemis III candidate landing region, is modeled in the study and shows that the formation of this fault scarp could have been associated with a moonquake of the recorded magnitude." },
+      { "title": "Same 2024 article, on the cause", "url": "https://www.nasa.gov/solar-system/moon/shrinking-moon-causing-moonquakes-and-faults-near-lunar-south-pole/", "quote": "The contraction is caused by cooling of the Moon's still-hot interior and tidal forces exerted by Earth, resulting in global shrinking." },
+      { "title": "10 Cool Things NASA's Lunar Reconnaissance Orbiter is Teaching Us About the Moon (NASA Science, 24 June 2019, updated 26 Mar 2025)", "url": "https://science.nasa.gov/solar-system/moon/10-cool-things-nasas-lunar-reconnaissance-orbiter-is-teaching-us-about-the-moon/", "quote": "The Moon, long thought to be a dead, inactive world, is still losing heat and, as a result, shrinking." },
+      { "title": "Same page, on size and quake strength", "url": "https://science.nasa.gov/solar-system/moon/10-cool-things-nasas-lunar-reconnaissance-orbiter-is-teaching-us-about-the-moon/", "quote": "Some are fairly strong, reaching level 5 on the Richter scale used to measure earthquakes." }
+    ],
+    "notes": "Every part of the draft confirmed; wording cautions follow. (1) NASA's 2019 release says 'more than about 150 feet (50 meters)', not just 'about'; the 2019 '10 Cool Things' page says 'the Moon has lost 150 feet (50 meters) of width over hundreds of millions of years, scientists estimate' - so 'about 50 m' is fine on a card. (2) The grape-to-raisin comparison IS NASA's own wording (2019 release), and so is the next sentence about the brittle crust. (3) Keep 'may': the 2019 headline is 'Shrinking Moon MAY Be Generating Moonquakes' (the evidence: \"eight of the 28 shallow quakes were within 30 kilometers (18.6 miles) of faults visible in lunar images\"); the 2024 headline is firmer ('Causing'). (4) The magnitude range 'about 2 to around 5' is from the 2019 release; the 2024 article gives no number for the strongest quake - it only says its epicentre was in the south-polar region and that its exact location 'could not be accurately determined'. (5) The 2024 article (written when Artemis III was the planned landing) says 'Artemis III candidate landing region'; NASA has since re-planned Artemis III (see E16 in facts-environment.json), so on the card say 'a region where Artemis astronauts may land'. (6) The 2024 article adds a cause besides cooling: 'tidal forces exerted by Earth'. It also warns that 'some areas are susceptible to regolith landslides from even light seismic shaking' and that faults 'should be considered when planning the location and stability of permanent outposts on the Moon' - good hook for an outpost game. Both NASA pages are by the same NASA Goddard writer; the 2024 page was last updated 19 Mar 2025."
+  },
+  {
+    "id": "D6",
+    "key": "orange_soil",
+    "status": "corrected",
+    "claim": "On 12 December 1972, during Apollo 17's second moonwalk, astronaut and geologist Harrison 'Jack' Schmitt spotted orange soil near Shorty crater in the Taurus-Littrow valley and called out \"There is orange soil!!\"; his crewmate Eugene Cernan confirmed it. Back on Earth the soil turned out to be made mostly of tiny beads of orange volcanic glass, rich in titanium, which most scientists think were sprayed out by a lava fountain ('fire fountain'). NASA's sample guide dates the glass to about 3.5 billion years ago (3,480 million years).",
+    "values": [
+      { "label": "Date of the find (photo AS17-137-20990)", "value": "1972-12-12", "unit": "date" },
+      { "label": "Moonwalk (EVA) number", "value": 2, "unit": "EVA" },
+      { "label": "Stop on the traverse", "value": "Station 4", "unit": "name" },
+      { "label": "Diameter of Shorty crater", "value": 330, "unit": "feet (about 100 m)" },
+      { "label": "Usual size of the glass beads in sample 74220", "value": "40 to 60", "unit": "micrometres (microns)" },
+      { "label": "Size range of the beads", "value": "a few to 100", "unit": "micrometres (microns)" },
+      { "label": "Age of the glass (NASA curation thin-section guide)", "value": 3480, "unit": "million years" },
+      { "label": "NASA sample number of the orange soil", "value": "74220", "unit": "sample" }
+    ],
+    "source_title": "50 Years Ago: Apollo 17 Lands at Taurus-Littrow (NASA History, 12 Dec 2022)",
+    "source_url": "https://www.nasa.gov/history/50-years-ago-apollo-17-lands-at-taurus-littrow/",
+    "quote": "But as they began exploring the site, Schmitt called out in surprise, “There is orange soil!!” Cernan walked over and confirmed it.",
+    "extra_sources": [
+      { "title": "Same page, on what the soil is", "url": "https://www.nasa.gov/history/50-years-ago-apollo-17-lands-at-taurus-littrow/", "quote": "Postflight analysis indicated the orange soil to be small spherical glass beads with a high titanium content." },
+      { "title": "Earth's Moon - Apollo 17, photo AS17-137-20990 (NASA Goddard, NSSDCA Photo Gallery)", "url": "https://nssdc.gsfc.nasa.gov/imgcat/html/object_page/a17_h_137_20990.html", "quote": "Apollo 17 surface photo showing orange soil discovered during the 2nd EVA near Shorty Crater at the Taurus-Littrow landing site on the Moon. Upon close examination on Earth, the soil was seen to contain many orange volcanic glass particles, giving it its distinctive color. ... This picture was taken on 12 December 1972." },
+      { "title": "Sample 74220 - Lunar Petrographic Thin Section Set Study Guide (NASA JSC Astromaterials curation)", "url": "https://curator.jsc.nasa.gov/education/lpetss/74220.cfm", "quote": "This glass is 3480 million years old (fig. 10)." },
+      { "title": "Same guide, on bead size", "url": "https://curator.jsc.nasa.gov/education/lpetss/74220.cfm", "quote": "Glass spheres range in size from a few microns to as large as 100 microns and commonly have a uniform size of about 40 to 60 microns." },
+      { "title": "Same guide, on the origin", "url": "https://curator.jsc.nasa.gov/education/lpetss/74220.cfm", "quote": "Most lunar scientists now accept the lava fountain hypothesis, because trace element data do not support a meteorite origin." },
+      { "title": "Gravity Assist podcast, Season 3 Episode 12: Fire Fountains on the Moon, with Dave Draper (NASA Deputy Chief Scientist; NASA, 12 Sep 2019)", "url": "https://www.nasa.gov/podcasts/gravity-assist/gravity-assist-fire-fountains-on-the-moon-with-dave-draper/", "quote": "The main process that forms these beads is something we call “fire fountaining,” and you can see this in volcanic eruptions on Earth." }
+    ],
+    "notes": "Date, people, place and the fire-fountain story confirmed. Correction: the age. The only NASA page I could read that dates this glass says 3,480 million years (about 3.5 billion); 3.6 billion appears in other sources (search snippets of the NASA Lunar Sample Compendium PDF and of an LPI page that says 3.64 billion), but I could not read either (LPI returned 403; my tool could not extract text from the PDF), so do not print 3.6 - say 'about 3.5 billion years ago'. Bead size: NASA's sample guide says 'a few microns to as large as 100 microns', usually 40-60 microns (hundredths of a millimetre); Dave Draper's 'a millimeter in diameter or less' is about lunar glass beads in general. 'Fire fountain' is NASA scientists' term (Draper: on the Moon, with low gravity and almost no air, 'these things were much more spectacular'); the curation guide says 'lava fountain hypothesis', which 'most lunar scientists now accept' - it is the accepted explanation, not a certainty. Schmitt was 'the first trained geologist to travel to the Moon' (same NASA History page). The 12 December date is the NSSDCA photo caption; the NASA History page gives no calendar date. Shorty is described there as 'the 330-foot diameter crater Shorty'."
+  },
+  {
+    "id": "D7",
+    "key": "genesis_rock",
+    "status": "corrected",
+    "claim": "On 1 August 1971, during their second moonwalk, Apollo 15 astronauts David Scott and James Irwin found a white crystalline rock at Spur crater, near their Hadley-Apennine landing site (Scott radioed: \"Guess what we just found\"). It is anorthosite - made almost entirely of one mineral, plagioclase feldspar - a piece of the Moon's ancient (primordial) crust. It was nicknamed the 'Genesis Rock' because it was thought to be among the oldest samples brought back; NASA geologists later concluded it is about 4 billion years old, although it is not the oldest Moon sample. Its NASA sample number is 15415 and it weighs 269 grams.",
+    "values": [
+      { "label": "Date found", "value": "1971-08-01", "unit": "date" },
+      { "label": "Moonwalk (EVA) number", "value": 2, "unit": "EVA" },
+      { "label": "Stop on the traverse", "value": "Station 7, Spur crater", "unit": "name" },
+      { "label": "Time of collection after launch (ground elapsed time)", "value": "145 h 42 min", "unit": "time" },
+      { "label": "NASA sample number", "value": "15415", "unit": "sample" },
+      { "label": "Mass (NASA curation thin-section guide, Table 5)", "value": 269, "unit": "grams" },
+      { "label": "Age (NASA Science)", "value": 4, "unit": "billion years (about)" }
+    ],
+    "source_title": "Genesis Rock (NASA Science, 22 Sep 2017, updated 22 Oct 2024)",
+    "source_url": "https://science.nasa.gov/solar-system/moon/genesis-rock/",
+    "quote": "That sample, nicknamed the Genesis Rock, sample number 15415, was an anorthosite, a piece of the moon’s primordial crust.",
+    "extra_sources": [
+      { "title": "Same page, on the age", "url": "https://science.nasa.gov/solar-system/moon/genesis-rock/", "quote": "While not the oldest lunar sample brought back from the moon, geologists at the Manned Spacecraft Center (now known as the Johnson Space Center) later concluded that this rock was about 4 billion years old." },
+      { "title": "Same page, on the date and Scott's words", "url": "https://science.nasa.gov/solar-system/moon/genesis-rock/", "quote": "On August 1, 1971, Apollo 15 mission commander David R. Scott relayed exciting news to Mission Control and the scientists in the back room. “Guess what we just found,” Scott said." },
+      { "title": "50 Years Ago: Apollo 15 on the Moon at Hadley-Apennine (NASA History, John Uri, 29 July 2021)", "url": "https://www.nasa.gov/history/50-years-ago-apollo-15-on-the-moon-at-hadley-apennine/", "quote": "Next, they drove to Station 7 at Spur Crater where they found, among other numerous samples, a white crystalline rock later dubbed the Genesis Rock." },
+      { "title": "APOLLO XV - LUNAR SAMPLE (NO. 15415 - \"GENESIS ROCK), photo S71-42955 (NASA Image and Video Library, read through images-api.nasa.gov because the images.nasa.gov page did not render)", "url": "https://images.nasa.gov/details/S71-42955", "quote": "This sample is the white anorthositic rock (Genesis Rock) collected by astronauts David R. Scott and James B. Irwin in container no. 196 at Site no. 7 at a Ground Elapsed Time of 145 hours and 42 minutes, on the mission's second extravehicular activity (EVA)." },
+      { "title": "50 Years Ago: Apollo 15 Astronauts Return to Houston (NASA History, 9 Aug 2021)", "url": "https://www.nasa.gov/history/50-years-ago-apollo-15-astronauts-return-to-houston/", "quote": "Another interesting sample was the so-called \"Genesis Rock,\" a white anorthosite so named because it was thought to be among the oldest samples returned." },
+      { "title": "History of Lunar Exploration (NASA Science)", "url": "https://science.nasa.gov/solar-system/moon/history-of-lunar-exploration/", "quote": "The crew returned the “Genesis Rock,” composed almost entirely of a single mineral (plagioclase feldspar), representing the most ancient crustal rocks on the Moon." },
+      { "title": "Plutonic Rocks - Lunar Petrographic Thin Section Set Study Guide, Table 5 (NASA JSC Astromaterials curation)", "url": "https://astromaterials.jsc.nasa.gov/education/lpetss/plutonic.cfm", "quote": "15415 | Anorthosite | 269 | | \"Genesis rock\" (table row; columns Sample, Rock Type, Weight, Grams, Age, Special Features - the age cell is blank)" }
+    ],
+    "notes": "Who, when, where, what and the sample number are confirmed. Two corrections. (1) 'Sitting on a grey boulder' is NOT supported. No official NASA page I could read describes how it lay. The Apollo Lunar Surface Journal (first published by the NASA History Office, now hosted at apollojournals.org, which is not an official NASA site) says: \"Interestingly, it was sitting up off the surface on a pedestal of soil.\" The big grey boulder at Station 7 was a different rock (a breccia). Drop the boulder, or say 'sitting on a little lump of soil' and accept that it rests on a non-NASA page. (2) 'Later measurements said older' is NOT supported: the NASA Science page gives 'about 4 billion years' and stresses it is 'not the oldest lunar sample'; I found no NASA page with a newer, older age (a search snippet suggests a NASA lithograph PDF says 4.5 billion, which conflicts - I did not open it). Use 'about 4 billion years old'. Other details: the ALSJ gives Irwin's \"Look at the glint!\" just before Scott's \"Guess what we just found!\" (mission time 145:42:47), and NASA Science adds Scott's \"I think we found what we came for.\" The landing site is 'Hadley-Apennine' (NASA Science writes 'Hadley-Apennines'). NASA calls it 'white', 'white crystalline' and 'white anorthositic'."
+  },
+  {
+    "id": "D8",
+    "key": "new_craters",
+    "status": "corrected",
+    "claim": "By comparing before-and-after pictures from NASA's Lunar Reconnaissance Orbiter (in orbit around the Moon since June 2009), scientists found more than 200 new impact craters that formed while the orbiter was watching, from about 3 to 43 m across - about 30% more than models predicted (a later NASA page says 33% higher). They also spotted over 47,000 small fresh marks they call 'splotches'. The top few centimetres (about an inch) of moon soil is being stirred up over 100 times faster than older models said - 99% of the surface gets overturned in about 81,000 years - so the Apollo astronauts' tracks will be gone in tens of thousands of years rather than millions, and long-lasting equipment such as a lunar base may have to be made sturdier.",
+    "values": [
+      { "label": "New impact craters found (NASA release; the Nature paper is widely reported as 222, not on a NASA page I opened)", "value": 200, "unit": "craters (more than)" },
+      { "label": "Size of the new craters", "value": "about 3 to 43", "unit": "m (about 10 to 140 feet)" },
+      { "label": "More new craters than models predicted (NASA release, 2016)", "value": 30, "unit": "percent (about)" },
+      { "label": "Rate of new craters above expectations (NASA Science 'Why Study Moon Craters?', updated 2025)", "value": 33, "unit": "percent" },
+      { "label": "Small surface changes ('splotches') seen", "value": 47000, "unit": "splotches (more than)" },
+      { "label": "Time for 99% of the surface to be overturned by splotches", "value": 81000, "unit": "years (about)" },
+      { "label": "Depth of soil churned in that estimate", "value": "the upper few centimetres", "unit": "depth (NASA: 'approximately an inch')" },
+      { "label": "Depth that older models said took millions of years to overturn (Speyerer)", "value": 2, "unit": "cm (about 0.8 inch)" },
+      { "label": "New churning rate compared with previous models", "value": 100, "unit": "times faster (more than)" },
+      { "label": "Speed of debris that surface equipment must withstand", "value": 500, "unit": "m/s (about 1,600 feet per second)" },
+      { "label": "LRO arrives in lunar orbit", "value": "2009-06", "unit": "month" },
+      { "label": "Study published in Nature (lead author Emerson Speyerer, Arizona State University) and NASA release", "value": "2016-10-13", "unit": "date" }
+    ],
+    "source_title": "Earth's Moon Hit by Surprising Number of Meteoroids (NASA Goddard release, by William Steigerwald, 13 Oct 2016)",
+    "source_url": "https://www.nasa.gov/news-release/earths-moon-hit-by-surprising-number-of-meteoroids/",
+    "quote": "Using these before-and-after images (temporal pairs) acquired by the LROC Narrow Angle Camera (NAC), the team identified over 200 impact craters that formed during the LRO mission, ranging in size from about 10 to 140 feet (approximately 3 to 43 meters) in diameter.",
+    "extra_sources": [
+      { "title": "Same release, on the surprise", "url": "https://www.nasa.gov/news-release/earths-moon-hit-by-surprising-number-of-meteoroids/", "quote": "During the search, they identified about 30 percent more new craters than anticipated by previous cratering models." },
+      { "title": "Same release, on splotches and stirring", "url": "https://www.nasa.gov/news-release/earths-moon-hit-by-surprising-number-of-meteoroids/", "quote": "The team found that 99 percent of the surface would be overturned by splotch formation after about 81,000 years. This rate is over 100 times faster than previous models that considered overturn from micrometeorite impacts alone, and ignored the effects of secondary impacts." },
+      { "title": "Same release, co-author Mark Robinson (Arizona State University)", "url": "https://www.nasa.gov/news-release/earths-moon-hit-by-surprising-number-of-meteoroids/", "quote": "The newly determined churning rate means that the Apollo astronaut tracks will be gone in tens of thousands of years rather than millions," },
+      { "title": "Same release, on a Moon base", "url": "https://www.nasa.gov/news-release/earths-moon-hit-by-surprising-number-of-meteoroids/", "quote": "The finding also implies that equipment placed on the moon for long durations — such as a lunar base — may have to be made sturdier." },
+      { "title": "Why Study Moon Craters? (NASA Science, updated 8 Apr 2025)", "url": "https://science.nasa.gov/moon/lunar-craters/why-study-craters/", "quote": "Scientists analyzing before and after pictures taken by NASA’s Lunar Reconnaissance Orbiter found new craters forming on the Moon at a rate 33 percent higher than expected." },
+      { "title": "Gardening Rates on the Moon (NASA Scientific Visualization Studio, 13 Oct 2016)", "url": "https://svs.gsfc.nasa.gov/4505", "quote": "the LROC team has found over 200 new craters large enough for the camera to see (at least 5 meters in diameter)" }
+    ],
+    "notes": "Corrections: (1) '222' is not on any NASA page I opened. NASA says 'over 200'; 222 is the count in the Nature paper as quoted by press coverage, and I could not open the paper (nature.com sent me to a login page). Print 'more than 200'. (2) '33% more' vs 'about 30% more': the 2016 NASA release says 'about 30 percent more new craters than anticipated'; NASA Science's 'Why Study Moon Craters?' page says 'a rate 33 percent higher than expected'. 'About a third more than expected' fits both. (3) 'In about seven years' is not stated on any NASA page I opened. NASA only says the craters 'formed during the LRO mission', which began in June 2009, and the study came out in October 2016. Say 'since 2009' or 'over several years'. Size: up to about 43 m is confirmed, and NASA gives a lower end of about 3 m (the SVS page says LRO's camera can see craters at least 5 m wide - a small inconsistency inside NASA's own pages). Base implication from NASA Science: such equipment 'would have to be able to withstand damage caused when nearby impacts spray debris that can move as fast as 1,600 feet per second (500 meters per second)'. The 81,000-year figure is for 99% of the surface being overturned, and the depth NASA gives for it is 'the upper few centimeters (approximately an inch) of the regolith'; the 2 cm figure is only in Emerson Speyerer's description of the old view (churning 'took millions of years to overturn the surface down to 2 centimeters (about 0.8 inches)'). Do not turn this into 'the whole Moon is dug up'. The 100-times speed-up is about soil churning, not about how many craters form."
+  }
+]

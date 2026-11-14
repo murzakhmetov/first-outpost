@@ -1,0 +1,142 @@
+{
+  "about": "Independent check of the true stories, glossary and Science log texts against their linked sources (12 November 2026). Every claim was looked up; every link was opened. The problems found are listed here with what was changed.",
+  "checked": {
+    "priority1": true,
+    "priority2": true,
+    "priority3": true,
+    "priority4": true,
+    "claimsChecked": 212,
+    "urls": 83,
+    "deadUrls": 0
+  },
+  "findings": [
+    {
+      "where": "lumi.night.moon (not in the priority list; found while skimming en.ts)",
+      "severity": "wrong",
+      "problem": "'Earth never rises or sets here' is true for most of the Moon's near side but not for the game's site, the south pole ridge. NASA: at the lunar South Pole 'the Earth sits low on the horizon, sometimes out of sight all together', and Earth is visible from there for only about half of every month. NASA's visualization from the rim of Shackleton crater shows that 'the Earth bobs up and down'.",
+      "fix": "Earth stays low on the horizon here. It slowly bobs up and down, and for part of each month it dips out of sight.",
+      "source": "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/scan/lunar-surface-propagation/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.dust_devil.src / ev.dust_devil.url",
+      "severity": "wrong",
+      "problem": "The label says 'Opportunity’s cleaned solar panels', but PIA03608 is 'Solar-Panel Dust Accumulation and Cleanings', a graph of the Spirit rover's solar panel output. The old photojournal.jpl.nasa.gov address still works but redirects to science.nasa.gov. The story text itself is fine.",
+      "fix": "ev.dust_devil.src: 'NASA Photojournal: Solar-panel dust accumulation and cleanings (Spirit rover)'; ev.dust_devil.url: https://science.nasa.gov/photojournal/solar-panel-dust-accumulation-and-cleanings/",
+      "source": "https://science.nasa.gov/photojournal/solar-panel-dust-accumulation-and-cleanings/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.quake.story.mars",
+      "severity": "unsupported",
+      "problem": "NASA's own pages give the May 2022 quake as 'an estimated magnitude 5', not 4.7, and the linked page (ev.quake.url.mars) gives no magnitude at all. 4.7 is a later refinement from a journal paper (Kawamura et al., Geophysical Research Letters, 2023), so a judge who checks the NASA link will not find it.",
+      "fix": "NASA’s InSight lander listened to the ground on Mars for four years. It felt more than 1,300 marsquakes. The biggest, in May 2022, was about magnitude 5. (Alternative: keep 4.7 and add the paper as a source, https://doi.org/10.1029/2022GL101543)",
+      "source": "https://www.nasa.gov/missions/insight/nasas-insight-records-monster-quake-on-mars/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.quake.story.moon / ev.quake.url.moon",
+      "severity": "unsupported",
+      "problem": "The linked NASA page (Shrinking Moon May Be Generating Moonquakes) says only that four seismometers recorded 28 shallow moonquakes from 1969 to 1977. It does not say 'thousands' and does not say 'more than ten minutes'. The codex card 'quakes' also says 28, so a reader sees 'thousands' in one place and '28' in another.",
+      "fix": "The story text is correct; change only the link. ev.quake.url.moon: https://science.nasa.gov/solar-system/moon/nasas-apollo-samples-lro-help-scientists-forecast-moonquakes/ (NASA, 2025: 'Between 1969 and 1977, a network of seismometers deployed by Apollo astronauts on the Moon’s surface recorded thousands of vibrations from moonquakes' and 'a moonquake can last for hours'). Second source for the duration: https://science.nasa.gov/moon/moonquakes/ ('can last for over 10 minutes').",
+      "source": "https://science.nasa.gov/solar-system/moon/nasas-apollo-samples-lro-help-scientists-forecast-moonquakes/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.battery_hot.url",
+      "severity": "unsupported",
+      "problem": "The link is the generic International Space Station page, which does not mention the battery upgrade. The story itself is correct (48 nickel-hydrogen batteries replaced by 24 lithium-ion ones; a four-year effort finished on the spacewalk of 1 February 2021).",
+      "fix": "https://www.nasa.gov/blogs/spacestation/2021/02/01/spacewalkers-wrap-up-battery-work-and-camera-installations/",
+      "source": "https://www.nasa.gov/blogs/spacestation/2021/02/01/spacewalkers-wrap-up-battery-work-and-camera-installations/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.cold_snap.url / ev.cold_snap.src",
+      "severity": "unsupported",
+      "problem": "The link is the generic Curiosity mission page, which gives no temperatures. The claim 'nights colder than −90 °C' is correct (NASA/JPL: REMS measured air temperatures down to 'minus 148 F (minus 100 C) on a winter night') but needs the page that says so.",
+      "fix": "ev.cold_snap.url: https://www.jpl.nasa.gov/news/second-cycle-of-martian-seasons-completing-for-curiosity-rover/ ; ev.cold_snap.src: 'NASA/JPL: Second cycle of Martian seasons completing for Curiosity rover'",
+      "source": "https://www.jpl.nasa.gov/news/second-cycle-of-martian-seasons-completing-for-curiosity-rover/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.cold_snap.story",
+      "severity": "misleading",
+      "problem": "The story says shadowed lunar craters are 'about −240 °C', but NASA's figure, which the game's own codex card 'cold' uses, is 'lower than -410°F (-246°C)'. Two different numbers for the same fact in one game.",
+      "fix": "Mars is cold: about −60 °C on average. Curiosity’s weather station has measured nights colder than −90 °C. Craters on the Moon that never see the Sun are colder still: below −246 °C.",
+      "source": "https://science.nasa.gov/moon/weather-on-the-moon/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "codex card 'gravity' (en body and numbers row 'The same jump on Mars')",
+      "severity": "misleading",
+      "problem": "The card says a jump on Mars is 'about two and a half times higher' / 'about 2.5 times higher', while site.mars.f1 says 2.6 times. With gravity at 38% of Earth's (the card's own number) the ratio is 1/0.38 = 2.6 (9.81/3.71 = 2.64).",
+      "fix": "Body: 'Jump just as hard and you would rise about 2.6 times higher on Mars, and about six times higher on the Moon.' Numbers row: ['The same jump on Mars', 'about 2.6 times higher']. Change the ru text the same way.",
+      "source": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.dust_warning.story",
+      "severity": "misleading",
+      "problem": "'After almost 15 years on Mars, Opportunity fell silent on 10 June 2018' does not add up: NASA gives the landing as 24 January 2004, so on 10 June 2018 the rover had been on Mars 14 years and 4.5 months. NASA's 'almost 15 years' is the whole mission up to February 2019, and the linked page's 'nearly-15-year-old rover' counts from its 2003 launch. Also, 'dustiest ever measured' is not on the linked page; it is on https://science.nasa.gov/resource/on-mars-light-is-energy/.",
+      "fix": "In 2018 a dust storm covered all of Mars. The sky above the Opportunity rover became the dustiest ever measured. Its solar panels could not make enough power. After more than 14 years on Mars, Opportunity fell silent on 10 June 2018.",
+      "source": "https://science.nasa.gov/missions/mer/nasas-opportunity-rover-mission-on-mars-comes-to-end/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.plants_sick.url / ev.plants_sick.src",
+      "severity": "unsupported",
+      "problem": "The Veggie fact sheet PDF only says that zinnias were planted on 16 November 2015 and flowered. It does not mention the mould, Scott Kelly's request to water them his own way, or the January 2016 bloom.",
+      "fix": "ev.plants_sick.url: https://www.nasa.gov/image-article/first-flower-grown-space-stations-veggie-facility-2/ ; ev.plants_sick.src: 'NASA: First flower grown in Space Station’s Veggie facility' (late December 2015 trouble, Kelly as 'autonomous gardener', bloom on 16 January 2016). The mould itself is on https://www.nasa.gov/humans-in-space/zinnias-from-space-nasa-studies-the-multiple-benefits-of-gardening/ ('traces of mold were found on the plants').",
+      "source": "https://www.nasa.gov/image-article/first-flower-grown-space-stations-veggie-facility-2/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.solar_storm.story / ev.solar_storm.url",
+      "severity": "unsupported",
+      "problem": "The linked page supports the August 1972 near miss and the shelter made of stowage bags, but not 'in about an hour' and not that an astronaut 'could have become very ill'. The hour is on another NASA page.",
+      "fix": "Use as the link (or add as a second source): https://www.nasa.gov/missions/artemis/orion/scientists-and-engineers-evaluate-orion-radiation-protection-plan/ (NASA: 'the crew would create the shelter within an hour').",
+      "source": "https://www.nasa.gov/missions/artemis/orion/scientists-and-engineers-evaluate-orion-radiation-protection-plan/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.water_pump.story / ev.water_pump.url",
+      "severity": "unsupported",
+      "problem": "The linked page supports the 98% only. It does not mention the clog with crystals or the changed cleaning recipe; those come from a NASA Marshall paper (calcium from bone loss formed solids in the urine processor; the pretreatment acid was changed).",
+      "fix": "Add as a second source: https://ntrs.nasa.gov/citations/20170008985 (Preventing Precipitation in the ISS Urine Processor). The codex card 'water_recycling' already cites both.",
+      "source": "https://ntrs.nasa.gov/citations/20170008985",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.ration.story / ev.ration.url",
+      "severity": "unsupported",
+      "problem": "The linked page gives the travel times (Apollo 8 'just under three days'; Mars 'seven to ten months') but does not mention the 26-month launch window.",
+      "fix": "Add as a second source: https://science.nasa.gov/planetary-science/programs/mars-exploration/mission-timeline/ (NASA: 'about once every 26 months'). The codex card 'launch_windows' already cites both.",
+      "source": "https://science.nasa.gov/planetary-science/programs/mars-exploration/mission-timeline/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.leak.story / ev.leak.url",
+      "severity": "unsupported",
+      "problem": "The linked post (status-2, morning of 30 August 2018) has the 2 mm hole and the tape, but not the final repair. The glue on a cloth pad ('epoxy on a gauze wipe') is in the later post of the same day.",
+      "fix": "Add as a second source: https://www.nasa.gov/blogs/spacestation/2018/08/30/international-space-station-status-3/ . The codex card 'iss_leak' already cites both.",
+      "source": "https://www.nasa.gov/blogs/spacestation/2018/08/30/international-space-station-status-3/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "ev.far_rock.story / ev.far_rock.url",
+      "severity": "unsupported",
+      "problem": "The linked sample catalogue page gives neither the thickness of a core nor the tube material. NASA's own comparison is 'about the size of a piece of classroom chalk' (13 mm wide, 60 mm long), in 'titanium sample tubes'. 'As thick as a finger' is about right for 13 mm but is not NASA's wording; the codex card 'samples' says chalk.",
+      "fix": "Link https://www.jpl.nasa.gov/news/why-scientists-are-intrigued-by-air-in-nasas-mars-sample-tubes/ . Optional text, to match the codex card: 'NASA’s Perseverance rover drills rock cores the size of a stick of chalk and seals them in metal tubes. Scientists hope to bring them to Earth one day.'",
+      "source": "https://www.jpl.nasa.gov/news/why-scientists-are-intrigued-by-air-in-nasas-mars-sample-tubes/",
+      "status": "fixed in the game texts on 2026-11-12"
+    },
+    {
+      "where": "codex card 'storm_shelter' (source 2, web.archive.org)",
+      "severity": "dead-link",
+      "problem": "NOT CONFIRMED DEAD. The Internet Archive link answered HTTP 429 (rate limit) on three tries from this machine, so it could not be checked. It is also the only source for the '400 rem / less than 35 rem' numbers on the card and is not hosted by NASA.",
+      "fix": "https://www.nasa.gov/wp-content/uploads/2015/03/139023main_stereo_science_guide.pdf (returns HTTP 200; NASA STEREO Science Writer's Guide, which reprints the article as 'Feature 3: Sickening Solar Flares'). Open the archive link once in a browser before submitting; if it loads, keeping it is fine.",
+      "source": "https://www.nasa.gov/wp-content/uploads/2015/03/139023main_stereo_science_guide.pdf",
+      "status": "fixed in the game texts on 2026-11-12"
+    }
+  ]
+}

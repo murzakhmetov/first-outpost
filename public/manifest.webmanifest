@@ -1,0 +1,12 @@
+{
+  "name": "First Outpost — Junior Astronaut Mission Trainer",
+  "short_name": "First Outpost",
+  "description": "Run a Moon or Mars outpost. Every choice costs something. Built on real NASA data.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0b1026",
+  "theme_color": "#0b1026",
+  "icons": [{ "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

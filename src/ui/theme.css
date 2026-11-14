@@ -1,0 +1,1019 @@
+/* First Outpost — the adventure-game look.
+   Loaded after styles.css and laid over it: slate glass panels with a thin gold
+   frame, pill buttons, a round map in the corner, the week as a quest list, and
+   Lumi speaking the way characters speak in story games. */
+
+:root {
+  --ink: #f6f1e6;
+  --ink-dim: #cfcad9;
+  --ink-faint: #9c98b0;
+  --gold: #ecd297;
+  --gold-deep: #c9a45c;
+  --cream: #f4eddd;
+  --cream-ink: #384058;
+  --glass: rgba(27, 32, 54, 0.84);
+  --glass-deep: rgba(14, 17, 34, 0.93);
+  --line: rgba(236, 222, 190, 0.2);
+  --line-strong: rgba(236, 222, 190, 0.46);
+  --r-lg: 18px;
+  --r-md: 12px;
+  --r-sm: 8px;
+  --shadow: 0 16px 44px rgba(4, 6, 20, 0.55);
+  --font-display: 'Philosopher', 'Nunito Variable', system-ui, serif;
+  --text-shadow: 0 1px 2px rgba(6, 8, 24, 0.9), 0 0 10px rgba(6, 8, 24, 0.55);
+}
+
+/* ----- Panels --------------------------------------------------------------- */
+
+.glass,
+.card,
+.sheet,
+.modal,
+.lumi {
+  background: linear-gradient(172deg, rgba(40, 47, 78, 0.9), rgba(16, 19, 38, 0.94));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+/* A second, thinner frame just inside the edge. */
+.card,
+.sheet,
+.modal {
+  outline: 1px solid rgba(236, 222, 190, 0.13);
+  outline-offset: -6px;
+}
+
+@media (min-width: 900px) {
+  .card,
+  .sheet,
+  .modal {
+    background: linear-gradient(172deg, rgba(40, 47, 78, 0.8), rgba(16, 19, 38, 0.88));
+  }
+}
+
+.card h2,
+.sheet-head h2,
+.modal-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.01em;
+  color: var(--gold);
+}
+
+.card h2 {
+  padding-bottom: 9px;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, var(--line-strong), rgba(236, 222, 190, 0.08) 85%, transparent) 1;
+}
+
+.card-foot {
+  background: linear-gradient(180deg, transparent, rgba(14, 17, 34, 0.97) 34%);
+}
+
+.card-foot.two {
+  grid-template-columns: 1fr 1.45fr;
+}
+
+.card-foot .btn {
+  letter-spacing: 0;
+  padding-inline: 0.8em;
+  line-height: 1.15;
+}
+
+/* ----- Buttons -------------------------------------------------------------- */
+
+.btn {
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  background: rgba(244, 237, 221, 0.09) !important;
+  border: 1px solid var(--line-strong) !important;
+  color: var(--ink) !important;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(244, 237, 221, 0.2) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #fbf5e7, #e9dcbc) !important;
+  border-color: #fffaf0 !important;
+  color: var(--cream-ink) !important;
+  box-shadow: 0 6px 20px rgba(236, 210, 151, 0.28), inset 0 -2px 0 rgba(160, 130, 70, 0.25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff, #f2e6c8) !important;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  border-color: var(--line) !important;
+  color: var(--ink-dim) !important;
+}
+
+.btn-danger {
+  background: rgba(255, 110, 122, 0.2) !important;
+  border-color: rgba(255, 130, 140, 0.6) !important;
+}
+
+.icon-btn {
+  background: rgba(18, 22, 42, 0.62) !important;
+  border: 1px solid rgba(255, 255, 255, 0.34) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.icon-btn:hover {
+  background: rgba(52, 60, 96, 0.82) !important;
+}
+
+.lang {
+  background: rgba(18, 22, 42, 0.62);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.lang button.is-on {
+  background: var(--cream);
+  color: var(--cream-ink);
+}
+
+/* ----- Top of the screen ----------------------------------------------------- */
+
+.game {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.game > .stage {
+  grid-row: 2;
+}
+
+.hud {
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.hud-left {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: 'map week' 'quest quest';
+  align-items: center;
+  gap: 8px 12px;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+/* A soft shade behind the map and the quest list keeps the text readable over bright ground. */
+.hud-left::before {
+  content: '';
+  position: absolute;
+  inset: -40px -70px -50px -60px;
+  z-index: -1;
+  /* closest-side: the shade ends inside the box, so no edge shows on a bright sky. */
+  background: radial-gradient(closest-side, rgba(8, 10, 26, 0.62), rgba(8, 10, 26, 0.34) 55%, transparent 100%);
+  pointer-events: none;
+}
+
+.minimap {
+  grid-area: map;
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 0 0 5px rgba(14, 17, 34, 0.5), 0 10px 26px rgba(4, 6, 20, 0.5);
+}
+
+.minimap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.minimap-north {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--cream-ink);
+  font-size: 0.6875rem;
+  font-weight: 900;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(4, 6, 20, 0.5);
+}
+
+.hud-week {
+  grid-area: week;
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-shadow: var(--text-shadow);
+  line-height: 1.2;
+}
+
+.hud-week b {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--gold);
+  letter-spacing: 0.01em;
+}
+
+.hud-week small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+/* The week as a quest list. */
+.quest {
+  grid-area: quest;
+  display: grid;
+  gap: 5px;
+  text-shadow: var(--text-shadow);
+}
+
+.quest-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+
+.quest-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line-strong), transparent);
+}
+
+.quest ul {
+  display: grid;
+  gap: 3px;
+}
+
+.quest li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgba(246, 241, 230, 0.62);
+  line-height: 1.25;
+}
+
+/* A small diamond: hollow for later, gold for now, a tick when done. */
+.quest li i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 2px;
+  transform: rotate(45deg);
+  border: 1.5px solid currentColor;
+}
+
+.quest li.is-done {
+  color: rgba(160, 232, 190, 0.8);
+}
+
+.quest li.is-done i {
+  width: 5px;
+  height: 9px;
+  margin: 0 4px 2px 3px;
+  border-width: 0 2px 2px 0;
+}
+
+.quest li.is-now {
+  color: #ffffff;
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.quest li.is-now i {
+  width: 10px;
+  height: 10px;
+  margin: 0 1px;
+  border-color: var(--gold);
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(236, 210, 151, 0.8);
+}
+
+.quest li.is-home i {
+  border-color: #7dffb0;
+  background: #7dffb0;
+  box-shadow: 0 0 10px rgba(125, 255, 176, 0.8);
+}
+
+/* Meters: lighter, so the world shows through. */
+.meter {
+  background: linear-gradient(180deg, rgba(22, 26, 48, 0.66), rgba(14, 17, 34, 0.8)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 6px 18px rgba(4, 6, 20, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.meter-name {
+  letter-spacing: 0.02em;
+}
+
+.meter-tip {
+  background: linear-gradient(172deg, rgba(40, 47, 78, 0.96), rgba(16, 19, 38, 0.97));
+  border: 1px solid var(--line-strong);
+}
+
+/* ----- Lumi speaks ----------------------------------------------------------- */
+
+.lumi {
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(24, 28, 50, 0.8), rgba(12, 14, 30, 0.92));
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.lumi-text b {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  text-transform: none;
+}
+
+.lumi-text p {
+  color: var(--ink);
+}
+
+/* ----- Labels on buildings and small messages --------------------------------- */
+
+.marker {
+  background: linear-gradient(180deg, rgba(24, 28, 50, 0.86), rgba(12, 14, 30, 0.94)) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 18px 7px 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(14, 17, 34, 0.92), rgba(14, 17, 34, 0.74));
+  border: 1px solid var(--line);
+  font-weight: 800;
+  text-shadow: var(--text-shadow);
+}
+
+.toast i {
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(236, 210, 151, 0.9);
+}
+
+.toast-good i {
+  background: var(--good);
+  box-shadow: 0 0 8px rgba(111, 230, 164, 0.9);
+}
+
+/* ----- Rover ----------------------------------------------------------------------- */
+
+.prompt-drive {
+  bottom: 30%;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* The button to get in sits above the row of round buttons. */
+.round-drive {
+  position: absolute;
+  right: 12px;
+  bottom: 128px;
+  background: radial-gradient(circle at 50% 40%, rgba(236, 210, 151, 0.42), rgba(14, 17, 34, 0.7)) !important;
+  border-color: var(--gold) !important;
+}
+
+.left-hand .round-drive {
+  right: auto;
+  left: 12px;
+}
+
+/* The key hint makes room for the battery bar. */
+.game.is-driving .eva-keys {
+  bottom: 74px;
+}
+
+/* Battery above the suit air. */
+.suitbar.chargebar {
+  bottom: 40px;
+}
+
+.suitbar.chargebar .suitbar-track i {
+  background: linear-gradient(90deg, #7fd8ff, #b6e8ff);
+}
+
+.suitbar.chargebar.is-low .suitbar-track i {
+  background: linear-gradient(90deg, #ff7b86, #ffb36b);
+}
+
+.suitbar.chargebar b {
+  min-width: 5.2em;
+}
+
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  .suitbar.chargebar {
+    bottom: 208px;
+  }
+
+  .game.is-driving .eva-keys {
+    bottom: 246px;
+  }
+
+  .round-drive {
+    bottom: 120px;
+  }
+
+  .prompt-drive {
+    bottom: 36%;
+  }
+}
+
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .suitbar.chargebar {
+    bottom: 30px;
+  }
+
+  .game.is-driving .eva-keys {
+    bottom: 68px;
+  }
+
+  .round-drive {
+    bottom: 108px;
+  }
+}
+
+/* While driving, Lumi's bubble sits above the battery and suit bars. */
+.game.is-driving.step-eva .lumi {
+  bottom: 86px;
+}
+
+/* ----- Pickup list --------------------------------------------------------------- */
+
+.pickups {
+  position: fixed;
+  right: 18px;
+  top: 34%;
+  z-index: 30;
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.pickup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 230px;
+  max-width: min(340px, 70vw);
+  padding: 5px 14px 5px 6px;
+  border-radius: 6px 0 0 6px;
+  border-right: 3px solid var(--tint, var(--gold));
+  background: linear-gradient(90deg, rgba(14, 17, 34, 0.25), rgba(14, 17, 34, 0.82) 30%, rgba(14, 17, 34, 0.9));
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-shadow: var(--text-shadow);
+  animation: pickup-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.15) both, pickup-out 0.45s ease-in 3.3s forwards;
+}
+
+.pickup-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  color: #fff;
+  background: radial-gradient(circle at 50% 45%, var(--tint, var(--gold)) 0%, rgba(14, 17, 34, 0.2) 72%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.pickup-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pickup-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding-left: 8px;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+@keyframes pickup-in {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+}
+
+@keyframes pickup-out {
+  to {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+}
+
+.less-motion .pickup {
+  animation: pickup-out 0.45s ease-in 3.3s forwards;
+}
+
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  .pickups {
+    right: 10px;
+    top: 44%;
+  }
+
+  .pickup {
+    min-width: 0;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .pickups {
+    right: auto;
+    left: 12px;
+    top: 36%;
+    justify-items: start;
+  }
+
+  /* Room for three lines between the task list and the hint at the bottom. */
+  .pickup:nth-last-child(n + 4) {
+    display: none;
+  }
+
+  .pickup {
+    border-right: 0;
+    border-left: 3px solid var(--tint, var(--gold));
+    border-radius: 0 6px 6px 0;
+    background: linear-gradient(270deg, rgba(14, 17, 34, 0.25), rgba(14, 17, 34, 0.82) 30%, rgba(14, 17, 34, 0.9));
+  }
+}
+
+/* ----- Discovery banner ------------------------------------------------------- */
+
+.codex-finds {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--gold);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+.discovery {
+  position: fixed;
+  left: 50%;
+  top: 24%;
+  z-index: 40;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: min(560px, 86vw);
+  padding: 14px 40px 16px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  text-align: center;
+  color: var(--ink);
+  background: radial-gradient(closest-side, rgba(18, 20, 40, 0.84), rgba(18, 20, 40, 0.6) 55%, rgba(18, 20, 40, 0) 100%);
+  animation: discovery-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2) both, discovery-out 0.5s ease-in 4.1s forwards;
+}
+
+.discovery::before,
+.discovery::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--gold) 30%, #fff6d8 50%, var(--gold) 70%, transparent);
+  box-shadow: 0 0 10px rgba(236, 210, 151, 0.8);
+}
+
+.discovery::before {
+  top: 0;
+}
+
+.discovery::after {
+  bottom: 0;
+}
+
+.discovery-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(236, 210, 151, 0.7);
+}
+
+.discovery-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4.2vw, 38px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff6e0;
+  text-shadow: 0 2px 4px rgba(6, 8, 24, 0.9), 0 0 22px rgba(255, 214, 140, 0.55);
+}
+
+.discovery-note {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-dim);
+  text-shadow: var(--text-shadow);
+}
+
+@keyframes discovery-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.86);
+    letter-spacing: 0.04em;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes discovery-out {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+}
+
+.less-motion .discovery {
+  animation: discovery-out 0.5s ease-in 4.1s forwards;
+}
+
+@media (max-width: 760px) {
+  .discovery {
+    top: 30%;
+    padding: 12px 22px 14px;
+  }
+}
+
+/* ----- The walk outside -------------------------------------------------------- */
+
+.eva-chip,
+.arrow {
+  background: rgba(14, 17, 34, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Suit air: one long bar at the bottom, like a health bar. */
+.suitbar {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(380px, 46vw);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-shadow: var(--text-shadow);
+  pointer-events: none !important;
+}
+
+.suitbar-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.suitbar-track {
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(14, 17, 34, 0.72);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+.suitbar-track i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7df0a8, #b7f58c);
+  transition: width 0.3s linear;
+}
+
+.suitbar.is-low .suitbar-track i {
+  background: linear-gradient(90deg, #ff7b86, #ffb36b);
+}
+
+/* Running: the bar turns amber, because the air is going faster. */
+.suitbar.is-run .suitbar-track i {
+  background: linear-gradient(90deg, #ffd27a, #ffb36b);
+}
+
+.round-run.is-on,
+.round-view.is-on {
+  border-color: #ffd27a !important;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 210, 122, 0.4), rgba(14, 17, 34, 0.6)) !important;
+}
+
+.suitbar b {
+  min-width: 2.6em;
+  font-size: 1rem;
+  font-weight: 900;
+  text-align: right;
+}
+
+.suitbar.is-low b {
+  color: var(--bad);
+}
+
+.eva-keys {
+  bottom: 44px;
+  background: rgba(14, 17, 34, 0.6);
+}
+
+.round {
+  background: rgba(14, 17, 34, 0.56) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.62) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 22px rgba(4, 6, 20, 0.4);
+}
+
+.round-big {
+  background: radial-gradient(circle at 50% 40%, rgba(236, 210, 151, 0.34), rgba(14, 17, 34, 0.6)) !important;
+  border-color: var(--gold) !important;
+}
+
+/* ----- Title screen ------------------------------------------------------------- */
+
+.menu .btn {
+  background: linear-gradient(90deg, rgba(18, 22, 42, 0.82), rgba(18, 22, 42, 0.5)) !important;
+  border-color: rgba(236, 222, 190, 0.32) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.menu .btn:hover:not(:disabled) {
+  background: linear-gradient(90deg, rgba(52, 60, 96, 0.9), rgba(40, 47, 78, 0.62)) !important;
+  border-color: var(--gold) !important;
+}
+
+.menu .btn-primary {
+  background: linear-gradient(180deg, #fbf5e7, #e9dcbc) !important;
+  border-color: #fffaf0 !important;
+}
+
+.menu .btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff, #f2e6c8) !important;
+}
+
+.logo h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.logo-tag {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  border-color: var(--line-strong);
+  color: var(--gold);
+}
+
+/* ----- Wide screens: the map and quest list float at the top left --------------- */
+
+@media (min-width: 761px) and (min-aspect-ratio: 4/5) {
+  .hud {
+    min-height: 50px;
+    padding-left: 252px;
+  }
+
+  .hud-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 244px;
+  }
+
+  /* Lumi speaks at the bottom, in the middle of the free part of the screen. */
+  .lumi,
+  .game.step-eva .lumi,
+  .game.step-night .lumi {
+    top: auto;
+    left: calc((100% - min(440px, 46vw)) / 2);
+    bottom: 4px;
+    width: max-content;
+    max-width: min(560px, calc(100% - min(440px, 46vw) - 24px));
+    transform: translateX(-50%);
+    animation-name: talk-in;
+  }
+
+  .game.step-eva .lumi,
+  .game.step-night .lumi {
+    left: 50%;
+    bottom: 50px;
+    max-width: min(520px, 60vw);
+  }
+
+  .game.step-night .lumi {
+    bottom: 8px;
+  }
+}
+
+@keyframes talk-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1080px) and (min-aspect-ratio: 4/5) {
+  .meter-name {
+    display: none;
+  }
+}
+
+/* Short, wide screens (a phone held sideways): a smaller map, only the current task. */
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .game {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .hud {
+    padding-left: 176px;
+    min-height: 40px;
+  }
+
+  .hud-left {
+    width: 170px;
+    gap: 4px 8px;
+  }
+
+  .minimap {
+    width: 72px;
+    height: 72px;
+  }
+
+  .hud-week b {
+    font-size: 0.9375rem;
+  }
+
+  .hud-week small {
+    display: block;
+    font-size: 0.6875rem;
+  }
+
+  .quest-title,
+  .quest li:not(.is-now) {
+    display: none;
+  }
+
+  .quest li.is-now {
+    font-size: 0.8125rem;
+  }
+
+  /* The map's gold stars show the discoveries; the list keeps to the main tasks. */
+  .quest li.is-find {
+    display: none;
+  }
+
+  .suitbar {
+    bottom: 6px;
+  }
+
+  /* Keep the hint clear of the round buttons on the right. */
+  .eva-keys {
+    left: 16px;
+    bottom: 40px;
+    transform: none;
+    max-width: calc(100% - 380px);
+  }
+}
+
+/* ----- Upright phones ------------------------------------------------------------- */
+
+@media (max-width: 760px), (max-aspect-ratio: 4/5) {
+  /* Map and task on the left, buttons on the right, the meters in a row underneath. */
+  .hud {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'left buttons' 'meters meters';
+    align-items: start;
+    gap: 6px;
+  }
+
+  .hud-buttons {
+    grid-area: buttons;
+  }
+
+  .meters {
+    grid-area: meters;
+  }
+
+  /* One line is enough on a small screen: the arrows and the map show the way home,
+     and the map's gold stars show the discoveries. */
+  .quest li.is-home,
+  .quest li.is-find {
+    display: none;
+  }
+
+  .hud-left {
+    grid-area: left;
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: 'map week' 'map quest';
+    gap: 0 10px;
+    align-items: center;
+  }
+
+  .minimap {
+    width: 66px;
+    height: 66px;
+    margin: 6px 0 0 4px;
+  }
+
+  .hud-week {
+    align-self: end;
+  }
+
+  .hud-week b {
+    font-size: 1rem;
+  }
+
+  .hud-week small {
+    display: inline;
+    margin-left: 6px;
+    font-size: 0.75rem;
+  }
+
+  .quest {
+    align-self: start;
+  }
+
+  .quest-title,
+  .quest li:not(.is-now) {
+    display: none;
+  }
+
+  .quest li.is-now {
+    font-size: 0.875rem;
+  }
+
+  .meters {
+    order: 3;
+    flex: 1 1 100%;
+  }
+
+  .suitbar {
+    width: min(300px, 70vw);
+    bottom: 176px;
+  }
+
+  .eva-keys {
+    bottom: 206px;
+  }
+}

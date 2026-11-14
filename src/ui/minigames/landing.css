@@ -1,0 +1,359 @@
+/* First Outpost — the landing simulator (LandingSim.tsx).
+   A canvas view of the descent with instrument chips on top and big touch
+   controls in the lower corners: side jets on the left, THRUST on the right. */
+
+.mg-landing {
+  --mg-left: minmax(200px, 0.62fr);
+  --mg-right: minmax(0, 1.38fr);
+}
+
+.mg-landing .mg-play {
+  justify-items: stretch;
+}
+
+.mg-land {
+  position: relative;
+  width: 100%;
+  height: clamp(260px, calc(100vh - 290px), 560px);
+  height: clamp(260px, calc(100dvh - 290px), 560px);
+  border-radius: var(--r-md, 12px);
+  overflow: hidden;
+  background: #0b0f20;
+  border: 1px solid rgba(236, 222, 190, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+
+.mg-land-view {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Instruments: height and speed on the left, fuel on the right. */
+.mg-land-hud {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.mg-gauge {
+  display: grid;
+  gap: 3px;
+  min-width: 118px;
+  padding: 6px 9px 7px;
+  border-radius: 10px;
+  background: rgba(10, 12, 28, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  line-height: 1.15;
+}
+
+.mg-gauge-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mg-gauge-name {
+  color: var(--ink-faint, #9c98b0);
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.mg-gauge b {
+  font-size: 0.875rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mg-speed.is-safe b {
+  color: #9dfcc6;
+}
+
+.mg-speed.is-warn b {
+  color: #ffd98c;
+}
+
+.mg-speed.is-bad b {
+  color: #ff9aa3;
+}
+
+/* The speed bar: green up to the safe speed, amber, then red. */
+.mg-safe {
+  position: relative;
+  display: block;
+  height: 6px;
+  margin-top: 1px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(111, 230, 164, 0.45) 0 33.3%, rgba(255, 193, 94, 0.45) 33.3% 53%, rgba(255, 123, 134, 0.5) 53%);
+}
+
+.mg-safe i {
+  display: block;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  transition: width 0.1s linear;
+}
+
+.mg-safe em {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #0b0f20;
+}
+
+.mg-fuel-bar {
+  display: block;
+  height: 6px;
+  margin-top: 1px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.mg-fuel-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd166, #ff9f43);
+  transition: width 0.1s linear;
+}
+
+.mg-fuel.is-low b {
+  color: #ff9aa3;
+}
+
+.mg-fuel.is-low .mg-fuel-bar i {
+  background: #ff7b86;
+  animation: mg-blink 0.7s ease-in-out infinite;
+}
+
+/* Controls in the lower corners, where thumbs rest. */
+.mg-land-pads {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.mg-land-sides {
+  display: flex;
+  gap: 8px;
+}
+
+.mg-pad-btn,
+.mg-thrust {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.mg-pad-btn {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 16px;
+  color: #ffffff;
+  background: rgba(14, 17, 34, 0.55);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 6px 16px rgba(4, 6, 20, 0.4);
+  transition: transform 0.08s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.mg-pad-btn.is-on {
+  transform: scale(0.93);
+  background: rgba(127, 227, 255, 0.38);
+  border-color: #7fe3ff;
+  box-shadow: 0 0 18px rgba(127, 227, 255, 0.55);
+}
+
+.mg-thrust {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1px;
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--cream-ink, #384058);
+  background: radial-gradient(circle at 45% 35%, #fff6dc, #ecd297 60%, #c9a45c);
+  border: 2px solid #fffaf0;
+  box-shadow: 0 6px 22px rgba(236, 210, 151, 0.4), inset 0 -4px 0 rgba(120, 90, 40, 0.3);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+/* Dark letters on the gold button (".mg button" would otherwise pass down the light text colour). */
+.mg .mg-thrust {
+  position: relative;
+  color: var(--cream-ink, #384058);
+  border-color: #2b2440;
+  box-shadow: 0 0 0 3px #fffaf0, 0 6px 22px rgba(236, 210, 151, 0.4), inset 0 -4px 0 rgba(120, 90, 40, 0.3);
+}
+
+.mg .mg-pad-btn:not(.is-on) {
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 0 2px rgba(43, 36, 64, 0.9), 0 6px 16px rgba(4, 6, 20, 0.4);
+}
+
+
+.mg-thrust.is-on {
+  transform: scale(0.93);
+  background: radial-gradient(circle at 45% 35%, #fffbe8, #ffc861 55%, #ff9440);
+  box-shadow: 0 0 0 6px rgba(255, 180, 80, 0.25), 0 0 32px rgba(255, 160, 60, 0.75), inset 0 -3px 0 rgba(120, 60, 20, 0.3);
+}
+
+.mg-pad-btn:disabled,
+.mg-thrust:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.mg-land .mg-stamp {
+  top: 36%;
+}
+
+.mg-land-burst {
+  top: 72%;
+}
+
+/* The result: gravity on Earth, Mars and the Moon as bars. */
+.mg-gravity {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  text-align: left;
+  background: rgba(8, 10, 26, 0.42);
+  border: 1px solid rgba(236, 222, 190, 0.12);
+}
+
+.mg-gravity-title {
+  margin: 0 0 2px;
+  color: var(--ink-faint, #9c98b0);
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mg-gravity-row {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-dim, #cfcad9);
+  font-size: 0.75rem;
+}
+
+.mg-gravity-row b {
+  font-variant-numeric: tabular-nums;
+}
+
+.mg-gravity-bar {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mg-gravity-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  transform-origin: left center;
+  animation: mg-grow-x 0.9s cubic-bezier(0.2, 0.9, 0.3, 1) 0.5s both;
+}
+
+.mg-gravity-row.is-earth i {
+  background: linear-gradient(90deg, #3f7fe0, #8fd0ff);
+}
+
+.mg-gravity-row.is-mars i {
+  background: linear-gradient(90deg, #c45a30, #f2a272);
+}
+
+.mg-gravity-row.is-moon i {
+  background: linear-gradient(90deg, #8f95a6, #e6e9f1);
+}
+
+.mg-gravity-row.is-here {
+  color: var(--ink, #f6f1e6);
+  font-weight: 800;
+}
+
+.mg-gravity-row.is-here b {
+  color: var(--gold, #ecd297);
+}
+
+@keyframes mg-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Wide screens: the view fills the right side. */
+@media (min-aspect-ratio: 5/4) and (min-width: 600px) {
+  .mg-land {
+    height: clamp(220px, calc(100vh - 116px), 640px);
+    height: clamp(220px, calc(100dvh - 116px), 640px);
+  }
+}
+
+@media (max-height: 520px) {
+  .mg-pad-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+  }
+
+  .mg-thrust {
+    width: 78px;
+    height: 78px;
+    font-size: 0.6875rem;
+  }
+
+  .mg-gauge {
+    min-width: 104px;
+    padding: 4px 8px 5px;
+  }
+
+  .mg-gravity {
+    display: none;
+  }
+}

@@ -1,0 +1,745 @@
+/* First Outpost — sending the data to Earth (SignalRelay.tsx).
+   A strip of sky with the Earth and the outpost's dish, the data meter with
+   its 70% goal line, and three lanes. Packets slide from the data port on the
+   left to the gate on the right; the gate's middle is 62 px from the lane's end
+   (the screen code uses the same number). */
+
+.mg-signal {
+  --mg-left: minmax(200px, 0.66fr);
+  --mg-right: minmax(0, 1.34fr);
+}
+
+.mg-signal .mg-play {
+  justify-items: stretch;
+}
+
+.mg-sig {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+/* ----- The sky: Earth, the dish, and the beams of sent data ---------------------------- */
+
+.mg-sig-sky {
+  --sky-h: clamp(56px, 13vh, 104px);
+  --dish-w: calc(var(--sky-h) * 0.92);
+  /* Where the dish's feed horn is: the beams of sent data start there. */
+  --dish-x: calc(94% - var(--dish-w) * 0.675);
+  --dish-y: calc(100% - 2px - var(--dish-w) * 0.82);
+  position: relative;
+  height: var(--sky-h);
+  border-radius: var(--r-md, 12px);
+  overflow: hidden;
+  border: 1.5px solid rgba(43, 36, 64, 0.95);
+  box-shadow: inset 0 0 0 1px rgba(236, 222, 190, 0.12);
+}
+
+@supports (height: 1dvh) {
+  .mg-sig-sky {
+    --sky-h: clamp(56px, 13dvh, 104px);
+  }
+}
+
+.mg-mars .mg-sig-sky {
+  --earth-x: calc(18% + 4px);
+  --earth-y: calc(22% + 4px);
+  background:
+    radial-gradient(60% 90% at 18% 0%, rgba(255, 244, 220, 0.35), transparent 60%),
+    linear-gradient(180deg, #b0703c, #d9a066 62%, #efcb96);
+}
+
+.mg-moon .mg-sig-sky {
+  --earth-x: calc(12% + 24px);
+  --earth-y: calc(10% + 24px);
+  background:
+    radial-gradient(1.2px 1.2px at 8% 30%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 33% 64%, #fff 60%, transparent),
+    radial-gradient(1.4px 1.4px at 47% 22%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 58% 48%, rgba(255, 255, 255, 0.7) 60%, transparent),
+    radial-gradient(1.2px 1.2px at 69% 18%, #fff 60%, transparent),
+    radial-gradient(1px 1px at 81% 40%, rgba(255, 255, 255, 0.8) 60%, transparent),
+    radial-gradient(1px 1px at 25% 12%, rgba(255, 255, 255, 0.6) 60%, transparent),
+    linear-gradient(180deg, #02030a, #0b0f20);
+}
+
+/* The ground: low hills with a dark outline, and the outpost's dome. */
+.mg-sig-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 30%;
+}
+
+.mg-mars .mg-sig-hill {
+  fill: #a9532c;
+}
+
+.mg-moon .mg-sig-hill {
+  fill: #8d909c;
+}
+
+.mg-sig-dome {
+  position: absolute;
+  left: 5%;
+  bottom: 1px;
+  z-index: 2;
+  width: calc(var(--sky-h) * 0.42);
+  height: auto;
+}
+
+/* From Mars the Earth is a bright blue dot; from the Moon it is a big blue world. */
+.mg-sig-earth {
+  position: absolute;
+  z-index: 1;
+}
+
+.mg-mars .mg-sig-earth {
+  left: 18%;
+  top: 22%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e2f2ff, #4f95ec 60%);
+  box-shadow: 0 0 10px 3px rgba(150, 205, 255, 0.85);
+}
+
+/* A little four-point twinkle around the dot. */
+.mg-mars .mg-sig-earth i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  background:
+    linear-gradient(90deg, transparent 46%, rgba(226, 242, 255, 0.9) 50%, transparent 54%),
+    linear-gradient(0deg, transparent 46%, rgba(226, 242, 255, 0.9) 50%, transparent 54%);
+  -webkit-mask: radial-gradient(circle, #000 20%, transparent 70%);
+  mask: radial-gradient(circle, #000 20%, transparent 70%);
+  animation: mg-twinkle 2.4s ease-in-out infinite;
+}
+
+.mg-moon .mg-sig-earth {
+  left: 12%;
+  top: 10%;
+  width: 48px;
+  height: 48px;
+}
+
+.mg-sig-globe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: mg-float-soft 5s ease-in-out infinite;
+}
+
+.mg-sig-earth-name {
+  position: absolute;
+  z-index: 1;
+  padding: 1px 6px;
+  border-radius: 999px;
+  color: #d4e9ff;
+  background: rgba(8, 10, 26, 0.45);
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.mg-mars .mg-sig-earth-name {
+  left: calc(18% + 14px);
+  top: 15%;
+}
+
+.mg-moon .mg-sig-earth-name {
+  left: calc(12% + 54px);
+  top: 26%;
+}
+
+.mg-dish {
+  position: absolute;
+  right: 6%;
+  bottom: 2px;
+  z-index: 2;
+  width: var(--dish-w);
+  height: auto;
+  overflow: visible;
+}
+
+.mg-dish-light {
+  fill: #ff6b6b;
+  stroke: #2b2440;
+  stroke-width: 1.2;
+  animation: mg-blink 1.2s ease-in-out infinite;
+}
+
+/* A packet of sent data flies from the dish to Earth: a bright dot with a soft tail of light. */
+.mg-sig-beam {
+  position: absolute;
+  z-index: 3;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 214, 120, 0.6), 0 0 12px 5px rgba(255, 230, 140, 0.85);
+  opacity: 0;
+  pointer-events: none;
+  animation: mg-sig-beam 0.75s cubic-bezier(0.4, 0, 0.6, 1) both;
+}
+
+/* ----- The meter: data sent, and the 70% goal line --------------------------------------- */
+
+.mg-sig-meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+}
+
+.mg-sig-bar {
+  position: relative;
+  flex: 1;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(8, 10, 26, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.mg-sig-bar i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.mg-sig-bar i.is-possible {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mg-sig-bar i.is-sent {
+  background: linear-gradient(90deg, #4fd8ff, #b7f58c);
+  box-shadow: 0 0 10px rgba(111, 230, 200, 0.5);
+}
+
+.mg-sig-mark {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: rgba(255, 244, 214, 0.7);
+}
+
+.mg-sig-mark b {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: 2px;
+  transform: translateX(-50%);
+  color: var(--ink-faint, #9c98b0);
+  font-size: 0.625rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Only the goal line has a label: the others are close together. */
+.mg-sig-mark:not(:first-of-type) b {
+  display: none;
+}
+
+.mg-sig-mark:first-of-type {
+  width: 3px;
+  background: var(--gold, #ecd297);
+  box-shadow: 0 0 6px rgba(236, 210, 151, 0.8);
+}
+
+.mg-sig-mark.is-met b {
+  color: var(--gold, #ecd297);
+}
+
+.mg-combo {
+  flex: none;
+  min-width: 86px;
+  color: var(--gold, #ecd297);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mg-combo b {
+  display: inline-block;
+  animation: mg-combo 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.6) both;
+}
+
+/* Five or more in a row: the streak burns warm. */
+.mg-combo.is-hot b {
+  padding: 1px 10px;
+  border-radius: 999px;
+  color: #3b2a05;
+  background: linear-gradient(180deg, #fff1bf, #f2c46d);
+  border: 2px solid #2b2440;
+  box-shadow: 0 0 14px rgba(255, 200, 100, 0.7);
+}
+
+/* ----- The lanes ------------------------------------------------------------------------- */
+
+.mg-lanes {
+  --lane-h: 58px;
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding: 8px;
+  border-radius: var(--r-md, 12px);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 22px 100%,
+    var(--mg-inset, rgba(8, 10, 26, 0.52));
+  border: 1px solid rgba(236, 222, 190, 0.12);
+}
+
+/* The line to tap on, across all lanes, through the middle of the gates. */
+.mg-hitline {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  right: 70px;
+  z-index: 4;
+  width: 4px;
+  margin-right: -2px;
+  border-radius: 4px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 244, 214, 0), #fff4d6 18%, #fff4d6 82%, rgba(255, 244, 214, 0));
+  box-shadow: 0 0 14px rgba(255, 230, 160, 0.8);
+}
+
+.mg-lane {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--lane-h, 58px);
+  padding: 0;
+  border-radius: 12px;
+  border: 1.5px solid rgba(43, 36, 64, 0.95);
+  background: linear-gradient(90deg, rgba(var(--lane-rgb), 0.05), rgba(var(--lane-rgb), 0.18));
+  box-shadow: inset 0 0 0 1px rgba(var(--lane-rgb), 0.22), inset 0 2px 0 rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  transition: background 0.1s ease, transform 0.08s ease;
+}
+
+.mg-lane:active:not(:disabled) {
+  background: linear-gradient(90deg, rgba(var(--lane-rgb), 0.12), rgba(var(--lane-rgb), 0.34));
+  transform: scale(0.99);
+}
+
+/* A missed packet: the lane blinks red for a moment. */
+.mg-lane-flash {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 123, 134, 0), rgba(255, 123, 134, 0.35));
+  animation: mg-fade-out 0.45s ease-out both;
+}
+
+.mg-gate-burst {
+  z-index: 6;
+}
+
+/* The first-time hand at a gate: its word sits above the gate, out of the packets' way. */
+.mg-lane .mg-hand-left .mg-hand-label {
+  top: -46px;
+  right: 8px;
+}
+
+.mg-lane:disabled {
+  cursor: default;
+}
+
+.mg-lane-0 {
+  --lane: #1aa9d6;
+  --lane-hi: #9af2ff;
+  --lane-rgb: 106, 232, 255;
+}
+
+.mg-lane-1 {
+  --lane: #d99a1e;
+  --lane-hi: #ffe596;
+  --lane-rgb: 255, 209, 102;
+}
+
+.mg-lane-2 {
+  --lane: #cf4f97;
+  --lane-hi: #ffb8e0;
+  --lane-rgb: 255, 143, 208;
+}
+
+/* The track a packet slides along: a dark groove with a line of light running to the gate. */
+.mg-lane-rail {
+  position: absolute;
+  left: 18px;
+  right: 62px;
+  top: 50%;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 6px;
+  background: rgba(8, 10, 26, 0.7);
+  box-shadow: inset 0 0 0 1.5px rgba(43, 36, 64, 0.9), inset 0 -2px 0 rgba(var(--lane-rgb), 0.18);
+}
+
+.mg-lane-rail::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 2px;
+  opacity: 0.75;
+  background: repeating-linear-gradient(90deg, rgba(var(--lane-rgb), 0.85) 0 10px, transparent 10px 18px);
+  background-size: 18px 3px;
+  animation: mg-rail 0.6s linear infinite;
+}
+
+.mg-lane-port {
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  border-radius: 9px;
+  color: var(--lane-hi);
+  background: linear-gradient(180deg, #2c3460 0 50%, #1d2244 50%);
+  border: 2px solid #2b2440;
+  box-shadow: 0 0 0 1px rgba(var(--lane-rgb), 0.5);
+}
+
+/* The gate: a ring with a dark outline and a dot in the middle, where the packet must be tapped. */
+.mg-gate {
+  position: absolute;
+  right: 62px;
+  top: 50%;
+  z-index: 2;
+  width: 46px;
+  height: 46px;
+  margin: -23px -23px 0 0;
+  border-radius: 50%;
+  border: 4px solid rgba(var(--lane-rgb), 0.95);
+  background: radial-gradient(circle, rgba(var(--lane-rgb), 0.9) 0 3px, transparent 3.5px), radial-gradient(circle, transparent 0 11px, rgba(var(--lane-rgb), 0.18) 11.5px);
+  box-shadow: 0 0 0 2px #2b2440, inset 0 0 0 2px #2b2440, 0 0 14px rgba(var(--lane-rgb), 0.6);
+}
+
+.mg-gate-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  opacity: 0;
+  animation: mg-ring 0.42s ease-out both;
+}
+
+.mg-gate-ring.is-perfect {
+  border-color: #fff4d6;
+  box-shadow: 0 0 22px rgba(255, 230, 160, 0.95);
+}
+
+.mg-gate-ring.is-good {
+  border-color: var(--lane-hi);
+}
+
+.mg-gate-ring.is-miss {
+  border-color: #ff7b86;
+}
+
+.mg-gate-ring.is-empty {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.mg-lane-key {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  font-size: 0.625rem !important;
+  opacity: 0.9;
+}
+
+.mg-judge {
+  position: absolute;
+  right: 92px;
+  top: 50%;
+  z-index: 5;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 2px 6px rgba(4, 6, 20, 0.9);
+  transform: translateY(-50%);
+  animation: mg-judge 0.6s ease-out both;
+}
+
+.mg-judge.is-perfect {
+  color: #fff1b8;
+}
+
+.mg-judge.is-good {
+  color: #bdf4ff;
+}
+
+.mg-judge.is-miss {
+  color: #ff9aa3;
+}
+
+/* A packet of data. The screen code moves it along its lane every frame. */
+/* A packet of data: a little two-tone cube with a dark outline, a shine and its cargo's picture. */
+.mg-packet {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 36px;
+  margin-left: -20px;
+  border-radius: 11px;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 26% 24%, rgba(255, 255, 255, 0.9) 0 2.2px, transparent 2.8px),
+    linear-gradient(180deg, var(--lane-hi) 0 48%, var(--lane) 48% 100%);
+  border: 2px solid #2b2440;
+  box-shadow: 0 0 14px rgba(var(--lane-rgb), 0.7), inset 0 -3px 0 rgba(0, 0, 0, 0.22);
+  transform: translate3d(-60px, -50%, 0);
+  will-change: transform, opacity;
+}
+
+.mg-packet .icon {
+  color: #ffffff;
+  filter: drop-shadow(0 1.5px 0 #2b2440) drop-shadow(0 -1px 0 #2b2440);
+}
+
+.mg-packet.is-lost {
+  background: linear-gradient(180deg, #a3a8bb 0 48%, #6a7088 48%);
+  box-shadow: none;
+}
+
+.mg-sig .mg-stamp {
+  top: 62%;
+}
+
+/* ----- The result: the data's trip to Earth ------------------------------------------------ */
+
+.mg-delay {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  text-align: left;
+  background: rgba(8, 10, 26, 0.42);
+  border: 1px solid rgba(127, 227, 255, 0.28);
+}
+
+.mg-delay-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  color: #d4f6ff;
+  font-size: 0.8125rem;
+}
+
+.mg-delay-text .icon {
+  margin-top: 2px;
+}
+
+.mg-delay-track {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-dim, #cfcad9);
+  font-size: 0.6875rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.mg-delay-end {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.mg-delay-line {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, rgba(127, 227, 255, 0.55) 0 6px, transparent 6px 11px);
+}
+
+.mg-delay-line i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px 3px rgba(127, 227, 255, 0.9);
+  animation-name: mg-travel;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+.mg-delay.is-arrived .mg-delay-line i {
+  left: 100%;
+}
+
+.mg-delay-state {
+  margin: 0;
+  color: var(--ink-faint, #9c98b0);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.mg-delay.is-arrived .mg-delay-state {
+  color: var(--mg-good, #6fe6a4);
+}
+
+/* ----- Screens ----------------------------------------------------------------------------- */
+
+@media (hover: none), (pointer: coarse) {
+  .mg-lane-key {
+    display: none;
+  }
+}
+
+/* Upright phones that are not very tall: slimmer sky and lanes, still easy to tap. */
+@media (max-height: 700px) and (max-aspect-ratio: 5/4) {
+  .mg-sig-sky {
+    --sky-h: 60px;
+  }
+
+  .mg-lanes {
+    --lane-h: 54px;
+  }
+}
+
+@media (max-height: 520px) {
+  .mg-sig-sky {
+    display: none;
+  }
+
+  .mg-lanes {
+    --lane-h: 52px;
+  }
+
+  .mg-sig {
+    gap: 6px;
+  }
+
+  .mg-delay-track {
+    display: none;
+  }
+}
+
+/* ----- Motion ------------------------------------------------------------------------------ */
+
+@keyframes mg-sig-beam {
+  0% {
+    left: var(--dish-x);
+    top: var(--dish-y);
+    opacity: 1;
+    transform: scale(0.6);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: var(--earth-x);
+    top: var(--earth-y);
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes mg-combo {
+  from {
+    transform: scale(1.6);
+  }
+}
+
+@keyframes mg-twinkle {
+  50% {
+    opacity: 0.35;
+    transform: rotate(45deg) scale(0.8);
+  }
+}
+
+@keyframes mg-rail {
+  to {
+    background-position: 18px 0;
+  }
+}
+
+@keyframes mg-ring {
+  0% {
+    opacity: 1;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes mg-judge {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.6);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.12);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-80%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-110%) scale(1);
+  }
+}
+
+@keyframes mg-travel {
+  from {
+    left: 0;
+  }
+  to {
+    left: 100%;
+  }
+}

@@ -1,0 +1,684 @@
+/* Upright phones on a walk outside: one clear layout instead of everything at once.
+   - The top keeps the map, the week, the task and the two menu buttons; the base meters
+     (which do not change on a walk) step aside, so the view is free.
+   - The walk chips and the two direction arrows sit in one short band under the top.
+   - Lumi speaks in a compact card under that band, never over the controls.
+   - The stick is alone on the left; on the right the buttons stand in an arc around Jump,
+     the way action games lay them out: the button for what is at hand (go in, dig, drive)
+     is the one closest to the thumb.
+   Loaded last. */
+
+@media (max-width: 600px) and (orientation: portrait) {
+  /* ----- Top ------------------------------------------------------------------ */
+  .game.step-eva .meters,
+  .game.step-eva .hud-buttons .gi-hud-btn {
+    display: none !important;
+  }
+
+  .game.step-eva .hud {
+    gap: 6px;
+  }
+
+  .game.step-eva .eva-top {
+    top: 0;
+    gap: 6px;
+  }
+
+  .game.step-eva .eva-top .eva-chip {
+    min-height: 28px;
+    padding: 3px 9px;
+    font-size: 0.82rem;
+  }
+
+  .game.step-eva .eva-arrows {
+    top: 36px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px;
+  }
+
+  .game.step-eva .eva-arrows .arrow {
+    min-height: 30px;
+    padding: 2px 10px 2px 3px;
+    font-size: 0.82rem;
+  }
+
+  .game.step-eva .eva-arrows .arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ----- Lumi: a compact card under the chips ---------------------------------- */
+  .game.step-eva .lumi {
+    top: 84px !important;
+    bottom: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    font-size: 0.84rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .game.step-eva .lumi .lumi-face {
+    width: 34px;
+    height: 34px;
+  }
+
+  .game.step-eva .lumi-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ----- Bottom: suit air, then the controls -------------------------------- */
+  .game.step-eva .suitbar:not(.chargebar) {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 196px !important;
+    width: auto !important;
+    transform: none !important;
+  }
+
+  .game.step-eva .suitbar.chargebar {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 228px !important;
+    width: auto !important;
+    transform: none !important;
+  }
+
+  .game.step-eva .eva-keys {
+    bottom: 292px !important;
+    font-size: 0.78rem;
+  }
+
+  /* What the cadet can do here (go in, drive) and the digging games: above the bars. */
+  .game.step-eva .gi-prompts {
+    left: 50% !important;
+    top: auto !important;
+    bottom: 236px !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .game.step-eva .gi-prompt {
+    min-width: 0;
+    max-width: calc(100vw - 32px);
+    min-height: 40px;
+    font-size: 0.88rem;
+  }
+
+  .game.step-eva .prompt {
+    bottom: 262px !important;
+    top: auto !important;
+    max-width: calc(100vw - 24px);
+  }
+
+  .game.is-driving.step-eva .gi-prompts,
+  .game.is-driving.step-eva .prompt {
+    bottom: 268px !important;
+  }
+
+  .game.step-eva .stick {
+    left: 16px !important;
+    right: auto !important;
+    bottom: 22px !important;
+    width: 124px !important;
+    height: 124px !important;
+  }
+
+  /* The right-hand arc. */
+  .game.step-eva .eva-buttons {
+    display: contents !important;
+  }
+
+  .game.step-eva .eva-buttons .round,
+  .game.step-eva .round-drive {
+    position: absolute !important;
+    left: auto !important;
+    margin: 0 !important;
+  }
+
+  .game.step-eva .eva-buttons .round-big {
+    right: 14px !important;
+    bottom: 22px !important;
+    width: 86px !important;
+    height: 86px !important;
+  }
+
+  .game.step-eva .eva-buttons .round-run {
+    right: 112px !important;
+    bottom: 14px !important;
+    width: 62px !important;
+    height: 62px !important;
+  }
+
+  .game.step-eva .eva-buttons .round:not(.round-big):not(.round-run) {
+    right: 20px !important;
+    bottom: 124px !important;
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .game.step-eva .eva-buttons .round.round-view:not(.round-big):not(.round-run) {
+    bottom: 188px !important;
+  }
+
+  .game.step-eva .round-drive {
+    right: 100px !important;
+    bottom: 96px !important;
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .game.step-eva .round small {
+    font-size: 0.6rem;
+  }
+
+  /* Left-handed: the same layout, mirrored. */
+  .left-hand .game.step-eva .stick,
+  .game.left-hand.step-eva .stick {
+    left: auto !important;
+    right: 16px !important;
+  }
+
+  .left-hand .game.step-eva .eva-buttons .round,
+  .left-hand .game.step-eva .round-drive {
+    right: auto !important;
+  }
+
+  .left-hand .game.step-eva .eva-buttons .round-big {
+    left: 14px !important;
+  }
+
+  .left-hand .game.step-eva .eva-buttons .round-run {
+    left: 112px !important;
+  }
+
+  .left-hand .game.step-eva .eva-buttons .round:not(.round-big):not(.round-run) {
+    left: 20px !important;
+  }
+
+  .left-hand .game.step-eva .round-drive {
+    left: 100px !important;
+  }
+}
+
+/* ----- Inside a building on a phone --------------------------------------------------------
+   Lumi never speaks under the stick or the buttons: upright phones show the card under the
+   help line, phones on their side show it between the stick and the buttons. */
+
+@media (max-width: 600px) and (orientation: portrait) {
+  .game.in-room .lumi {
+    top: 104px !important;
+    bottom: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    font-size: 0.84rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .game.in-room .lumi .lumi-face {
+    width: 34px;
+    height: 34px;
+  }
+
+  .game.in-room .lumi-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* The help line may take two lines instead of being cut. */
+  .room3d .room-keys {
+    width: calc(100vw - 24px);
+    white-space: normal;
+    text-align: center;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    border-radius: 14px;
+  }
+
+  /* The place name comes in under Lumi's card. */
+  .room3d .discovery-room {
+    top: 40%;
+  }
+}
+
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .game.in-room .lumi {
+    left: 150px !important;
+    right: 200px !important;
+    bottom: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    animation-name: lumi-in !important;
+    padding: 7px 10px !important;
+    gap: 8px !important;
+    font-size: 0.84rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .game.in-room .lumi .lumi-face {
+    width: 34px;
+    height: 34px;
+  }
+
+  .game.in-room .lumi-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .left-hand .game.in-room .lumi,
+  .game.in-room.left-hand .lumi {
+    left: 200px !important;
+    right: 150px !important;
+  }
+
+  /* (What the use button does here shows as a pill in the middle of the screen, clear of Lumi.) */
+
+  /* The help line keeps all its words. */
+  .room3d .room-keys {
+    max-width: calc(100vw - 24px);
+    white-space: normal;
+    font-size: 0.78rem;
+  }
+
+  /* The place name sits under the help line, not over it. */
+  .room3d .discovery-room {
+    top: 34%;
+  }
+
+  /* ----- A walk outside: the suit air fits between the stick and the buttons ---------------- */
+  .game.step-eva .suitbar:not(.chargebar) {
+    left: 160px !important;
+    right: 350px !important;
+    width: auto !important;
+    transform: none !important;
+  }
+
+  .left-hand .game.step-eva .suitbar:not(.chargebar),
+  .game.left-hand.step-eva .suitbar:not(.chargebar) {
+    left: 350px !important;
+    right: 160px !important;
+  }
+
+  /* The control hint and Lumi stand in the same free band, above the suit air. */
+  .game.step-eva .eva-keys {
+    left: 160px !important;
+    right: 350px !important;
+    bottom: 30px !important;
+    max-width: none !important;
+    transform: none !important;
+    white-space: normal;
+    text-align: center;
+    border-radius: 14px;
+  }
+
+  .game.step-eva .lumi {
+    left: 160px !important;
+    right: 350px !important;
+    bottom: 74px !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    animation-name: lumi-in !important;
+  }
+
+  .left-hand .game.step-eva .eva-keys,
+  .game.left-hand.step-eva .eva-keys,
+  .left-hand .game.step-eva .lumi,
+  .game.left-hand.step-eva .lumi {
+    left: 350px !important;
+    right: 160px !important;
+  }
+
+  /* The rover's battery bar sits right above the suit air, in the same free band. */
+  .game.step-eva .suitbar.chargebar {
+    left: 160px !important;
+    right: 350px !important;
+    width: auto !important;
+    transform: none !important;
+  }
+
+  .left-hand .game.step-eva .suitbar.chargebar,
+  .game.left-hand.step-eva .suitbar.chargebar {
+    left: 350px !important;
+    right: 160px !important;
+  }
+
+  /* Driving: the battery bar sits on the suit air bar, so both move up a little. */
+  .game.is-driving.step-eva .lumi {
+    bottom: 104px !important;
+  }
+
+  /* ----- Lumi beside the step card, never over it ----------------------------------------- */
+  /* The five meters share the top: each takes the room its number needs. */
+  .meters {
+    gap: 4px;
+  }
+
+  .meter {
+    flex: 1 1 auto;
+    gap: 5px;
+    padding: 3px 7px 3px 3px;
+  }
+
+  .meter-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .meter-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .meter-value {
+    font-size: 0.875rem;
+  }
+
+  /* (The step card is wider here than on big screens: min(470px, 56vw).) */
+  .game:not(.step-eva):not(.step-night):not(.in-room) .lumi {
+    left: calc((100% - min(470px, 56vw)) / 2);
+    max-width: calc(100% - min(470px, 56vw) - 24px);
+  }
+
+  /* ----- The pause menu fits the short screen and scrolls if it must ----------------------- */
+  .gi-screen {
+    overflow: auto;
+  }
+
+  .gi-top {
+    min-height: 44px;
+    padding-bottom: 6px;
+  }
+
+  .pause-screen {
+    grid-template-rows: auto auto auto;
+  }
+
+  .pause-body {
+    align-self: start;
+    grid-template-columns: minmax(170px, 210px) minmax(0, 1fr);
+    gap: 18px;
+    padding: 10px 0;
+  }
+
+  .pause-card {
+    gap: 4px;
+    padding: 12px 10px;
+  }
+
+  .pause-avatar {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 2px;
+  }
+
+  .pause-avatar svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pause-card b {
+    font-size: 1.05rem;
+  }
+
+  .pause-stats {
+    margin-top: 6px;
+    gap: 4px;
+    font-size: 0.78rem;
+  }
+
+  .pause-stats li {
+    padding: 4px 8px;
+  }
+
+  .pause-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 8px;
+  }
+
+  .pause-item {
+    gap: 5px;
+    padding: 2px;
+    font-size: 0.82rem;
+    line-height: 1.15;
+  }
+
+  .pause-ring {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pause-ring svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .pause-foot {
+    padding-top: 2px;
+  }
+}
+
+/* ----- Upright phones: the week and its dates are never hidden under the round buttons ------ */
+@media (max-width: 600px) and (orientation: portrait) {
+  .game:not(.step-eva) .hud-buttons {
+    gap: 5px;
+  }
+
+  .game:not(.step-eva) .hud-buttons .icon-btn {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+  }
+
+  .game:not(.step-eva) .hud-buttons .icon-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .game:not(.step-eva) .minimap {
+    width: 58px;
+    height: 58px;
+  }
+
+  .game:not(.step-eva) .hud-week small {
+    display: block;
+    margin-left: 0;
+    font-size: 0.68rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+}
+
+/* ----- Touch screens: captions under the round buttons and Lumi's close button are easy to read and hit. */
+@media (pointer: coarse) {
+  .round small {
+    font-size: 0.68rem !important;
+  }
+
+  .lumi-close {
+    width: 38px !important;
+    height: 38px !important;
+  }
+}
+
+.touch .round small {
+  font-size: 0.68rem !important;
+}
+
+.touch .lumi-close {
+  width: 38px !important;
+  height: 38px !important;
+}
+
+/* Upright phones: the 3D power markers only show the plan. The plan card has the + and − buttons, so
+   a stray tap on a marker (which can sit under the meters) never changes the plan. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .markers .marker {
+    pointer-events: none !important;
+  }
+}
+
+/* ----- Phones on their side: the Outpost menu scrolls as one page ---------------------------------
+   The slots and the detail card are taller than the short screen, so the whole menu scrolls instead
+   of squeezing the rows into cards that overlap. */
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .gi-screen:not(.pause-screen) {
+    grid-template-rows: auto auto auto;
+  }
+
+  .gi-body {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 36vw);
+    min-height: auto;
+    align-items: start;
+    gap: 14px;
+  }
+
+  .gi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .gi-slot {
+    aspect-ratio: 0.9;
+  }
+
+  .gi-slot-name {
+    font-size: 0.72rem;
+    padding: 4px 4px 5px;
+  }
+
+  .gi-slot-art {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .gi-slot-art .item-art {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: contain;
+  }
+
+  .gi-detail-art .item-art {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+  }
+
+  .gi-detail {
+    overflow: hidden;
+    grid-template-rows: auto auto auto;
+    position: sticky;
+    top: 0;
+  }
+
+  .gi-detail-head {
+    overflow: hidden;
+    min-height: 90px;
+  }
+
+  .gi-detail-art {
+    width: 70px !important;
+    height: 70px !important;
+  }
+}
+
+/* ----- Upright phones, inside a room: this week's reward status stays visible ----------------------
+   The status chips (reward, done, reward next week) used to be hidden here. They now sit on a second
+   line of the header, and the help line and Lumi's card move down to make room. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .room3d .room-head {
+    flex-wrap: wrap;
+    border-radius: 24px;
+    row-gap: 6px;
+  }
+
+  .room3d .room-head .room-task {
+    display: inline-flex;
+    order: 5;
+    padding: 3px 9px;
+    font-size: 0.72rem;
+  }
+
+  .room3d .room-keys {
+    top: calc(max(12px, env(safe-area-inset-top)) + 108px);
+  }
+
+  .game.in-room .lumi {
+    top: 156px !important;
+  }
+}
+
+/* ----- Phones on their side: the title menu fits (longer Russian words included) ------------------ */
+@media (max-height: 520px) and (min-aspect-ratio: 4/5) {
+  .title .logo-line {
+    display: none;
+  }
+
+  .title .menu {
+    gap: 6px;
+  }
+
+  .title .menu .btn {
+    min-height: 38px;
+    padding-block: 3px;
+    font-size: 0.88rem;
+    line-height: 1.1;
+  }
+
+  .title .menu .btn .count {
+    margin-left: 6px;
+  }
+
+  .title .title-foot {
+    padding-bottom: 2px;
+  }
+}
+
+/* On a walk (any screen size) the notices sit below the distance chips instead of over them. */
+body:has(.eva-top) .toast {
+  top: max(196px, 21vh);
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  body:has(.eva-top) .toast {
+    top: 190px;
+  }
+}
+
+/* Upright phones on a walk: the suit-air bars stop short of the round buttons (the View button used to cover the seconds). */
+@media (max-width: 600px) and (orientation: portrait) {
+  .game.step-eva .suitbar:not(.chargebar),
+  .game.step-eva .suitbar.chargebar {
+    right: 84px !important;
+  }
+
+  .left-hand .game.step-eva .suitbar:not(.chargebar),
+  .left-hand .game.step-eva .suitbar.chargebar,
+  .game.left-hand.step-eva .suitbar:not(.chargebar),
+  .game.left-hand.step-eva .suitbar.chargebar {
+    left: 84px !important;
+    right: 12px !important;
+  }
+}

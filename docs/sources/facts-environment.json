@@ -1,0 +1,553 @@
+[
+  {
+    "id": "E1",
+    "status": "corrected",
+    "claim": "A radio signal takes about 3 to 22 minutes one way between Earth and Mars, depending on where the two planets are in their orbits (some NASA pages round this to \"4 to 24\" or \"5 to 20\" minutes); between Earth and the Moon it takes about 1.3 seconds one way.",
+    "values": [
+      { "label": "Earth-Mars one-way signal time, shortest (54.6 million km divided by the speed of light)", "value": 3.0, "unit": "minutes" },
+      { "label": "Earth-Mars one-way signal time, longest (401.4 million km divided by the speed of light)", "value": 22.3, "unit": "minutes" },
+      { "label": "Earth-Moon one-way signal time (384,400 km divided by the speed of light = 1.28 s)", "value": 1.3, "unit": "seconds" },
+      { "label": "Rounded range on the NASA Goddard page (2020)", "value": "4 to 24", "unit": "minutes" },
+      { "label": "Rounded range on the NASA Glenn slide deck (2021)", "value": "5 to 20", "unit": "minutes" }
+    ],
+    "source_title": "Voyager 1: What Is a Light-Day (NASA Science, page last updated 10 Nov 2026)",
+    "source_url": "https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/",
+    "quote": "The distance between Earth and Mars changes as they orbit the Sun, and it can take anywhere from three minutes to 22 minutes for light to travel between the two planets.",
+    "extra_sources": [
+      { "title": "Speaking Percy's Language: How to Talk so Perseverance Will Listen (NASA Science blog) - \"between 3 and 22 minutes\"", "url": "https://science.nasa.gov/blog/speaking-percys-language-how-to-talk-so-perseverance-will-listen/" },
+      { "title": "Space Communications: 7 Things You Need to Know (NASA Goddard, 6 Oct 2020) - \"four to 24 minutes of latency\"", "url": "https://www.nasa.gov/centers-and-facilities/goddard/space-communications-7-things-you-need-to-know/" },
+      { "title": "Space Communications and Navigation, slide deck by NASA Glenn (NTRS 20210010148) - \"about 5 to 20 minutes\"", "url": "https://ntrs.nasa.gov/api/citations/20210010148/downloads/Mars%20Perseverance%20Communications%202021%20revised.pdf" },
+      { "title": "Hazard: Distance From Earth (NASA Human Research Program) - \"communication delay of up to 20 minutes one way\"", "url": "https://www.nasa.gov/hrp/hazard-distance-from-earth/" },
+      { "title": "Mars Fact Sheet (NASA NSSDCA) - distance from Earth, minimum 54.6 and maximum 401.4 million km", "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" }
+    ],
+    "notes": "Draft said 4 to 24 minutes. That wording is real (NASA Goddard, 2020) but it does not match NASA's own distances: light needs 3.0 min at 54.6 million km and 22.3 min at 401.4 million km. Two NASA Science pages say 3 to 22 minutes, so use that. \"5 to 20 minutes\" is confirmed on a NASA Glenn slide deck: \"It takes about 5 to 20 minutes for a radio signal to travel the distance between Mars and Earth, depending on planet positions\". Moon: the same NASA light-day page says light \"can traverse that distance in 1.3 seconds\" (a question and its answer therefore take about 2.6 s)."
+  },
+  {
+    "id": "E2",
+    "status": "verified",
+    "claim": "About every two years the Sun passes between Earth and Mars (Mars solar conjunction) and NASA stops sending commands to its Mars spacecraft for about two weeks: 2-16 October 2021, 11-25 November 2023, and most recently from 29 December 2025 until contact resumed on 16 January 2026 (about two and a half weeks).",
+    "values": [
+      { "label": "2021 command moratorium, start", "value": "2021-10-02", "unit": "date" },
+      { "label": "2021 command moratorium, end", "value": "2021-10-16", "unit": "date" },
+      { "label": "2023 command moratorium, start", "value": "2023-11-11", "unit": "date" },
+      { "label": "2023 command moratorium, end", "value": "2023-11-25", "unit": "date" },
+      { "label": "Latest conjunction, start (NASA MAVEN blog)", "value": "2025-12-29", "unit": "date" },
+      { "label": "Latest conjunction, contact with Mars missions resumes (NASA MAVEN blog)", "value": "2026-01-16", "unit": "date" },
+      { "label": "Latest conjunction as described by the Curiosity team", "value": "2025-12-27 to 2026-01-20", "unit": "date range" },
+      { "label": "2019 command moratorium (for reference)", "value": "2019-08-28 to 2019-09-07", "unit": "date range" },
+      { "label": "Time between conjunctions (Mars synodic period, NASA fact sheet)", "value": 779.94, "unit": "days" }
+    ],
+    "source_title": "NASA's Mars Fleet Will Still Conduct Science While Lying Low (NASA/JPL, 10 Nov 2023)",
+    "source_url": "https://www.nasa.gov/solar-system/planets/mars/nasas-mars-fleet-will-still-conduct-science-while-lying-low/",
+    "quote": "NASA will hold off sending commands to its Mars fleet for two weeks, from Nov. 11 to 25, while Earth and the Red Planet are on opposite sides of the Sun.",
+    "extra_sources": [
+      { "title": "NASA's Mars Fleet Lies Low With Sun Between Earth and Red Planet (NASA/JPL, 28 Sep 2021)", "url": "https://www.nasa.gov/solar-system/nasas-mars-fleet-lies-low-with-sun-between-earth-and-red-planet/" },
+      { "title": "NASA Works MAVEN Spacecraft Issue Ahead of Solar Conjunction (NASA Science blog, 23 Dec 2025)", "url": "https://science.nasa.gov/blogs/maven/2025/12/23/nasa-works-maven-spacecraft-issue-ahead-of-solar-conjunction/" },
+      { "title": "Curiosity Blog, Sols 4750-4762: See You on the Other Side of the Sun (NASA Science, 22 Dec 2025)", "url": "https://science.nasa.gov/blog/curiosity-blog-sols-4750-4762-see-you-on-the-other-side-of-the-sun/" },
+      { "title": "Curiosity Blog, Sols 4788-4797: Welcome Back from Conjunction (NASA Science, 4 Feb 2026)", "url": "https://science.nasa.gov/blog/curiosity-blog-sols-4788-4797-welcome-back-from-conjunction/" },
+      { "title": "What's Mars Solar Conjunction, and Why Does It Matter? (NASA, 2019 conjunction)", "url": "https://www.nasa.gov/solar-system/whats-mars-solar-conjunction-and-why-does-it-matter/" }
+    ],
+    "notes": "Core claim confirmed; the same 2023 release says \"this phenomenon happens every two years\". 2021 release: \"most missions will stop sending commands between Oct. 2 and Oct. 16\". There is no conjunction inside 2026 apart from the first half of January: the latest one ran over New Year. NASA MAVEN blog: \"Mars solar conjunction ... begins Monday, Dec. 29, and NASA will not have contact with any Mars missions until Friday, Jan. 16\"; the Curiosity team wrote \"this one will last from Dec. 27 to Jan. 20\". I found no single NASA press release for 2025-26, so these dates are blog-level and it lasted longer than the usual two weeks. Rovers keep working on pre-loaded commands during the pause. The next conjunction is due about 26 months later; its dates were not checked."
+  },
+  {
+    "id": "E3",
+    "status": "corrected",
+    "claim": "Mars has a surface gravity of about 3.7 m/s2 (38% of Earth's; NASA's current fact sheet says 3.73), a day (sol) of 24 h 39 min 35 s, an average temperature of about -60 degrees C (NASA pages give -59 to -65), air pressure of about 0.6% of Earth's, air that is about 95% carbon dioxide, and sunlight about 43% as strong as at Earth (586 versus 1361 W/m2).",
+    "values": [
+      { "label": "Surface gravity, mean (NASA Mars Fact Sheet, updated 19 May 2025)", "value": 3.73, "unit": "m/s2" },
+      { "label": "Mars gravity compared with Earth (3.73 / 9.82)", "value": 38, "unit": "percent" },
+      { "label": "Length of a sol (24 h 39 min 35 s)", "value": 24.6597, "unit": "hours" },
+      { "label": "Average temperature (NASA Mars Fact Sheet, 214 K)", "value": -59, "unit": "degC" },
+      { "label": "Median surface temperature (NASA Science, Temperatures Across Our Solar System)", "value": -65, "unit": "degC" },
+      { "label": "Average surface temperature (NASA Science, Sounds of Mars page)", "value": -63, "unit": "degC" },
+      { "label": "Surface pressure at mean radius (varies 4.0 to 8.7 with season)", "value": 6.36, "unit": "mbar" },
+      { "label": "Surface pressure compared with Earth (6.36 / 1014 mbar)", "value": 0.63, "unit": "percent" },
+      { "label": "Carbon dioxide in the atmosphere, by volume", "value": 95.1, "unit": "percent" },
+      { "label": "Solar irradiance at Mars", "value": 586.2, "unit": "W/m2" },
+      { "label": "Solar irradiance at Earth", "value": 1361.0, "unit": "W/m2" },
+      { "label": "Sunlight at Mars compared with Earth", "value": 43.1, "unit": "percent" }
+    ],
+    "source_title": "Mars Fact Sheet (NASA Space Science Data Coordinated Archive, last updated 19 May 2025)",
+    "source_url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html",
+    "quote": "Average temperature: ~214 K (-59 C)",
+    "extra_sources": [
+      { "title": "Mars 2020 Perseverance Landing Press Kit, Quick Facts (NASA/JPL) - gravity \"About 38% as strong as Earth's\"; sol \"24 hours, 39 minutes, 35 seconds\"", "url": "https://www.jpl.nasa.gov/news/press_kits/mars_2020/landing/quick_facts/" },
+      { "title": "Temperatures Across Our Solar System (NASA Science) - \"The median surface temperature on Mars is -85°F (-65°C).\"", "url": "https://science.nasa.gov/solar-system/temperatures-across-our-solar-system/" },
+      { "title": "Sounds of Mars (NASA Science) - \"an average surface temperature around -81 F (-63 C)\"", "url": "https://science.nasa.gov/mission/mars-2020-perseverance/sounds-of-mars/" },
+      { "title": "Earth Fact Sheet (NASA NSSDCA) - surface pressure 1014 mb, solar irradiance 1361.0 W/m2", "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" },
+      { "title": "Mars: Facts (NASA Science) - temperature range 20 C down to about -153 C", "url": "https://science.nasa.gov/mars/facts/" }
+    ],
+    "notes": "Changes from the draft: gravity 3.71 -> 3.73 m/s2 (the fact sheet now lists mean gravity 3.73 and equatorial acceleration 3.69; 3.71 is the older figure and still widely quoted, so 'about 3.7' is safest); average temperature -63 -> -59 degrees C on the current fact sheet, while other NASA pages still say -63 or -65 (and the JPL press kit says -53), so say 'about -60'; sunlight 590 -> 586.2 W/m2. Confirmed exactly: sol length (24.6597 h), 38% gravity ratio, carbon dioxide 95.1% by volume, pressure 6.36 mbar, irradiance ratio 0.431. Other fact-sheet rows used: \"Surface pressure: 6.36 mb at mean radius\" and \"Carbon Dioxide (CO2) - 95.1%\"."
+  },
+  {
+    "id": "E4",
+    "status": "verified",
+    "claim": "During the 2018 global dust storm the sky above the Opportunity rover became the dustiest ever measured on Mars (opacity, or tau, of about 10.8); the solar-powered rover's daily energy fell from about 645 Wh to about 22 Wh, it was last heard from on 10 June 2018, and NASA declared the mission over on 13 February 2019.",
+    "values": [
+      { "label": "Dust opacity (tau) at Opportunity on 10 June 2018 (NASA/JPL releases)", "value": 10.8, "unit": "tau" },
+      { "label": "Same measurement as given in a NASA graphic caption", "value": 10.5, "unit": "tau" },
+      { "label": "Usual tau at Opportunity's site", "value": 0.5, "unit": "tau" },
+      { "label": "Rover energy on 2 June 2018 (NASA press briefing, reported by Space.com)", "value": 645, "unit": "Wh per sol" },
+      { "label": "Rover energy on 10 June 2018 (NASA press briefing, reported by Space.com)", "value": 22, "unit": "Wh per sol" },
+      { "label": "Rover energy on 10 June 2018 (NASA graphic caption)", "value": 21, "unit": "Wh per sol" },
+      { "label": "Last contact", "value": "2018-06-10", "unit": "date" },
+      { "label": "NASA declares end of mission", "value": "2019-02-13", "unit": "date" }
+    ],
+    "source_title": "Six Things About Opportunity's Recovery Efforts (NASA/JPL, 16 Aug 2018)",
+    "source_url": "https://www.jpl.nasa.gov/news/six-things-about-opportunitys-recovery-efforts/",
+    "quote": "The higher the tau, the less sunlight is available; the last tau measured by Opportunity was 10.8 on June 10.",
+    "extra_sources": [
+      { "title": "Opportunity Hunkers Down During Dust Storm (NASA/JPL) - \"this new storm had an estimated tau of 10.8 as of Sunday morning\"", "url": "https://www.jpl.nasa.gov/news/opportunity-hunkers-down-during-dust-storm/" },
+      { "title": "Opportunity mission page (NASA Science) - \"June 10, 2018: Last communication with Opportunity\"; \"Feb. 13, 2019: NASA declares End of Mission\"", "url": "https://science.nasa.gov/mission/mer-opportunity/" },
+      { "title": "NASA's Opportunity Rover Mission on Mars Comes to End (NASA Science, 13 Feb 2019)", "url": "https://science.nasa.gov/missions/mer/nasas-opportunity-rover-mission-on-mars-comes-to-end/" },
+      { "title": "On Mars, Light Is Energy (NASA Science graphic, 13 June 2018) - tau 10.5 and 21 watt-hours on 10 June", "url": "https://science.nasa.gov/resource/on-mars-light-is-energy/" },
+      { "title": "The Mars Global Dust Storm of 2018 (Smith and Guzewich, NASA Goddard, ICES-2019-181) - \"a lower limit of tau>10.7, the highest ever dust optical depth measured at Mars\"", "url": "https://ntrs.nasa.gov/api/citations/20190027303/downloads/20190027303.pdf" },
+      { "title": "Space.com, 13 June 2018 (report of NASA's press briefing) - \"from 645 watt-hours on June 2 to about 22 watt-hours on Sunday (June 10), Callas said\"", "url": "https://www.space.com/40881-monster-mars-dust-storm-opportunity-rover.html" }
+    ],
+    "notes": "Tau 10.8 and both dates are confirmed on NASA pages. The 645 Wh -> 22 Wh pair is NOT on any NASA page I could find: it comes from NASA's 13 June 2018 press briefing (rover project manager John Callas) as reported by Space.com. NASA's own graphic caption gives slightly different same-day numbers: \"The June 10, 2018, tau measurement (10.5) was higher than any previously measured on the Red Planet. Energy level on that day (21 watt-hours) was the lowest ever measured on Opportunity at that time.\" If every number must trace to nasa.gov, show 'about 21-22 Wh' for 10 June and avoid the 645 figure (or credit it to the press briefing). The rover needed tau below 2.0 to recharge."
+  },
+  {
+    "id": "E5",
+    "status": "verified",
+    "claim": "Dust settling on the InSight lander's solar panels cut its power from about 5,000 Wh per sol at landing (November 2018) to about 500 Wh per sol by May 2022; NASA last heard from it on 15 December 2022 and declared the mission over on 21 December 2022, whereas the Spirit and Opportunity rovers lasted years longer because gusts of wind sometimes blew the dust off their panels (\"cleaning events\").",
+    "values": [
+      { "label": "InSight solar power at landing", "value": 5000, "unit": "Wh per sol" },
+      { "label": "InSight solar power in May 2022", "value": 500, "unit": "Wh per sol" },
+      { "label": "InSight landing", "value": "2018-11-26", "unit": "date" },
+      { "label": "InSight last contact", "value": "2022-12-15", "unit": "date" },
+      { "label": "NASA announces end of InSight mission", "value": "2022-12-21", "unit": "date" },
+      { "label": "Spirit wind cleaning event first seen (sol 1812)", "value": "2009-02-06", "unit": "date" },
+      { "label": "Spirit daily energy before that cleaning", "value": 210, "unit": "Wh per sol" },
+      { "label": "Spirit daily energy after that cleaning", "value": 240, "unit": "Wh per sol" }
+    ],
+    "source_title": "NASA's InSight Still Hunting Marsquakes as Power Levels Diminish (NASA/JPL, 17 May 2022)",
+    "source_url": "https://www.nasa.gov/missions/insight/nasas-insight-still-hunting-marsquakes-as-power-levels-diminish/",
+    "quote": "When InSight landed, the solar panels produced around 5,000 watt-hours each Martian day, or sol – enough to power an electric oven for an hour and 40 minutes. Now, they’re producing roughly 500 watt-hours per sol",
+    "extra_sources": [
+      { "title": "NASA Retires InSight Mars Lander Mission After Years of Science (NASA, 21 Dec 2022) - \"The last time InSight communicated with Earth was Dec. 15.\"", "url": "https://www.nasa.gov/missions/insight/nasa-retires-insight-mars-lander-mission-after-years-of-science/" },
+      { "title": "Solar-Panel Dust Accumulation and Cleanings, PIA03608 (NASA Photojournal, image added 5 Dec 2005)", "url": "https://science.nasa.gov/photojournal/solar-panel-dust-accumulation-and-cleanings/" },
+      { "title": "Spirit Gets Energy Boost from Cleaner Solar Panels (NASA/JPL, 12 Feb 2009)", "url": "https://www.jpl.nasa.gov/news/spirit-gets-energy-boost-from-cleaner-solar-panels/" },
+      { "title": "For InSight, Dust Cleanings Will Yield New Science (NASA)", "url": "https://www.nasa.gov/missions/insight/for-insight-dust-cleanings-will-yield-new-science/" },
+      { "title": "InSight Lander mission page (NASA Science) - landing and end-of-mission dates", "url": "https://science.nasa.gov/mission/insight/" }
+    ],
+    "notes": "All draft numbers confirmed. NASA quote on cleaning events (Photojournal PIA03608, 2005): \"However, the rovers have been blessed with occasional wind events that clear significant amounts of dust from the solar panels.\" Dated example (JPL, 12 Feb 2009): \"The cleaning boosts Spirit's daily energy supply by about 30 watt-hours, to about 240 watt-hours from 210 watt-hours.\" InSight never got one: \"The mission's power engineers are still waiting for the kind of dust cleaning Spirit and Opportunity experienced.\" NASA's mission page lists 15 Dec 2022 (last contact) as end of mission; the announcement was 21 Dec 2022."
+  },
+  {
+    "id": "E6",
+    "status": "verified",
+    "claim": "MOXIE, an instrument on the Perseverance rover, made oxygen out of Mars' carbon-dioxide air 16 times - 122 grams in total, at a best rate of 12 grams per hour and 98% purity or better; its final run was on 7 August 2023.",
+    "values": [
+      { "label": "Total oxygen made", "value": 122, "unit": "grams" },
+      { "label": "Number of oxygen-making runs", "value": 16, "unit": "runs" },
+      { "label": "Best production rate", "value": 12, "unit": "grams per hour" },
+      { "label": "Oxygen purity at best rate (or better)", "value": 98, "unit": "percent" },
+      { "label": "Oxygen made on the final run", "value": 9.8, "unit": "grams" },
+      { "label": "Final (16th) run", "value": "2023-08-07", "unit": "date" },
+      { "label": "NASA announcement", "value": "2023-09-06", "unit": "date" }
+    ],
+    "source_title": "NASA's Oxygen-Generating Experiment MOXIE Completes Mars Mission (NASA/JPL, 6 Sep 2023)",
+    "source_url": "https://www.nasa.gov/missions/mars-2020-perseverance/perseverance-rover/nasas-oxygen-generating-experiment-moxie-completes-mars-mission/",
+    "quote": "Since Perseverance landed on Mars in 2021, MOXIE has generated a total of 122 grams of oxygen – about what a small dog breathes in 10 hours.",
+    "extra_sources": [],
+    "notes": "All draft numbers confirmed. Same release: \"At its most efficient, MOXIE was able to produce 12 grams of oxygen an hour – twice as much as NASA's original goals for the instrument – at 98% purity or better. On its 16th run, on Aug. 7, the instrument made 9.8 grams of oxygen.\" Kid-friendly comparison comes straight from NASA: 122 g is about what a small dog breathes in 10 hours."
+  },
+  {
+    "id": "E7",
+    "status": "verified",
+    "claim": "NASA reported on 20 June 2023 that the International Space Station's life-support system had reached 98% water recovery (up from 93-94%), turning urine, sweat and breath moisture back into drinking water; the station's oxygen is made by electrolysis - using electricity to split water into oxygen and hydrogen.",
+    "values": [
+      { "label": "Water recovery reached", "value": 98, "unit": "percent" },
+      { "label": "Water recovery before the Brine Processor Assembly", "value": "93 to 94", "unit": "percent" },
+      { "label": "NASA article date", "value": "2023-06-20", "unit": "date" }
+    ],
+    "source_title": "NASA Achieves Water Recovery Milestone on International Space Station (NASA, 20 June 2023)",
+    "source_url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/",
+    "quote": "We have now demonstrated that we can reach total water recovery of 98%, thanks to the brine processor.",
+    "extra_sources": [
+      { "title": "Environmental Control and Life Support Systems (ECLSS) reference page (NASA Marshall) - oxygen by electrolysis", "url": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/" }
+    ],
+    "notes": "Confirmed. The quote is by Jill Williamson, ECLSS water subsystems manager. Electrolysis quote (NASA ECLSS page): \"The oxygen generation assembly is composed of the cell stack, which electrolyzes, or breaks apart, water provided by the Water Recovery System, yielding oxygen and hydrogen as byproducts.\" The oxygen goes to the cabin; the hydrogen is vented or combined with exhaled carbon dioxide to make more water."
+  },
+  {
+    "id": "E8",
+    "status": "verified",
+    "claim": "NASA's standard design numbers for one astronaut per day are about 0.84 kg of oxygen, about 1.6 kg of drinking water (NASA's current standard asks for at least about 2.5 litres of drinkable water) and about 0.62 kg of dry food - roughly 1.8 kg of food as eaten once the water in it is counted - about 5 kg in all.",
+    "values": [
+      { "label": "Oxygen used", "value": 0.84, "unit": "kg per person per day" },
+      { "label": "Drinking water", "value": 1.62, "unit": "kg per person per day" },
+      { "label": "Food-preparation water", "value": 0.76, "unit": "kg per person per day" },
+      { "label": "Food solids (dry)", "value": 0.62, "unit": "kg per person per day" },
+      { "label": "Water contained in food", "value": 1.15, "unit": "kg per person per day" },
+      { "label": "Total oxygen, food and water", "value": 4.99, "unit": "kg per person per day" },
+      { "label": "Potable water for hydration (NASA-STD-3001, 2023 brief)", "value": 2.5, "unit": "litres per person per day" },
+      { "label": "Food energy (NASA-STD-3001 [V2 7003])", "value": 3035, "unit": "kcal per person per day" },
+      { "label": "ISS water need for drinking, food preparation and hygiene (\"about a gallon\")", "value": 3.8, "unit": "litres per person per day" }
+    ],
+    "source_title": "Design Rules for Life Support Systems (Harry Jones, NASA Ames Research Center, 33rd International Conference on Environmental Systems, NTRS 20040012725)",
+    "source_url": "https://ntrs.nasa.gov/api/citations/20040012725/downloads/20040012725.pdf",
+    "quote": "The metabolic use of oxygen is 0.84 kg/day per crewmember, as shown in Table 2.",
+    "extra_sources": [
+      { "title": "NASA-STD-3001 Technical Brief: Environmental Control & Life Support System, OCHMO-TB-002 Rev B (NASA, 2023)", "url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-002-eclss.pdf" },
+      { "title": "NASA-STD-3001 Technical Brief: Food and Nutrition, OCHMO-TB-013 (NASA, 2023)", "url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-013-food-and-nutrition.pdf" },
+      { "title": "NASA Achieves Water Recovery Milestone on International Space Station (NASA, 20 June 2023)", "url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/" }
+    ],
+    "notes": "Draft oxygen value confirmed. The table values (oxygen 0.84, food solids 0.62, water in food 1.15, food-preparation water 0.76, drinking water 1.62, total 4.99 kg) come from Tables 2 and 6 of the NASA Ames paper, which cites the classic NASA reference (Wieland) and assumes 2,677 kcal per day. The PDF is a scan and I read it as OCR text, so check the table by eye before printing. Newer NASA wording: \"Astronauts need approximately 2.5 L of potable water for hydration per crewmember per day\" (OCHMO-TB-002) and \"an average of 12,698 kJ (3,035 kcal) per day\" (NASA-STD-3001 [V2 7003]). ISS article: \"Each crew member needs about a gallon of water per day for consumption, food preparation, and hygiene such as brushing teeth.\" The 2023 brief computes oxygen as 0.771 kg per day at rest and 1.083 kg per day with exercise, so 0.84 is a planning average."
+  },
+  {
+    "id": "E9",
+    "status": "verified",
+    "claim": "On 10 August 2015 ISS astronauts ate \"Outredgeous\" red romaine lettuce grown for 33 days in the Veggie unit - the first time a station-grown crop was officially on the menu; 20 radish plants were harvested in the Advanced Plant Habitat on 30 November 2020 after 27 days; chile peppers (Plant Habitat-04, 2021) grew for 137 days; and when zinnias went mouldy in December 2015, astronaut Scott Kelly took over the watering as an \"autonomous gardener\" and they bloomed in January 2016.",
+    "values": [
+      { "label": "Lettuce (VEG-01 B) planted", "value": "2015-07-08", "unit": "date" },
+      { "label": "Lettuce eaten on the ISS", "value": "2015-08-10", "unit": "date" },
+      { "label": "Lettuce growing time", "value": 33, "unit": "days" },
+      { "label": "Radish harvest (Plant Habitat-02)", "value": "2020-11-30", "unit": "date" },
+      { "label": "Radish growing time", "value": 27, "unit": "days" },
+      { "label": "Radish plants harvested", "value": 20, "unit": "plants" },
+      { "label": "Chile peppers planted (Plant Habitat-04)", "value": "2021-07-12", "unit": "date" },
+      { "label": "Chile peppers, first harvest", "value": "2021-10-29", "unit": "date" },
+      { "label": "Chile peppers, final harvest", "value": "2021-11-26", "unit": "date" },
+      { "label": "Chile pepper experiment length", "value": 137, "unit": "days" },
+      { "label": "Zinnias started", "value": "2015-11-16", "unit": "date" },
+      { "label": "Kelly reports the zinnias \"aren't looking too good\"", "value": "2015-12-27", "unit": "date" },
+      { "label": "First zinnia bloom shared by Kelly", "value": "2016-01-16", "unit": "date" }
+    ],
+    "source_title": "Veggie fact sheet (NASAfacts, NASA Kennedy Space Center)",
+    "source_url": "https://www.nasa.gov/wp-content/uploads/2023/03/veggie-fact-sheet-508.pdf",
+    "quote": "Astronaut Scott Kelly initiated VEG-01 B, the second crop of lettuce, on July, 8, 2015, and both he and Astronaut Kjell Lindgren cared for the plants. The crop grew for 33 days.",
+    "extra_sources": [
+      { "title": "Cosmonauts Complete Russian Spacewalk (NASA Space Station blog, 10 Aug 2015) - lettuce tasting", "url": "https://www.nasa.gov/blogs/spacestation/2015/08/10/cosmonauts-complete-russian-spacewalk/" },
+      { "title": "Astronauts Harvest Radish Crop on International Space Station (NASA, 2 Dec 2020)", "url": "https://www.nasa.gov/missions/station/astronauts-harvest-radish-crop-on-international-space-station/" },
+      { "title": "NASA's Second Pepper Harvest Sets Record on Space Station (NASA, 30 Nov 2021)", "url": "https://www.nasa.gov/missions/station/nasas-second-pepper-harvest-sets-record-on-space-station/" },
+      { "title": "First Flower Grown in Space Station's Veggie Facility (NASA, 19 Jan 2016) - \"autonomous gardener\"", "url": "https://www.nasa.gov/image-article/first-flower-grown-space-stations-veggie-facility-2/" },
+      { "title": "ZINNIAS FROM SPACE! NASA Studies the Multiple Benefits of Gardening (NASA) - mold and dates", "url": "https://www.nasa.gov/humans-in-space/zinnias-from-space-nasa-studies-the-multiple-benefits-of-gardening/" }
+    ],
+    "notes": "All four stories confirmed. Wording: NASA says \"This is the first time a station-grown crop has officially been on the menu for station crew members\" and \"the first crop grown and consumed in NASA hardware\" - avoid 'first plants ever eaten in space'. The lettuce eaten was Veggie's second crop; the first (2014) was sent to Earth for safety tests. Radishes: \"On Nov. 30, 2020, NASA astronaut Kate Rubins harvested radish plants\" and they \"reach maturity in just 27 days\". Peppers: \"The longest – and perhaps the spiciest – plant experiment in the history of the International Space Station, Plant Habitat-04 (PH-04), concluded recently, 137 days after it began.\" Zinnias: \"the care guide was a one-page, streamlined resource to support Kelly as an autonomous gardener\"; Kelly's own words: \"if we're going to Mars, and we were growing stuff, we would be responsible for deciding when the stuff needed water.\""
+  },
+  {
+    "id": "E10",
+    "status": "verified",
+    "claim": "On Apollo 13 the command module's square carbon-dioxide filters (lithium hydroxide canisters) did not fit the lunar module's round openings, so Mission Control worked out an adapter that the crew built from plastic bags, cardboard and tape - nicknamed the \"mailbox\".",
+    "values": [
+      { "label": "Mission dates (photo caption)", "value": "1970-04-11 to 1970-04-17", "unit": "date range" },
+      { "label": "Lunar module was designed for", "value": "two men for two days", "unit": "design" },
+      { "label": "Lunar module had to support", "value": "three men for about four days", "unit": "actual" }
+    ],
+    "source_title": "Apollo 13: Mission Details (NASA, 8 July 2009)",
+    "source_url": "https://www.nasa.gov/missions/apollo/apollo-13-mission-details/",
+    "quote": "the square canisters from the command module were not compatible with the round openings in the lunar module environmental system.",
+    "extra_sources": [
+      { "title": "Apollo 13 Lunar Module 'Mail Box' (NASA image article) - \"a jury-rigged arrangement\"", "url": "https://www.nasa.gov/image-article/apollo-13-lunar-module-mail-box/" },
+      { "title": "\"Houston, We've Had a Problem\" (NASA History) - the parts used and who designed it", "url": "https://www.nasa.gov/history/houston-weve-had-a-problem/" }
+    ],
+    "notes": "Confirmed. Same NASA page: \"Mission control devised a way to attach the CM canisters to the LM system by using plastic bags, cardboard and to tape all materials carried on board\" (the typo is NASA's). NASA History lists the parts as \"a spacesuit's liquid cooled garment and inlet hose, plastic bags, a cue card from the flight plan and of course duct tape\" - the cardboard was a flight-plan card. The fix was designed and tested on the ground by a team led by Ed Smylie, then built in space by Jack Swigert and Jim Lovell. NASA spells it both \"mail box\" and \"mailbox\"."
+  },
+  {
+    "id": "E11",
+    "status": "verified",
+    "claim": "On the night of 29-30 August 2018 flight controllers noticed a slow air leak on the International Space Station; the crew traced it to a hole about 2 mm wide in the docked Soyuz MS-09 spacecraft, slowed it with Kapton tape and then sealed it with epoxy on a gauze wipe.",
+    "values": [
+      { "label": "Hole diameter", "value": 2, "unit": "mm" },
+      { "label": "Leak detected (Wednesday night, U.S. time)", "value": "2018-08-29", "unit": "date" },
+      { "label": "Leak found and repaired", "value": "2018-08-30", "unit": "date" }
+    ],
+    "source_title": "International Space Station Status (NASA Space Station blog, 30 Aug 2018, 11:20 a.m. EDT)",
+    "source_url": "https://www.nasa.gov/blogs/spacestation/2018/08/30/international-space-station-status-2/",
+    "quote": "The leak has been isolated to a hole about two millimeters in diameter in the orbital compartment, or upper section, of the Soyuz MS-09 spacecraft attached to the Rassvet module of the Russian segment.",
+    "extra_sources": [
+      { "title": "International Space Station Status, later update the same day (NASA Space Station blog, 30 Aug 2018) - epoxy and gauze repair", "url": "https://www.nasa.gov/blogs/spacestation/2018/08/30/international-space-station-status-3/" }
+    ],
+    "notes": "Confirmed. First post: \"The rate of the leak was slowed this morning through the temporary application of Kapton tape at the leak site.\" Second post: \"Soyuz commander Sergey Prokopyev of Roscosmos used epoxy on a gauze wipe to plug the hole identified as the leak source.\" The hole was in the part of the Soyuz that does not return to Earth, and NASA said the crew was never in danger."
+  },
+  {
+    "id": "E12",
+    "status": "verified",
+    "claim": "The space station's urine recycler (Urine Processor Assembly) once failed because astronauts lose bone in weightlessness, which puts extra calcium in their urine; the calcium formed solid crystals that clogged the distillation unit, and NASA fixed it by changing the treatment acid from sulfuric to phosphoric.",
+    "values": [
+      { "label": "Designed water recovery from urine", "value": 85, "unit": "percent" }
+    ],
+    "source_title": "Preventing Precipitation in the ISS Urine Processor (Muirhead, Carter, Williamson, Chambers; NASA Marshall Space Flight Center; ICES 2017; NTRS 20170008985)",
+    "source_url": "https://ntrs.nasa.gov/citations/20170008985",
+    "quote": "This occurred because the calcium concentration in the crew urine was elevated in microgravity due to bone loss.",
+    "extra_sources": [
+      { "title": "NASA Achieves Water Recovery Milestone on International Space Station (NASA, 2023) - how the urine and brine processors work today", "url": "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station/" }
+    ],
+    "notes": "Optional item, confirmed from the NASA abstract: \"The higher calcium concentration precipitated with sulfate from the pretreatment acid, resulting in a failure of the UPA due to the accumulation of solids in the Distillation Assembly.\" After the failure the unit ran at reduced recovery until the new phosphoric-acid pretreatment was developed. The abstract does not give the date of the failure, so do not print one."
+  },
+  {
+    "id": "E13",
+    "status": "verified",
+    "claim": "The Moon's surface gravity is 1.62 m/s2 (about one-sixth of Earth's); one day-night cycle lasts about 29.5 Earth days; near the equator temperatures swing from about +121 degrees C in daylight to about -133 degrees C at night, and permanently shadowed craters near the poles have been measured below -246 degrees C by NASA's Lunar Reconnaissance Orbiter.",
+    "values": [
+      { "label": "Surface gravity", "value": 1.62, "unit": "m/s2" },
+      { "label": "Moon gravity compared with Earth", "value": 0.165, "unit": "ratio" },
+      { "label": "Day-night cycle (synodic period)", "value": 29.53, "unit": "Earth days" },
+      { "label": "Equator, daytime (\"over 250 F\")", "value": 121, "unit": "degC" },
+      { "label": "Equator, after nightfall", "value": -133, "unit": "degC" },
+      { "label": "Permanently shadowed polar craters (\"lower than -410 F\")", "value": -246, "unit": "degC" }
+    ],
+    "source_title": "Weather on the Moon (NASA Science)",
+    "source_url": "https://science.nasa.gov/moon/weather-on-the-moon/",
+    "quote": "Temperatures near the Moon’s equator can spike to over 250°F (121°C) in daylight, then plummet after nightfall to -208°F (-133°C).",
+    "extra_sources": [
+      { "title": "Moon Fact Sheet (NASA NSSDCA, updated 11 Jan 2024) - gravity 1.62 m/s2, ratio 0.165, synodic period 29.53 days", "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" },
+      { "title": "Moon Facts (NASA Science) - \"the gravity on the surface of the Moon is one-sixth of Earth's\"", "url": "https://science.nasa.gov/moon/facts/" }
+    ],
+    "notes": "All draft numbers confirmed. Next sentence on the NASA page: \"In deep craters near the Moon's poles, permanent shadows keep the surface even colder — NASA's Lunar Reconnaissance Orbiter has measured temperatures lower than -410°F (-246°C).\" The page names the orbiter, not the Diviner instrument. NASA pages do not agree on the extremes: Moon Facts says about 127 degrees C in full Sun and -173 degrees C in darkness, and the fact sheet gives 95 K to 390 K (-178 to +117 degrees C) at the equator - so keep the word 'about'."
+  },
+  {
+    "id": "E14",
+    "status": "verified",
+    "claim": "Near Shackleton crater at the Moon's south pole, three high points on the crater rim are, taken together, in sunlight for more than 90% of the year (the best small areas get sunlight nearly 94% of the year, with dark spells of at most about 43 hours); the Sun always stays within about 1.5 degrees of the horizon, and no place is sunlit all the time.",
+    "values": [
+      { "label": "Three points on Shackleton's rim, sunlit collectively", "value": 90, "unit": "percent of the year (more than)" },
+      { "label": "Best small areas near the south pole, sunlit", "value": 94, "unit": "percent of the year (nearly)" },
+      { "label": "Longest period of darkness at those best spots", "value": 43, "unit": "hours" },
+      { "label": "Ridge between Shackleton and de Gerlache craters, sunlit", "value": 90, "unit": "percent of the time (up to)" },
+      { "label": "Greatest height of the Sun above or below the horizon at the poles", "value": 1.5, "unit": "degrees" },
+      { "label": "Moon's axial tilt (Earth's is 23.5)", "value": 1.5, "unit": "degrees" },
+      { "label": "Shackleton crater diameter", "value": 21, "unit": "km" }
+    ],
+    "source_title": "Shackleton Crater's Illuminated Rim & Shadowed Interior (NASA Science; credit NASA/GSFC/Arizona State University; 20 April 2022)",
+    "source_url": "https://science.nasa.gov/resource/shackleton-craters-illuminated-rim-shadowed-interior/",
+    "quote": "Three points on the crater’s rim remain collectively sunlit for more than 90% of the year due to this tilt.",
+    "extra_sources": [
+      { "title": "Five Years Later: Revisiting an Old Friend (LROC, Arizona State University, 3 July 2014) - 94% and 43 hours", "url": "https://lroc.im-ldi.com/images/789" },
+      { "title": "Islands in the Dark (LROC, 20 May 2019) - ridge between Shackleton and de Gerlache", "url": "https://lroc.im-ldi.com/images/1105" },
+      { "title": "Shadows near the Moon's South Pole (NASA Scientific Visualization Studio, 7 April 2021) - Sun within 1.5 degrees of the horizon", "url": "https://science.nasa.gov/resource/shadows-near-the-moons-south-pole/" },
+      { "title": "NASA's Artemis Base Camp on the Moon Will Need Light, Water, Elevation (NASA, 27 Jan 2021)", "url": "https://www.nasa.gov/humans-in-space/nasas-artemis-base-camp-on-the-moon-will-need-light-water-elevation/" }
+    ],
+    "notes": "Confirmed and sharpened. Draft said 'dark periods lasting only a few days'; the LROC number is shorter: \"LROC has shown there are no true regions of perpetual sunlight, but within small areas the surface is in sunlight nearly 94% of the year, with the longest periods of darkness lasting just 43 hours.\" The word 'collectively' matters - the 90% is for three rim points together, so a base needs solar panels at several spots or on tall masts. LROC on the ridge: \"some portions are illuminated up to 90% of the time, but nowhere is permanently illuminated.\" NASA SVS: \"At the Moon's North and South Poles, the Sun is never more than 1.5° above or below the horizon.\" Nice image for kids from NASA: the Sun skims the horizon \"like a flashlight laying on a table\"."
+  },
+  {
+    "id": "E15",
+    "status": "verified",
+    "claim": "On 9 October 2009 NASA's LCROSS mission crashed a spent rocket stage into the permanently shadowed Cabeus crater near the Moon's south pole and detected about 155 kg of water (vapour and ice) in the plume, which means the soil there is about 5.6% water ice by mass.",
+    "values": [
+      { "label": "Water vapour and ice seen in the instrument's field of view", "value": 155, "unit": "kg (plus or minus 12)" },
+      { "label": "Water ice in the soil at the impact site", "value": 5.6, "unit": "percent by mass (plus or minus 2.9)" },
+      { "label": "Impact date", "value": "2009-10-09", "unit": "date" }
+    ],
+    "source_title": "Detection of Water in the LCROSS Ejecta Plume (Colaprete et al., NASA Ames Research Center; Science 330, 463-468, 22 Oct 2010; doi:10.1126/science.1186986)",
+    "source_url": "https://pubmed.ncbi.nlm.nih.gov/20966242/",
+    "quote": "The maximum total water vapor and water ice within the instrument field of view was 155 ± 12 kilograms.",
+    "extra_sources": [
+      { "title": "NASA Ames Astrogram, September 2016 - \"approximately 155 kilograms (or 342 lbs.) of water vapor and water ice\"", "url": "https://www.nasa.gov/centers-and-facilities/ames/nasa-ames-astrogram-september-2016/" },
+      { "title": "LCROSS mission page (NASA Science) - impact in Cabeus crater on 9 Oct 2009", "url": "https://science.nasa.gov/mission/lcross/" }
+    ],
+    "notes": "Both draft numbers confirmed in the peer-reviewed paper led by NASA Ames (the NASA press releases I opened do not print them). Second sentence of the abstract: \"the concentration of water ice in the regolith at the LCROSS impact site is estimated to be 5.6 ± 2.9% by mass.\" The 155 kg is what the instruments could see, not all the water in the crater, and the uncertainty on 5.6% is large - say 'about'."
+  },
+  {
+    "id": "E16",
+    "status": "corrected",
+    "claim": "In October 2024 NASA named nine candidate landing regions near the Moon's south pole (names listed under values), and its plan for a base there - first called Artemis Base Camp, renamed Moon Base in March 2026 - includes solar arrays on masts up to 32 feet (about 10 m) tall and a small nuclear fission reactor, first planned at 40 kW and raised in 2025 to at least 100 kW by 2030.",
+    "values": [
+      { "label": "Candidate landing regions (announced 28 Oct 2024)", "value": 9, "unit": "regions" },
+      { "label": "Region names", "value": "Peak near Cabeus B; Haworth; Malapert Massif; Mons Mouton Plateau; Mons Mouton; Nobile Rim 1; Nobile Rim 2; de Gerlache Rim 2; Slater Plain", "unit": "names" },
+      { "label": "Vertical solar array (VSAT) deployed height", "value": 32, "unit": "feet (about 10 m)" },
+      { "label": "Fission Surface Power design goal (2022-2024), for 10 years", "value": 40, "unit": "kW" },
+      { "label": "Reactor goal declared in August 2025, by fiscal year 2030 (at least)", "value": 100, "unit": "kW" },
+      { "label": "Artemis Base Camp concept: crew of a fixed habitat", "value": 4, "unit": "astronauts" },
+      { "label": "Artemis Base Camp concept: longest planned stay", "value": 2, "unit": "months" },
+      { "label": "Moon Base announced", "value": "2026-03-24", "unit": "date" },
+      { "label": "First Artemis Moon landing now planned (Artemis IV)", "value": 2028, "unit": "year" }
+    ],
+    "source_title": "NASA Provides Update on Artemis III Moon Landing Regions (NASA release 24-136, 28 Oct 2024)",
+    "source_url": "https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/",
+    "quote": "The refined candidate Artemis III lunar landing regions are, in no priority order:",
+    "extra_sources": [
+      { "title": "NASA Adds Mission to Artemis Lunar Program, Updates Architecture (NASA release 26-022, 27 Feb 2026)", "url": "https://www.nasa.gov/news-release/nasa-adds-mission-to-artemis-lunar-program-updates-architecture/" },
+      { "title": "Lunar Living: NASA's Artemis Base Camp Concept (NASA blog, 28 Oct 2020)", "url": "https://www.nasa.gov/blogs/missions/2020/10/28/lunar-living-nasas-artemis-base-camp-concept/" },
+      { "title": "Moon Base (NASA reference page, 2026)", "url": "https://www.nasa.gov/reference/moonbase-about/" },
+      { "title": "Three Companies to Help NASA Advance Solar Array Technology for Moon (NASA release 22-090, 23 Aug 2022)", "url": "https://www.nasa.gov/news-release/three-companies-to-help-nasa-advance-solar-array-technology-for-moon/" },
+      { "title": "Fission Surface Power (NASA) - \"at least 40 kilowatts of power – enough to continuously run 30 households for ten years\"", "url": "https://www.nasa.gov/exploration-systems-development-mission-directorate/fission-surface-power/" },
+      { "title": "NASA Names Glenn's Steven Sinacore to Lead Fission Surface Power (NASA Glenn, 25 Sep 2025) - 100 kW by fiscal year 2030", "url": "https://www.nasa.gov/centers-and-facilities/glenn/nasa-names-glenns-steven-sinacore-to-lead-fission-surface-power/" },
+      { "title": "NASA, Department of Energy to Develop Lunar Surface Reactor by 2030 (NASA release 26-004, 13 Jan 2026)", "url": "https://www.nasa.gov/news-release/nasa-department-of-energy-to-develop-lunar-surface-reactor-by-2030/" }
+    ],
+    "notes": "The nine names and the 2024 date are exactly right, but three things changed after the draft was written. (1) On 27 Feb 2026 NASA re-planned Artemis III as a 2027 test flight in Earth orbit: \"to prepare for an Artemis IV landing in 2028\" - so call them 'candidate landing regions near the south pole', not 'Artemis III landing sites'. (2) 'Artemis Base Camp' is the 2020 concept (\"a modern lunar cabin, a rover and even a mobile home\"); since 24 March 2026 NASA calls the plan 'Moon Base', built in three phases. (3) The 40 kW reactor is still on NASA's Fission Surface Power page, but in Sep 2025 NASA wrote: \"Last month, NASA declared its intent to put a system that would provide at least 100 kilowatts of electrical power on the Moon by fiscal year 2030.\" VSAT confirmed: \"vertical solar arrays that can autonomously deploy up to 32 feet high and retract for relocation if necessary\"."
+  },
+  {
+    "id": "E17",
+    "status": "verified",
+    "claim": "Sunsets on Mars look blue because the very fine dust in the air lets blue light through more easily and scatters it forward, so a blue glow stays close to the Sun while the rest of the sky looks yellow to orange.",
+    "values": [
+      { "label": "First colour sunset recorded by Curiosity (sol 956)", "value": "2015-04-15", "unit": "date" }
+    ],
+    "source_title": "What Do Sunrises and Sunsets Look Like on Mars? (NASA Science, 1 May 2019)",
+    "source_url": "https://science.nasa.gov/solar-system/planets/mars/what-does-a-sunrise-sunset-look-like-on-mars/",
+    "quote": "The colors come from the fact that the very fine dust is the right size so that blue light penetrates the atmosphere slightly more efficiently",
+    "extra_sources": [
+      { "title": "Sunset in Mars' Gale Crater (NASA Science; credit NASA/JPL-Caltech/MSSS/Texas A&M Univ.; 9 May 2015)", "url": "https://science.nasa.gov/resource/sunset-in-mars-gale-crater/" }
+    ],
+    "notes": "Confirmed. The speaker is Mark Lemmon of Texas A&M University, a Curiosity science team member. He continues: \"When the blue light scatters off the dust, it stays closer to the direction of the Sun than light of other colors does. The rest of the sky is yellow to orange, as yellow and red light scatter all over the sky instead of being absorbed or staying close to the Sun.\" Same page: \"Martian sunsets typically stand out for their distinctive blue color.\""
+  },
+  {
+    "id": "E18",
+    "status": "verified",
+    "claim": "Perseverance's microphones showed that sound on Mars travels at about 240 m/s (about 340 m/s on Earth) - high-pitched sounds a little faster, about 250 m/s - and that everything sounds quieter and more muffled in the thin, cold, carbon-dioxide air.",
+    "values": [
+      { "label": "Speed of sound on Mars (low-pitched sounds)", "value": 240, "unit": "m/s" },
+      { "label": "Speed of higher-pitched sounds on Mars", "value": 250, "unit": "m/s" },
+      { "label": "Speed of sound on Earth (NASA Sounds of Mars page; the 2022 release says 343)", "value": 340, "unit": "m/s" }
+    ],
+    "source_title": "Sounds of Mars (NASA Science, Mars 2020 Perseverance)",
+    "source_url": "https://science.nasa.gov/mission/mars-2020-perseverance/sounds-of-mars/",
+    "quote": "If you were standing on Mars, you’d hear a quieter, more muffled version of what you’d hear on Earth, and you’d wait slightly longer to hear it.",
+    "extra_sources": [
+      { "title": "What Sounds Captured by NASA's Perseverance Rover Reveal About Mars (NASA/JPL, 1 April 2022)", "url": "https://www.nasa.gov/solar-system/what-sounds-captured-by-nasas-perseverance-rover-reveal-about-mars/" }
+    ],
+    "notes": "Confirmed. Same NASA page: \"Mars has a lower speed of sound, around 540 mph (~240 meters per second), compared to about 760 mph (~340 meters per second) on Earth.\" 2022 release: \"low-pitched sounds travel at about 537 mph (240 meters per second), while higher-pitched sounds move at 559 mph (250 meters per second).\" Fun quote from a scientist in that release: \"At some point, we thought the microphone was broken, it was so quiet.\" Whistles, bells and bird song would be almost inaudible."
+  },
+  {
+    "id": "E19",
+    "status": "verified",
+    "claim": "On 18 March 2024 the Perseverance rover's cameras detected a faint green aurora in the night sky of Mars - the first aurora ever observed from the surface of another planet; NASA announced it on 14 May 2025.",
+    "values": [
+      { "label": "Aurora observed (mission sol 1094, instruments on at 06:30 UTC)", "value": "2024-03-18", "unit": "date" },
+      { "label": "Solar flare and eruption that caused it", "value": "2024-03-15", "unit": "date" },
+      { "label": "NASA announcement and Science Advances paper", "value": "2025-05-14", "unit": "date" },
+      { "label": "Wavelength of the green light (oxygen)", "value": 557.7, "unit": "nm" }
+    ],
+    "source_title": "NASA Observes First Visible-light Auroras at Mars (NASA Science, 14 May 2025)",
+    "source_url": "https://science.nasa.gov/solar-system/planets/mars/nasa-observes-first-visible-light-auroras-at-mars/",
+    "quote": "NASA’s Perseverance Mars rover made history by detecting them for the first time from the surface of another planet.",
+    "extra_sources": [
+      { "title": "Detection of visible-wavelength aurora on Mars (Knutsen et al., Science Advances, 14 May 2025)", "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12077521/" }
+    ],
+    "notes": "Confirmed. The NASA article gives the date of the solar eruption (15 March 2024) and says the aurora came \"a few days later\"; the exact date is in the paper: \"The rover activity was initiated on 18 March (mission sol 1094), with the instruments switching on at 06:30 UTC\". It was detected with the SuperCam and Mastcam-Z instruments, not seen by a person. NASA adds that such auroras \"could be visible to future astronauts on Mars' surface\"."
+  },
+  {
+    "id": "E20",
+    "status": "verified",
+    "claim": "On 14 March 2025 Firefly's Blue Ghost lander, a NASA Commercial Lunar Payload Services delivery standing in Mare Crisium, photographed the eclipse from the Moon's surface - what people on Earth saw as a total lunar eclipse was, from the Moon, Earth blocking the Sun; there were 16 total lunar eclipses from 2010 through 2026.",
+    "values": [
+      { "label": "Eclipse photographed from the Moon", "value": "2025-03-14", "unit": "date" },
+      { "label": "Blue Ghost landing", "value": "2025-03-02", "unit": "date" },
+      { "label": "Blue Ghost mission ended", "value": "2025-03-16", "unit": "date" },
+      { "label": "NASA instruments delivered", "value": 10, "unit": "instruments" },
+      { "label": "Total lunar eclipses, 2010 through 2026", "value": 16, "unit": "eclipses" }
+    ],
+    "source_title": "NASA Science Data Received, Blue Ghost Captures Eclipse From Moon (NASA blog, 14 March 2025)",
+    "source_url": "https://www.nasa.gov/blogs/missions/2025/03/14/nasa-science-data-received-blue-ghost-captures-eclipse-from-moon/",
+    "quote": "Image of a total lunar eclipse from the Moon’s surface captured by Firefly’s Blue Ghost Mission 1 lunar lander on March 14, 2025.",
+    "extra_sources": [
+      { "title": "APOD 19 March 2025: Blue Ghost's Diamond Ring (NASA) - seen from the Moon it was a solar eclipse", "url": "https://science.nasa.gov/image-article/apod-2025-march-19-blue-ghost-s-diamond-ring/" },
+      { "title": "NASA Science Continues After Firefly's First Moon Mission Concludes (NASA release, March 2025)", "url": "https://www.nasa.gov/news-release/nasa-science-continues-after-fireflys-first-moon-mission-concludes/" },
+      { "title": "Lunar Eclipses: 2001-2010 (NASA Eclipse Web Site)", "url": "https://eclipse.gsfc.nasa.gov/LEdecade/LEdecade2001.html" },
+      { "title": "Lunar Eclipses: 2011-2020 (NASA Eclipse Web Site)", "url": "https://eclipse.gsfc.nasa.gov/LEdecade/LEdecade2011.html" },
+      { "title": "Lunar Eclipses: 2021-2030 (NASA Eclipse Web Site)", "url": "https://eclipse.gsfc.nasa.gov/LEdecade/LEdecade2021.html" }
+    ],
+    "eclipses": [
+      "2010-12-21",
+      "2011-06-15",
+      "2011-12-10",
+      "2014-04-15",
+      "2014-10-08",
+      "2015-04-04",
+      "2015-09-28",
+      "2018-01-31",
+      "2018-07-27",
+      "2019-01-21",
+      "2021-05-26",
+      "2022-05-16",
+      "2022-11-08",
+      "2025-03-14",
+      "2025-09-07",
+      "2026-03-03"
+    ],
+    "notes": "Confirmed. NASA's caption calls it a lunar eclipse; NASA's Astronomy Picture of the Day explains the view: \"from the Moon's near side that same astronomical syzygy was seen as a solar eclipse.\" The caption continues: \"The image shows the sun about to emerge from totality behind Earth.\" Eclipse dates are the Universal Time dates of greatest eclipse from NASA's tables (type 'Total' only); in some time zones the local date is one day earlier. The 28 Aug 2026 eclipse was partial and is not in the list."
+  },
+  {
+    "id": "E21",
+    "status": "corrected",
+    "claim": "A trip to the Moon takes about three days, a trip to Mars takes about seven to ten months (Perseverance needed just under seven), and a good launch window for Mars opens only about once every 26 months.",
+    "values": [
+      { "label": "Earth to Moon (Apollo 8, the fastest Apollo, took \"just under three days\")", "value": 3, "unit": "days" },
+      { "label": "Earth to Mars, NASA's stated range", "value": "7 to 10", "unit": "months" },
+      { "label": "Perseverance cruise (launch 30 July 2020, landing 18 Feb 2021)", "value": 203, "unit": "days" },
+      { "label": "InSight cruise (launch 5 May 2018, landing 26 Nov 2018)", "value": 205, "unit": "days" },
+      { "label": "Time between Mars launch windows", "value": 26, "unit": "months" },
+      { "label": "Earth-Mars synodic period (NASA fact sheet)", "value": 779.94, "unit": "days" },
+      { "label": "Artemis II: launch, lunar flyby, splashdown", "value": "2026-04-01, 2026-04-06, 2026-04-10", "unit": "dates" }
+    ],
+    "source_title": "How Long Does it Take to Get to the Moon... Mars... Jupiter? We Asked a NASA Expert: Episode 51 (NASA, 19 Feb 2025)",
+    "source_url": "https://www.nasa.gov/directorates/smd/how-long-does-it-take-to-get-to-the-moon-mars-jupiter-we-asked-a-nasa-expert-episode-51/",
+    "quote": "So to get to the Moon takes several days. To get to Mars takes seven to ten months.",
+    "extra_sources": [
+      { "title": "Mars Mission Timeline (NASA Science) - \"about once every 26 months they are aligned in a way that allows the most energy-efficient trip to Mars\"", "url": "https://science.nasa.gov/planetary-science/programs/mars-exploration/mission-timeline/" },
+      { "title": "25 Years of Continuous Robotic Mars Exploration (NASA History, 13 Sep 2022) - \"suitable launch windows every 26 months\"", "url": "https://www.nasa.gov/history/25-years-of-continuous-robotic-mars-exploration-from-pathfinder-to-perseverance/" },
+      { "title": "Mars 2020 Perseverance Landing Press Kit, Quick Facts (NASA/JPL) - launch and landing dates", "url": "https://www.jpl.nasa.gov/news/press_kits/mars_2020/landing/quick_facts/" },
+      { "title": "Voyager 1: What Is a Light-Day (NASA Science) - Artemis II crew \"took about three days to get there\"", "url": "https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/" },
+      { "title": "Artemis II mission page (NASA) - launched 1 April 2026, splashdown 10 April 2026", "url": "https://www.nasa.gov/mission/artemis-ii/" },
+      { "title": "Hazard: Distance From Earth (NASA Human Research Program) - \"a three-day lunar trip\"", "url": "https://www.nasa.gov/hrp/hazard-distance-from-earth/" }
+    ],
+    "notes": "Moon (about 3 days) and the 26-month window are confirmed. Changed: the draft's Mars range '6-9 months' -> NASA's wording 'seven to ten months'; 'about 7 months' is still right for recent landers (Perseverance 203 days, InSight 205 days, both about 6.7 months). Same NASA page: \"The fastest of these was Apollo 8, which took just under three days to go from Earth orbit to orbit around the Moon.\" For Artemis II (2026) NASA pages differ: one says the crew \"took about three days to get there\", while the mission pages show launch on 1 April and the lunar flyby on 6 April - so keep 'about 3 days' as the Apollo-style figure and do not attach it to Artemis II."
+  },
+  {
+    "id": "E22",
+    "status": "corrected",
+    "claim": "Curiosity's REMS weather station in Gale Crater typically records afternoon air temperatures between about -30 and 0 degrees C and night-time lows between about -80 and -70 degrees C; NASA's own Curiosity weather widget loads the JSON feed at mars.nasa.gov/rss/api (feed=weather, category=msl) and credits it \"NASA/JPL-Caltech/CAB(CSIC-INTA)\", but the feed is not live - on 11 November 2026 its newest record was sol 4995 (25 August 2026).",
+    "values": [
+      { "label": "Typical daily high, NASA statement (late winter to spring 2012-13)", "value": 0, "unit": "degC" },
+      { "label": "Typical nightly low, NASA statement (same period)", "value": -70, "unit": "degC" },
+      { "label": "Warmest air temperature in the first two Mars years (NASA/JPL)", "value": 15.9, "unit": "degC" },
+      { "label": "Coldest air temperature in the first two Mars years (NASA/JPL)", "value": -100, "unit": "degC" },
+      { "label": "Usual drop from afternoon high to overnight low (more than)", "value": 55, "unit": "degC" },
+      { "label": "Median daily high in the feed (my calculation, 4,717 sols, Aug 2012 - Aug 2026)", "value": -11, "unit": "degC" },
+      { "label": "Median daily low in the feed (my calculation)", "value": -74, "unit": "degC" },
+      { "label": "Median daily high by Mars month, coldest to warmest (my calculation)", "value": "-28 to 0", "unit": "degC" },
+      { "label": "Median daily low by Mars month, coldest to warmest (my calculation)", "value": "-81 to -68", "unit": "degC" },
+      { "label": "Records in the feed on 2026-11-11", "value": 4745, "unit": "sols" },
+      { "label": "Newest record in the feed on 2026-11-11", "value": "sol 4995, 2026-08-25", "unit": "sol and Earth date" }
+    ],
+    "source_title": "Steady Temperatures at Mars' Gale Crater (NASA Science; credit NASA/JPL-Caltech/CAB(CSIC-INTA)/FMI/Ashima Research; 8 April 2013)",
+    "source_url": "https://science.nasa.gov/resource/steady-temperatures-at-mars-gale-crater/",
+    "quote": "The pattern is quite steady, with daily highs at about 32 degrees Fahrenheit (0 degrees Celsius) and lows at about minus 94 Fahrenheit (minus 70 Celsius).",
+    "extra_sources": [
+      { "title": "Weather at Gale Crater - NASA Mars | Curiosity Rover (NASA's weather widget page; shows \"Credit: NASA/JPL-Caltech/CAB(CSIC-INTA)\")", "url": "https://mars.nasa.gov/layout/embed/image/mslweather/" },
+      { "title": "Curiosity REMS weather feed (JSON, NASA-hosted)", "url": "https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json" },
+      { "title": "Script used by NASA's widget; it requests the feed URL above", "url": "https://mars.nasa.gov/js/general/weather/msl-weather.js" },
+      { "title": "Second Cycle of Martian Seasons Completing for Curiosity Rover (NASA/JPL, 11 May 2016) - 15.9 and -100 degrees C", "url": "https://www.jpl.nasa.gov/news/second-cycle-of-martian-seasons-completing-for-curiosity-rover/" },
+      { "title": "Seasonal Cycles in Curiosity's First Two Martian Years, PIA20600 (NASA Photojournal; credits NASA/JPL-Caltech/CAB(CSIC-INTA))", "url": "https://science.nasa.gov/photojournal/seasonal-cycles-in-curiositys-first-two-martian-years/" }
+    ],
+    "notes": "Corrections to the draft: (1) the feed is real, NASA-hosted and used by NASA's own widget, and it answers with HTTP 200 and the header Access-Control-Allow-Origin: * (a browser game can read it directly), but it is not a documented NASA API and it is NOT real-time: on 11 Nov 2026 the newest of 4,745 records was sol 4995 (25 Aug 2026), about 11 weeks old. Show the record's own Earth date, never 'today', and ship a saved copy as fallback (the file is 1.7 MB; values are strings and missing ones are \"--\"). (2) The data come from Spain's Centro de Astrobiologia; the feed's disclaimer says it \"is provided by Centro de Astrobiologia (CAB) and is intended for outreach purposes only\". (3) Credit line confirmed exactly as NASA/JPL-Caltech/CAB(CSIC-INTA). The old page mars.nasa.gov/msl/weather/ now redirects to a Curiosity instruments page. Use max_temp and min_temp for air temperature; max_gts_temp and min_gts_temp are ground temperatures and run warmer by day (up to about +20 degrees C). The medians above are my own statistics from the feed, not NASA statements."
+  },
+  {
+    "id": "E23",
+    "status": "verified",
+    "claim": "NASA is paying the company ICON $57.2 million (a contract running through 2028, under NASA's MMPACT project) to develop its Olympus construction system, which is meant to 3D-print landing pads, habitats and roads on the Moon out of local soil (regolith).",
+    "values": [
+      { "label": "Contract value", "value": 57.2, "unit": "million US dollars" },
+      { "label": "Contract runs through", "value": 2028, "unit": "year" },
+      { "label": "Award announced", "value": "2022-11-29", "unit": "date" }
+    ],
+    "source_title": "NASA, ICON Advance Lunar Construction Technology for Moon Missions (NASA Marshall, 29 Nov 2022)",
+    "source_url": "https://www.nasa.gov/centers-and-facilities/marshall/nasa-icon-advance-lunar-construction-technology-for-moon-missions/",
+    "quote": "The new NASA SBIR Phase III award will support the development of ICON’s Olympus construction system, which is designed to use local resources on the Moon and Mars as building materials.",
+    "extra_sources": [
+      { "title": "NASA Looks to Advance 3D Printing Construction Systems for the Moon and Mars (NASA, 1 Oct 2020)", "url": "https://www.nasa.gov/technology/manufacturing-materials-3-d-printing/nasa-looks-to-advance-3d-printing-construction-systems-for-the-moon-and-mars/" }
+    ],
+    "notes": "Confirmed. Naming: NASA writes 'Olympus construction system' ('Project Olympus' is ICON's own name for it), and MMPACT stands for Moon to Mars Planetary Autonomous Construction Technologies. Same release: \"NASA has awarded ICON, located in Austin, a contract to develop construction technologies that could help build infrastructure such as landing pads, habitats, and roads on the lunar surface\" and \"The contract runs through 2028 and has a value of $57.2 million.\" The release says 'local resources' rather than 'regolith'; the 2020 article describes tests with lunar soil simulant. This is technology under development - nothing has been printed on the Moon yet."
+  },
+  {
+    "id": "E24",
+    "status": "verified",
+    "claim": "The Moon is on average 384,400 km from Earth, and the distance between Earth and Mars ranges from about 54.6 million km to about 401 million km.",
+    "values": [
+      { "label": "Earth-Moon average distance", "value": 384400, "unit": "km" },
+      { "label": "Earth-Moon at perigee (NASA fact sheet)", "value": 363300, "unit": "km" },
+      { "label": "Earth-Moon at apogee (NASA fact sheet)", "value": 405500, "unit": "km" },
+      { "label": "Earth-Mars minimum distance", "value": 54.6, "unit": "million km" },
+      { "label": "Earth-Mars maximum distance", "value": 401.4, "unit": "million km" },
+      { "label": "Earth-Mars distance at an average opposition", "value": 78.34, "unit": "million km" }
+    ],
+    "source_title": "Moon Facts (NASA Science)",
+    "source_url": "https://science.nasa.gov/moon/facts/",
+    "quote": "The Moon is an average of 238,855 miles (384,400 kilometers) away.",
+    "extra_sources": [
+      { "title": "Mars Fact Sheet (NASA NSSDCA, updated 19 May 2025) - distance from Earth: minimum 54.6, maximum 401.4 (10^6 km)", "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" },
+      { "title": "Moon Fact Sheet (NASA NSSDCA) - semimajor axis 0.3844, perigee 0.3633, apogee 0.4055 (10^6 km)", "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" }
+    ],
+    "notes": "All three draft numbers confirmed. The Mars figures are rows of the NASA fact-sheet table ('Distance from Earth: Minimum (10^6 km) 54.6, Maximum (10^6 km) 401.4'), not a sentence. 54.6 million km is the smallest possible distance; at an ordinary close approach Mars is about 78 million km away. NASA's Moon Facts page adds a kid-friendly picture: 30 Earth-sized planets could fit between Earth and the Moon."
+  }
+]
