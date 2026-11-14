@@ -2,6 +2,7 @@
  * Renderer, main loop, screen size handling and automatic performance tuning.
  */
 import * as THREE from 'three';
+import { flag } from './devflags';
 import { PostFX } from './post';
 import type { QualityOptions } from './quality';
 
@@ -89,8 +90,31 @@ export class Engine {
   private applyShadowSettings(): void {
     const q = this.quality;
     this.renderer.shadowMap.enabled = q.shadows;
-    this.renderer.shadowMap.type = q.softShadows ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+    this.renderer.shadowMap.type = this.wantedShadowType();
     this.renderer.shadowMap.needsUpdate = true;
+  }
+
+  /** The radius filter (PCF) is used where the quality asks for a soft edge wider than PCFSoft gives. */
+  private wantedShadowType(): THREE.ShadowMapType {
+    const q = this.quality;
+    if (q.shadows && q.shadowRadius > 1 && flag('G1')) return THREE.PCFShadowMap;
+    return q.softShadows ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+  }
+
+  /** Follows the dev A/B flag: lit materials must be built again when the filter changes. */
+  private syncShadowType(): void {
+    const type = this.wantedShadowType();
+    if (type === this.renderer.shadowMap.type) return;
+    this.renderer.shadowMap.type = type;
+    this.renderer.shadowMap.needsUpdate = true;
+    const refresh = (scene: THREE.Object3D): void =>
+      scene.traverse((child) => {
+        const material = (child as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+        if (Array.isArray(material)) for (const m of material) m.needsUpdate = true;
+        else if (material) material.needsUpdate = true;
+      });
+    refresh(this.scene);
+    if (this.view) refresh(this.view);
   }
 
   setQuality(quality: QualityOptions): void {
@@ -161,6 +185,7 @@ export class Engine {
 
   /** Draw the picture. Rooms are drawn from their own scene: there the Sun's light shafts and the world's colour mood stay off. */
   private draw(): void {
+    this.syncShadowType();
     this.post.indoor = this.view !== null;
     this.post.render(this.view ?? this.scene, this.camera, this.time);
   }

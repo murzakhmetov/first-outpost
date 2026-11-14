@@ -279,6 +279,52 @@ async function ab(name: string, flagId: string, width = 1920, height = 1080, opt
   return [await save(`${name}_off`, await encode(pair.off, options)), await save(`${name}_on`, await encode(pair.on, options))];
 }
 
+/**
+ * Orbit the camera in small yaw steps and compare each frame with the one before, with the flag off and on.
+ * Extra frame-to-frame change with the flag on (more pixels, or bigger changes) means shadow swim or pop.
+ * Returns, per step, the changed-pixel count of both runs and how many pixels changed by more than 24 levels.
+ */
+function sweep(flagId: string, steps = 12, dyaw = 0.004, axis: 'yaw' | 'distance' = 'yaw', width = 1920, height = 1080): { off: number[]; on: number[]; offBig: number[]; onBig: number[]; range: number[] } {
+  const w = world();
+  const rig = w.rig as unknown as { yaw: number; goalYaw: number; distance: number; goalDistance: number };
+  const before = devFlags[flagId];
+  const startYaw = rig.yaw;
+  const startDistance = rig.distance;
+  const result = { off: [] as number[], on: [] as number[], offBig: [] as number[], onBig: [] as number[], range: [] as number[] };
+  try {
+    withSize(width, height, (engine) => {
+      for (const on of [false, true]) {
+        devFlags[flagId] = on;
+        let last: ImageData | null = null;
+        for (let i = 0; i <= steps; i++) {
+          if (axis === 'yaw') rig.yaw = rig.goalYaw = startYaw + i * dyaw;
+          else rig.distance = rig.goalDistance = startDistance + i * dyaw;
+          const image = grab(engine, width, height);
+          if (last) {
+            let changed = 0;
+            let big = 0;
+            for (let p = 0; p < image.data.length; p += 4) {
+              const d = Math.max(Math.abs(image.data[p] - last.data[p]), Math.abs(image.data[p + 1] - last.data[p + 1]), Math.abs(image.data[p + 2] - last.data[p + 2]));
+              if (d > 0) changed++;
+              if (d > 24) big++;
+            }
+            (on ? result.on : result.off).push(changed);
+            (on ? result.onBig : result.offBig).push(big);
+          }
+          if (on) result.range.push((w.daylight as unknown as { shadowRange: number }).shadowRange);
+          last = image;
+        }
+      }
+    });
+  } finally {
+    rig.yaw = rig.goalYaw = startYaw;
+    rig.distance = rig.goalDistance = startDistance;
+    if (before === undefined) delete devFlags[flagId];
+    else devFlags[flagId] = before;
+  }
+  return result;
+}
+
 /** Count the pixels that differ between the frame with the flag off and on. No files are saved. */
 function diff(flagId: string, width = 1920, height = 1080): { different: number; maxDelta: number; total: number } {
   const { off, on } = renderPair(flagId, width, height);
@@ -359,6 +405,8 @@ const gfxlab = {
   frameMs,
   ab,
   diff,
+  sweep,
+  world,
   scene,
   tier,
   live,

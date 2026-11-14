@@ -7,6 +7,7 @@
  */
 import * as THREE from 'three';
 import type { SiteId } from '../sim/types';
+import { flag } from './devflags';
 import { GLOBALS } from './materials';
 import type { PostFX } from './post';
 import { Sky } from './sky';
@@ -196,6 +197,15 @@ export class Daylight {
   private readonly dustFog = new THREE.Color('#8a5636');
   private readonly dustLight = new THREE.Color('#ffb070');
   private shadowRange = 46;
+  private baseRange = 46;
+  private shadowSize = 0;
+  private shadowWide = false;
+  private shadowRadius = 1;
+  /** Range step in use while the wide box is on (0 = base range). */
+  private rangeStep = 0;
+  private wideActive = false;
+  private readonly lightX = new THREE.Vector3();
+  private readonly lightY = new THREE.Vector3();
 
   constructor(scene: THREE.Scene, sky: Sky, post: PostFX, site: SiteId, mountains: THREE.Object3D) {
     this.scene = scene;
@@ -248,16 +258,20 @@ export class Daylight {
     });
   }
 
-  configureShadows(size: number, enabled: boolean): void {
+  configureShadows(size: number, enabled: boolean, wide = false, radius = 1): void {
     this.sun.castShadow = enabled;
+    this.shadowWide = wide;
+    this.shadowRadius = radius;
+    this.shadowSize = size;
+    this.rangeStep = 0;
+    this.wideActive = false;
+    this.sun.shadow.radius = 1;
+    this.sun.shadow.normalBias = 0.05;
     if (!enabled) return;
     // A low Sun throws long shadows, so the Moon needs a wider shadow area.
-    this.shadowRange = this.site === 'moon' ? 62 : 46;
+    this.baseRange = this.site === 'moon' ? 62 : 46;
+    this.setShadowRange(this.baseRange);
     const camera = this.sun.shadow.camera;
-    camera.left = -this.shadowRange;
-    camera.right = this.shadowRange;
-    camera.top = this.shadowRange;
-    camera.bottom = -this.shadowRange;
     camera.near = 1;
     camera.far = 420;
     camera.updateProjectionMatrix();
@@ -266,6 +280,57 @@ export class Daylight {
       this.sun.shadow.map?.dispose();
       this.sun.shadow.map = null;
     }
+    this.shadowFocus.set(1e9, 0, 0);
+  }
+
+  private setShadowRange(range: number): void {
+    this.shadowRange = range;
+    const camera = this.sun.shadow.camera;
+    camera.left = -range;
+    camera.right = range;
+    camera.top = range;
+    camera.bottom = -range;
+    camera.updateProjectionMatrix();
+  }
+
+  /**
+   * High and ultra: the shadow box grows in three steps with the camera distance (with a margin
+   * so it does not flip back and forth), and its centre sits on whole shadow texels in light space.
+   * Returns the centre of the box.
+   */
+  private wideShadowAnchor(camera: THREE.Camera, focus: THREE.Vector3, lightDir: THREE.Vector3): THREE.Vector3 {
+    const distance = camera.position.distanceTo(focus);
+    let next = this.rangeStep;
+    while (next < 2 && distance > [40, 90][next]) next++;
+    while (next > 0 && distance < [36, 84][next - 1]) next--;
+    if (next !== this.rangeStep || !this.wideActive) {
+      this.rangeStep = next;
+      this.wideActive = true;
+      this.setShadowRange(Math.max(this.baseRange, [0, 80, 110][next]));
+      // Larger texels at the wide steps: lift the surface offset in step with them.
+      this.sun.shadow.normalBias = 0.05 * Math.sqrt(Math.max(1, this.shadowRange / this.baseRange));
+      // Keep the blur about the same size in the world: texels get larger as the box widens.
+      this.sun.shadow.radius = Math.max(1, this.shadowRadius * Math.sqrt(this.baseRange / this.shadowRange));
+    }
+    // The light camera looks along -lightDir with world up: its right and up axes.
+    const x = this.lightX.set(0, 1, 0).cross(lightDir).normalize();
+    const y = this.lightY.copy(lightDir).cross(x).normalize();
+    const texel = (2 * this.shadowRange) / this.shadowSize;
+    const snapX = Math.round(focus.dot(x) / texel) * texel;
+    const snapY = Math.round(focus.dot(y) / texel) * texel;
+    return this.shadowFocus
+      .copy(focus)
+      .addScaledVector(x, snapX - focus.dot(x))
+      .addScaledVector(y, snapY - focus.dot(y));
+  }
+
+  /** Back to the fixed box and the old edge filter (the wide box is off in the dev A/B or on a weaker tier). */
+  private resetShadowBox(): void {
+    this.wideActive = false;
+    this.rangeStep = 0;
+    this.setShadowRange(this.baseRange);
+    this.sun.shadow.radius = 1;
+    this.sun.shadow.normalBias = 0.05;
     this.shadowFocus.set(1e9, 0, 0);
   }
 
@@ -324,7 +389,10 @@ export class Daylight {
     this.sun.intensity = c.lightPower * (1 - 0.78 * dust);
 
     // Keep the shadow area around the player; move it in steps to avoid shimmer.
-    if (this.sun.castShadow && this.shadowFocus.distanceToSquared(focus) > 36) {
+    const wide = this.sun.castShadow && this.shadowWide && flag('G1');
+    if (!wide && this.wideActive) this.resetShadowBox();
+    if (wide) this.wideShadowAnchor(camera, focus, lightDir);
+    else if (this.sun.castShadow && this.shadowFocus.distanceToSquared(focus) > 36) {
       this.shadowFocus.copy(focus);
     }
     const anchor = this.sun.castShadow ? this.shadowFocus : focus;

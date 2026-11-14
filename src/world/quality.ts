@@ -23,6 +23,10 @@ export interface QualityOptions {
   shadows: boolean;
   shadowSize: number;
   softShadows: boolean;
+  /** Sun shadows also cover the far edges of the overview picture (the box widens in steps). */
+  shadowWide: boolean;
+  /** Edge softness of the sun shadow in shadow texels; above 1 uses the radius filter instead of PCFSoft. */
+  shadowRadius: number;
   /** Dark outlines around characters. */
   outlines: boolean;
   /** Multiplier for the number of dust, sparkle and star particles. */
@@ -63,6 +67,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: false,
     shadowSize: 0,
     softShadows: false,
+    shadowWide: false,
+    shadowRadius: 1,
     outlines: false,
     particles: 0.3,
     terrain: 72,
@@ -88,6 +94,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: true,
     shadowSize: 1024,
     softShadows: false,
+    shadowWide: false,
+    shadowRadius: 1,
     outlines: true,
     particles: 0.6,
     terrain: 110,
@@ -113,6 +121,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: true,
     shadowSize: 2048,
     softShadows: true,
+    shadowWide: true,
+    shadowRadius: 1,
     outlines: true,
     particles: 1,
     terrain: 150,
@@ -138,6 +148,8 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     shadows: true,
     shadowSize: 4096,
     softShadows: true,
+    shadowWide: true,
+    shadowRadius: 1,
     outlines: true,
     particles: 1.5,
     terrain: 190,

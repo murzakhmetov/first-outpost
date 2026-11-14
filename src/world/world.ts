@@ -190,6 +190,7 @@ export class World {
     this.interior = new Interior(this.astronaut, this.lumi, this.rig, {
       shadows: quality.shadows,
       shadowSize: quality.shadowSize,
+      shadowRadius: quality.shadowRadius,
       pointLights: quality.pointLights,
       outlines: quality.outlines,
       suit: () => this.suitColor,
@@ -223,7 +224,7 @@ export class World {
     }
 
     this.daylight = new Daylight(this.engine.scene, this.sky, this.engine.post, site, this.terrain.mountains);
-    this.daylight.configureShadows(quality.shadowSize, quality.shadows);
+    this.daylight.configureShadows(quality.shadowSize, quality.shadows, quality.shadowWide, quality.shadowRadius);
 
     this.rig.heightAt = height;
     this.rig.blockers = this.colliders;
@@ -279,7 +280,7 @@ export class World {
         quality.shadows !== previous.shadows ||
         quality.groundDetail !== previous.groundDetail);
     this.engine.setQuality(quality);
-    if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows);
+    if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows, quality.shadowWide, quality.shadowRadius);
     if (!rebuild) return;
     // The picture gets cheaper at once. The scene itself cannot be swapped under a
     // player who is walking outside, so that part waits until the walk ends.

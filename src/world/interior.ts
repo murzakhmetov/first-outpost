@@ -1646,7 +1646,7 @@ export class Interior {
     private readonly astronaut: Astronaut,
     private readonly lumi: Lumi,
     private readonly rig: CameraRig,
-    private readonly options: { shadows: boolean; shadowSize: number; pointLights: boolean; outlines: boolean; suit?: () => string },
+    private readonly options: { shadows: boolean; shadowSize: number; shadowRadius?: number; pointLights: boolean; outlines: boolean; suit?: () => string },
   ) {
     this.scene.add(this.root);
     this.scene.name = 'interior';
@@ -2384,6 +2384,7 @@ export class Interior {
       camera.near = 0.5;
       camera.far = height + 12;
       key.shadow.mapSize.setScalar(Math.min(2048, this.options.shadowSize));
+      key.shadow.radius = this.options.shadowRadius ?? 1;
       key.shadow.bias = -0.0006;
       key.shadow.normalBias = 0.02;
     }
