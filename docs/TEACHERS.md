@@ -46,6 +46,7 @@ The activities connect to these US Next Generation Science Standards performance
 
 ## Reading help and access
 
+- **Voices:** the films and Lumi's most frequent lines are spoken by synthetic voices (made with ElevenLabs from the game's own texts). Settings → Voices turns them off.
 - **Read-aloud:** a speaker button on Lumi's lines and on every card; it can read new texts by itself (Settings).
 - **Text size:** three sizes (Settings).
 - **Colour-blind help:** meters and chart lines can use patterns as well as colours.
@@ -57,5 +58,7 @@ The activities connect to these US Next Generation Science Standards performance
 
 - **Time:** one week of a mission takes about 3 to 5 minutes; a whole 6-week mission about 20 to 30 minutes. Progress is saved on the device, so a mission can be continued in the next lesson.
 - **Failure is part of it:** a failed mission ends with an early flight home, a clear reason and "try again". Nothing is lost.
+- **"Why?" buttons:** the forecast, the event card, the power plan, the walk briefing and the weekly report each have a "Why?" button. It replays a short film about the task and ends on a card: what to do, why it matters, and a true fact with its source. Good for starting a class discussion.
+- **Playing together (optional):** "Play with friends" lets up to four pupils fly the very same mission (same real Sun, same cards) and compare their crews at the end. It needs an internet connection, has no chat and no typed names (only eight preset stickers), and only game numbers travel between the devices. Details: [MULTIPLAYER.md](MULTIPLAYER.md). A crew mission replaces a solo mission saved on that device.
 - **Facts:** every fact the game tells has a source; the Science log cards link to the NASA pages they come from. The checks are in [docs/sources/](sources/), and what the game simplified is listed in [NASA_DATA.md](NASA_DATA.md).
 - **Not an official NASA product.** The game uses NASA's open data and images with their credits; NASA does not endorse it.

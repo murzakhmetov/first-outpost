@@ -776,7 +776,7 @@ export const en: Record<string, string> = {
   'set.reading': 'Reading help',
   'set.textSize': 'Text size',
   'set.speak': 'Read texts aloud',
-  'set.speakHint': 'Uses your device’s voice.',
+  'set.speakHint': 'New texts are read by themselves: with the game’s voices where they exist, otherwise with your device’s voice.',
   'set.motion': 'Less motion',
   'set.motionHint': 'Calmer camera, no screen shake.',
   'set.contrast': 'Shapes as well as colours',
