@@ -251,7 +251,7 @@ export function glow(color: THREE.ColorRepresentation, intensity = 2): THREE.Mes
     shader.uniforms.uAnime = GLOBALS.anime;
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', '#include <common>\nuniform float uNight;\nuniform float uAnime;')
-      .replace('#include <opaque_fragment>', 'outgoingLight *= 1.0 + 0.9 * uNight * uAnime;\n#include <opaque_fragment>');
+      .replace('#include <opaque_fragment>', 'outgoingLight *= 1.0 + 0.4 * uNight * uAnime;\n#include <opaque_fragment>');
   };
   material.customProgramCacheKey = () => 'glow-n';
   return material;
@@ -272,6 +272,7 @@ export function lamp(
       uColor: { value: new THREE.Color(color) },
       uPower: power,
       uNight: GLOBALS.night,
+      uAnime: GLOBALS.anime,
       uDay: { value: options.day ?? 0.9 },
       uNightLevel: { value: options.night ?? 3.2 },
     },
@@ -287,12 +288,13 @@ export function lamp(
       uniform vec3 uColor;
       uniform float uPower;
       uniform float uNight;
+      uniform float uAnime;
       uniform float uDay;
       uniform float uNightLevel;
       #include <common>
       #include <fog_pars_fragment>
       void main() {
-        float level = mix( uDay, uNightLevel, uNight ) * mix( 0.06, 1.0, uPower );
+        float level = mix( uDay, uNightLevel * mix( 1.0, 0.4, uAnime ), uNight ) * mix( 1.0, 0.6, uAnime ) * mix( 0.06, 1.0, uPower );
         gl_FragColor = vec4( uColor * level, 1.0 );
         #include <fog_fragment>
       }`,

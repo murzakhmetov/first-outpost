@@ -23,13 +23,23 @@ uniform sampler2D tMap;
 uniform vec2 uTexel;
 uniform float uThreshold;
 uniform float uKnee;
+uniform float uCeil;
 varying vec2 vUv;
 vec3 bright(vec3 c) {
   float level = max(c.r, max(c.g, c.b));
   float soft = clamp(level - uThreshold + uKnee, 0.0, 2.0 * uKnee);
   soft = soft * soft / (4.0 * uKnee + 1e-4);
   float gain = max(soft, level - uThreshold) / max(level, 1e-4);
-  return min(c * gain, vec3(24.0));
+  c *= gain;
+  // High and ultra: a soft knee rolls the hottest pixels (lamp rings, windows, portholes) off towards uCeil, so they bloom with detail instead of a flat white blob.
+  if (uCeil > 0.0) {
+    float m = max(c.r, max(c.g, c.b));
+    float k = uCeil * 0.4;
+    float over = max(m - k, 0.0);
+    float soft = min(m, k) + over / (1.0 + over / (uCeil - k));
+    c *= soft / max(m, 1e-4);
+  }
+  return min(c, vec3(24.0));
 }
 void main() {
   vec3 c = bright(texture2D(tMap, vUv + uTexel * vec2(-1.0, -1.0)).rgb);
@@ -422,7 +432,7 @@ void main() {
     c *= mix(vec3(1.0), uGradeShadow, (1.0 - smoothstep(0.0, 0.6, l)) * uGrade);
     c *= mix(vec3(1.0), uGradeHigh, smoothstep(0.4, 1.0, l) * uGrade);
     #ifdef USE_BLOOM
-    vec3 g = toSrgb(neutralToneMap(bloomSample * uGlow));
+    vec3 g = toSrgb(neutralToneMap(bloomSample * uGlow * 0.7));
     c = 1.0 - (1.0 - c) * (1.0 - g);
     #endif
   }
@@ -727,6 +737,7 @@ export class PostFX {
       uTexel: { value: new THREE.Vector2() },
       uThreshold: { value: 1 },
       uKnee: { value: 0.5 },
+      uCeil: { value: 0 },
     });
     this.down = fullscreenMaterial(DOWN_FRAG, { tMap: { value: null }, uTexel: { value: new THREE.Vector2() } });
     this.up = fullscreenMaterial(UP_FRAG, {
@@ -869,6 +880,7 @@ export class PostFX {
     // Without HDR, colours stop at 1.0, so glow has to start from a lower brightness.
     this.prefilter.uniforms.uThreshold.value = this.hdrActive ? 1.0 : 0.82;
     this.prefilter.uniforms.uKnee.value = this.hdrActive ? 0.6 : 0.12;
+    this.prefilter.uniforms.uCeil.value = q.grade && this.hdrActive ? 2.0 : 0;
 
     const hw = Math.max(2, w >> 1);
     const hh = Math.max(2, h >> 1);
