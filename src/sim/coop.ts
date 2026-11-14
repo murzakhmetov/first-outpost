@@ -85,7 +85,8 @@ export interface Stamp {
 }
 
 export type IntentBody =
-  | { k: 'ready'; on: boolean }
+  /** `a`: the power plan the child saw when it pressed Ready on the plan. A Ready for a plan that has since changed is stale. */
+  | { k: 'ready'; on: boolean; a?: Alloc }
   | { k: 'vote'; o: OptionId }
   | { k: 'ask' }
   | { k: 'alloc'; a: Alloc }
@@ -161,6 +162,18 @@ export function parseWalkResult(raw: unknown): WalkResult | null {
   return result;
 }
 
+function parseAlloc(raw: unknown): Alloc | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const a = raw as Record<string, unknown>;
+  const alloc: Alloc = { life: 0, farm: 0, lab: 0, shield: 0 };
+  for (const id of MODULES) {
+    const level = int(a[id], 0, MAX_LEVEL[id]);
+    if (level === null) return null;
+    alloc[id] = level;
+  }
+  return alloc;
+}
+
 /** Read one intent from the network. Null when anything is off: wrong type, out of range, unknown id. */
 export function parseIntent(raw: unknown): Intent | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -172,8 +185,12 @@ export function parseIntent(raw: unknown): Intent | null {
   if (typeof o.s !== 'string' || !(COOP_STAGES as readonly string[]).includes(o.s)) return null;
   const stamp: Stamp = { from: o.from, n, w, s: o.s as CoopStage };
   switch (o.k) {
-    case 'ready':
-      return typeof o.on === 'boolean' ? { ...stamp, k: 'ready', on: o.on } : null;
+    case 'ready': {
+      if (typeof o.on !== 'boolean') return null;
+      if (o.a === undefined) return { ...stamp, k: 'ready', on: o.on };
+      const a = parseAlloc(o.a);
+      return a ? { ...stamp, k: 'ready', on: o.on, a } : null;
+    }
     case 'vote':
       return typeof o.o === 'string' && OPTIONS.includes(o.o) ? { ...stamp, k: 'vote', o: o.o as OptionId } : null;
     case 'ask':
@@ -181,15 +198,8 @@ export function parseIntent(raw: unknown): Intent | null {
     case 'go':
       return { ...stamp, k: o.k };
     case 'alloc': {
-      if (!o.a || typeof o.a !== 'object') return null;
-      const a = o.a as Record<string, unknown>;
-      const alloc: Alloc = { life: 0, farm: 0, lab: 0, shield: 0 };
-      for (const id of MODULES) {
-        const level = int(a[id], 0, MAX_LEVEL[id]);
-        if (level === null) return null;
-        alloc[id] = level;
-      }
-      return { ...stamp, k: 'alloc', a: alloc };
+      const alloc = parseAlloc(o.a);
+      return alloc ? { ...stamp, k: 'alloc', a: alloc } : null;
     }
     case 'walk':
       return typeof o.go === 'boolean' ? { ...stamp, k: 'walk', go: o.go } : null;
@@ -256,7 +266,7 @@ export function tally(votes: Record<string, OptionId>, host: string, advice: Opt
  *    because it stores the whole result. Alerted: any.
  * Returns null when nobody walked.
  */
-export function mergeWalks(results: readonly WalkResult[], cap: number = WALK_SCIENCE_CAP): EvaResult | null {
+export function mergeWalks(results: readonly WalkResult[], cap: number = WALK_SCIENCE_CAP, walkerCount: number = results.length): EvaResult | null {
   if (results.length === 0) return null;
   const best = results.reduce((a, b) => (b.science > a.science ? b : a));
   let science = Math.min(best.science, cap);
@@ -284,7 +294,7 @@ export function mergeWalks(results: readonly WalkResult[], cap: number = WALK_SC
     caught: caughtCount > 0,
     alerted: results.some((r) => r.alerted),
   };
-  if (caughtCount > 0) merged.caughtShare = caughtCount / results.length;
+  if (caughtCount > 0) merged.caughtShare = caughtCount / Math.max(walkerCount, results.length);
   return merged;
 }
 
@@ -451,7 +461,8 @@ function advance(co: CoopSim, now: number): void {
           co.rev += 1;
         }
       } else {
-        const merged = mergeWalks(Object.values(co.returned));
+        const out = new Set([...walkers(co), ...Object.keys(co.returned)]);
+        const merged = mergeWalks(Object.values(co.returned), undefined, out.size);
         if (merged) applyEva(mission, merged);
         night(co, now);
       }
@@ -507,9 +518,9 @@ export function coopApply(co: CoopSim, intent: Intent, now: number): Verdict {
   if (stages) {
     if (!stages.includes(co.stage) || intent.s !== co.stage) return 'stale';
   } else {
-    // Build, craft and room wins: allowed by day only, and the stamp must name the stage they were sent in.
+    // Build, craft and room wins: allowed in any daytime stage. The stage stamp is not checked: a child's build sent
+    // in one stage may arrive after the commander moved to another daytime stage, and it is still good.
     if (!WORK_STAGES.includes(co.stage)) return 'denied';
-    if (intent.s !== co.stage) return 'stale';
   }
 
   const { mission } = co;
@@ -533,6 +544,8 @@ function run(co: CoopSim, intent: Intent, now: number): Verdict {
   switch (intent.k) {
     case 'ready': {
       if (intent.on) {
+        // A Ready made on a plan that another child has changed since is not a Ready for the new plan.
+        if (co.stage === 'plan' && intent.a && lower(intent.a) !== lower(mission.alloc)) return 'stale';
         if (!co.ready.includes(from)) co.ready.push(from);
         if (co.stage === 'plan' && co.planCap === null) co.planCap = now + COOP_TIMING.planCap * 1000;
         startCountdown(co, now, co.stage === 'plan' ? COOP_TIMING.plan : COOP_TIMING.ready);

@@ -12,9 +12,10 @@ import type { Step } from '../game/store';
 
 /**
  * The version of the messages. 2: the start carries a mode (race or one shared base) and the co-op
- * messages exist. The host cannot start while a seat has another version (room.ts).
+ * messages exist. 3: every message and the host's decisions are signed (sign.ts); a presence entry carries the
+ * player's public key. There is no unsigned mode. The host cannot start while a seat has another version (room.ts).
  */
-export const PROTOCOL = 2;
+export const PROTOCOL = 3;
 export const MAX_PLAYERS = 4;
 
 /** Room codes: 31 letters and digits, no I, L, O, 0 or 1 (they look alike). */
@@ -120,6 +121,17 @@ function flag(value: unknown): boolean | null {
 }
 
 const ID_PATTERN = /^[a-z0-9]{6,16}$/;
+/** A public key (65 bytes, base64url) and a signature (64 bytes, base64url): see sign.ts. */
+const KEY_PATTERN = /^[A-Za-z0-9_-]{87}$/;
+const SIG_PATTERN = /^[A-Za-z0-9_-]{86}$/;
+
+export function isKey(value: unknown): value is string {
+  return typeof value === 'string' && KEY_PATTERN.test(value);
+}
+
+export function isSignature(value: unknown): value is string {
+  return typeof value === 'string' && SIG_PATTERN.test(value);
+}
 
 export function playerId(value: unknown): string | null {
   return typeof value === 'string' && ID_PATTERN.test(value) ? value : null;
@@ -155,6 +167,12 @@ export interface Meta {
   /** When this player came in (ms). Decides who gets a seat when a fifth one tries to join. */
   t: number;
   v: number;
+  /** This visit's public key (sign.ts). Empty only for a player of another protocol version. */
+  k: string;
+  /** Host only: the public keys of the seated players, in the order of `m` ('' for a player without one). */
+  mk: string[];
+  /** Host only: the host's signature over its decisions (`s`, `p`, `m`, `mk`), see presenceText in sign.ts. Empty when not signed. */
+  g: string;
 }
 
 export function parseMeta(raw: unknown): Meta | null {
@@ -168,6 +186,16 @@ export function parseMeta(raw: unknown): Meta | null {
   const t = int(raw.t, 0, 4e12);
   const v = int(raw.v, 0, 1000);
   if (id === null || n === null || c === null || r === null || h === null || s === null || t === null || v === null) return null;
+  let k = '';
+  if (raw.k !== undefined) {
+    if (!isKey(raw.k)) return null;
+    k = raw.k;
+  }
+  let g = '';
+  if (raw.g !== undefined) {
+    if (!isSignature(raw.g)) return null;
+    g = raw.g;
+  }
   let p: StartPayload | null = null;
   if (raw.p !== undefined && raw.p !== null) {
     p = parseStart(raw.p);
@@ -182,8 +210,23 @@ export function parseMeta(raw: unknown): Meta | null {
       m.push(seat);
     }
   }
-  m = [...new Set(m)];
-  return { id, n, c, r, h, s, t, v, m, p };
+  let mk: string[] = [];
+  if (raw.mk !== undefined) {
+    if (!Array.isArray(raw.mk) || raw.mk.length !== m.length) return null;
+    for (const entry of raw.mk) {
+      if (entry !== '' && !isKey(entry)) return null;
+      mk.push(entry as string);
+    }
+  }
+  if (v === PROTOCOL) {
+    // The current version is always signed: a key, and for the host a signed seat list with a key for each seat.
+    if (k === '' || new Set(m).size !== m.length) return null;
+    if (h && (g === '' || mk.length !== m.length)) return null;
+  }
+  const seats = [...new Set(m)];
+  if (seats.length !== m.length) mk = [];
+  m = seats;
+  return { id, n, c, r, h, s, t, v, m, p, k, mk, g };
 }
 
 /** The order players are looked at in: the host first, then by arrival, then by id. */

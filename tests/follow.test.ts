@@ -22,11 +22,12 @@ import {
   whoIsBehind,
   wrapAngle,
 } from '../src/net/follow';
-import { CREW_SUITS, POSITION_MIN_MS, channelName, parseMessage, startDateOf } from '../src/net/protocol';
+import { CREW_SUITS, POSITION_MIN_MS, parseMessage, startDateOf } from '../src/net/protocol';
 import type { CrewChoice, Position, Status } from '../src/net/protocol';
 import { CrewRoom } from '../src/net/room';
 import type { Player } from '../src/net/room';
 import { MemoryHub, MemoryTransport } from '../src/net/transport';
+import { Handmade } from './handmade';
 
 const tick = async (ms: number): Promise<void> => {
   await vi.advanceTimersByTimeAsync(ms);
@@ -232,7 +233,7 @@ function state(week: number, step: Status['step'], over: Partial<Status> = {}): 
   return { week, step, air: 90, food: 5, dose: 10, doseLimit: 100, science: 10, stars: 0, end: null, storm: { w: 0, s: 0, k: false, a: 0 }, ...over };
 }
 
-async function playing(guests = 1) {
+async function playing(guests = 1, hand = false) {
   const hub = new MemoryHub();
   const host = client(hub);
   const made = host.room.create();
@@ -248,10 +249,12 @@ async function playing(guests = 1) {
     guest.room.setReady(true);
     others.push(guest);
   }
-  await tick(10);
+  // A hand-made client with a seat and a key of its own: it signs what it sends, so only the rules for the content are tested.
+  const maker = hand ? await Handmade.join(hub, code, { id: 'rogue00001' }) : null;
+  await tick(100);
   host.room.start(CHOICE, 7, startDateOf('may2024')!);
   await tick(10);
-  return { hub, host, guests: others, code };
+  return { hub, host, guests: others, code, hand: maker! };
 }
 
 describe('through a room', () => {
@@ -276,17 +279,17 @@ describe('through a room', () => {
   });
 
   it('bad positions are dropped (words, huge numbers, a wrong speed code)', async () => {
-    const { hub, host, guests, code } = await playing();
-    const rogue = new MemoryTransport(hub);
-    await rogue.connect(channelName(code), 'rogue00001', { id: 'rogue00001', n: 0, c: 0, r: false, h: false, s: false, t: 1, v: 1 }, { presence() {}, message() {}, status() {} });
-    rogue.send('pos', { from: host.id, x: 1, z: 2, a: 0, m: 3 });
-    rogue.send('pos', { from: host.id, x: 1, z: 2, a: 99, m: 1 });
-    rogue.send('pos', { from: host.id, x: 'far', z: 2, a: 0, m: 1 });
-    rogue.send('pos', { from: host.id, x: 9e9, z: 2, a: 0, m: 1 });
+    const { host, guests, hand: rogue } = await playing(1, true);
+    await rogue.send('pos', { x: 1, z: 2, a: 0, m: 3 });
+    await rogue.send('pos', { x: 1, z: 2, a: 99, m: 1 });
+    await rogue.send('pos', { x: 'far', z: 2, a: 0, m: 1 });
+    await rogue.send('pos', { x: 9e9, z: 2, a: 0, m: 1 });
+    // In the host name, signed with its own key: not the host key.
+    await rogue.send('pos', { x: 5, z: 2, a: 0, m: 1, from: host.id });
     await tick(10);
     expect(guests[0].positions).toHaveLength(0);
     // The same road does carry a good one (so the zero above means "dropped", not "never arrived").
-    rogue.send('pos', { from: host.id, x: 4, z: 2, a: 0.5, m: 1 });
+    await rogue.send('pos', { x: 4, z: 2, a: 0.5, m: 1 });
     await tick(10);
     expect(guests[0].positions).toHaveLength(1);
     expect(guests[0].positions[0].position).toEqual({ x: 4, z: 2, a: 0.5, m: 1 });
