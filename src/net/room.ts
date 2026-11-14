@@ -48,14 +48,14 @@ import {
   wire,
 } from './protocol';
 import type { CoopEventName, CrewChoice, GameMode, Meta, Position, ReactionId, StartPayload, Status } from './protocol';
-import { Ordered, SIG_OVERHEAD, getCrewCrypto, isPromise, messageText, presenceText } from './sign';
+import { Ordered, SIG_OVERHEAD, canSign, getCrewCrypto, isPromise, messageText, presenceText } from './sign';
 import type { CrewCrypto, Identity, Maybe } from './sign';
 import type { PresenceEntry, Transport, TransportHandlers } from './transport';
 
 type Timer = ReturnType<typeof setTimeout> | 0;
 
 export type Phase = 'idle' | 'connecting' | 'lobby' | 'playing' | 'closed' | 'failed';
-export type Failure = 'offline' | 'noRoom' | 'full' | 'started' | 'hostLeft' | 'badCode';
+export type Failure = 'offline' | 'insecure' | 'noRoom' | 'full' | 'started' | 'hostLeft' | 'badCode';
 
 export interface Player {
   id: string;
@@ -371,7 +371,8 @@ export class CrewRoom {
     this.emit();
 
     // This visit's key pair, and for a host its first signed entry. A device that cannot sign cannot join a crew:
-    // that is the same "offline" the player sees when the network cannot be reached.
+    // a page without Web Crypto (http on a local network address) is told it needs a secure page ("insecure");
+    // a crypto that fails for another reason is the same "offline" the player sees when the network cannot be reached.
     let first: Meta;
     try {
       const made = this.makeIdentity();
@@ -387,7 +388,7 @@ export class CrewRoom {
       }
     } catch {
       if (token !== this.token) return 'fail';
-      this.fail('offline');
+      this.fail(canSign() ? 'offline' : 'insecure');
       return 'fail';
     }
 

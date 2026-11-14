@@ -583,8 +583,8 @@ describe('the ordered pipeline', () => {
 
 // ----- No Web Crypto, and the local transport ----------------------------------------------------------------------------
 
-describe('no Web Crypto: the crew cannot connect, through the usual error', () => {
-  it('a device without crypto.subtle fails to create or join a room as "offline"', async () => {
+describe('no Web Crypto: the crew cannot connect, and says it needs a secure page', () => {
+  it('a device without crypto.subtle fails to create or join a room as "insecure"', async () => {
     const hub = new MemoryHub();
     const host = player(hub);
     expect(await host.room.create()).toBe(true);
@@ -594,10 +594,10 @@ describe('no Web Crypto: the crew cannot connect, through the usual error', () =
     const made = player(hub);
     expect(await made.room.create()).toBe(false);
     expect(made.room.view.phase).toBe('failed');
-    expect(made.room.view.failure).toBe('offline');
+    expect(made.room.view.failure).toBe('insecure');
     const joiner = player(hub);
     expect(await joiner.room.join(code)).toBe(false);
-    expect(joiner.room.view.failure).toBe('offline');
+    expect(joiner.room.view.failure).toBe('insecure');
     // Nothing of it reached the channel.
     expect(hub.members(`fo-crew-${code}`).map((m) => m.key)).toEqual([host.id]);
     vi.unstubAllGlobals();
@@ -605,7 +605,7 @@ describe('no Web Crypto: the crew cannot connect, through the usual error', () =
     vi.stubGlobal('crypto', { getRandomValues: globalThis.crypto.getRandomValues.bind(globalThis.crypto) });
     const insecure = player(hub);
     expect(await insecure.room.create()).toBe(false);
-    expect(insecure.room.view.failure).toBe('offline');
+    expect(insecure.room.view.failure).toBe('insecure');
   });
 
   it('a crypto that throws while it makes the key is the same "offline"', async () => {
