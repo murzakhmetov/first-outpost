@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LUMI_CLEAR, LUMI_GOAL_CLEAR, resolveSphere, sphereOverlaps } from '../src/world/keepclear';
 import type { SolidBox, SolidCircle, Solids, Vec3 } from '../src/world/keepclear';
-import { LUMI_TOP_SPEED, driveGoal, newRoverBoxes, pushFlight, roverBoxes, stepFlight, walkGoal } from '../src/world/lumifollow';
+import { LUMI_TOP_SPEED, MAX_GOAL_RAISE, driveGoal, liftGoalOverPath, newRoverBoxes, pushFlight, roverBoxes, stepFlight, walkGoal } from '../src/world/lumifollow';
 import type { Flight } from '../src/world/lumifollow';
 
 const flat = (circles: SolidCircle[] = [], boxes: SolidBox[] = []): Solids => ({ circles, boxes, ground: () => 0 });
@@ -318,5 +318,87 @@ describe('rover on a slope', () => {
     // Lumi level with the roof of a level rover touches the leaning one, which is what keeps the nose end safe.
     expect(sphereOverlaps({ x: 0, y: 3.2 + LUMI_CLEAR + 0.3, z: 2.2 }, LUMI_CLEAR, flat([], level))).toBe(false);
     expect(sphereOverlaps({ x: 0, y: 3.2 + LUMI_CLEAR + 0.3, z: 2.2 }, LUMI_CLEAR, flat([], leaning))).toBe(true);
+  });
+});
+
+describe('a step between two solids', () => {
+  it('steps over the low roof and away from the mast with two small moves, not one big lift', () => {
+    // The rover's hull (3.2 m) with its mast box (3.9 m) at one end; Lumi rests on the roof (bobbing a hair into it) at the mast's front edge.
+    const boxes = newRoverBoxes();
+    roverBoxes(boxes, 0, 0, -27.8, 0, 0, 0);
+    const solids = flat([], boxes);
+    const p = { x: 0.79, y: 3.99, z: -26.26 };
+    expect(resolveSphere(p, 0.8, solids)).toBe(true);
+    expect(sphereOverlaps(p, 0.8 - 1e-6, solids)).toBe(false);
+    // Moved by hundredths of a metre, not the 0.7 m of a lift over the mast.
+    expect(Math.hypot(p.x - 0.79, p.y - 3.99, p.z + 26.26)).toBeLessThan(0.1);
+  });
+});
+
+describe('the flight goes over what is in the way', () => {
+  it('raises a low goal behind a wall of low solids so the straight way is clear', () => {
+    // A 3 m high block between Lumi (up at 5 m) and a goal on the other side at 2 m.
+    const solids = flat([{ x: 5, z: 0, r: 1.5, h: 3 }]);
+    const goal = { x: 10, y: 2, z: 0 };
+    const from = { x: 0, y: 5, z: 0 };
+    liftGoalOverPath(goal, from, 0.9, solids);
+    expect(goal.y).toBeGreaterThan(2);
+    // The straight line from Lumi to the raised goal passes over the block, with Lumi's room to spare.
+    for (let i = 0; i <= 20; i++) {
+      const t = i / 20;
+      const q = { x: from.x + (goal.x - from.x) * t, y: from.y + (goal.y - from.y) * t, z: 0 };
+      if (t >= 0.15) expect(sphereOverlaps(q, 0.9 - 0.05, solids)).toBe(false);
+    }
+  });
+  it('goes high enough over a tall building from right beside it', () => {
+    // The lab: 9.5 m tall, Lumi 2 m from its wall at 2 m height, the goal beyond it.
+    const solids = flat([{ x: 3, z: 0, r: 3, h: 9.5 }]);
+    const goal = { x: 20, y: 2, z: 0 };
+    const from = { x: -2, y: 2, z: 0 };
+    liftGoalOverPath(goal, from, 0.9, solids);
+    expect(goal.y).toBeGreaterThan(9.5);
+    expect(goal.y).toBeLessThanOrEqual(2 + MAX_GOAL_RAISE);
+  });
+  it('leaves a clear way alone', () => {
+    const goal = { x: 10, y: 2, z: 0 };
+    liftGoalOverPath(goal, { x: 0, y: 2, z: 0 }, 0.9, flat([{ x: 5, z: 6, r: 1.5, h: 3 }]));
+    expect(goal.y).toBe(2);
+  });
+});
+
+describe('flying across the outpost over a tall building', () => {
+  // The lab as it stands on Mars: a row of tall circles; Lumi starts on its far side, the cadet is on the other.
+  const lab: SolidCircle[] = [
+    { x: 19, z: -6.6, r: 3.1, h: 9.4 },
+    { x: 19, z: -3, r: 3.1, h: 9.5 },
+    { x: 19, z: 0.6, r: 3.1, h: 8.6 },
+    { x: 19, z: 4.6, r: 1.3, h: 7.7 },
+  ];
+  it.each([
+    { x: 43, z: 4.5 },
+    { x: 40, z: -2 },
+    { x: -5, z: 3 },
+  ])('gets over it and arrives, never inside it (from $x,$z)', (start) => {
+    const solids = flat(lab);
+    const flight: Flight = { pos: { x: start.x, y: 2.1, z: start.z }, vel: { x: 0, y: 0, z: 0 } };
+    const target = start.x > 19 ? { x: -5, y: 2.1, z: 3 } : { x: 43, y: 2.1, z: 4.5 };
+    const goal: Vec3 = { ...target };
+    const dt = 1 / 60;
+    let overlaps = 0;
+    let arrived = -1;
+    for (let t = 0; t < 15; t += dt) {
+      goal.x = target.x;
+      goal.y = target.y;
+      goal.z = target.z;
+      resolveSphere(goal, LUMI_GOAL_CLEAR, solids);
+      liftGoalOverPath(goal, flight.pos, LUMI_CLEAR + 0.1, solids);
+      stepFlight(flight, goal, dt);
+      pushFlight(flight, 0, LUMI_CLEAR, solids);
+      if (sphereOverlaps(flight.pos, LUMI_CLEAR - 1e-3, solids)) overlaps++;
+      if (arrived < 0 && Math.hypot(flight.pos.x - target.x, flight.pos.z - target.z) < 3) arrived = t;
+    }
+    expect(overlaps).toBe(0);
+    expect(arrived).toBeGreaterThan(0);
+    expect(arrived).toBeLessThan(10);
   });
 });

@@ -126,6 +126,33 @@ export function sphereOverlaps(p: Vec3, R: number, solids: Solids): boolean {
   return false;
 }
 
+/**
+ * The distance from the point `p` to the nearest solid, metres (0 when inside one). Take away a
+ * sphere's radius to get its clearance: below 0 the sphere is in the solid. Plain geometry, for
+ * the dev route runner and tests; the keep-clear rule itself never needs it.
+ */
+export function solidGap(p: Vec3, solids: Solids): number {
+  let best = Infinity;
+  for (const c of solids.circles) {
+    if (c.r <= 0) continue;
+    const top = solids.ground(c.x, c.z) + (c.h ?? TALL);
+    const up = Math.max(0, p.y - top);
+    const out = Math.max(0, Math.hypot(p.x - c.x, p.z - c.z) - c.r);
+    best = Math.min(best, Math.hypot(out, up));
+  }
+  for (const b of solids.boxes) {
+    const cos = Math.cos(b.yaw);
+    const sin = Math.sin(b.yaw);
+    const dx = p.x - b.x;
+    const dz = p.z - b.z;
+    const lx = dx * cos - dz * sin;
+    const lz = dx * sin + dz * cos;
+    const out = Math.hypot(Math.max(0, Math.abs(lx) - b.hx), Math.max(0, Math.abs(lz) - b.hz));
+    best = Math.min(best, Math.hypot(out, vertGap(p.y, b.y0, b.y1)));
+  }
+  return best;
+}
+
 /** Lift `p` straight up until the sphere is above every solid it touches. */
 function liftAbove(p: Vec3, R: number, solids: Solids): void {
   const limit = solids.circles.length + solids.boxes.length + 2;
@@ -140,6 +167,13 @@ function liftAbove(p: Vec3, R: number, solids: Solids): void {
   }
 }
 
+/** How high the sphere centre at `p` would have to be to clear every solid it touches (its own height when it touches none). */
+export function heightToClear(p: Vec3, R: number, solids: Solids): number {
+  const copy: Vec3 = { x: p.x, y: p.y, z: p.z };
+  liftAbove(copy, R, solids);
+  return copy.y;
+}
+
 /**
  * Move the sphere centre `p` (radius `R`) out of every solid, in place. Returns true when it had to
  * move. Pushes sideways (the shortest way out); lifts instead when the pushes do not settle or the
@@ -147,6 +181,71 @@ function liftAbove(p: Vec3, R: number, solids: Solids): void {
  */
 export function resolveSphere(p: Vec3, R: number, solids: Solids, prefX = 1, prefZ = 0): boolean {
   if (!sphereOverlaps(p, R, solids)) return false;
+  const x0 = p.x;
+  const y0 = p.y;
+  const z0 = p.z;
+  // Solid by solid, each by its cheapest way out: this steps over a low edge (the rover's roof) and away from a high one (its mast)
+  // with two small moves, where the all-at-once answer below would lift over the tallest of them in one go.
+  const step: Vec3 = { x: x0, y: y0, z: z0 };
+  if (exitOneByOne(step, R, solids, prefX, prefZ)) {
+    p.x = step.x;
+    p.y = step.y;
+    p.z = step.z;
+    // Take it unless the all-at-once answer moves less (it is computed below on the copy).
+    const own = Math.hypot(step.x - x0, step.y - y0, step.z - z0);
+    const rest: Vec3 = { x: x0, y: y0, z: z0 };
+    resolveWhole(rest, R, solids, prefX, prefZ);
+    if (own <= Math.hypot(rest.x - x0, rest.y - y0, rest.z - z0) + 1e-9) return true;
+    p.x = rest.x;
+    p.y = rest.y;
+    p.z = rest.z;
+    return true;
+  }
+  resolveWhole(p, R, solids, prefX, prefZ);
+  return true;
+}
+
+const trial: Vec3 = { x: 0, y: 0, z: 0 };
+
+/** Move `p` out of the solids it touches, one at a time, each by the shorter of its sideways exit and its lift. True when that cleared them all. */
+function exitOneByOne(p: Vec3, R: number, solids: Solids, prefX: number, prefZ: number): boolean {
+  for (let pass = 0; pass < 8; pass++) {
+    let moved = false;
+    for (const c of solids.circles) {
+      if (!pushCircle(p, c, R, solids.ground, false, 0, 0)) continue;
+      trial.x = p.x;
+      trial.y = p.y;
+      trial.z = p.z;
+      pushCircle(trial, c, R, solids.ground, true, prefX, prefZ);
+      const lift = solids.ground(c.x, c.z) + (c.h ?? TALL) + R + EPS - p.y;
+      if (lift < Math.hypot(trial.x - p.x, trial.z - p.z)) p.y += lift;
+      else {
+        p.x = trial.x;
+        p.z = trial.z;
+      }
+      moved = true;
+    }
+    for (const b of solids.boxes) {
+      if (!pushBox(p, b, R, false)) continue;
+      trial.x = p.x;
+      trial.y = p.y;
+      trial.z = p.z;
+      pushBox(trial, b, R, true);
+      const lift = b.y1 + R + EPS - p.y;
+      if (lift < Math.hypot(trial.x - p.x, trial.z - p.z)) p.y += lift;
+      else {
+        p.x = trial.x;
+        p.z = trial.z;
+      }
+      moved = true;
+    }
+    if (!moved) return true;
+  }
+  return !sphereOverlaps(p, R, solids);
+}
+
+/** The all-at-once answer: push sideways until nothing touches, or lift over the tallest touched solid, whichever moves less. */
+function resolveWhole(p: Vec3, R: number, solids: Solids, prefX: number, prefZ: number): void {
   const x0 = p.x;
   const y0 = p.y;
   const z0 = p.z;
@@ -170,5 +269,4 @@ export function resolveSphere(p: Vec3, R: number, solids: Solids, prefX = 1, pre
     p.y = y0;
     p.z = sz;
   }
-  return true;
 }

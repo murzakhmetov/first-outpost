@@ -9,6 +9,7 @@ import { mulberry32 } from '../sim/rng';
 import type { SiteId } from '../sim/types';
 import type { Collider } from './base';
 import { disposeTree } from './build';
+import { boundsTop, colliderHeight, topOf, topWithin } from './heights';
 import { toon } from './materials';
 import { modelGeometry, modelPart } from './models';
 import { SCARP } from './terrain';
@@ -76,7 +77,11 @@ export class Scenery {
       this.group.add(butte);
       // Only the near one can be reached: the cadet stops at the foot of its slope.
       // The foot of its slope of fallen rock reaches about 16 m (at size 1) from the middle.
-      if (index === 0) this.colliders.push({ x, z, r: 16 * size, h: 16 * size });
+      // Its height is the model's own top inside that circle.
+      if (index === 0) {
+        const h = colliderHeight(topWithin(butte, { x, z, r: 16 * size }), this.height(x, z));
+        this.colliders.push(h === undefined ? { x, z, r: 16 * size } : { x, z, r: 16 * size, h });
+      }
     });
   }
 
@@ -132,7 +137,7 @@ export class Scenery {
         mesh.setMatrixAt(index, matrix);
         mesh.setColorAt(index, color.set(place.color));
         const reach = ((halfX * scale.x + halfZ * scale.z) / 2) * 0.92;
-        if (reach >= 0.5) this.colliders.push({ x: place.x, z: place.z, r: reach, h: reach * 1.2 });
+        if (reach >= 0.5) this.colliders.push({ x: place.x, z: place.z, r: reach, h: colliderHeight(boundsTop(bounds, matrix), this.height(place.x, place.z)) });
       });
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -167,7 +172,10 @@ export class Scenery {
       model.rotation.y = index * 1.7 + 0.6;
       model.scale.setScalar(shown.size);
       this.group.add(model);
-      if (shown.radius > 0) this.colliders.push({ x: find.x, z: find.z, r: shown.radius, h: shown.size * 1.2 });
+      if (shown.radius > 0) {
+        const h = colliderHeight(topOf(model), this.height(find.x, find.z));
+        this.colliders.push(h === undefined ? { x: find.x, z: find.z, r: shown.radius } : { x: find.x, z: find.z, r: shown.radius, h });
+      }
     });
   }
 

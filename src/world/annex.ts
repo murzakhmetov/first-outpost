@@ -9,6 +9,8 @@ import type { BuildingId, DecorItem } from '../sim/outpost';
 import { makeProp, propRadius } from './interior';
 import type { Collider } from './base';
 import { disposeTree } from './build';
+import { colliderHeight, overhangs, topOf } from './heights';
+import { LUMI_MARGIN } from './keepclear';
 import { canvasTexture, glass, glow, lamp, toon } from './materials';
 import { hasModel, modelPart } from './models';
 
@@ -78,6 +80,8 @@ interface Slot {
   building: THREE.Object3D | null;
   dome: THREE.Object3D | null;
   collider: Collider;
+  /** Circles for parts of the building that stick out of `collider` at flying height: solid for Lumi only, off (r 0) until used. */
+  extra: Collider[];
   state: PlotView['state'];
   /** Seconds since the building appeared (for its little pop). */
   shown: number;
@@ -88,6 +92,8 @@ const always = { value: 1 };
 export class Annex {
   readonly group = new THREE.Group();
   readonly colliders: Collider[] = [];
+  /** The slots' `extra` circles (solid for Lumi only). */
+  readonly lumiOnly: Collider[] = [];
   private readonly slots = new Map<BuildingId, Slot>();
   private readonly own: THREE.Material[] = [];
   private readonly geometries: THREE.BufferGeometry[] = [];
@@ -112,7 +118,7 @@ export class Annex {
     this.group.add(this.decorGroup);
     // Room for decorations to stop the cadet; unused ones have no size.
     for (let i = 0; i < 64; i++) {
-      const collider: Collider = { x: 0, z: 0, r: 0, h: 3 };
+      const collider: Collider = { x: 0, z: 0, r: 0 };
       this.decorColliders.push(collider);
       this.colliders.push(collider);
     }
@@ -152,7 +158,13 @@ export class Annex {
       object.rotation.y = item.heading;
       this.decorGroup.add(object);
       const collider = this.decorColliders[index];
-      if (collider) Object.assign(collider, { x: item.x, z: item.z, r: Math.max(0.3, propRadius(item.id) - 0.25) });
+      if (collider) {
+        Object.assign(collider, { x: item.x, z: item.z, r: Math.max(0.3, propRadius(item.id) - 0.25) });
+        // As high as the placed prop (without a measure it stays tall).
+        const h = colliderHeight(topOf(object), this.height(item.x, item.z));
+        if (h === undefined) delete collider.h;
+        else collider.h = h;
+      }
     });
   }
 
@@ -175,9 +187,11 @@ export class Annex {
     root.add(pad, scaffold);
 
     // The building stops the cadet once its scaffolding goes up.
-    const collider: Collider = { x: plot.x, z: plot.z, r: 0, h: 8 };
+    const collider: Collider = { x: plot.x, z: plot.z, r: 0 };
     this.colliders.push(collider);
-    return { id, root, pad, scaffold, plan: null, building: null, dome: null, collider, state: 'empty', shown: 0 };
+    const extra: Collider[] = [0, 1, 2, 3, 4, 5, 6, 7].map(() => ({ x: 0, z: 0, r: 0 }));
+    this.lumiOnly.push(...extra);
+    return { id, root, pad, scaffold, plan: null, building: null, dome: null, collider, extra, state: 'empty', shown: 0 };
   }
 
   /** Marked-out ground: a square of dashed lines in the building's colour, with a stake at each corner. */
@@ -361,6 +375,8 @@ export class Annex {
         slot.collider.x = x;
         slot.collider.z = z;
         slot.shown = 0;
+        // The measures follow the building to its new place.
+        this.fitHeight(slot);
       }
       if (view.state !== slot.state) this.change(slot, view.state);
       slot.pad.visible = view.state !== 'done' && !(view.free && view.state === 'empty');
@@ -389,6 +405,31 @@ export class Annex {
     }
     if (slot.building) slot.building.visible = state === 'done';
     slot.collider.r = state === 'empty' ? 0 : 4.2;
+    this.fitHeight(slot);
+  }
+
+  /**
+   * The collider is as high as what stands on the plot: the building, or while it is going up the
+   * scaffolding and the glowing plan (all measured at full size, before the little pop-up bounce).
+   */
+  private fitHeight(slot: Slot): void {
+    const parts = slot.state === 'done' ? [slot.building] : slot.state === 'building' ? [slot.scaffold, slot.plan] : [];
+    let top: number | undefined;
+    for (const part of parts) {
+      const value = part ? topOf(part) : undefined;
+      if (value !== undefined) top = Math.max(top ?? -Infinity, value);
+    }
+    const h = colliderHeight(top, slot.root.position.y);
+    if (h === undefined) delete slot.collider.h;
+    else slot.collider.h = h;
+    // Corners and eaves that reach past the circle (the circle is round, the buildings are not).
+    for (const extra of slot.extra) extra.r = 0;
+    const model = slot.state === 'done' ? slot.building : null;
+    if (!model) return;
+    const found = overhangs(model, [slot.collider], this.height, LUMI_MARGIN - 0.1)
+      .sort((a, b) => b.r - a.r)
+      .slice(0, slot.extra.length);
+    found.forEach((o, index) => Object.assign(slot.extra[index], { x: o.x, z: o.z, r: o.r, h: colliderHeight(o.top, this.height(o.x, o.z)) }));
   }
 
   /** Where the builder robot should work: the plot under construction. */

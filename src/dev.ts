@@ -7,6 +7,8 @@ import { EVENTS } from './sim/events';
 import { addMaterials, buildingDef, ensureOutpost } from './sim/outpost';
 import type { BuildingId } from './sim/outpost';
 import type { SiteId } from './sim/types';
+import { lumiRoutes } from './devroutes';
+import type { RouteOptions } from './devroutes';
 import { lumiProbeRead } from './world/lumiprobe';
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
@@ -42,8 +44,16 @@ async function toWalk(site: SiteId = 'mars', extra: Partial<SetupChoice> = {}): 
   director.useSafePlan();
   director.confirmPlan();
   await sleep(500);
+  // A task film may have started on its own: end it, so it cannot land on the walk and send the camera to the overview.
+  const endFilms = (): void => {
+    for (let i = 0; i < 4 && store.film.value; i++) director.finishFilm();
+  };
+  endFilms();
   if (store.step.value === 'evaIntro') director.beginWalk();
   await sleep(1200);
+  endFilms();
+  const world = director.getWorld();
+  if (world && world.eva.active && world.mode !== 'eva') world.setMode('eva');
   return store.step.value;
 }
 
@@ -167,4 +177,12 @@ function lumiProbe(reset = false): unknown {
   return lumiProbeRead(reset);
 }
 
-(window as unknown as { fo: unknown }).fo = { director, store, toPlan, toWalk, toDebrief, look, teleport, sleep, give, lumiProbe };
+/**
+ * Drive scripted manoeuvres (walks past the rover, boarding, drives past every building, ...) in the real
+ * world with a fixed time step and read Lumi's overlap counters and clearance for each. See devroutes.ts.
+ */
+function runLumiRoutes(options: RouteOptions = {}): ReturnType<typeof lumiRoutes> {
+  return lumiRoutes(options, { toWalk: (site) => toWalk(site) });
+}
+
+(window as unknown as { fo: unknown }).fo = { director, store, toPlan, toWalk, toDebrief, look, teleport, sleep, give, lumiProbe, lumiRoutes: runLumiRoutes };

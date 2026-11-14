@@ -11,6 +11,8 @@ import { CROP_WEEKS } from '../sim/sites';
 import type { SiteId } from '../sim/types';
 import { disposeTree, shape } from './build';
 import type { Xf } from './build';
+import { colliderHeight, overhangs, sweptTop, topOf, topWithin } from './heights';
+import { LUMI_MARGIN } from './keepclear';
 import { GLOBALS, fogUniforms, glass, glow, lamp, toon } from './materials';
 import { model, modelPart } from './models';
 import type { ModelName } from './models';
@@ -79,6 +81,8 @@ const COLORS = {
 export class Base {
   readonly group = new THREE.Group();
   readonly colliders: Collider[] = [];
+  /** Parts that stick out of the circle colliders (the airlock canopy, ...): solid for Lumi only, the cadet and the camera walk as before. */
+  readonly lumiOnly: Collider[] = [];
   readonly spots: Record<SpotId, Spot>;
   /** Shared brightness values; lamps of one module read the same number. */
   readonly power = {
@@ -129,7 +133,10 @@ export class Base {
   private readonly tmpVec = new THREE.Vector3();
   private readonly up = new THREE.Vector3(0, 1, 0);
 
-  constructor(site: SiteId) {
+  constructor(
+    site: SiteId,
+    private readonly ground: (x: number, z: number) => number = () => 0,
+  ) {
     this.site = site;
     this.group.name = 'base';
     this.spots = {
@@ -156,6 +163,19 @@ export class Base {
     this.buildPower();
     this.buildShield();
     this.buildPlaza();
+    for (const model of this.models) {
+      // The lab's dish turns (see update): look at both ends of its swing.
+      const dish = model.getObjectByName('dish');
+      const turns = dish ? [-0.85, -0.5, -0.15] : [0];
+      const rest = dish?.rotation.y ?? 0;
+      for (const turn of turns) {
+        if (dish) dish.rotation.y = turn;
+        for (const o of overhangs(model, [...this.colliders, ...this.lumiOnly], this.ground, LUMI_MARGIN - 0.1, 1.2, 1)) {
+          this.lumiOnly.push({ x: o.x, z: o.z, r: o.r, h: colliderHeight(o.top, this.ground(o.x, o.z)) });
+        }
+      }
+      if (dish) dish.rotation.y = rest;
+    }
     this.applyPlants(true);
     this.applyWall(true);
   }
@@ -192,6 +212,20 @@ export class Base {
     return piece ? modelPart(name, piece, pick) : model(name, pick);
   }
 
+  /** A solid circle on a building: its height is the model's top inside the circle (see heights.ts). */
+  private solid(object: THREE.Object3D, x: number, z: number, r: number): void {
+    this.solidAt(x, z, r, topWithin(object, { x, z, r }));
+  }
+
+  /** A solid circle whose top (world y) is known; with none, the collider stays tall. */
+  private solidAt(x: number, z: number, r: number, top: number | undefined): void {
+    const h = colliderHeight(top, this.ground(x, z));
+    this.colliders.push(h === undefined ? { x, z, r } : { x, z, r, h });
+  }
+
+  /** The building models, kept to find the parts that stick out of their colliders. */
+  private readonly models: THREE.Object3D[] = [];
+
   private buildHab(): void {
     const warm = this.own(lamp('#ffd9a0', this.power.life, { day: 1.15, night: 3.4 }));
     const cyan = this.own(lamp('#5fe0ff', this.power.life, { day: 1.6, night: 3.6 }));
@@ -204,9 +238,11 @@ export class Base {
     hab.position.set(HAB.x, 0, HAB.z);
     this.group.add(hab);
 
-    this.colliders.push({ x: HAB.x, z: HAB.z, r: 7.3, h: 9 });
-    this.colliders.push({ x: HAB.x, z: HAB.z + 7.6, r: 1.9, h: 3.5 });
-    this.colliders.push({ x: HAB.x - 3.6, z: HAB.z + 6.5, r: 1.15, h: 3 }, { x: HAB.x + 3.6, z: HAB.z + 6.5, r: 1.15, h: 3 });
+    this.models.push(hab);
+    this.solid(hab, HAB.x, HAB.z, 7.3);
+    this.solid(hab, HAB.x, HAB.z + 7.6, 1.9);
+    this.solid(hab, HAB.x - 3.6, HAB.z + 6.5, 1.15);
+    this.solid(hab, HAB.x + 3.6, HAB.z + 6.5, 1.15);
   }
 
   // -------------------------------------------------------------------------
@@ -251,8 +287,9 @@ export class Base {
 
     farm.position.set(FARM.x, 0, FARM.z);
     this.group.add(farm);
-    for (const dz of [-4.4, 0, 4.4]) this.colliders.push({ x: FARM.x, z: FARM.z + dz, r: 4.5, h: 4.5 });
-    this.colliders.push({ x: FARM.x - 5, z: FARM.z - 1.5, r: 1.6, h: 3 });
+    this.models.push(farm);
+    for (const dz of [-4.4, 0, 4.4]) this.solid(farm, FARM.x, FARM.z + dz, 4.5);
+    this.solid(farm, FARM.x - 5, FARM.z - 1.5, 1.6);
   }
 
   // -------------------------------------------------------------------------
@@ -269,8 +306,9 @@ export class Base {
     this.dish = dish;
     lab.position.set(LAB.x, 0, LAB.z);
     this.group.add(lab);
-    for (const dz of [-3.6, 0, 3.6]) this.colliders.push({ x: LAB.x, z: LAB.z + dz, r: 3.1, h: 9.5 });
-    this.colliders.push({ x: LAB.x, z: LAB.z + 7.6, r: 1.3, h: 3 });
+    this.models.push(lab);
+    for (const dz of [-3.6, 0, 3.6]) this.solid(lab, LAB.x, LAB.z + dz, 3.1);
+    this.solid(lab, LAB.x, LAB.z + 7.6, 1.3);
   }
 
   // -------------------------------------------------------------------------
@@ -292,8 +330,8 @@ export class Base {
           head.position.set(x, 1.85, z);
           this.panelHeads.push(head);
           this.group.add(base, head);
-          // The panel (3.7 x 2.3 m) turns with the Sun, so one circle covers every angle.
-          this.colliders.push({ x, z, r: 2.0, h: 3.4 });
+          // The panel (3.7 x 2.3 m) turns with the Sun, so one circle covers every angle: as high as the head can swing.
+          this.solidAt(x, z, 2.0, Math.max(topOf(base) ?? 0, sweptTop(head) ?? Infinity));
         }
       }
     } else {
@@ -306,8 +344,8 @@ export class Base {
         head.position.set(x, 2.5, z);
         this.panelHeads.push(head);
         this.group.add(base, head);
-        // The tall panel (2.9 m wide) turns with the Sun.
-        this.colliders.push({ x, z, r: 1.5, h: 4.6 });
+        // The tall panel (2.9 m wide) turns with the Sun: as high as the head can swing.
+        this.solidAt(x, z, 1.5, Math.max(topOf(base) ?? 0, sweptTop(head) ?? Infinity));
       }
     }
 
@@ -322,7 +360,7 @@ export class Base {
     battery.position.set(BATTERY.x, 0, BATTERY.z);
     battery.rotation.y = Math.atan2(-BATTERY.x, -BATTERY.z);
     this.group.add(battery);
-    this.colliders.push({ x: BATTERY.x, z: BATTERY.z, r: 2.4, h: 3.5 });
+    this.solidAt(BATTERY.x, BATTERY.z, 2.4, topOf(battery));
 
     // Cables: light pulses run along them, brighter when a module gets more power.
     const cable = (to: 'life' | 'farm' | 'lab' | 'shield', color: string, points: [number, number, number][]): void => {
@@ -406,7 +444,8 @@ export class Base {
     const steps = 34;
     for (let i = 0; i <= steps; i++) {
       const angle = from + ((to - from) * i) / steps;
-      const spot = { x: HAB.x + Math.cos(angle) * 8.3, z: HAB.z + Math.sin(angle) * 8.3, r: 0, h: 4 };
+      // Its height follows the layers that stand (see applyWall); the finished wall is the limit.
+      const spot: Collider = { x: HAB.x + Math.cos(angle) * 8.3, z: HAB.z + Math.sin(angle) * 8.3, r: 0, h: 0.7 };
       this.wallColliders.push(spot);
       this.colliders.push(spot);
     }
@@ -463,6 +502,8 @@ export class Base {
     const post = toon({ color: this.site === 'mars' ? '#e6d2b6' : '#d5d9e2', rim: 0.35, lift: 0.16, flatShading: true });
     const crystal = this.own(lamp('#9ff3ff', this.power.life, { day: 1.8, night: 3.8 }));
     this.plazaCrystals = [];
+    // In the scene before the posts are measured, so the bounds are in world space whatever the parent's pose.
+    this.group.add(group);
     for (const degrees of [2, 83, 172, -122, -58]) {
       const a = (degrees * Math.PI) / 180;
       const x = Math.cos(a) * (PLAZA.r - 0.3);
@@ -477,9 +518,9 @@ export class Base {
       gem.position.set(x, top + 1.2, z);
       group.add(pillar, cap, gem);
       this.plazaCrystals.push(gem);
-      this.colliders.push({ x: PLAZA.x + x, z: PLAZA.z + z, r: 0.3, h: 2.4 });
+      // The crystal bobs by 0.06 m; the post and the gem are what stand there.
+      this.solidAt(PLAZA.x + x, PLAZA.z + z, 0.3, (topOf(gem) ?? 0) + 0.06);
     }
-    this.group.add(group);
   }
 
   private plazaCrystals: THREE.Mesh[] = [];
@@ -518,6 +559,9 @@ export class Base {
     const built = this.view.shield * 10;
     const solid = built >= 1;
     for (const spot of this.wallColliders) spot.r = solid ? 0.95 : 0;
+    // The wall's collider is as high as the layers that are up (a layer is 0.7 m; a growing one counts whole).
+    const standing = this.wallLayers.reduce((n, _layer, index) => (Math.max(0, Math.min(1, built - index)) > 0 ? index + 1 : n), 0);
+    for (const spot of this.wallColliders) spot.h = Math.max(0.7, standing * 0.7);
     this.wallLayers.forEach((layer, index) => {
       const amount = Math.max(0, Math.min(1, built - index));
       const current = layer.visible ? layer.scale.y : 0;

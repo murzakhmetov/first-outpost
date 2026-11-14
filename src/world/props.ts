@@ -10,6 +10,8 @@ import type { SiteId } from '../sim/types';
 import { BATTERY, FARM, HAB, LAB, PATHS, SOLAR } from './base';
 import type { Collider } from './base';
 import { Kit, disposeTree, shape } from './build';
+import { boundsTop, colliderHeight, overhangs, topOf } from './heights';
+import { LUMI_MARGIN } from './keepclear';
 import { GLOBALS, canvasTexture, glass, glow, lamp, toon } from './materials';
 import { model, modelGeometry, modelPart } from './models';
 import { ROVER, ROVER_HEADING } from './rover';
@@ -34,12 +36,16 @@ export class Props {
   landerFlame!: THREE.Object3D;
   /** The circles that stop the cadet from walking through the rover (they move with it). */
   readonly roverColliders: Collider[] = [];
+  /** Parts that stick out of the circle colliders (the flag's cloth): solid for Lumi only. */
+  readonly lumiOnly: Collider[] = [];
   private readonly own: THREE.Material[] = [];
   private flag: THREE.Mesh | null = null;
   private readonly site: SiteId;
+  private readonly ground: (x: number, z: number) => number;
 
   constructor(site: SiteId, height: (x: number, z: number) => number, rockFactor: number, softShadows: boolean) {
     this.site = site;
+    this.ground = height;
     this.group.name = 'props';
     this.buildBlobs(softShadows);
     this.buildRocks(height, rockFactor);
@@ -163,7 +169,7 @@ export class Props {
         const reach = ((halfX * scale.x + halfZ * scale.z) / 2) * 0.92;
         // A rock never blocks the way to a discovery, and the far ones are out of the walking area.
         const onFind = finds.some((find) => Math.hypot(find.x - x, find.z - z) < find.reach + reach + 0.5);
-        if (reach >= 0.5 && radius < 125 && !onFind) this.colliders.push({ x, z, r: reach, h: reach * 1.2 });
+        if (reach >= 0.5 && radius < 125 && !onFind) this.colliders.push({ x, z, r: reach, h: colliderHeight(boundsTop(bounds, matrix), height(x, z)) });
         placed++;
       }
       mesh.count = placed;
@@ -242,6 +248,12 @@ export class Props {
     return prop;
   }
 
+  /** A solid circle whose top (world y) is measured from the model; with none, the collider stays tall. */
+  private solidAt(x: number, z: number, r: number, top: number | undefined): void {
+    const h = colliderHeight(top, this.ground(x, z));
+    this.colliders.push(h === undefined ? { x, z, r } : { x, z, r, h });
+  }
+
   private buildLander(): void {
     // The painted landing pad stays a flat disc; the lander itself is a Blender model.
     const pad = new THREE.Mesh(shape.disc(7.4, 48), toon({ color: '#ffffff', map: padTexture(), rim: 0, bandSoft: 0.3 }));
@@ -274,7 +286,7 @@ export class Props {
     flame.visible = false;
     lander.add(flame);
     this.landerFlame = flame;
-    this.colliders.push({ x: LANDER.x, z: LANDER.z, r: 3.6, h: 8.5 });
+    this.solidAt(LANDER.x, LANDER.z, 3.6, topOf(lander));
   }
 
   private buildRover(): void {
@@ -330,7 +342,10 @@ export class Props {
     pole.position.set(FLAG.x, 0, FLAG.z);
     pole.rotation.y = -0.5;
     this.group.add(pole);
-    this.colliders.push({ x: FLAG.x, z: FLAG.z, r: 0.35, h: 5.2 });
+    this.solidAt(FLAG.x, FLAG.z, 0.35, topOf(pole));
+    for (const o of overhangs(pole, this.colliders, this.ground, LUMI_MARGIN - 0.1)) {
+      this.lumiOnly.push({ x: o.x, z: o.z, r: o.r, h: colliderHeight(o.top, this.ground(o.x, o.z)) });
+    }
   }
 
   private buildCrates(): void {
@@ -355,7 +370,7 @@ export class Props {
       crate.rotation.y = turn;
       crate.scale.setScalar(size);
       this.group.add(crate);
-      this.colliders.push({ x, z, r: size * 0.75, h: size * 1.6 });
+      this.solidAt(x, z, size * 0.75, topOf(crate));
     }
   }
 
