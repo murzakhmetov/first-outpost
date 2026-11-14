@@ -141,6 +141,7 @@ export function buildTerrain(
   site: SiteId,
   segments: number,
   paths: [number, number, number, number][],
+  groundDetail = false,
 ): TerrainBuild {
   const info = makeHeightFunction(site);
   const noise = new Noise2D(site === 'mars' ? 77 : 78);
@@ -203,11 +204,12 @@ export function buildTerrain(
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
 
-  const material = ground(
-    mars
+  const material = ground({
+    ...(mars
       ? { speck: '#56322a', light: '#f3c892', bandEdge: 0.02, bandSoft: 0.16, ripples: true }
-      : { speck: '#34373f', light: '#e6e8ee', bandEdge: 0.075, bandSoft: 0.06, ripples: false },
-  );
+      : { speck: '#34373f', light: '#e6e8ee', bandEdge: 0.075, bandSoft: 0.06, ripples: false }),
+    relief: groundDetail,
+  });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.receiveShadow = true;
   mesh.name = 'terrain';

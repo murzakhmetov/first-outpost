@@ -47,6 +47,8 @@ export interface QualityOptions {
   cinematic: boolean;
   /** Moons, Earth "star", shooting stars, sun glare and softer clouds in the sky. */
   skyFancy: boolean;
+  /** Fine relief on the ground: grain and an irregular light/shadow edge near the camera. */
+  groundDetail: boolean;
 }
 
 export const QUALITY: Record<QualityTier, QualityOptions> = {
@@ -73,6 +75,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     grade: false,
     cinematic: false,
     skyFancy: false,
+    groundDetail: false,
   },
   medium: {
     tier: 'medium',
@@ -97,6 +100,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     grade: false,
     cinematic: false,
     skyFancy: false,
+    groundDetail: false,
   },
   high: {
     tier: 'high',
@@ -121,6 +125,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     grade: true,
     cinematic: true,
     skyFancy: true,
+    groundDetail: true,
   },
   ultra: {
     tier: 'ultra',
@@ -145,6 +150,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     grade: true,
     cinematic: true,
     skyFancy: true,
+    groundDetail: true,
   },
 };
 

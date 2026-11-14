@@ -399,6 +399,52 @@ const GROUND_COLOR = /* glsl */ `
   }
 }`;
 
+
+// ---- Ground micro-relief (high and ultra only; compiled in by USE_RELIEF) ----
+const GROUND_RELIEF_PARS = /* glsl */ `
+#ifdef USE_RELIEF
+// Value noise with its analytic gradient: x = value, yz = d/dp.
+vec3 gNoiseD( vec2 p ) {
+  vec2 i = floor( p );
+  vec2 f = fract( p );
+  vec2 u = f * f * ( 3.0 - 2.0 * f );
+  vec2 du = 6.0 * f * ( 1.0 - f );
+  float a = gHash( i );
+  float b = gHash( i + vec2( 1.0, 0.0 ) );
+  float c = gHash( i + vec2( 0.0, 1.0 ) );
+  float d = gHash( i + vec2( 1.0, 1.0 ) );
+  float k = a - b - c + d;
+  return vec3( a + ( b - a ) * u.x + ( c - a ) * u.y + k * u.x * u.y,
+               du * vec2( ( b - a ) + k * u.y, ( c - a ) + k * u.x ) );
+}
+#endif`;
+
+const GROUND_RELIEF = /* glsl */ `
+#ifdef USE_RELIEF
+{
+  float reliefDist = length( vViewPosition );
+  float reliefFade = 1.0 - smoothstep( 25.0, 110.0, reliefDist );
+  // Flat-on views (grazing) would sparkle: scale the effect down towards the horizon.
+  float reliefGraze = smoothstep( 0.1, 0.45, abs( dot( normal, vViewPosition ) ) / max( reliefDist, 0.001 ) );
+  float reliefAmount = reliefFade * reliefGraze;
+  if ( reliefAmount > 0.001 ) {
+    // Two octaves of the ground noise (about 1.5 and 6 cycles per metre) read as a small height field.
+    vec3 n1 = gNoiseD( vWorldPos.xz * 1.5 + 3.7 );
+    vec3 n2 = gNoiseD( vWorldPos.xz * 6.0 + 11.3 );
+    vec2 slope = n1.yz * 1.5 * 0.045 + n2.yz * 6.0 * 0.012;
+    if ( uRipple > 0.0 ) {
+      // The wind ripples of the colour term, as a small ridge too.
+      vec2 rippleDir = vec2( 0.82, 0.57 );
+      float ripplePhase = dot( vWorldPos.xz, rippleDir ) * 5.0 + gNoise( vWorldPos.xz * 0.5 ) * 9.0;
+      float rippleMask = smoothstep( 0.35, 0.7, gFbm( vWorldPos.xz * 0.1 ) );
+      slope += rippleDir * ( cos( ripplePhase ) * 5.0 * 0.014 * rippleMask );
+    }
+    vec3 worldTilt = vec3( -slope.x, 0.0, -slope.y ) * reliefAmount;
+    normal = normalize( normal + ( viewMatrix * vec4( worldTilt, 0.0 ) ).xyz );
+  }
+}
+#endif`;
+
 /** Painted-looking ground with patches, pebbles and (on Mars) sand ripples. */
 export function ground(options: {
   speck: THREE.ColorRepresentation;
@@ -406,6 +452,8 @@ export function ground(options: {
   bandEdge: number;
   bandSoft: number;
   ripples: boolean;
+  /** High and ultra: fine normal relief near the camera (own shader program). */
+  relief?: boolean;
 }): THREE.MeshToonMaterial {
   const material = new THREE.MeshToonMaterial({ color: 0xffffff, vertexColors: true });
   material.onBeforeCompile = (shader) => {
@@ -417,9 +465,11 @@ export function ground(options: {
       .replace('#include <common>', '#include <common>\nvarying vec3 vWorldPos;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvWorldPos = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;');
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <gradientmap_pars_fragment>', GROUND_PARS)
+      .replace('#include <gradientmap_pars_fragment>', options.relief ? GROUND_PARS + GROUND_RELIEF_PARS : GROUND_PARS)
       .replace('#include <color_fragment>', GROUND_COLOR);
+    if (options.relief) shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>' + GROUND_RELIEF);
   };
-  material.customProgramCacheKey = () => 'ground';
+  if (options.relief) material.defines.USE_RELIEF = '';
+  material.customProgramCacheKey = () => (options.relief ? 'ground-relief' : 'ground');
   return material;
 }

@@ -153,7 +153,7 @@ export class World {
     this.site = site;
     const quality = this.engine.quality;
 
-    this.terrain = buildTerrain(site, quality.terrain, PATHS);
+    this.terrain = buildTerrain(site, quality.terrain, PATHS, quality.groundDetail);
     const height = this.terrain.info.height;
     this.sky = new Sky({ detail: quality.skyDetail, withEarth: site === 'moon', sunSize: site === 'moon' ? 0.02 : 0.026 });
     this.base = new Base(site);
@@ -276,7 +276,8 @@ export class World {
         quality.outlines !== previous.outlines ||
         quality.particles !== previous.particles ||
         quality.pointLights !== previous.pointLights ||
-        quality.shadows !== previous.shadows);
+        quality.shadows !== previous.shadows ||
+        quality.groundDetail !== previous.groundDetail);
     this.engine.setQuality(quality);
     if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows);
     if (!rebuild) return;

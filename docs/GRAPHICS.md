@@ -64,6 +64,7 @@ All of them live in `src/world/post.ts` unless said otherwise.
 rooms use 0.65, so their lights are about 1.6 times brighter). Lumi's antenna glow is drawn only on
 these tiers. These are uniforms, not shader variants, so
   the compiled programs are shared by every tier.
+- **Ground micro-relief** (`materials.ts` `ground({ relief: true })`, flag `groundDetail`, high and ultra). Own shader program (cache key `ground-relief`, define `USE_RELIEF`); low and medium keep the `ground` program unchanged. The normal is tilted by the analytic gradient of two noise octaves (about 1.5 and 6 cycles per metre) in world XZ, fading out between 25 m and 110 m and at grazing angles; on Mars the sand ripple term tilts the normal too. It breaks up the light/shadow band edge and gives grain at low sun. Cost at 1080p and 1440p: under 0.15 ms.
 - **Colour grade outdoors.** `Daylight` now resets saturation, contrast, tint, bloom and vignette every
   frame outdoors, so a room's own grade cannot stay on after the cadet walks out.
 
