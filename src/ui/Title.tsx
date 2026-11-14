@@ -109,14 +109,12 @@ export function Title(): JSX.Element {
             {t('menu.codex')}
             {CODEX.length > 0 && <em class="count">{found}/{CODEX.length}</em>}
           </Btn>
-          <div class="menu-row">
-            <Btn icon="help" onClick={() => openPanel('help')}>
-              {t('menu.help')}
-            </Btn>
-            <Btn icon="globe" onClick={() => openPanel('about')}>
-              {t('menu.about')}
-            </Btn>
-          </div>
+          <Btn icon="help" wide onClick={() => openPanel('help')}>
+            {t('menu.help')}
+          </Btn>
+          <Btn icon="globe" wide onClick={() => openPanel('about')}>
+            {t('menu.about')}
+          </Btn>
         </nav>
       </div>
 

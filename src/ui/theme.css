@@ -106,6 +106,12 @@
   outline-offset: 3px;
 }
 
+/* Navy buttons and fields: the ring sits on a light-ivory halo so it reads (3:1 or better) on any surface. */
+#ui :is(.btn, .icon-btn, .lang button, .menu button, .title-bar button):focus-visible {
+  outline-color: var(--gold-dk);
+  box-shadow: 0 0 0 3px var(--ivory-hi);
+}
+
 #ui * {
   scrollbar-width: thin;
   scrollbar-color: var(--gold-edge) transparent;
@@ -695,8 +701,8 @@
 .toggle-track {
   flex: none;
   position: relative;
-  width: 56px;
-  height: 32px;
+  width: 64px;
+  height: 44px;
   border-radius: var(--r-sm);
   background: var(--ivory-line);
   border: 1.5px solid var(--gold-edge);
@@ -706,10 +712,10 @@
 .toggle-track::after {
   content: '';
   position: absolute;
-  top: 5px;
-  left: 6px;
-  width: 17px;
-  height: 17px;
+  top: 11px;
+  left: 9px;
+  width: 20px;
+  height: 20px;
   background: var(--navy);
   border: 1px solid var(--gold-orn);
   transform: rotate(45deg);
@@ -721,7 +727,7 @@
 }
 
 .toggle input:checked + .toggle-track::after {
-  transform: translateX(22px) rotate(45deg);
+  transform: translateX(26px) rotate(45deg);
 }
 
 .toggle input:focus-visible + .toggle-track {
@@ -747,6 +753,8 @@
   color: var(--slate);
   border: 1.5px solid var(--ivory-line);
   display: grid;
+  align-content: center;
+  justify-items: center;
   gap: 1px;
   text-align: center;
   line-height: 1.2;
@@ -1709,6 +1717,7 @@
 
 .title-main {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   width: min(464px, 100%);
   margin: 0 0 0 clamp(0px, 1.4vw, 20px);
@@ -1780,11 +1789,13 @@
   margin: 2px 0 0;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2rem, 9vw, 3.125rem);
+  font-size: clamp(1.5rem, 8vw, 3.125rem);
   line-height: 1.2;
   letter-spacing: 0.01em;
   color: var(--ivory);
   text-align: center;
+  overflow-wrap: normal;
+  max-width: 100%;
 }
 
 .logo h1 span + span {
@@ -1874,17 +1885,6 @@
 .menu .btn-primary {
   min-height: 56px;
   font-size: 1.3125rem;
-}
-
-.menu-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.menu-row .btn {
-  font-size: 1rem;
-  padding-inline: 8px;
 }
 
 .count {

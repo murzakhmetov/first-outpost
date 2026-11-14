@@ -640,7 +640,7 @@
   }
 
   .logo {
-    padding: 12px 14px 12px;
+    padding: 12px 12px 12px;
   }
 
   .emblem {
@@ -657,21 +657,6 @@
 
   .menu {
     padding: 16px 14px;
-  }
-
-  .menu-row {
-    gap: 8px;
-  }
-
-  .menu-row .btn {
-    gap: 8px;
-    padding-inline: 6px;
-    font-size: 0.9375rem;
-  }
-
-  .menu-row .btn > svg:first-child:not(:last-child) {
-    width: 28px;
-    height: 28px;
   }
 
   .title-foot {
@@ -737,10 +722,6 @@
   .menu .btn-primary {
     min-height: 46px;
     font-size: 1rem;
-  }
-
-  .menu-row {
-    grid-template-columns: 1fr;
   }
 
   .title-foot {

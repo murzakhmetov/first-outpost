@@ -500,8 +500,8 @@
   margin: 0;
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(59, 66, 85, 0.08);
-  border-left: 4px solid var(--accent, var(--gi-r5b));
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
   font-weight: 800;
   color: var(--gi-ink);
 }
