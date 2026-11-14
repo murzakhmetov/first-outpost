@@ -314,6 +314,7 @@ async function runLines(id: number, keys: string[], lang: string, options: PlayO
     const text = options.parts && options.parts.length === keys.length ? options.parts.slice(from).join(' ') : from === 0 ? options.text : undefined;
     return speakText(text, lang, !!options.queue && from === 0);
   };
+  let started = 0; // parts whose recording was handed to the audio engine: the device's voice never re-reads them
   try {
     // Sound at 0 (or Voices off): the manifest is not downloaded either (what is already known is used).
     const lines = audible && options.voices !== false ? await loadManifest() : (voiceLines.value ?? {});
@@ -339,6 +340,7 @@ async function runLines(id: number, keys: string[], lang: string, options: PlayO
         if (!buffer) return options.recordedOnly ? false : speakFrom(index); // cannot load: the device's voice reads what has not been played
         const handle = audio.playVoice(buffer, (entries[index] as VoiceEntry).speaker === 'mc');
         if (!handle) return options.recordedOnly ? false : speakFrom(index); // cannot start (tab hidden, no sound on the device)
+        started = index + 1;
         stopSpeaking(); // the device's voice and a recorded line must not talk at once
         if (!(await playSegment(handle))) return false;
         if (id !== token) return false;
@@ -348,7 +350,8 @@ async function runLines(id: number, keys: string[], lang: string, options: PlayO
     if (mode === 'speech') return speakFrom(0);
     return false;
   } catch {
-    return speakFrom(0);
+    // Never re-read a part that has started; films never use the device's voice.
+    return options.recordedOnly ? false : speakFrom(started);
   }
 }
 
