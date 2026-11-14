@@ -600,3 +600,218 @@
     animation: none;
   }
 }
+
+/* ----- One base together: the strip of dots, votes, plan flashes, the room chip ------------- */
+
+.crew-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+}
+
+.crew-pips {
+  display: inline-flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.crew-pip {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 26px;
+  opacity: 0.7;
+}
+
+.crew-pip.is-done {
+  opacity: 1;
+}
+
+.crew-pip i {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: #12163a;
+}
+
+.crew-pip.is-me i {
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.crew-pip small {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--ink-dim);
+}
+
+.crew-pip-mark {
+  position: absolute;
+  right: -7px;
+  top: -6px;
+  padding: 1px;
+  border-radius: 50%;
+  background: var(--glass-deep);
+}
+
+.crew-count,
+.crew-waiting {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--ink-dim);
+}
+
+.crew-goon {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--gold);
+  background: rgba(255, 209, 102, 0.14);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.crew-votes {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.crew-votes i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+}
+
+.crew-votes i.is-me {
+  box-shadow: 0 0 0 1.5px var(--gold);
+}
+
+.option.is-voted {
+  border-color: var(--gold) !important;
+  background: rgba(255, 209, 102, 0.14) !important;
+}
+
+.crew-vote-hint {
+  margin: 0;
+}
+
+.crew-flash {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  pointer-events: none;
+  animation: crew-flash 1.8s ease-out forwards;
+}
+
+@keyframes crew-flash {
+  0% {
+    transform: scale(2.2);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.crew-plan-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 7px 11px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold);
+  background: rgba(255, 209, 102, 0.14);
+  font-weight: 800;
+  font-size: 0.875rem;
+}
+
+.crew-quiet {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 74px;
+  z-index: 70;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  max-width: calc(100vw - 20px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: var(--glass-deep);
+  box-shadow: var(--shadow);
+  font-size: 0.875rem;
+}
+
+.crew-alone {
+  min-height: 34px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--gold);
+  background: rgba(255, 209, 102, 0.14);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.crew-chip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(max(12px, env(safe-area-inset-top)) + 60px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--glass-deep);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .crew-chip {
+    top: calc(max(12px, env(safe-area-inset-top)) + 100px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crew-flash {
+    animation-duration: 0.01s;
+    animation-delay: 1.8s;
+  }
+}

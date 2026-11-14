@@ -61,6 +61,7 @@ import { createMission } from '../src/sim/mission';
 import { CoopGuest } from '../src/net/coop';
 import type { CoopHost } from '../src/net/coop';
 import { startCoopHost } from '../src/net/coopglue';
+import { answered, canGoOn, coopGo, coopLive, waitingFor } from '../src/net/coopview';
 import { DATA } from './bots';
 import { CHOICE as ROOM_CHOICE, SEED, START_DATE, pickOption, scriptedAct, startedRooms } from './coop-rig';
 import type { Rooms } from './coop-rig';
@@ -169,6 +170,27 @@ afterEach(() => {
 });
 
 describe('the commander\'s director in a shared base', () => {
+  it('shows the crew to the screen, offers "Go on" after 5 s, and "Go on" moves the crew on with those who answered', async () => {
+    expect(coopLive.value).toBeNull();
+    const r = await rig(2);
+    const first = coopLive.value!;
+    expect(first.me).toBe(r.rooms.host.id);
+    expect(first.hostId).toBe(r.rooms.host.id);
+    expect(first.stage).toBe('briefing');
+    director.continueBriefing();
+    await pass(r, 300);
+    expect(answered(coopLive.value!)).toEqual([r.rooms.host.id]);
+    expect(waitingFor(coopLive.value!)).toHaveLength(2);
+    expect(canGoOn(coopLive.value!, Date.now())).toBe(false);
+    await pass(r, 5200);
+    expect(canGoOn(coopLive.value!, Date.now())).toBe(true);
+    coopGo();
+    await pass(r, 300);
+    expect(['event', 'plan']).toContain(coopLive.value!.stage);
+    director.quitMission();
+    expect(coopLive.value).toBeNull();
+  });
+
   it('runs a whole week: guests vote and walk, the merged walk is applied once, the night is worked out once', async () => {
     const r = await rig(2);
     const s = director.getState()!;

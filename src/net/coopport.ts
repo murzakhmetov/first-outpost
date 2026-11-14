@@ -15,6 +15,7 @@ import { suggestAlloc } from '../sim/mission';
 import type { BuildingId, GameId, RoomId, ToolId } from '../sim/outpost';
 import type { Alloc, EvaResult, MissionState, OptionId } from '../sim/types';
 import type { CoopGuest, CoopHost } from './coop';
+import { clearCoop } from './coopview';
 
 const clamp = (n: number, min: number, max: number): number => Math.min(max, Math.max(min, n));
 const whole = (n: unknown, min: number, max: number): number => (typeof n === 'number' && Number.isFinite(n) ? Math.round(clamp(n, min, max)) : min);
@@ -90,6 +91,7 @@ export function hostPort(host: CoopHost): SessionPort {
     },
     reassert() {},
     close() {
+      clearCoop();
       host.dispose();
     },
   };
@@ -121,6 +123,7 @@ export function guestPort(guest: CoopGuest, me: string): SessionPort {
       mission.alloc = { ...edit.alloc };
     },
     close() {
+      clearCoop();
       guest.dispose();
     },
   };

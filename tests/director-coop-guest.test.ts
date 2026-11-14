@@ -64,6 +64,7 @@ import { ensureOutpost } from '../src/sim/outpost';
 import { MODULES } from '../src/sim/types';
 import { CoopGuest, CoopHost } from '../src/net/coop';
 import { startCoopGuest } from '../src/net/coopglue';
+import { canPlayAlone, coopLive, coopPlayAlone, coopSilentMs, waitingForCommander } from '../src/net/coopview';
 import { DATA } from './bots';
 import { CHOICE as ROOM_CHOICE, SEED, START_DATE, pickOption, scriptedAct, startedRooms } from './coop-rig';
 import type { Rooms } from './coop-rig';
@@ -306,6 +307,37 @@ describe('a guest\'s director in a shared base', () => {
     expect(steps.seq).not.toContain('event');
     expect(steps.seq).not.toContain('eventResult');
     steps.stop();
+  });
+
+  it('shows the crew to the screen; a silent commander shows "waiting", then "play on alone" leaves the crew', async () => {
+    expect(coopLive.value).toBeNull();
+    const r = await rig(1);
+    const live = coopLive.value!;
+    expect(live.me).toBe(r.rooms.guests[0].id);
+    expect(live.hostId).toBe(r.rooms.host.id);
+    expect(live.seats).toEqual(r.rooms.seats);
+    expect(live.stage).toBe('briefing');
+    expect(waitingForCommander(live)).toBe(false);
+    // This seat answers: a countdown starts, and it ends at the same moment whenever the screen is refreshed.
+    director.continueBriefing();
+    await pass(r, 600, false);
+    const ends = coopLive.value!.endsAt;
+    expect(ends).not.toBeNull();
+    // The commander's device stops sending (it is still in the room): quiet from 15 s, "play on alone" from 45 s.
+    r.host.dispose();
+    await pass(r, 16_000, false);
+    expect(waitingForCommander(coopLive.value!)).toBe(true);
+    expect(coopLive.value!.endsAt).toBe(ends);
+    expect(canPlayAlone(coopSilentMs())).toBe(false);
+    await pass(r, 30_000, false);
+    expect(canPlayAlone(coopSilentMs())).toBe(true);
+    coopPlayAlone();
+    expect(coopLive.value).toBeNull();
+    // Solo code from here: the call is not sent anywhere, it runs.
+    director.continueBriefing();
+    expect(['event', 'plan']).toContain(step.value);
+    director.quitMission();
+    expect(coopLive.value).toBeNull();
   });
 
   it('plays a whole mission, ends with the debrief, ignores the host heartbeats after it, and the next mission is solo', async () => {

@@ -16,6 +16,7 @@ import type { RoomId } from '../sim/outpost';
 import type { MissionState } from '../sim/types';
 import type { InteriorHud } from '../world/interior';
 import { Btn } from './common';
+import { CoopChip } from './CrewStrip';
 import { Icon } from './icons';
 import type { IconName } from './icons';
 import { Joystick } from './Joystick';
@@ -186,6 +187,7 @@ export function RoomScreen(): JSX.Element | null {
           {t('room.leave')}
         </Btn>
       </header>
+      <CoopChip />
 
       {station && !game && (
         <InteractPrompt

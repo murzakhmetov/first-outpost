@@ -14,6 +14,7 @@ import {
   explainTask,
   finishWalk,
   getWorld,
+  goNextWeek,
   recallWalk,
   skipNight,
   skipWalk,
@@ -32,6 +33,8 @@ import type { TaskId } from '../game/films';
 import { Btn, FxChips, Rich, SpeakBtn } from './common';
 import { CrewDock } from './CrewDock';
 import { crewBehind, crewDontWait, crewNextWeek, crewWaiting } from '../net/crew';
+import { coopLive, friendsOutside } from '../net/coopview';
+import { ChangeFlash, CoopQuietBar, CrewStrip, PlanChangedNote, VoteDots, coopAnswered, coopAt } from './CrewStrip';
 import { DiscoveryBanner, Hud, LumiBubble, Markers, PickupFeed } from './Hud';
 import { Joystick } from './Joystick';
 import { InteractPrompt } from './Prompt';
@@ -149,8 +152,9 @@ function Briefing({ m }: { m: MissionState }): JSX.Element {
       </div>
 
       <footer class="card-foot">
-        <Btn kind="primary" iconRight="next" wide autoFocus onClick={continueBriefing}>
-          {t('brief.go')}
+        <CrewStrip stage="briefing" />
+        <Btn kind="primary" iconRight="next" wide autoFocus disabled={coopAnswered('briefing')} onClick={continueBriefing}>
+          {coopAnswered('briefing') ? t('crew.co.waitCrew') : t('brief.go')}
         </Btn>
       </footer>
     </section>
@@ -183,6 +187,9 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
     timer.current = window.setTimeout(() => setWaiting(false), seconds * 1000);
   };
   const advised = answer && !waiting && !answer.tooLate ? answer.advice : null;
+  // A shared base: a click is a vote, and the dots show who voted for what.
+  const coEvent = coopAt('event');
+  const myVote = coEvent ? coEvent.votes[coEvent.me] : undefined;
 
   return (
     <section class={`dock card event ${view.storm ? 'event-storm' : ''}`} aria-label={view.title}>
@@ -210,17 +217,19 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
       )}
 
       {!view.notice && <h3 class="choose">{t('ev.choose')}</h3>}
+      {coEvent && <p class="sub crew-vote-hint">{t('crew.co.voteHint')}</p>}
       <div class="options">
         {view.options.map((option) => (
           <button
             key={option.id}
             type="button"
-            class={`option ${advised === option.id ? 'is-advised' : ''}`}
+            class={`option ${advised === option.id ? 'is-advised' : ''} ${myVote === option.id ? 'is-voted' : ''}`}
             disabled={!!option.blocked}
             onClick={() => chooseEvent(option.id)}
           >
             <span class="option-label">
               {option.label}
+              <VoteDots option={option.id} />
               {advised === option.id && (
                 <em class="advice-tag">
                   <Icon name="earth" size={13} /> {t('earth.answer')}
@@ -232,6 +241,8 @@ function EventCard({ m }: { m: MissionState }): JSX.Element | null {
           </button>
         ))}
       </div>
+      {coEvent && myVote && <p class="sub crew-vote-hint">{t('crew.co.voted')}</p>}
+      <CrewStrip stage="event" />
 
       {!view.notice && (
         <div class="help-row">
@@ -324,8 +335,9 @@ function EventResult({ m }: { m: MissionState }): JSX.Element | null {
       </div>
 
       <footer class="card-foot">
-        <Btn kind="primary" iconRight="next" wide autoFocus onClick={confirmEvent}>
-          {t('common.continue')}
+        <CrewStrip stage="eventResult" />
+        <Btn kind="primary" iconRight="next" wide autoFocus disabled={coopAnswered('eventResult')} onClick={confirmEvent}>
+          {coopAnswered('eventResult') ? t('crew.co.waitCrew') : t('common.continue')}
         </Btn>
       </footer>
     </section>
@@ -386,6 +398,7 @@ function PlanPanel({ m }: { m: MissionState }): JSX.Element {
             : t('plan.from', { sun: now.solar, battery: m.battery })}
         </small>
       </p>
+      <PlanChangedNote />
       <div class="cells" aria-hidden="true">
         {cells.map((module, index) => (
           <i key={index} class={module ? `cell cell-${module}` : 'cell cell-free'} />
@@ -422,6 +435,7 @@ function PlanPanel({ m }: { m: MissionState }): JSX.Element {
           return (
             <div key={module} class={`module module-${module} ${level === 0 ? 'is-off' : ''}`}>
               <i key={`pulse-${level}`} class="module-pulse" aria-hidden="true" />
+              <ChangeFlash module={module} />
               <span class="module-icon">
                 <Icon name={MODULE_ICON[module]} size={24} />
               </span>
@@ -462,12 +476,13 @@ function PlanPanel({ m }: { m: MissionState }): JSX.Element {
         {outcome.wasted > 0 && <b> · {t('plan.wasted', { n: outcome.wasted })}</b>}
       </p>
 
+      <CrewStrip stage="plan" />
       <footer class="card-foot two">
         <Btn kind="ghost" icon="shield" onClick={useSafePlan}>
           {t('plan.safe')}
         </Btn>
-        <Btn kind="primary" iconRight="play" onClick={confirmPlan}>
-          {t('plan.go')}
+        <Btn kind="primary" iconRight="play" disabled={coopAnswered('plan')} onClick={confirmPlan}>
+          {coopAnswered('plan') ? t('crew.co.waitCrew') : t('plan.go')}
         </Btn>
       </footer>
     </section>
@@ -495,6 +510,10 @@ function EvaIntro({ m }: { m: MissionState }): JSX.Element {
   const mars = m.config.site === 'mars';
   const chore = mars ? m.panelDust >= 0.1 : m.week % 2 === 0;
   const findsLeft = FINDS[m.config.site].length - foundIn(m).length;
+  // A shared base: the choice is sent to the crew; the card then says who walks and who is outside.
+  const co = coopAt('walk');
+  const choice = co ? co.walk[co.me] : undefined;
+  const decided = !!co && (choice !== undefined || co.outside);
   return (
     <section class="dock card eva-intro" aria-label={t('eva.title')}>
       <h2>
@@ -523,14 +542,22 @@ function EvaIntro({ m }: { m: MissionState }): JSX.Element {
           <Icon name="storm" size={18} /> {t(risk)}
         </li>
       </ul>
-      <footer class="card-foot two">
-        <Btn kind="ghost" onClick={skipWalk}>
-          {t('eva.stay')}
-        </Btn>
-        <Btn kind="primary" icon="walk" autoFocus onClick={beginWalk}>
-          {t('eva.go')}
-        </Btn>
-      </footer>
+      {co && <h3 class="choose">{t('crew.co.walkTitle')}</h3>}
+      <CrewStrip stage="walk" />
+      {decided ? (
+        <p class="crew-wait" role="status">
+          {co.outside ? t('crew.co.outside', { n: friendsOutside(co) }) : t(choice ? 'crew.co.youWalk' : 'crew.co.youStay')}
+        </p>
+      ) : (
+        <footer class="card-foot two">
+          <Btn kind="ghost" onClick={skipWalk}>
+            {t('eva.stay')}
+          </Btn>
+          <Btn kind="primary" icon="walk" autoFocus onClick={beginWalk}>
+            {t('eva.go')}
+          </Btn>
+        </footer>
+      )}
     </section>
   );
 }
@@ -795,6 +822,8 @@ function EvaResultCard({ m }: { m: MissionState }): JSX.Element | null {
   // Science from rock samples and from discoveries, each on its own line.
   const findScience = finds * FIND_SCIENCE;
   const sampleScience = result.science;
+  const coWalk = coopAt('walk');
+  const outsideNow = coWalk ? friendsOutside(coWalk) : 0;
   return (
     <section class="dock card eva-result" aria-label={t('eva.resultTitle')}>
       <h2>
@@ -848,9 +877,15 @@ function EvaResultCard({ m }: { m: MissionState }): JSX.Element | null {
           </li>
         )}
       </ul>
+      {outsideNow > 0 && (
+        <p class="crew-wait" role="status">
+          {t('crew.co.outsideLeft', { n: outsideNow })}
+        </p>
+      )}
+      <CrewStrip stage="walk" />
       <footer class="card-foot">
-        <Btn kind="primary" iconRight="next" wide autoFocus onClick={finishWalk}>
-          {t('common.continue')}
+        <Btn kind="primary" iconRight="next" wide autoFocus disabled={!!coopLive.value} onClick={finishWalk}>
+          {coopLive.value ? t('crew.co.waitCrew') : t('common.continue')}
         </Btn>
       </footer>
     </section>
@@ -963,6 +998,8 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
   const airLimit = weekStart ? Math.min(0, Math.round((record.air - airBefore - airRows) * 10) / 10) : 0;
   const batteryBefore = weekStart?.battery ?? before?.battery ?? record.battery;
   const last = m.week >= m.config.weeks;
+  // A shared base: "Next week" is a Ready of the whole crew (the race mode's wait for friends is not used).
+  const co = coopLive.value;
   const waiting = crewWaiting.value;
   const behind = crewBehind.value;
   const firstHarvest = record.harvested && m.harvests === 1;
@@ -1076,7 +1113,14 @@ function Report({ m }: { m: MissionState }): JSX.Element | null {
       </ul>
 
       <footer class="card-foot">
-        {waiting ? (
+        {co ? (
+          <>
+            <CrewStrip stage="report" />
+            <Btn kind="primary" iconRight="next" wide autoFocus disabled={coopAnswered('report')} onClick={goNextWeek}>
+              {coopAnswered('report') ? t('crew.co.waitNext') : t(last ? 'report.finish' : 'report.next')}
+            </Btn>
+          </>
+        ) : waiting ? (
           <>
             <p class="crew-wait" role="status">
               {t('crew.waitCrew', { names: behind.map((player) => t(`crew.name.${player.name}`)).join(', ') })}
@@ -1126,6 +1170,7 @@ export function Game(): JSX.Element | null {
         </div>
         <DiscoveryBanner />
         <PickupFeed />
+        <CoopQuietBar />
       </div>
     );
   }
@@ -1147,6 +1192,7 @@ export function Game(): JSX.Element | null {
       <DiscoveryBanner />
       <PickupFeed />
       <CrewDock />
+      <CoopQuietBar />
       {current === 'plan' && <Markers m={m} />}
     </div>
   );
