@@ -402,3 +402,22 @@ describe('flying across the outpost over a tall building', () => {
     expect(arrived).toBeLessThan(10);
   });
 });
+
+describe('the goals', () => {
+  it('the drive goal sits beside the rover, below the roof line, outside its body at any heading', () => {
+    const goal = { x: 0, y: 0, z: 0 };
+    for (let heading = 0; heading < 6.3; heading += 0.5) {
+      const boxes = newRoverBoxes();
+      roverBoxes(boxes, 5, 0, -3, heading);
+      driveGoal(goal, 5, 0, -3, heading);
+      expect(goal.y).toBeLessThan(3.2);
+      expect(sphereOverlaps(goal, 0.3, flat([], boxes))).toBe(false); // never inside the hull; the clearance is added by the world's goal resolve
+    }
+  });
+  it('the walk goal is beside the cadet, on the camera right when the camera is known', () => {
+    const goal = { x: 0, y: 0, z: 0 };
+    walkGoal(goal, 0, 0, 0, 0.3, 0, 10); // camera at +z looking toward -z: its right is +x
+    expect(goal.x).toBeGreaterThan(1.2);
+    expect(Math.abs(goal.z - Math.cos(0.3) * 0.5)).toBeLessThan(0.1);
+  });
+});

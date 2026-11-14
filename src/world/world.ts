@@ -34,7 +34,7 @@ import type { Mood } from './lumi';
 import { Props } from './props';
 import { LUMI_CLEAR, LUMI_GOAL_CLEAR, resolveSphere } from './keepclear';
 import type { Solids } from './keepclear';
-import { DRIVE_LOOKAHEAD, DRIVE_LOOKAHEAD_SPEED, driveGoal, liftGoalOverPath, walkGoal } from './lumifollow';
+import { DRIVE_LOOKAHEAD, DRIVE_LOOKAHEAD_SPEED, WALK_FLIGHT, driveFlight, driveGoal, liftGoalOverPath, walkGoal } from './lumifollow';
 import { lumiProbeStep } from './lumiprobe';
 import { Rover } from './rover';
 import { Scenery } from './scenery';
@@ -887,6 +887,7 @@ export class World {
 
   /** Seconds the walking cadet has stood still (Lumi then looks at the camera). */
   private lumiStill = 0;
+  private readonly driveTune = { stiff: 70, damp: 12, max: 15 };
 
   private updateLumi(dt: number): void {
     const lumi = this.lumi;
@@ -897,8 +898,13 @@ export class World {
       const p = this.eva.position;
       const rover = this.rover;
       // Driving: above the roof, a little behind the middle. On foot: beside the cadet, a little ahead.
-      if (rover.driving) driveGoal(lumi.goal, rover.x, rover.y, rover.z, rover.heading);
-      else walkGoal(lumi.goal, p.x, p.y, p.z, yaw);
+      if (rover.driving) {
+        driveGoal(lumi.goal, rover.x, rover.y, rover.z, rover.heading);
+        lumi.tune = driveFlight(this.driveTune, rover.speed);
+      } else {
+        lumi.tune = WALK_FLIGHT;
+        walkGoal(lumi.goal, p.x, p.y, p.z, yaw, camera.position.x, camera.position.z);
+      }
       // Standing still for a moment, Lumi turns round and looks at the player.
       this.lumiStill = this.eva.speed < 0.35 ? this.lumiStill + dt : 0;
       if (this.lumiStill > 1.2) lumi.lookTarget.copy(camera.position);

@@ -15,15 +15,31 @@ export interface Flight {
   vel: Vec3;
 }
 
+/** The spring's strength, its damping and its top speed (metres per second). */
+export interface FlightTune {
+  stiff: number;
+  damp: number;
+  max: number;
+}
+export const WALK_FLIGHT: FlightTune = { stiff: 26, damp: 7, max: LUMI_FLIGHT_MAX };
+/** While driving Lumi keeps up: a stiffer spring and a top speed at least this much above the rover's speed. */
+export const DRIVE_FLIGHT_MARGIN = 3;
+export function driveFlight(out: FlightTune, roverSpeed: number): FlightTune {
+  out.stiff = 70;
+  out.damp = 12;
+  out.max = Math.max(LUMI_FLIGHT_MAX, Math.abs(roverSpeed) + DRIVE_FLIGHT_MARGIN);
+  return out;
+}
+
 /** One step of Lumi's springy flight toward `goal`. */
-export function stepFlight(f: Flight, goal: Vec3, dt: number): void {
-  const k = Math.exp(-dt * 7);
-  f.vel.x = (f.vel.x + (goal.x - f.pos.x) * dt * 26) * k;
-  f.vel.y = (f.vel.y + (goal.y - f.pos.y) * dt * 26) * k;
-  f.vel.z = (f.vel.z + (goal.z - f.pos.z) * dt * 26) * k;
+export function stepFlight(f: Flight, goal: Vec3, dt: number, tune: FlightTune = WALK_FLIGHT): void {
+  const k = Math.exp(-dt * tune.damp);
+  f.vel.x = (f.vel.x + (goal.x - f.pos.x) * dt * tune.stiff) * k;
+  f.vel.y = (f.vel.y + (goal.y - f.pos.y) * dt * tune.stiff) * k;
+  f.vel.z = (f.vel.z + (goal.z - f.pos.z) * dt * tune.stiff) * k;
   const speed = Math.hypot(f.vel.x, f.vel.y, f.vel.z);
-  if (speed > LUMI_FLIGHT_MAX) {
-    const scale = LUMI_FLIGHT_MAX / speed;
+  if (speed > tune.max) {
+    const scale = tune.max / speed;
     f.vel.x *= scale;
     f.vel.y *= scale;
     f.vel.z *= scale;
@@ -103,31 +119,49 @@ export function liftGoalOverPath(goal: Vec3, from: Vec3, R: number, solids: Soli
   }
 }
 
-/** On foot: beside the cadet, a little ahead, above the head. */
-export function walkGoal(out: Vec3, x: number, y: number, z: number, yaw: number): Vec3 {
-  out.x = x + Math.cos(yaw) * 1.1 + Math.sin(yaw) * 0.5;
-  out.y = y + 2.05;
-  out.z = z - Math.sin(yaw) * 1.1 + Math.cos(yaw) * 0.5;
+/** On foot: Lumi floats beside the cadet (not over the head), at about shoulder height. */
+export const WALK_GOAL_SIDE = 1.7;
+export const WALK_GOAL_HEIGHT = 1.75;
+/** On foot: beside the cadet, a little ahead. */
+export function walkGoal(out: Vec3, x: number, y: number, z: number, yaw: number, camX?: number, camZ?: number): Vec3 {
+  // The side is the camera's right when the camera is known (so Lumi never hides behind the head, whichever way the cadet faces).
+  let sx = Math.cos(yaw);
+  let sz = -Math.sin(yaw);
+  if (camX !== undefined && camZ !== undefined) {
+    const dx = x - camX;
+    const dz = z - camZ;
+    const len = Math.hypot(dx, dz);
+    if (len > 0.5) {
+      sx = -dz / len;
+      sz = dx / len;
+    }
+  }
+  out.x = x + sx * WALK_GOAL_SIDE + Math.sin(yaw) * 0.5;
+  out.y = y + WALK_GOAL_HEIGHT;
+  out.z = z + sz * WALK_GOAL_SIDE + Math.cos(yaw) * 0.5;
   return out;
 }
 
 /** The top of the rover's tallest part (the mast) above its ground point, with room for the tilt on slopes. */
 export const ROVER_TOP = 3.9;
 /**
- * Driving: above the front half of the roof (the mast is behind it), so Lumi shows in the chase camera
- * and not behind the HUD. 4.35 m is the roof (3.2 m) plus the goal's clear distance.
+ * Driving: beside the roof, lower than it, so Lumi shows in the chase camera in the middle of the upper half
+ * of the screen: below the top HUD band, not hidden by the rover. The side distance is the hull's half width
+ * (1.65 m, a little more on a slope) plus the goal's clear distance.
  */
-export const DRIVE_GOAL_HEIGHT = 4.35;
-export const DRIVE_GOAL_AHEAD = 2;
+export const DRIVE_GOAL_HEIGHT = 2.5;
+export const DRIVE_GOAL_AHEAD = 0;
+/** Metres to the side of the rover's middle line (negative: its right). */
+export const DRIVE_GOAL_SIDE = -2.6;
 /** While driving, the goal keeps this much more room from buildings than the hard rule asks, metres. */
 export const DRIVE_LOOKAHEAD = 3;
 /** The look-ahead only applies above this rover speed, metres per second (a rover crawling or stopped at a wall needs no run-up). */
 export const DRIVE_LOOKAHEAD_SPEED = 2.5;
 
 export function driveGoal(out: Vec3, x: number, y: number, z: number, heading: number): Vec3 {
-  out.x = x + Math.sin(heading) * DRIVE_GOAL_AHEAD;
+  out.x = x + Math.sin(heading) * DRIVE_GOAL_AHEAD + Math.cos(heading) * DRIVE_GOAL_SIDE;
   out.y = y + DRIVE_GOAL_HEIGHT;
-  out.z = z + Math.cos(heading) * DRIVE_GOAL_AHEAD;
+  out.z = z + Math.cos(heading) * DRIVE_GOAL_AHEAD - Math.sin(heading) * DRIVE_GOAL_SIDE;
   return out;
 }
 

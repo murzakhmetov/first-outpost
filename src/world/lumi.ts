@@ -6,7 +6,8 @@ import * as THREE from 'three';
 import { shape } from './build';
 import { LUMI_CLEAR } from './keepclear';
 import type { Solids } from './keepclear';
-import { pushFlight, stepFlight } from './lumifollow';
+import { WALK_FLIGHT, pushFlight, stepFlight } from './lumifollow';
+import type { FlightTune } from './lumifollow';
 import { GLOBALS, addOutline, glow, outlineMaterial, toon } from './materials';
 import { model } from './models';
 import { dotTexture } from './textures';
@@ -23,6 +24,8 @@ const MOOD_COLOR: Record<Mood, string> = {
 
 export class Lumi {
   readonly group = new THREE.Group();
+  /** The spring's tuning; the world switches it while the cadet drives. */
+  tune: FlightTune = WALK_FLIGHT;
   /** Where Lumi wants to be. */
   readonly goal = new THREE.Vector3(2, 2.6, 2);
   /**
@@ -155,7 +158,7 @@ export class Lumi {
     const t = this.time;
 
     // Springy flight toward the goal, with a gentle bob.
-    stepFlight(this.flight, this.goal, dt);
+    stepFlight(this.flight, this.goal, dt, this.tune);
     this.hop = Math.max(0, this.hop - dt * 2.4);
     const bob = Math.sin(t * 2.2) * 0.07 + Math.sin(this.hop * Math.PI) * 0.25;
     // The hard rule: what is drawn (flight plus bob) is never inside the rover, a building or a prop.
