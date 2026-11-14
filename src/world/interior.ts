@@ -1641,6 +1641,7 @@ export class Interior {
   private readonly materials: THREE.Material[] = [];
   /** G13: fake light (pools, gradient, shafts, contact shadows), high and ultra only. */
   private fx: RoomLight | null = null;
+  private lumiShadow = true;
   private readonly wallMeshes: THREE.Mesh[] = [];
   private paints: Paints | null = null;
   private globe: THREE.Mesh | null = null;
@@ -1733,6 +1734,7 @@ export class Interior {
     this.restoreRig();
     this.astronaut.group.visible = true;
     this.scene.remove(this.astronaut.group, this.lumi.group);
+    this.setLumiShadow(true);
     this.lumi.bright = 1;
     this.clearRoom();
   }
@@ -1840,6 +1842,7 @@ export class Interior {
     post.specks = 0;
     if (this.fx) {
       this.fx.group.visible = flag('G13');
+      this.setLumiShadow(!flag('G13'));
       this.fx.setCadet(this.position.x, this.position.y, this.position.z);
     }
   }
@@ -2423,6 +2426,20 @@ export class Interior {
       // Without point lights, a little more of the sky light.
       hemi.intensity *= 1.15;
     }
+  }
+
+  /**
+   * Lumi floats 2 m up, so its key-light shadow lands on the floor as a big dark blob far from it that reads as a stray stain.
+   * With the room light (G13, high and ultra) it casts none inside; outdoors and on low and medium it keeps it.
+   */
+  private setLumiShadow(on: boolean): void {
+    if (on === this.lumiShadow) return;
+    this.lumiShadow = on;
+    this.lumi.group.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      object.userData.castShadowKept ??= object.castShadow;
+      object.castShadow = on && object.userData.castShadowKept === true;
+    });
   }
 
   /** G13: floor pools under the lamps, wall gradient, window shafts and contact shadows. */

@@ -492,6 +492,7 @@ uniform float uMacroOn;
 uniform vec3 uPatchA;
 uniform vec3 uPatchB;
 uniform vec3 uPatchC;
+uniform vec3 uSunDirView;
 #define G_MAC uMacroOn
 // Two octaves are enough for the slow patch noises (a third costs three more texture-free hashes per pixel on a wide ground).
 float gMac( vec2 p ) { return 0.62 * gNoise( p ) + 0.38 * gNoise( p * 2.3 + 7.0 ); }
@@ -534,6 +535,9 @@ const GROUND_COLOR = /* glsl */ `
     diffuseColor.rgb = mix( diffuseColor.rgb, uPatchA, smoothstep( 0.56, 0.6, mid ) * 0.17 );
     diffuseColor.rgb = mix( diffuseColor.rgb, uPatchB, smoothstep( 0.57, 0.61, big ) * 0.15 );
     diffuseColor.rgb = mix( diffuseColor.rgb, uPatchC, smoothstep( 0.6, 0.64, low ) * smoothstep( 0.45, 0.55, mid ) * 0.14 );
+    // Dune relief: slopes that face the Sun take a little more light, lee slopes a little less, so big landforms keep their shape at a distance.
+    float duneFace = dot( normalize( vNormal ), uSunDirView );
+    diffuseColor.rgb *= 1.0 + 0.5 * ( smoothstep( -0.2, 0.8, duneFace ) - 0.5 ) * ( 1.0 - 0.6 * near );
   }
   // Long soft strokes, as if the ground were brushed on: drifts of lighter soil lying with the wind.
   vec2 strokeAt = mix( vec2( vWorldPos.x * 0.045 + vWorldPos.z * 0.02, vWorldPos.z * 0.2 - vWorldPos.x * 0.05 ), wp * vec2( 0.05, 0.06 ) + 9.0, mac );
@@ -662,6 +666,7 @@ export function ground(options: {
       shader.uniforms.uAnime = GLOBALS.anime;
       shader.uniforms.uReliefOn = GLOBALS.relief;
       shader.uniforms.uMacroOn = GLOBALS.macro;
+      shader.uniforms.uSunDirView = GLOBALS.sunDirView;
       const patchColors = options.patches ?? ['#d19a52', '#e3b693', '#a4563a'];
       shader.uniforms.uPatchA = { value: new THREE.Color(patchColors[0]) };
       shader.uniforms.uPatchB = { value: new THREE.Color(patchColors[1]) };
