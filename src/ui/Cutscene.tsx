@@ -281,7 +281,7 @@ function WhyCard({ task, site }: { task: TaskId; site: SiteId }): JSX.Element {
   const keys = whyKeys(task, site);
   const calm = settings.value.lessMotion;
   return (
-    <section class={`cut-goal cut-why ${calm ? 'is-calm' : ''}`} aria-label={t(keys.title)}>
+    <section class={`cut-goal cut-why ${calm ? 'is-calm' : ''}`} aria-label={t(keys.title)} tabIndex={0}>
       <header>
         <small>{t('film.card.kicker')}</small>
         <h2>

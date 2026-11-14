@@ -369,6 +369,7 @@ html {
 .h2-text {
   flex: 1 1 auto;
   min-width: 0;
+  text-wrap: balance;
 }
 
 .dock h2 > svg:first-child {
@@ -378,11 +379,6 @@ html {
 
 .dock h2 .speak + .why-btn {
   margin-left: 8px;
-}
-
-.dock h2 .speak {
-  width: 44px;
-  height: 44px;
 }
 
 /* "Why?": replays the film that says what this is and why it matters. */
@@ -869,6 +865,19 @@ html {
   stroke-width: 0.9;
 }
 
+.gem-mark {
+  display: none;
+  fill: #fff;
+  stroke: var(--navy);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+/* Colour-blind help: every machine's gems get their own shape (circle, triangle, cross, square). */
+.patterns .gem-mark {
+  display: inline;
+}
+
 .cell-life {
   --c: var(--sys-life);
 }
@@ -957,6 +966,7 @@ html {
   display: grid;
   line-height: 1.25;
   min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .module-text b {
@@ -1889,16 +1899,14 @@ html {
 
   .module-text b {
     font-size: 0.8125rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   .module-effect {
     font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   .module-effect em {
@@ -2051,24 +2059,41 @@ html {
   fill: currentColor;
 }
 
-.line-air,
-.legend-air {
+.line-air {
   color: var(--air);
 }
 
-.line-food,
-.legend-food {
+.line-food {
   color: var(--food);
 }
 
-.line-dose,
-.legend-dose,
-.legend-storm {
+.line-dose {
   color: var(--amber);
 }
 
-.line-science,
-.legend-science {
+.line-science {
+  color: var(--science);
+}
+
+/* The legend text stays slate (contrast); only its small icon carries the line colour. */
+.legend {
+  color: var(--slate);
+}
+
+.legend-air svg {
+  color: var(--air);
+}
+
+.legend-food svg {
+  color: var(--food);
+}
+
+.legend-dose svg,
+.legend-storm svg {
+  color: var(--amber);
+}
+
+.legend-science svg {
   color: var(--science);
 }
 
@@ -2237,6 +2262,9 @@ html {
 
 .data-block .link {
   justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .simple {

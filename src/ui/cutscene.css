@@ -271,6 +271,13 @@
   --focus: var(--gold-dk);
 }
 
+/* The start button stays reachable while a tall card scrolls. */
+.cut-goal > .btn {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
 @keyframes cut-card {
   from {
     opacity: 0;
@@ -473,7 +480,7 @@
   }
 
   .cut-goal header small,
-  .cut-goal-block:first-of-type p,
+  .cut-goal:not(.cut-why) .cut-goal-block:first-of-type p,
   .cut-grow {
     display: none;
   }
@@ -484,6 +491,29 @@
 
   .cut-goal-block {
     padding: 8px 12px;
+  }
+
+  .cut-why {
+    padding: 8px 16px;
+    gap: 6px;
+  }
+
+  .cut-why .cut-goal-block p {
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .cut-why .cut-goal-block {
+    padding: 4px 12px;
+  }
+
+  .cut-why h2 {
+    font-size: 1.15rem;
+  }
+
+  .cut-why .cut-why-src {
+    display: block;
+    line-height: 1.2;
   }
 
   .cut-step-icon {

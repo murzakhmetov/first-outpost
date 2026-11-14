@@ -78,7 +78,7 @@
 
   .game.step-eva .lumi-text p {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -241,7 +241,7 @@
 
   .game.in-room .lumi-text p {
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -284,7 +284,7 @@
 
   .game.in-room .lumi-text p {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -340,7 +340,7 @@
   }
 
   .game.step-eva .lumi {
-    left: 160px !important;
+    left: 216px !important;
     right: 350px !important;
     bottom: 112px !important;
     width: auto !important;

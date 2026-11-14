@@ -362,6 +362,7 @@ export function PrintGame({ tool }: { tool: ToolId }): JSX.Element {
               x={pct(top.left + top.width / 2)}
               y={`calc(100% - var(--plate) - ${stack.length + 0.5} * var(--layer))`}
               label={t('mg.print.hintTap')}
+              class={top.left + top.width / 2 > 0.5 ? 'mg-hand-left' : undefined}
             />
           )}
           {done && (

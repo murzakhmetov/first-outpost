@@ -230,16 +230,6 @@ export function Modal(props: { title: string; onClose: () => void; children: Com
   );
 }
 
-/** A labelled bar from empty to full. `danger` turns it red and makes it pulse. */
-export function Bar({ value, max, tone, danger }: { value: number; max: number; tone: string; danger?: boolean }): JSX.Element {
-  const fill = Math.max(0, Math.min(1, value / max));
-  return (
-    <span class={`bar bar-${tone} ${danger ? 'is-danger' : ''}`}>
-      <span class="bar-fill" style={{ width: `${fill * 100}%` }} />
-    </span>
-  );
-}
-
 export function Toggle({ on, onChange, label, hint }: { on: boolean; onChange: (next: boolean) => void; label: string; hint?: string }): JSX.Element {
   return (
     <label class="toggle">

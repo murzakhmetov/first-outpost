@@ -129,7 +129,7 @@
 .mg-fuel-bar i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #ffd166, #ff9f43);
+  background: var(--gold-lt);
   transition: width 0.1s linear;
 }
 
@@ -180,7 +180,7 @@
   color: #ffffff;
   background: rgba(29, 35, 51, 0.8);
   border: 1.5px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 10px rgba(4, 6, 20, 0.4);
+  box-shadow: 0 4px 10px rgba(29, 35, 51, 0.4);
   transition: transform 0.08s ease, background 0.12s ease, box-shadow 0.12s ease;
 }
 
@@ -219,7 +219,7 @@
 
 .mg .mg-pad-btn:not(.is-on) {
   border-color: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 0 0 2px rgba(43, 36, 64, 0.9), 0 6px 16px rgba(4, 6, 20, 0.4);
+  box-shadow: 0 0 0 2px rgba(29, 35, 51, 0.9), 0 6px 16px rgba(29, 35, 51, 0.4);
 }
 
 

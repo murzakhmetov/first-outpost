@@ -380,6 +380,14 @@ function shieldExtra(m: MissionState): string {
   return t('mod.shield.built', { n: Math.round(m.shield * 100) });
 }
 
+/** Colour-blind help: each machine's gems carry their own mark (shown only with the patterns setting). */
+const GEM_MARKS: Record<ModuleId, string> = {
+  life: 'M13 11.5a3.5 3.5 0 1 0 0.01 0z',
+  farm: 'M13 10.5l4 7h-8z',
+  lab: 'M11.5 10h3v2.5h2.5v3h-2.5V18h-3v-2.5H9v-3h2.5z',
+  shield: 'M9.8 11h6.4v6.4H9.8z',
+};
+
 /** One cut gem for one unit of power: a hexagon with a lit top facet. Free cells are outlines. */
 function Gem({ module }: { module: ModuleId | null }): JSX.Element {
   return (
@@ -387,6 +395,7 @@ function Gem({ module }: { module: ModuleId | null }): JSX.Element {
       <polygon class="gem-body" points="13,1 24,9 24,21 13,29 2,21 2,9" />
       {module && <polygon class="gem-top" points="13,1 24,9 13,13 2,9" />}
       {module && <path class="gem-edge" d="M13 13v16M13 13L2 21M13 13l11 8" />}
+      {module && <path class={`gem-mark mark-${module}`} d={GEM_MARKS[module]} />}
     </svg>
   );
 }

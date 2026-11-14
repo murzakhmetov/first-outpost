@@ -900,7 +900,7 @@
   width: 42px;
   height: 56px;
   overflow: visible;
-  filter: drop-shadow(0 4px 6px rgba(4, 6, 20, 0.55));
+  filter: drop-shadow(0 4px 6px rgba(29, 35, 51, 0.55));
   transform-origin: 16px 2px;
   animation: mg-hand-tap 1.3s ease-in-out infinite;
 }
@@ -939,7 +939,8 @@
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.2;
-  white-space: nowrap;
+  width: max-content;
+  max-width: min(150px, 40vw);
   box-shadow: 0 3px 8px rgba(29, 35, 51, 0.35);
   animation: mg-pop-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
 }
@@ -1179,7 +1180,7 @@
   place-items: center;
   border-radius: inherit;
   pointer-events: none;
-  background: rgba(29, 35, 51, 0.55);
+  background: rgba(29, 35, 51, 0.9);
 }
 
 .mg-count-num {
@@ -1337,7 +1338,7 @@
   min-width: 0;
   padding: 0;
   border-radius: 10px;
-  border: 1.5px solid rgba(43, 36, 64, 0.95);
+  border: 1.5px solid rgba(29, 35, 51, 0.95);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 45%),
     radial-gradient(circle at 30% 22%, #3a4270, #171b36 76%);
@@ -1353,10 +1354,10 @@
   border-radius: inherit;
   pointer-events: none;
   background:
-    radial-gradient(circle at 8px 8px, rgba(236, 222, 190, 0.45) 0 1.6px, rgba(20, 16, 40, 0.8) 1.7px 2.5px, transparent 2.6px),
-    radial-gradient(circle at calc(100% - 8px) 8px, rgba(236, 222, 190, 0.45) 0 1.6px, rgba(20, 16, 40, 0.8) 1.7px 2.5px, transparent 2.6px),
-    radial-gradient(circle at 8px calc(100% - 8px), rgba(236, 222, 190, 0.45) 0 1.6px, rgba(20, 16, 40, 0.8) 1.7px 2.5px, transparent 2.6px),
-    radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), rgba(236, 222, 190, 0.45) 0 1.6px, rgba(20, 16, 40, 0.8) 1.7px 2.5px, transparent 2.6px);
+    radial-gradient(circle at 8px 8px, rgba(236, 222, 190, 0.45) 0 1.6px, rgba(29, 35, 51, 0.8) 1.7px 2.5px, transparent 2.6px),
+    radial-gradient(circle at calc(100% - 8px) 8px, rgba(236, 222, 190, 0.45) 0 1.6px, rgba(29, 35, 51, 0.8) 1.7px 2.5px, transparent 2.6px),
+    radial-gradient(circle at 8px calc(100% - 8px), rgba(236, 222, 190, 0.45) 0 1.6px, rgba(29, 35, 51, 0.8) 1.7px 2.5px, transparent 2.6px),
+    radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), rgba(236, 222, 190, 0.45) 0 1.6px, rgba(29, 35, 51, 0.8) 1.7px 2.5px, transparent 2.6px);
 }
 
 .mg-tile:hover:not(:disabled) {
@@ -1556,7 +1557,7 @@
   margin-left: -12%;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 34%, #ffffff 0 30%, #dff6ff 31% 62%, #a9def5 63%);
-  border: 1.5px solid rgba(43, 36, 64, 0.55);
+  border: 1.5px solid rgba(29, 35, 51, 0.55);
   opacity: 0.85;
   animation: mg-puff 1s ease-out infinite;
 }
@@ -1600,7 +1601,7 @@
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
-  text-shadow: var(--text-shadow, 0 1px 2px rgba(6, 8, 24, 0.9));
+  text-shadow: var(--text-shadow, 0 1px 2px rgba(29, 35, 51, 0.9));
 }
 
 /* An <svg> keeps its own shape unless both sides are given, so width and height are set outright. */
@@ -1732,7 +1733,7 @@
   border-radius: 12px;
   border: 2.5px solid #2b2440;
   background:
-    linear-gradient(180deg, transparent 0 32%, rgba(43, 36, 64, 0.35) 32% calc(32% + 2px), transparent calc(32% + 2px) 68%, rgba(43, 36, 64, 0.35) 68% calc(68% + 2px), transparent calc(68% + 2px)),
+    linear-gradient(180deg, transparent 0 32%, rgba(29, 35, 51, 0.35) 32% calc(32% + 2px), transparent calc(32% + 2px) 68%, rgba(29, 35, 51, 0.35) 68% calc(68% + 2px), transparent calc(68% + 2px)),
     linear-gradient(90deg, #56628f 0 70%, #3c4670 70%);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.18), 0 6px 14px rgba(0, 0, 0, 0.4);
 }
@@ -1867,7 +1868,7 @@
   height: 8px;
   border-radius: var(--r-sm);
   overflow: hidden;
-  background: rgba(8, 10, 26, 0.75);
+  background: rgba(29, 35, 51, 0.75);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
@@ -2006,7 +2007,7 @@
   border-radius: 50%;
   color: var(--need);
   background: radial-gradient(circle at 40% 35%, #ffffff, #e6ebf6);
-  box-shadow: 0 4px 12px rgba(4, 6, 20, 0.5);
+  box-shadow: 0 4px 12px rgba(29, 35, 51, 0.5);
   animation: mg-pop-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 
@@ -2043,7 +2044,7 @@
 }
 
 .mg-ring-track {
-  stroke: rgba(11, 15, 34, 0.16);
+  stroke: rgba(29, 35, 51, 0.16);
 }
 
 .mg-ring-fill {
@@ -2190,7 +2191,7 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 700;
-  text-shadow: 0 2px 6px rgba(4, 6, 20, 0.85);
+  text-shadow: 0 2px 6px rgba(29, 35, 51, 0.85);
   pointer-events: none;
   animation: mg-float 0.8s ease-out both;
 }
@@ -2208,7 +2209,7 @@
   border-radius: 50%;
   color: #2a0b10;
   background: var(--mg-bad);
-  box-shadow: 0 0 0 3px rgba(16, 19, 38, 0.9);
+  box-shadow: 0 0 0 3px rgba(29, 35, 51, 0.9);
   animation: mg-pop-in 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.6) both;
 }
 
@@ -2272,9 +2273,9 @@
 
 .mg-tool-name {
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+  text-align: center;
 }
 
 .mg-tool .mg-key {
@@ -2326,7 +2327,7 @@
 }
 
 .mg-tool-icon {
-  border: 2px solid rgba(43, 36, 64, 0.9);
+  border: 2px solid rgba(29, 35, 51, 0.9);
 }
 
 .mg-need {
@@ -2502,7 +2503,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(8, 10, 26, 0.66);
+  background: rgba(29, 35, 51, 0.66);
 }
 
 .mg-strip svg {

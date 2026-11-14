@@ -53,8 +53,6 @@
   --ink: var(--ivory);
   --ink-dim: var(--on-navy-dim);
   --ink-faint: #b9c0d2;
-  --glass: var(--navy);
-  --glass-deep: var(--navy);
   --line: rgba(201, 165, 92, 0.5);
   --line-strong: var(--gold-orn);
   --power: #e4c57e;
@@ -561,8 +559,8 @@
 .speak {
   display: inline-grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   margin-left: 6px;
   border-radius: 50%;
   background: var(--ivory-hi);
@@ -641,53 +639,6 @@
 
 .dim {
   color: var(--ivory-line);
-}
-
-/* Bars: a crisp ivory trough with a gold line; the fill takes the system colour. */
-.bar {
-  display: block;
-  height: 10px;
-  border-radius: 3px;
-  background: var(--ivory-line);
-  box-shadow: inset 0 0 0 1px var(--gold-edge);
-  overflow: hidden;
-}
-
-.bar-fill {
-  display: block;
-  height: 100%;
-  background: currentColor;
-  transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.bar-air {
-  color: var(--sys-life);
-}
-
-.bar-food {
-  color: var(--sys-green);
-}
-
-.bar-dose {
-  color: #b8467a;
-}
-
-.bar.is-danger .bar-fill {
-  background: var(--red-fill);
-  animation: pulse 1s ease-in-out infinite;
-}
-
-/* Colour-blind help: bars get a pattern, so they do not rely on colour alone. */
-.patterns .bar-air .bar-fill {
-  background-image: repeating-linear-gradient(90deg, transparent 0 6px, rgba(0, 0, 0, 0.35) 6px 8px);
-}
-
-.patterns .bar-food .bar-fill {
-  background-image: repeating-linear-gradient(45deg, transparent 0 5px, rgba(0, 0, 0, 0.35) 5px 8px);
-}
-
-.patterns .bar-dose .bar-fill {
-  background-image: repeating-linear-gradient(-45deg, transparent 0 5px, rgba(0, 0, 0, 0.4) 5px 8px);
 }
 
 @keyframes pulse {
@@ -1308,6 +1259,11 @@
 
 .logo h1 span + span {
   margin-left: 0.28em;
+}
+
+/* a place where a long word pair (Russian) may wrap */
+.logo h1 span + span::before {
+  content: "\200b";
 }
 
 .logo-rule {
