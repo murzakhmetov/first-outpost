@@ -519,9 +519,10 @@ const GROUND_COLOR = /* glsl */ `
   float viewDist = length( vViewPosition );
   float near = 1.0 - smoothstep( 35.0, 130.0, viewDist );
   float mac = G_MAC;
-  vec2 wp = vWorldPos.xz + gWarp( vWorldPos.xz ) * mac;
+  vec2 wp = vWorldPos.xz;
+  if ( mac > 0.0 ) wp += gWarp( vWorldPos.xz ) * mac;
   // Blobs and ripples seen flat-on to the ground squash into dashes: fade them out towards a grazing view (G12 only).
-  float flatOn = mix( 1.0, smoothstep( 0.14, 0.6, abs( dot( normalize( vNormal ), normalize( vViewPosition ) ) ) ), mac );
+  float flatOn = mix( 1.0, smoothstep( 0.3, 0.85, abs( dot( normalize( vNormal ), normalize( vViewPosition ) ) ) ), mac );
   float patches = gFbm( vWorldPos.xz * 0.1 );
   diffuseColor.rgb *= 0.82 + 0.36 * patches;
   if ( mac > 0.0 ) {
@@ -606,7 +607,8 @@ const GROUND_RELIEF = /* glsl */ `
     if ( uRipple > 0.0 ) {
       // The wind ripples of the colour term, as a small ridge too.
       vec2 rippleDir = vec2( 0.82, 0.57 );
-      vec2 rp = vWorldPos.xz + gWarp( vWorldPos.xz ) * uMacroOn;
+      vec2 rp = vWorldPos.xz;
+      if ( uMacroOn > 0.0 ) rp += gWarp( vWorldPos.xz ) * uMacroOn;
       float ripplePhase = dot( rp, rippleDir ) * 5.0 + gNoise( rp * 0.5 ) * 9.0;
       float rippleMask = smoothstep( 0.35, 0.7, gFbm( vWorldPos.xz * 0.1 ) ) * mix( 1.0, 0.35 + 0.65 * smoothstep( 0.25, 0.65, gNoise( rp * 0.17 + 71.0 ) ), uMacroOn );
       slope += rippleDir * ( cos( ripplePhase ) * 5.0 * 0.014 * rippleMask );

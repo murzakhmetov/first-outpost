@@ -170,8 +170,8 @@ const NUMBER_KEYS = ['sunPower', 'glowAmount', 'haloAmount', 'stars', 'clouds', 
 const FILL_OFFSET = new THREE.Vector3(-40, 80, -30);
 
 /** G14 title balance: the light stands this much higher, the sky light and the camera-side fill grow. */
-const TITLE_LIFT = 0.26;
-const TITLE_AMBIENT = 0.3;
+const TITLE_LIFT = 0.55;
+const TITLE_AMBIENT = 0.5;
 const TITLE_FILL = 0.45;
 const UP = new THREE.Vector3(0, 1, 0);
 const TITLE_FILL_COLOR = new THREE.Color('#ffc9a0');

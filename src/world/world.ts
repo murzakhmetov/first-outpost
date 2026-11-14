@@ -280,7 +280,8 @@ export class World {
         quality.pointLights !== previous.pointLights ||
         quality.shadows !== previous.shadows ||
         quality.groundDetail !== previous.groundDetail ||
-        quality.scatter !== previous.scatter);
+        quality.scatter !== previous.scatter ||
+        quality.interiorLight !== previous.interiorLight);
     this.engine.setQuality(quality);
     if (this.ready) this.daylight.configureShadows(quality.shadowSize, quality.shadows, quality.shadowWide, quality.shadowRadius);
     if (!rebuild) return;
