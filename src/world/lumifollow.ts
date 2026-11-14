@@ -73,13 +73,17 @@ export function walkGoal(out: Vec3, x: number, y: number, z: number, yaw: number
 
 /** The top of the rover's tallest part (the mast) above its ground point, with room for the tilt on slopes. */
 export const ROVER_TOP = 3.9;
-/** Driving: above the roof, a little behind its middle, clear of the mast. */
-export const DRIVE_GOAL_HEIGHT = 5.1;
+/**
+ * Driving: above the front half of the roof (the mast is behind it), so Lumi shows in the chase camera
+ * and not behind the HUD. 4.35 m is the roof (3.2 m) plus the goal's clear distance.
+ */
+export const DRIVE_GOAL_HEIGHT = 4.35;
+export const DRIVE_GOAL_AHEAD = 2;
 
 export function driveGoal(out: Vec3, x: number, y: number, z: number, heading: number): Vec3 {
-  out.x = x - Math.sin(heading) * 1;
+  out.x = x + Math.sin(heading) * DRIVE_GOAL_AHEAD;
   out.y = y + DRIVE_GOAL_HEIGHT;
-  out.z = z - Math.cos(heading) * 1;
+  out.z = z + Math.cos(heading) * DRIVE_GOAL_AHEAD;
   return out;
 }
 

@@ -204,9 +204,9 @@ export class Base {
     hab.position.set(HAB.x, 0, HAB.z);
     this.group.add(hab);
 
-    this.colliders.push({ x: HAB.x, z: HAB.z, r: 7.3 });
-    this.colliders.push({ x: HAB.x, z: HAB.z + 7.6, r: 1.9 });
-    this.colliders.push({ x: HAB.x - 3.6, z: HAB.z + 6.5, r: 1.15 }, { x: HAB.x + 3.6, z: HAB.z + 6.5, r: 1.15 });
+    this.colliders.push({ x: HAB.x, z: HAB.z, r: 7.3, h: 9 });
+    this.colliders.push({ x: HAB.x, z: HAB.z + 7.6, r: 1.9, h: 3.5 });
+    this.colliders.push({ x: HAB.x - 3.6, z: HAB.z + 6.5, r: 1.15, h: 3 }, { x: HAB.x + 3.6, z: HAB.z + 6.5, r: 1.15, h: 3 });
   }
 
   // -------------------------------------------------------------------------
@@ -251,8 +251,8 @@ export class Base {
 
     farm.position.set(FARM.x, 0, FARM.z);
     this.group.add(farm);
-    for (const dz of [-4.4, 0, 4.4]) this.colliders.push({ x: FARM.x, z: FARM.z + dz, r: 4.5 });
-    this.colliders.push({ x: FARM.x - 5, z: FARM.z - 1.5, r: 1.6 });
+    for (const dz of [-4.4, 0, 4.4]) this.colliders.push({ x: FARM.x, z: FARM.z + dz, r: 4.5, h: 4.5 });
+    this.colliders.push({ x: FARM.x - 5, z: FARM.z - 1.5, r: 1.6, h: 3 });
   }
 
   // -------------------------------------------------------------------------
@@ -269,8 +269,8 @@ export class Base {
     this.dish = dish;
     lab.position.set(LAB.x, 0, LAB.z);
     this.group.add(lab);
-    for (const dz of [-3.6, 0, 3.6]) this.colliders.push({ x: LAB.x, z: LAB.z + dz, r: 3.1 });
-    this.colliders.push({ x: LAB.x, z: LAB.z + 7.6, r: 1.3 });
+    for (const dz of [-3.6, 0, 3.6]) this.colliders.push({ x: LAB.x, z: LAB.z + dz, r: 3.1, h: 9.5 });
+    this.colliders.push({ x: LAB.x, z: LAB.z + 7.6, r: 1.3, h: 3 });
   }
 
   // -------------------------------------------------------------------------
@@ -322,7 +322,7 @@ export class Base {
     battery.position.set(BATTERY.x, 0, BATTERY.z);
     battery.rotation.y = Math.atan2(-BATTERY.x, -BATTERY.z);
     this.group.add(battery);
-    this.colliders.push({ x: BATTERY.x, z: BATTERY.z, r: 2.4 });
+    this.colliders.push({ x: BATTERY.x, z: BATTERY.z, r: 2.4, h: 3.5 });
 
     // Cables: light pulses run along them, brighter when a module gets more power.
     const cable = (to: 'life' | 'farm' | 'lab' | 'shield', color: string, points: [number, number, number][]): void => {
@@ -406,7 +406,7 @@ export class Base {
     const steps = 34;
     for (let i = 0; i <= steps; i++) {
       const angle = from + ((to - from) * i) / steps;
-      const spot = { x: HAB.x + Math.cos(angle) * 8.3, z: HAB.z + Math.sin(angle) * 8.3, r: 0 };
+      const spot = { x: HAB.x + Math.cos(angle) * 8.3, z: HAB.z + Math.sin(angle) * 8.3, r: 0, h: 4 };
       this.wallColliders.push(spot);
       this.colliders.push(spot);
     }
@@ -477,7 +477,7 @@ export class Base {
       gem.position.set(x, top + 1.2, z);
       group.add(pillar, cap, gem);
       this.plazaCrystals.push(gem);
-      this.colliders.push({ x: PLAZA.x + x, z: PLAZA.z + z, r: 0.3 });
+      this.colliders.push({ x: PLAZA.x + x, z: PLAZA.z + z, r: 0.3, h: 2.4 });
     }
     this.group.add(group);
   }

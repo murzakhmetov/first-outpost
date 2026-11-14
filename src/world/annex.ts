@@ -112,7 +112,7 @@ export class Annex {
     this.group.add(this.decorGroup);
     // Room for decorations to stop the cadet; unused ones have no size.
     for (let i = 0; i < 64; i++) {
-      const collider: Collider = { x: 0, z: 0, r: 0 };
+      const collider: Collider = { x: 0, z: 0, r: 0, h: 3 };
       this.decorColliders.push(collider);
       this.colliders.push(collider);
     }
@@ -175,7 +175,7 @@ export class Annex {
     root.add(pad, scaffold);
 
     // The building stops the cadet once its scaffolding goes up.
-    const collider: Collider = { x: plot.x, z: plot.z, r: 0 };
+    const collider: Collider = { x: plot.x, z: plot.z, r: 0, h: 8 };
     this.colliders.push(collider);
     return { id, root, pad, scaffold, plan: null, building: null, dome: null, collider, state: 'empty', shown: 0 };
   }

@@ -274,7 +274,7 @@ export class Props {
     flame.visible = false;
     lander.add(flame);
     this.landerFlame = flame;
-    this.colliders.push({ x: LANDER.x, z: LANDER.z, r: 3.6 });
+    this.colliders.push({ x: LANDER.x, z: LANDER.z, r: 3.6, h: 8.5 });
   }
 
   private buildRover(): void {
@@ -355,7 +355,7 @@ export class Props {
       crate.rotation.y = turn;
       crate.scale.setScalar(size);
       this.group.add(crate);
-      this.colliders.push({ x, z, r: size * 0.75 });
+      this.colliders.push({ x, z, r: size * 0.75, h: size * 1.6 });
     }
   }
 

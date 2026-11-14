@@ -76,7 +76,7 @@ export class Scenery {
       this.group.add(butte);
       // Only the near one can be reached: the cadet stops at the foot of its slope.
       // The foot of its slope of fallen rock reaches about 16 m (at size 1) from the middle.
-      if (index === 0) this.colliders.push({ x, z, r: 16 * size });
+      if (index === 0) this.colliders.push({ x, z, r: 16 * size, h: 16 * size });
     });
   }
 
@@ -167,7 +167,7 @@ export class Scenery {
       model.rotation.y = index * 1.7 + 0.6;
       model.scale.setScalar(shown.size);
       this.group.add(model);
-      if (shown.radius > 0) this.colliders.push({ x: find.x, z: find.z, r: shown.radius });
+      if (shown.radius > 0) this.colliders.push({ x: find.x, z: find.z, r: shown.radius, h: shown.size * 1.2 });
     });
   }
 

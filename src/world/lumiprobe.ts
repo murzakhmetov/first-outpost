@@ -39,7 +39,7 @@ export function lumiProbeStep(pos: Vec3, dt: number, teleport: boolean, counting
     if (sphereOverlaps(pos, LUMI_RADIUS, solids)) probe.bodyOverlaps++;
     if (teleport) probe.teleports++;
     else if (prev.has) {
-      const speed = Math.hypot(pos.x - prev.x, pos.y - prev.y, pos.z - prev.z) / dt;
+      const speed = Math.hypot(pos.x - prev.x, pos.y - prev.y, pos.z - prev.z) / Math.max(dt, 1 / 60);
       probe.maxSpeed = Math.max(probe.maxSpeed, speed);
       if (speed > LUMI_TOP_SPEED) probe.fast++;
     }
