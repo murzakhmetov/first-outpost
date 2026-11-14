@@ -18,38 +18,6 @@
   --gi-r3b: #679dd6;
 }
 
-/* ----- Buttons: cream pills, the icon in a dark disc ------------------------------- */
-
-.btn-primary {
-  background: var(--gi-cream) !important;
-  color: var(--gi-ink) !important;
-  border: 0 !important;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6), 0 6px 16px rgba(0, 0, 0, 0.3) !important;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--gi-cream-hi) !important;
-  box-shadow: inset 0 0 0 2px #fff, 0 0 0 3px rgba(242, 196, 109, 0.55), 0 8px 20px rgba(0, 0, 0, 0.32) !important;
-}
-
-.btn-primary > svg:first-child {
-  box-sizing: border-box;
-  flex: none;
-  width: 30px;
-  height: 30px;
-  margin-left: -8px;
-  padding: 6px;
-  border-radius: 50%;
-  background: #3a4058;
-  color: var(--gi-gold);
-  box-shadow: 0 0 0 2px rgba(242, 196, 109, 0.45);
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  filter: grayscale(0.4);
-}
-
 /* ----- Use-button pills, right of the middle ------------------------------------------ */
 
 .gi-prompts {
@@ -186,17 +154,6 @@
 }
 
 /* ----- The round buttons at the top right ---------------------------------------------------- */
-
-.icon-btn {
-  background: rgba(14, 17, 34, 0.55) !important;
-  border: 1.5px solid rgba(236, 229, 216, 0.55) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
-}
-
-.icon-btn:hover:not(:disabled) {
-  background: rgba(236, 229, 216, 0.22) !important;
-  border-color: var(--gi-cream) !important;
-}
 
 .gi-hud-btn {
   position: relative;

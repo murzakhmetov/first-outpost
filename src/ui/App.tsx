@@ -1,7 +1,5 @@
 import '@fontsource-variable/nunito';
-import '@fontsource-variable/unbounded';
-import '@fontsource/philosopher/400.css';
-import '@fontsource/philosopher/700.css';
+import '@fontsource/prata/400.css';
 import './styles.css';
 import './theme.css';
 import './outpost.css';

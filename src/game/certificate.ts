@@ -27,7 +27,7 @@ function star(ctx: CanvasRenderingContext2D, x: number, y: number, radius: numbe
 function fitText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, size: number, font: string): void {
   let current = size;
   do {
-    ctx.font = `${font} ${current}px 'Unbounded Variable', 'Nunito Variable', system-ui, sans-serif`;
+    ctx.font = `${font} ${current}px 'Prata', 'Nunito Variable', system-ui, serif`;
     current -= 2;
   } while (ctx.measureText(text).width > maxWidth && current > 14);
 }

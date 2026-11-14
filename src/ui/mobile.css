@@ -630,29 +630,122 @@
   }
 }
 
-/* ----- Phones on their side: the title menu fits (longer Russian words included) ------------------ */
+/* ----- Title screen on phones ------------------------------------------------------------------------
+   Upright: the plaque, the menu and the credit line stack in one column. On their side: the plaque and
+   the menu stand next to each other and the language and settings buttons keep the right-hand corner. */
+@media (max-width: 600px) {
+  .title-main {
+    margin-left: 0;
+    gap: 14px;
+  }
+
+  .logo {
+    padding: 12px 14px 12px;
+  }
+
+  .emblem {
+    width: 92px;
+  }
+
+  .logo-tag {
+    font-size: 0.8125rem;
+  }
+
+  .logo-line {
+    font-size: 0.9375rem;
+  }
+
+  .menu {
+    padding: 16px 14px;
+  }
+
+  .menu-row {
+    gap: 8px;
+  }
+
+  .menu-row .btn {
+    gap: 8px;
+    padding-inline: 6px;
+    font-size: 0.9375rem;
+  }
+
+  .menu-row .btn > svg:first-child:not(:last-child) {
+    width: 28px;
+    height: 28px;
+  }
+
+  .title-foot {
+    gap: 8px;
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .title-foot::before,
+  .title-foot::after {
+    display: none;
+  }
+}
+
 @media (max-height: 520px) and (min-aspect-ratio: 4/5) {
-  .title .logo-line {
+  .title-bar {
+    position: absolute;
+    right: max(10px, env(safe-area-inset-right));
+    top: 8px;
+    margin: 0;
+  }
+
+  .title-main {
+    grid-template-columns: minmax(0, 290px) minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+    width: min(660px, calc(100% - 210px));
+    margin: 0;
+  }
+
+  .logo {
+    padding: 12px 12px;
+  }
+
+  .emblem {
+    width: 64px;
+  }
+
+  .logo-tag {
+    margin-top: 2px;
+    font-size: 0.75rem;
+  }
+
+  .logo h1 {
+    font-size: 1.625rem;
+  }
+
+  .logo-rule,
+  .logo-line {
     display: none;
   }
 
-  .title .menu {
+  .menu {
     gap: 6px;
+    padding: 12px 14px;
   }
 
-  .title .menu .btn {
-    min-height: 38px;
-    padding-block: 3px;
-    font-size: 0.88rem;
-    line-height: 1.1;
+  .menu .btn {
+    min-height: 44px;
+    font-size: 0.9375rem;
   }
 
-  .title .menu .btn .count {
-    margin-left: 6px;
+  .menu .btn-primary {
+    min-height: 46px;
+    font-size: 1rem;
   }
 
-  .title .title-foot {
-    padding-bottom: 2px;
+  .menu-row {
+    grid-template-columns: 1fr;
+  }
+
+  .title-foot {
+    padding-block: 6px;
+    font-size: 0.75rem;
   }
 }
 

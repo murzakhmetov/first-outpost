@@ -13,6 +13,7 @@ export const en: Record<string, string> = {
   'app.title': 'First Outpost',
   'app.canvas': '3D view of the outpost',
   'app.subtitle': 'Junior Astronaut Mission Trainer',
+  'app.emblem': 'Emblem: the outpost dome on the Moon under a star',
   'app.tagline': 'Run an outpost on the Moon or Mars. Every choice costs something.',
   'app.dataLine': 'Real space weather: NASA DONKI · Real Mars weather: NASA Curiosity rover',
 

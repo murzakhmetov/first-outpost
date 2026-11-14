@@ -216,11 +216,11 @@ export function SettingsPanel(): JSX.Element {
         <Toggle on={s.showFps} onChange={(showFps) => updateSettings({ showFps })} label={t('set.showFps')} />
 
         <h3>{t('set.sound')}</h3>
-        <label class="slider">
+        <label class="slider" style={{ '--fill': `${Math.round(s.volume * 100)}%` } as never}>
           <span>{t('set.volume')}</span>
           <input type="range" min="0" max="1" step="0.05" value={s.volume} onInput={(event) => updateSettings({ volume: Number((event.target as HTMLInputElement).value) })} />
         </label>
-        <label class="slider">
+        <label class="slider" style={{ '--fill': `${Math.round(s.music * 100)}%` } as never}>
           <span>{t('set.music')}</span>
           <input type="range" min="0" max="1" step="0.05" value={s.music} onInput={(event) => updateSettings({ music: Number((event.target as HTMLInputElement).value) })} />
         </label>

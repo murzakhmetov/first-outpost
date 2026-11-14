@@ -1,74 +1,186 @@
-/* First Outpost — the adventure-game look.
-   Loaded after styles.css and laid over it: slate glass panels with a thin gold
-   frame, pill buttons, a round map in the corner, the week as a quest list, and
-   Lumi speaking the way characters speak in story games. */
+/* First Outpost — the interface look: ivory and gold, an anime-RPG menu style.
+   This sheet holds the design tokens and the base components (panels, buttons, toggles, sliders,
+   chips, tooltips, modals, the title and loading screens). styles.css has the layout of each screen
+   and loads first; this sheet loads after it. */
 
 :root {
-  --ink: #f6f1e6;
-  --ink-dim: #cfcad9;
-  --ink-faint: #9c98b0;
-  --gold: #ecd297;
-  --gold-deep: #c9a45c;
-  --cream: #f4eddd;
-  --cream-ink: #384058;
-  --glass: rgba(27, 32, 54, 0.84);
-  --glass-deep: rgba(14, 17, 34, 0.93);
-  --line: rgba(236, 222, 190, 0.2);
-  --line-strong: rgba(236, 222, 190, 0.46);
-  --r-lg: 18px;
-  --r-md: 12px;
-  --r-sm: 8px;
-  --shadow: 0 16px 44px rgba(4, 6, 20, 0.55);
-  --font-display: 'Philosopher', 'Nunito Variable', system-ui, serif;
-  --text-shadow: 0 1px 2px rgba(6, 8, 24, 0.9), 0 0 10px rgba(6, 8, 24, 0.55);
+  /* Ivory paper */
+  --ivory: #f4eee2;
+  --ivory-hi: #fbf7ee;
+  --ivory-line: #e8ddc8;
+  /* Gold: ornament lines and borders are --gold / --gold-edge; text on ivory uses --gold-dk only */
+  --gold: #c9a55c;
+  --gold-orn: #c9a55c; /* ornament: never re-mapped on ivory */
+  --gold-lt: #e4c57e;
+  --gold-hi: #f2d58a;
+  --gold-edge: #a8822e;
+  --gold-dk: #7a5a18;
+  /* Text on ivory */
+  --slate: #3b4252;
+  --muted: #4a5262;
+  /* Navy: dialogue band, secondary buttons, dark surfaces */
+  --navy: #1d2333;
+  --navy-2: #2c3550;
+  --on-navy: #f4eee2;
+  --on-navy-dim: #dde1ec;
+  /* One colour per base system */
+  --sys-life: #4a7fd6;
+  --sys-green: #3fa35f;
+  --sys-lab: #8e6cd8;
+  --sys-robot: #ee7b2e;
+  --red: #a63d2f;
+  --red-fill: #c8402f;
+  --amber: #8a5a00;
+  --amber-fill: #e0a030;
+  --green-text: #256b3d;
+  --blue-text: #2f5fb0;
+  --violet-text: #5b3fa8;
+
+  /* Shape */
+  --r-lg: 6px;
+  --r-md: 5px;
+  --r-sm: 4px;
+  --shadow: 0 6px 18px rgba(29, 35, 51, 0.3);
+  --ring: 0 0 0 2px var(--gold-edge), 0 0 0 4px var(--ivory), 0 0 0 5px var(--gold-edge);
+
+  /* Type */
+  --font-display: 'Prata', 'Nunito Variable', Georgia, serif;
+
+  /* Names the screens that are not rebuilt yet still use. On a dark surface (over the 3D world, on navy)
+     text is ivory and ornament is gold; ivory panels re-map them below. */
+  --ink: var(--ivory);
+  --ink-dim: var(--on-navy-dim);
+  --ink-faint: #b9c0d2;
+  --glass: var(--navy);
+  --glass-deep: var(--navy);
+  --line: rgba(201, 165, 92, 0.5);
+  --line-strong: var(--gold-orn);
+  --power: #e4c57e;
+  --air: #6f9ae6;
+  --food: #5fc47f;
+  --dose: #ff7ab8;
+  --science: #b79cff;
+  --shield: #ff9a5c;
+  --good: #7ad79a;
+  --bad: #ff8f84;
+  --warn: #f2c15e;
+  --link: #a9c8ff;
+  --focus: var(--gold-lt);
+  --cream: var(--ivory);
+  --cream-ink: var(--slate);
+  --text-shadow: 0 1px 2px rgba(29, 35, 51, 0.9);
 }
 
-/* ----- Panels --------------------------------------------------------------- */
-
-.glass,
+/* Ivory surfaces: the colours the old dark theme used for text become the dark-on-ivory ones. */
 .card,
 .sheet,
 .modal,
-.lumi {
-  background: linear-gradient(172deg, rgba(40, 47, 78, 0.9), rgba(16, 19, 38, 0.94));
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+.dock,
+.glass,
+.tip,
+.term-pop {
+  --ink: var(--slate);
+  --ink-dim: var(--muted);
+  --ink-faint: var(--muted);
+  --gold: var(--gold-dk);
+  --line: var(--ivory-line);
+  --line-strong: var(--gold-edge);
+  --good: var(--green-text);
+  --bad: var(--red);
+  --warn: var(--amber);
+  --power: #a8780f;
+  --air: var(--sys-life);
+  --food: var(--sys-green);
+  --dose: #b8467a;
+  --science: var(--sys-lab);
+  --shield: var(--sys-robot);
+  --link: var(--blue-text);
+  --focus: var(--gold-dk);
+  color: var(--slate);
 }
 
-/* A second, thinner frame just inside the edge. */
+/* ----- Focus, scrollbars --------------------------------------------------------- */
+
+#ui :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+#ui * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-edge) transparent;
+}
+
+#ui ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#ui ::-webkit-scrollbar-thumb {
+  background: var(--gold-orn);
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background-clip: padding-box;
+}
+
+#ui ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ----- Panels and docks ------------------------------------------------------------
+   Opaque ivory, a gold line and a second gold line inside it, a diamond on each corner. */
+
 .card,
 .sheet,
-.modal {
-  outline: 1px solid rgba(236, 222, 190, 0.13);
-  outline-offset: -6px;
+.modal,
+.dock,
+.glass {
+  position: relative;
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), var(--shadow);
 }
 
-@media (min-width: 900px) {
-  .card,
-  .sheet,
-  .modal {
-    background: linear-gradient(172deg, rgba(40, 47, 78, 0.8), rgba(16, 19, 38, 0.88));
-  }
+.card::before,
+.sheet::before,
+.modal::before,
+.dock::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    var(--diamond) left top / 14px 14px no-repeat,
+    var(--diamond) right top / 14px 14px no-repeat,
+    var(--diamond) left bottom / 14px 14px no-repeat,
+    var(--diamond) right bottom / 14px 14px no-repeat;
+}
+
+:root {
+  --diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 1L13 7L7 13L1 7Z' fill='%23C9A55C' stroke='%237A5A18' stroke-width='1.2'/%3E%3C/svg%3E");
 }
 
 .card h2,
 .sheet-head h2,
 .modal-head h2 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 400;
   font-size: 1.3rem;
-  letter-spacing: 0.01em;
-  color: var(--gold);
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--slate);
 }
 
 .card h2 {
-  padding-bottom: 9px;
-  border-bottom: 1px solid transparent;
-  border-image: linear-gradient(90deg, var(--line-strong), rgba(236, 222, 190, 0.08) 85%, transparent) 1;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gold-orn);
 }
 
 .card-foot {
-  background: linear-gradient(180deg, transparent, rgba(14, 17, 34, 0.97) 34%);
+  background: var(--ivory);
+  border-top: 1px solid var(--ivory-line);
 }
 
 .card-foot.two {
@@ -76,66 +188,870 @@
 }
 
 .card-foot .btn {
-  letter-spacing: 0;
   padding-inline: 0.8em;
   line-height: 1.15;
 }
 
-/* ----- Buttons -------------------------------------------------------------- */
+/* Section titles: a serif line with a diamond in front and a rule behind. */
+#ui h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--gold);
+}
+
+#ui h3::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gold-orn);
+  transform: rotate(45deg);
+}
+
+#ui h3::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-orn);
+  opacity: 0.55;
+}
+
+#ui h3:first-child {
+  margin-top: 0;
+}
+
+#ui h4 {
+  margin: 12px 0 6px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+/* ----- Buttons ------------------------------------------------------------------------
+   primary: gold; secondary (soft): navy with ivory text; ghost: ivory; danger: red.
+   A leading icon sits in a round medallion with a gold ring. */
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65em;
+  min-height: 48px;
+  padding: 0.5em 1.1em;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--gold-edge);
+  background: var(--navy);
+  color: var(--on-navy);
   font-weight: 800;
-  letter-spacing: 0.015em;
-  background: rgba(244, 237, 221, 0.09) !important;
-  border: 1px solid var(--line-strong) !important;
-  color: var(--ink) !important;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
 .btn:hover:not(:disabled) {
-  background: rgba(244, 237, 221, 0.2) !important;
+  background: var(--navy-2);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+}
+
+.btn > svg:first-child:not(:last-child) {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  margin-left: -6px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--navy-2);
+  color: var(--gold-lt);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, #fbf5e7, #e9dcbc) !important;
-  border-color: #fffaf0 !important;
-  color: var(--cream-ink) !important;
-  box-shadow: 0 6px 20px rgba(236, 210, 151, 0.28), inset 0 -2px 0 rgba(160, 130, 70, 0.25);
+  background: var(--gold-lt);
+  color: var(--navy);
+  box-shadow: inset 0 0 0 3px var(--gold-lt), inset 0 0 0 4px var(--gold-edge);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ffffff, #f2e6c8) !important;
+  background: var(--gold-hi);
+  box-shadow: inset 0 0 0 3px var(--gold-hi), inset 0 0 0 4px var(--gold-edge);
+}
+
+.btn-primary > svg:first-child:not(:last-child) {
+  background: var(--navy);
+  color: var(--gold-lt);
+  box-shadow: none;
 }
 
 .btn-ghost {
-  background: transparent !important;
-  border-color: var(--line) !important;
-  color: var(--ink-dim) !important;
+  background: var(--ivory-hi);
+  color: var(--slate);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--ivory);
+}
+
+.btn-ghost > svg:first-child:not(:last-child) {
+  background: none;
+  box-shadow: none;
+  color: var(--gold-dk);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-left: 0;
 }
 
 .btn-danger {
-  background: rgba(255, 110, 122, 0.2) !important;
-  border-color: rgba(255, 130, 140, 0.6) !important;
+  background: var(--red);
+  border-color: #7d2a20;
+  color: #fff;
 }
 
+.btn-danger:hover:not(:disabled) {
+  background: #8f3226;
+}
+
+.btn-wide {
+  width: 100%;
+}
+
+.btn-small {
+  min-height: 44px;
+  font-size: 0.9375rem;
+  padding: 0.35em 1em;
+}
+
+/* Round icon button: an ivory square with a double gold ring. */
 .icon-btn {
-  background: rgba(18, 22, 42, 0.62) !important;
-  border: 1px solid rgba(255, 255, 255, 0.34) !important;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  color: var(--slate);
+  box-shadow: var(--ring);
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-.icon-btn:hover {
-  background: rgba(52, 60, 96, 0.82) !important;
+.icon-btn:hover:not(:disabled) {
+  background: var(--ivory-hi);
 }
 
+.icon-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.icon-btn.is-active {
+  background: var(--gold-lt);
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+}
+
+/* Language switch: a navy plate with a gold line, the language in use filled gold. */
 .lang {
-  background: rgba(18, 22, 42, 0.62);
-  border-color: rgba(255, 255, 255, 0.28);
+  display: inline-flex;
+  padding: 3px;
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
+  box-shadow: 0 0 0 3px var(--navy), 0 0 0 4px var(--gold-orn);
+  margin: 4px;
+}
+
+.lang button {
+  min-width: 52px;
+  min-height: 44px;
+  border-radius: 2px;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  color: var(--on-navy);
+}
+
+.lang button:hover:not(.is-on) {
+  background: var(--navy-2);
 }
 
 .lang button.is-on {
-  background: var(--cream);
-  color: var(--cream-ink);
+  background: var(--gold-orn);
+  color: var(--navy);
+}
+
+.lang button:focus-visible {
+  outline-color: var(--gold-lt);
+}
+
+/* ----- Chips, data badges -------------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: var(--r-sm);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  background: var(--ivory-hi);
+  color: var(--slate);
+  border: 1px solid var(--gold-orn);
+  white-space: nowrap;
+}
+
+.chip b {
+  font-weight: 900;
+}
+
+.chip-good {
+  color: var(--green-text);
+  background: #e6f2e8;
+  border-color: var(--sys-green);
+}
+
+.chip-bad {
+  color: var(--red);
+  background: #f8e6e2;
+  border-color: var(--red-fill);
+}
+
+.chip-note {
+  color: var(--muted);
+  white-space: normal;
+}
+
+.chip-word {
+  color: inherit;
+  font-weight: 600;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.5;
+  background: var(--ivory-hi);
+  color: var(--muted);
+  border: 1px solid var(--gold-orn);
+}
+
+.tag-real {
+  background: #e4edfb;
+  color: var(--blue-text);
+  border-color: var(--sys-life);
+}
+
+.tag-model {
+  background: #ede8fa;
+  color: var(--violet-text);
+  border-color: var(--sys-lab);
+}
+
+.tag-live {
+  background: #e6f2e8;
+  color: var(--green-text);
+  border-color: var(--sys-green);
+}
+
+.link {
+  color: var(--link);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* A glossary word: dark gold with a dotted line; tap it for the short explanation. */
+.term-wrap {
+  position: relative;
+  display: inline;
+}
+
+#ui .term {
+  display: inline;
+  font-weight: 800;
+  color: var(--gold);
+  border-bottom: 2px dotted currentColor;
+}
+
+/* Tooltips and word explanations: a small ivory plate. */
+.term-pop,
+.tip {
+  position: absolute;
+  left: 0;
+  top: 1.7em;
+  z-index: 30;
+  width: min(280px, 70vw);
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--ivory), inset 0 0 0 3px var(--gold-orn), var(--shadow);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--slate);
+  white-space: normal;
+}
+
+.speak {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--ivory-hi);
+  color: var(--slate);
+  box-shadow: 0 0 0 1.5px var(--gold-orn);
+  vertical-align: middle;
+  flex: none;
+}
+
+.speak:hover {
+  background: var(--ivory);
+}
+
+.speak.is-on {
+  background: var(--gold-lt);
+  color: var(--navy);
+}
+
+.sub {
+  font-size: 0.8125rem;
+  color: var(--ink-dim);
+}
+
+.hint,
+.note {
+  font-size: 0.875rem;
+  color: var(--ink-dim);
+}
+
+.warn {
+  color: var(--warn) !important;
+}
+
+.strong {
+  font-weight: 800;
+  color: var(--red);
+}
+
+.danger {
+  color: var(--bad);
+  font-weight: 800;
+}
+
+/* Stars: gold when earned, an ivory outline otherwise. */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star {
+  color: var(--ivory-line);
+}
+
+.star.is-on {
+  color: var(--gold);
+}
+
+.stars-big .star.is-on {
+  animation: star-pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+@keyframes star-pop {
+  from {
+    transform: scale(0) rotate(-40deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.lit {
+  color: var(--gold);
+}
+
+.dim {
+  color: var(--ivory-line);
+}
+
+/* Bars: a crisp ivory trough with a gold line; the fill takes the system colour. */
+.bar {
+  display: block;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--ivory-line);
+  box-shadow: inset 0 0 0 1px var(--gold-edge);
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  background: currentColor;
+  transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.bar-air {
+  color: var(--sys-life);
+}
+
+.bar-food {
+  color: var(--sys-green);
+}
+
+.bar-dose {
+  color: #b8467a;
+}
+
+.bar.is-danger .bar-fill {
+  background: var(--red-fill);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* Colour-blind help: bars get a pattern, so they do not rely on colour alone. */
+.patterns .bar-air .bar-fill {
+  background-image: repeating-linear-gradient(90deg, transparent 0 6px, rgba(0, 0, 0, 0.35) 6px 8px);
+}
+
+.patterns .bar-food .bar-fill {
+  background-image: repeating-linear-gradient(45deg, transparent 0 5px, rgba(0, 0, 0, 0.35) 5px 8px);
+}
+
+.patterns .bar-dose .bar-fill {
+  background-image: repeating-linear-gradient(-45deg, transparent 0 5px, rgba(0, 0, 0, 0.4) 5px 8px);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ----- Toggle, segmented control, slider, text field -------------------------------------- */
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 6px 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle-text {
+  flex: 1;
+  display: grid;
+  gap: 1px;
+}
+
+.toggle-text b {
+  font-weight: 800;
+}
+
+.toggle-text small {
+  color: var(--ink-dim);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* A cut-corner track; the knob is a navy diamond that slides across. */
+.toggle-track {
+  flex: none;
+  position: relative;
+  width: 56px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: var(--ivory-line);
+  border: 1.5px solid var(--gold-edge);
+  transition: background 0.2s ease;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  width: 17px;
+  height: 17px;
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.toggle input:checked + .toggle-track {
+  background: var(--gold-lt);
+}
+
+.toggle input:checked + .toggle-track::after {
+  transform: translateX(22px) rotate(45deg);
+}
+
+.toggle input:focus-visible + .toggle-track {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.segmented {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.segmented button {
+  flex: 1 1 auto;
+  min-width: min(84px, 100%);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  min-height: 46px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  border: 1.5px solid var(--ivory-line);
+  display: grid;
+  gap: 1px;
+  text-align: center;
+  line-height: 1.2;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.segmented button:hover:not(.is-on) {
+  border-color: var(--gold-edge);
+}
+
+.segmented button small {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.segmented button.is-on {
+  background: var(--navy);
+  border-color: var(--gold-edge);
+  color: var(--on-navy);
+  box-shadow: inset 0 0 0 2px var(--navy), inset 0 0 0 3px var(--gold-orn);
+}
+
+.segmented button.is-on small {
+  color: var(--on-navy-dim);
+}
+
+/* Slider: a gold-lined trough, filled up to the value (--fill is set by the page), a navy medallion. */
+.slider {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 0;
+  --fill: 50%;
+}
+
+.slider input {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.slider input::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 3px;
+  border: 1px solid var(--gold-edge);
+  background: linear-gradient(90deg, var(--gold-lt) var(--fill), var(--ivory-line) var(--fill));
+}
+
+.slider input::-moz-range-track {
+  height: 8px;
+  border-radius: 3px;
+  border: 1px solid var(--gold-edge);
+  background: linear-gradient(90deg, var(--gold-lt) var(--fill), var(--ivory-line) var(--fill));
+}
+
+.slider input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -10px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 0;
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--navy);
+}
+
+.slider input::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 0;
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 4px var(--navy);
+}
+
+.slider input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--gold-edge);
+  background: var(--ivory-hi);
+  color: var(--slate);
+  font: inherit;
+  font-weight: 700;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.field input::placeholder {
+  color: var(--muted);
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+/* ----- Notices ------------------------------------------------------------------------------ */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  top: max(86px, 13vh);
+  transform: translateX(-50%);
+  z-index: 70;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 92vw;
+  padding: 9px 20px 9px 16px;
+  border-radius: var(--r-sm);
+  background: var(--navy);
+  color: var(--on-navy);
+  border: 1px solid var(--gold-edge);
+  box-shadow: inset 0 0 0 2px var(--navy), inset 0 0 0 3px var(--gold-edge), var(--shadow);
+  font-weight: 800;
+  text-align: left;
+  animation: toast-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  pointer-events: none;
+}
+
+.toast i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: var(--gold-lt);
+}
+
+.toast-good i {
+  background: #7ad79a;
+}
+
+.toast-warn i {
+  background: var(--amber-fill);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+}
+
+/* ----- Sheets and modals -------------------------------------------------------------------- */
+
+.setup,
+.debrief {
+  display: grid;
+  place-items: center;
+  background: rgba(29, 35, 51, 0.55);
+}
+
+.sheet {
+  width: min(1040px, 100%);
+  max-height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  animation: rise 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.debrief .sheet {
+  width: min(820px, 100%);
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.sheet-head,
+.modal-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 12px;
+  margin: 0 6px;
+  border-bottom: 1px solid var(--gold-orn);
+  color: var(--slate);
+}
+
+.sheet-head h2,
+.modal-head h2 {
+  flex: 1;
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+}
+
+.modal-head > .icon {
+  color: var(--gold-dk);
+}
+
+.sheet-body,
+.modal-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px clamp(18px, 2.4vw, 30px) 22px;
+}
+
+.sheet-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px 16px;
+  margin: 0 6px;
+  border-top: 1px solid var(--gold-orn);
+  flex-wrap: wrap;
+}
+
+.sheet-foot .dates {
+  flex: 1 1 200px;
+  font-size: 0.875rem;
+  color: var(--ink-dim);
+}
+
+.modal-back {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom))
+    max(14px, env(safe-area-inset-left));
+  background: rgba(29, 35, 51, 0.7);
+  pointer-events: auto;
+  animation: fade-in 0.2s ease both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.modal {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  animation: rise 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.modal-wide {
+  width: min(900px, 100%);
+}
+
+/* ----- Settings -------------------------------------------------------------------------------- */
+
+.settings {
+  display: grid;
+  gap: 4px;
+}
+
+.settings > h3:not(:first-child) {
+  margin-top: 26px;
+}
+
+.settings .lang {
+  justify-self: start;
+}
+
+.privacy {
+  margin-top: 18px !important;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  background: var(--ivory-hi);
+  border: 1px solid var(--ivory-line);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 8px;
+}
+
+.privacy .icon {
+  color: var(--gold-dk);
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  background: #f8e6e2;
+  border: 1px solid var(--red-fill);
+  color: var(--slate);
+}
+
+.confirm p {
+  flex: 1 1 100%;
 }
 
 /* ----- Top of the screen ----------------------------------------------------- */
@@ -331,11 +1247,6 @@
   letter-spacing: 0.02em;
 }
 
-.meter-tip {
-  background: linear-gradient(172deg, rgba(40, 47, 78, 0.96), rgba(16, 19, 38, 0.97));
-  border: 1px solid var(--line-strong);
-}
-
 /* ----- Lumi speaks ----------------------------------------------------------- */
 
 .lumi {
@@ -356,38 +1267,6 @@
 
 .lumi-text p {
   color: var(--ink);
-}
-
-/* ----- Labels on buildings and small messages --------------------------------- */
-
-.marker {
-  background: linear-gradient(180deg, rgba(24, 28, 50, 0.86), rgba(12, 14, 30, 0.94)) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
-}
-
-.toast {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 7px 18px 7px 14px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(14, 17, 34, 0.92), rgba(14, 17, 34, 0.74));
-  border: 1px solid var(--line);
-  font-weight: 800;
-  text-shadow: var(--text-shadow);
-}
-
-.toast i {
-  width: 8px;
-  height: 8px;
-  transform: rotate(45deg);
-  background: var(--gold);
-  box-shadow: 0 0 8px rgba(236, 210, 151, 0.9);
-}
-
-.toast-good i {
-  background: var(--good);
-  box-shadow: 0 0 8px rgba(111, 230, 164, 0.9);
 }
 
 /* ----- Rover ----------------------------------------------------------------------- */
@@ -788,40 +1667,294 @@
   border-color: var(--gold) !important;
 }
 
-/* ----- Title screen ------------------------------------------------------------- */
+/* ----- Title screen -------------------------------------------------------------------------------
+   A navy plaque with the emblem and the name, an ivory menu plate under it, and one line of credit
+   along the bottom. The 3D outpost stays visible on the right. */
 
-.menu .btn {
-  background: linear-gradient(90deg, rgba(18, 22, 42, 0.82), rgba(18, 22, 42, 0.5)) !important;
-  border-color: rgba(236, 222, 190, 0.32) !important;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  overflow-y: auto;
+  padding-bottom: 0;
+  --focus: var(--gold-lt);
 }
 
-.menu .btn:hover:not(:disabled) {
-  background: linear-gradient(90deg, rgba(52, 60, 96, 0.9), rgba(40, 47, 78, 0.62)) !important;
-  border-color: var(--gold) !important;
+.title-bar {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 2px 4px 10px 0;
 }
 
-.menu .btn-primary {
-  background: linear-gradient(180deg, #fbf5e7, #e9dcbc) !important;
-  border-color: #fffaf0 !important;
+.title-bar .icon-btn {
+  width: 52px;
+  height: 52px;
+  background: var(--navy);
+  color: var(--gold-lt);
+  box-shadow: 0 0 0 2px var(--gold-orn), 0 0 0 5px var(--navy), 0 0 0 6px var(--gold-orn);
+  margin: 6px;
 }
 
-.menu .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ffffff, #f2e6c8) !important;
+.title-bar .icon-btn:hover:not(:disabled) {
+  background: var(--navy-2);
 }
 
-.logo h1 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+.title-bar .icon-btn svg {
+  width: 28px;
+  height: 28px;
+}
+
+.title-main {
+  display: grid;
+  gap: 16px;
+  width: min(464px, 100%);
+  margin: 0 0 0 clamp(0px, 1.4vw, 20px);
+  flex: none;
+}
+
+.logo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 24px 16px;
+  text-align: center;
+  background: var(--navy);
+  border: 1px solid var(--gold-orn);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 5px var(--navy), inset 0 0 0 6px var(--gold-orn), 0 0 0 1px rgba(29, 35, 51, 0.5);
+}
+
+.logo::before,
+.logo::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  background: var(--gold-lt);
+  transform: rotate(45deg);
+}
+
+.logo::before {
+  top: -6px;
+}
+
+.logo::after {
+  bottom: -6px;
+}
+
+.emblem {
+  flex: none;
+  width: clamp(92px, 17vh, 150px);
+  height: auto;
+  aspect-ratio: 1;
 }
 
 .logo-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 0.875rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--gold-lt);
+}
+
+.logo-tag::before,
+.logo-tag::after {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  background: var(--gold-lt);
+  transform: rotate(45deg);
+}
+
+.logo h1 {
+  margin: 2px 0 0;
   font-family: var(--font-display);
-  letter-spacing: 0.12em;
-  border-color: var(--line-strong);
-  color: var(--gold);
+  font-weight: 400;
+  font-size: clamp(2rem, 9vw, 3.125rem);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--ivory);
+  text-align: center;
+}
+
+.logo h1 span + span {
+  margin-left: 0.28em;
+}
+
+.logo-rule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(300px, 80%);
+  margin: 4px 0 8px;
+}
+
+.logo-rule::before,
+.logo-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-orn);
+}
+
+.logo-rule i {
+  width: 11px;
+  height: 11px;
+  background: var(--gold-orn);
+  transform: rotate(45deg);
+}
+
+.logo-line {
+  max-width: 30em;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--on-navy-dim);
+}
+
+.menu {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 20px 24px;
+  background: var(--ivory);
+  border: 1px solid var(--gold-edge);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 3px var(--ivory), inset 0 0 0 4px var(--gold-edge), 0 0 0 1px rgba(29, 35, 51, 0.5);
+  --focus: var(--gold-dk);
+}
+
+.menu::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  pointer-events: none;
+  background:
+    var(--diamond) left top / 14px 14px no-repeat,
+    var(--diamond) right top / 14px 14px no-repeat,
+    var(--diamond) left bottom / 14px 14px no-repeat,
+    var(--diamond) right bottom / 14px 14px no-repeat;
+}
+
+.menu .btn {
+  justify-content: flex-start;
+  gap: 14px;
+  min-height: 50px;
+  padding: 0 14px 0 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.125rem;
+  text-align: left;
+}
+
+.menu .btn > span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu .btn > svg:first-child:not(:last-child) {
+  width: 34px;
+  height: 34px;
+  margin-left: 0;
+}
+
+.menu .btn-primary {
+  min-height: 56px;
+  font-size: 1.3125rem;
+}
+
+.menu-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.menu-row .btn {
+  font-size: 1rem;
+  padding-inline: 8px;
+}
+
+.count {
+  flex: none;
+  min-width: 54px;
+  margin-left: auto;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  background: var(--gold-lt);
+  color: var(--navy);
+  font-family: var(--font-ui, 'Nunito Variable', sans-serif);
+  font-style: normal;
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 28px;
+  text-align: center;
+}
+
+.title-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  align-self: stretch;
+  margin: auto calc(-1 * max(var(--pad), env(safe-area-inset-right))) 0 calc(-1 * max(var(--pad), env(safe-area-inset-left)));
+  padding: 10px max(var(--pad), env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(var(--pad), env(safe-area-inset-left));
+  background: var(--navy);
+  box-shadow: 0 -1px 0 var(--gold-orn), 0 -4px 0 var(--navy), 0 -5px 0 var(--gold-orn);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--on-navy-dim);
+  text-align: center;
+}
+
+.title-foot::before,
+.title-foot::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--gold-lt);
+  transform: rotate(45deg);
+}
+
+.title-foot {
+  margin-top: auto;
+}
+
+@media (min-width: 900px) and (min-height: 600px) {
+  .title-bar {
+    position: absolute;
+    right: 24px;
+    top: 20px;
+    margin: 0;
+  }
+
+  .title-main {
+    margin-top: 14px;
+  }
+}
+
+/* ----- Navy plates: parts of the game screen that are rebuilt with the game screen ---------------------- */
+
+.hud-week,
+.meter,
+.lumi {
+  background: var(--navy);
+  border: 1px solid var(--gold-edge);
+  box-shadow: var(--shadow);
 }
 
 /* ----- Wide screens: the map and quest list float at the top left --------------- */

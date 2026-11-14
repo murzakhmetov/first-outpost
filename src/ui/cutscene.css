@@ -115,7 +115,7 @@
 }
 
 .cut-line.speaker-caption .cut-text {
-  font-family: 'Philosopher', 'Nunito Variable', serif;
+  font-family: 'Prata', 'Nunito Variable', serif;
   font-size: clamp(1.35rem, 3.2vw, 2.1rem);
   font-weight: 700;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.75);
@@ -129,7 +129,7 @@
 
 .cut-who b {
   color: var(--gi-gold, #f2c46d);
-  font-family: 'Philosopher', 'Nunito Variable', serif;
+  font-family: 'Prata', 'Nunito Variable', serif;
   font-size: 1.15rem;
   letter-spacing: 0.02em;
 }
@@ -268,7 +268,7 @@
 
 .cut-goal h2 {
   margin: 2px 0 0;
-  font-family: 'Philosopher', 'Nunito Variable', serif;
+  font-family: 'Prata', 'Nunito Variable', serif;
   font-size: 1.9rem;
   color: var(--gi-gold, #f2c46d);
 }

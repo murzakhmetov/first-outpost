@@ -84,7 +84,7 @@
 }
 
 .print-titles strong {
-  font-family: 'Philosopher', 'Nunito Variable', serif;
+  font-family: 'Prata', 'Nunito Variable', serif;
   font-size: 1.32rem;
   font-weight: 700;
 }
@@ -605,7 +605,7 @@
 }
 
 .print-done {
-  font-family: 'Philosopher', 'Nunito Variable', serif;
+  font-family: 'Prata', 'Nunito Variable', serif;
   font-size: 1.5rem;
   color: var(--gi-gold, #f2c46d);
   text-shadow: 0 0 16px rgba(242, 196, 109, 0.5);

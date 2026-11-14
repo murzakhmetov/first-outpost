@@ -37,6 +37,35 @@ export function LangSwitch(): JSX.Element {
   );
 }
 
+function Emblem(): JSX.Element {
+  return (
+    <svg class="emblem" viewBox="0 0 160 160" role="img" aria-label={t('app.emblem')}>
+      <circle cx="80" cy="80" r="78" fill="#1D2333" stroke="#C9A55C" stroke-width="1.8" />
+      <circle cx="80" cy="80" r="72" fill="#2C3550" stroke="#C9A55C" stroke-width="1" />
+      <circle cx="80" cy="80" r="66" fill="none" stroke="#C9A55C" stroke-width="0.8" stroke-dasharray="1 4" stroke-linecap="round" />
+      <path d="M80 22L84 36L98 40L84 44L80 58L76 44L62 40L76 36Z" fill="#E4C57E" />
+      <g fill="#E4C57E">
+        <circle cx="40" cy="52" r="1.6" />
+        <circle cx="118" cy="46" r="1.6" />
+        <circle cx="124" cy="74" r="1.2" />
+        <circle cx="34" cy="78" r="1.2" />
+      </g>
+      <path d="M19.4 112Q80 94 140.6 112A66 66 0 0 1 19.4 112Z" fill="#F4EEE2" stroke="#C9A55C" stroke-width="1.4" stroke-linejoin="round" />
+      <g fill="none" stroke="#B9AE96" stroke-width="1.3">
+        <circle cx="46" cy="126" r="6" />
+        <circle cx="108" cy="130" r="4.5" />
+        <circle cx="80" cy="140" r="3.4" />
+      </g>
+      <path d="M56 106A24 24 0 0 1 104 106Z" fill="#1D2333" stroke="#C9A55C" stroke-width="1.6" stroke-linejoin="round" />
+      <path d="M80 82V106M66 91Q66 98 62 106M94 91Q94 98 98 106" fill="none" stroke="#C9A55C" stroke-width="1" />
+      <rect x="74" y="96" width="12" height="10" rx="5" fill="#F2D58A" />
+      <path d="M80 82V70" stroke="#C9A55C" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M80 64l3.5 4L80 72l-3.5-4z" fill="#E4C57E" />
+      <path d="M108 104l16-7v9l-16 5z M114 112l-2 6M120 109l-2 6" fill="#4A7FD6" stroke="#E4C57E" stroke-width="1.2" stroke-linejoin="round" />
+    </svg>
+  );
+}
+
 export function Title(): JSX.Element {
   const words = t('app.title').split(' ');
   const found = profile.value.unlocked.length;
@@ -49,12 +78,16 @@ export function Title(): JSX.Element {
 
       <div class="title-main">
         <div class="logo">
+          <Emblem />
           <span class="logo-tag">{t('app.subtitle')}</span>
           <h1>
             {words.map((word) => (
               <span key={word}>{word}</span>
             ))}
           </h1>
+          <span class="logo-rule" aria-hidden="true">
+            <i />
+          </span>
           <p class="logo-line">{t('app.tagline')}</p>
         </div>
 
@@ -88,7 +121,7 @@ export function Title(): JSX.Element {
       </div>
 
       <footer class="title-foot">
-        <Icon name="check" size={14} /> {t('app.dataLine')}
+        <span>{t('app.dataLine')}</span>
       </footer>
     </div>
   );
