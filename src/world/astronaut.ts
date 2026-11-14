@@ -66,11 +66,13 @@ function bubbleMaterial(): THREE.ShaderMaterial {
         // A soft sky-coloured sheen across the whole visor, a little stronger when the Sun is out.
         color += sky * 0.12 * uAnime * ( 1.0 - fresnel );
         float alpha = clamp( 0.035 + fresnel * 0.72 + glint * 0.8 + 0.05 * uAnime, 0.0, 1.0 );
-        vec2 st = animeStreak( n, uSunDirView ) * uAnime * uStreak;
-        color = mix( color, vec3( 0.06, 0.12, 0.3 ), st.y * 0.6 );
-        alpha += 0.3 * st.y * ( 1.0 - alpha );
-        color = mix( color, vec3( 1.8, 1.75, 1.7 ), st.x );
-        alpha += 0.6 * st.x * ( 1.0 - alpha );
+        // One thin band near the rim, faded out where the visor faces the camera so the face always shows (G11).
+        float facing = 1.0 - smoothstep( 0.62, 0.84, n.z );
+        vec2 st = animeStreak( n, uSunDirView, 0.2 ) * uAnime * uStreak * facing;
+        color = mix( color, vec3( 0.06, 0.12, 0.3 ), st.y * 0.3 );
+        alpha += 0.15 * st.y * ( 1.0 - alpha );
+        color = mix( color, vec3( 1.6, 1.58, 1.55 ), st.x );
+        alpha = mix( alpha, max( alpha, STREAK_PEAK ), st.x );
         gl_FragColor = vec4( color, alpha );
       }`,
     transparent: true,

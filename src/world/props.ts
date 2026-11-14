@@ -337,7 +337,7 @@ export class Props {
         case 'glass':
           mesh.renderOrder = 5;
           mesh.receiveShadow = false;
-          return this.keep(glass('#ffe6bf', { opacity: 0.1, edge: 0.5 }));
+          return this.keep(glass('#ffe6bf', { opacity: 0.1, edge: 0.5, interior: 0.6 }));
         case 'glow_red':
           return this.keep(glow('#ff5a5a', 2.6));
         case 'glow_green':
