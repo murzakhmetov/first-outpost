@@ -4,6 +4,9 @@
  */
 import * as THREE from 'three';
 import { shape } from './build';
+import { LUMI_CLEAR } from './keepclear';
+import type { Solids } from './keepclear';
+import { pushFlight, stepFlight } from './lumifollow';
 import { GLOBALS, addOutline, glow, outlineMaterial, toon } from './materials';
 import { model } from './models';
 import { dotTexture } from './textures';
@@ -22,6 +25,13 @@ export class Lumi {
   readonly group = new THREE.Group();
   /** Where Lumi wants to be. */
   readonly goal = new THREE.Vector3(2, 2.6, 2);
+  /**
+   * Solid things Lumi must never overlap (its drawn position is pushed out every frame, and on `snap`),
+   * and when that applies. Left null, or when `active` says no (films, rooms), Lumi goes where the goal says.
+   */
+  keepOut: { solids: Solids; active: () => boolean } | null = null;
+  /** True after a `snap` until the world has seen it (a jump the scene made on purpose, not flight). */
+  snapped = false;
   /** What Lumi looks at. */
   readonly lookTarget = new THREE.Vector3();
   readonly light: THREE.PointLight | null;
@@ -40,6 +50,7 @@ export class Lumi {
   private readonly spot = new THREE.Vector3(2, 2.6, 2);
   private readonly moodColor = new THREE.Color(MOOD_COLOR.calm);
   private readonly tmp = new THREE.Vector3();
+  private readonly flight = { pos: this.spot, vel: this.velocity };
   private mood: Mood = 'calm';
   private blink = 0;
   private nextBlink = 2;
@@ -133,8 +144,10 @@ export class Lumi {
   /** Jump straight to the goal (used when the scene changes). */
   snap(): void {
     this.spot.copy(this.goal);
-    this.group.position.copy(this.goal);
+    if (this.keepOut?.active()) pushFlight(this.flight, 0, LUMI_CLEAR, this.keepOut.solids);
+    this.group.position.copy(this.spot);
     this.velocity.set(0, 0, 0);
+    this.snapped = true;
   }
 
   update(dt: number, night: number): void {
@@ -142,12 +155,11 @@ export class Lumi {
     const t = this.time;
 
     // Springy flight toward the goal, with a gentle bob.
-    this.tmp.copy(this.goal).sub(this.spot);
-    this.velocity.addScaledVector(this.tmp, dt * 26);
-    this.velocity.multiplyScalar(Math.exp(-dt * 7));
-    this.spot.addScaledVector(this.velocity, dt);
+    stepFlight(this.flight, this.goal, dt);
     this.hop = Math.max(0, this.hop - dt * 2.4);
     const bob = Math.sin(t * 2.2) * 0.07 + Math.sin(this.hop * Math.PI) * 0.25;
+    // The hard rule: what is drawn (flight plus bob) is never inside the rover, a building or a prop.
+    if (this.keepOut?.active()) pushFlight(this.flight, bob, LUMI_CLEAR, this.keepOut.solids);
     this.group.position.set(this.spot.x, this.spot.y + bob, this.spot.z);
 
     // Face what matters.

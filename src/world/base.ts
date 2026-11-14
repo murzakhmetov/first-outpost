@@ -21,6 +21,8 @@ export interface Collider {
   x: number;
   z: number;
   r: number;
+  /** Height above the ground at its middle, metres. Lumi flies over low ones; without a height a collider counts as tall. */
+  h?: number;
 }
 
 export interface Spot {
@@ -291,7 +293,7 @@ export class Base {
           this.panelHeads.push(head);
           this.group.add(base, head);
           // The panel (3.7 x 2.3 m) turns with the Sun, so one circle covers every angle.
-          this.colliders.push({ x, z, r: 2.0 });
+          this.colliders.push({ x, z, r: 2.0, h: 3.4 });
         }
       }
     } else {
@@ -305,7 +307,7 @@ export class Base {
         this.panelHeads.push(head);
         this.group.add(base, head);
         // The tall panel (2.9 m wide) turns with the Sun.
-        this.colliders.push({ x, z, r: 1.5 });
+        this.colliders.push({ x, z, r: 1.5, h: 4.6 });
       }
     }
 

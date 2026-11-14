@@ -7,6 +7,7 @@ import { EVENTS } from './sim/events';
 import { addMaterials, buildingDef, ensureOutpost } from './sim/outpost';
 import type { BuildingId } from './sim/outpost';
 import type { SiteId } from './sim/types';
+import { lumiProbeRead } from './world/lumiprobe';
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -161,4 +162,9 @@ function teleport(x: number, z: number): void {
   world.eva.position.set(x, world.terrain.info.height(x, z), z);
 }
 
-(window as unknown as { fo: unknown }).fo = { director, store, toPlan, toWalk, toDebrief, look, teleport, sleep, give };
+/** Read (and with `reset` clear) the counters of frames where Lumi touched a solid thing. See world/lumiprobe.ts. */
+function lumiProbe(reset = false): unknown {
+  return lumiProbeRead(reset);
+}
+
+(window as unknown as { fo: unknown }).fo = { director, store, toPlan, toWalk, toDebrief, look, teleport, sleep, give, lumiProbe };

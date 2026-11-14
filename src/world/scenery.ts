@@ -132,7 +132,7 @@ export class Scenery {
         mesh.setMatrixAt(index, matrix);
         mesh.setColorAt(index, color.set(place.color));
         const reach = ((halfX * scale.x + halfZ * scale.z) / 2) * 0.92;
-        if (reach >= 0.5) this.colliders.push({ x: place.x, z: place.z, r: reach });
+        if (reach >= 0.5) this.colliders.push({ x: place.x, z: place.z, r: reach, h: reach * 1.2 });
       });
       mesh.castShadow = true;
       mesh.receiveShadow = true;

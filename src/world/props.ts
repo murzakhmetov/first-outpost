@@ -163,7 +163,7 @@ export class Props {
         const reach = ((halfX * scale.x + halfZ * scale.z) / 2) * 0.92;
         // A rock never blocks the way to a discovery, and the far ones are out of the walking area.
         const onFind = finds.some((find) => Math.hypot(find.x - x, find.z - z) < find.reach + reach + 0.5);
-        if (reach >= 0.5 && radius < 125 && !onFind) this.colliders.push({ x, z, r: reach });
+        if (reach >= 0.5 && radius < 125 && !onFind) this.colliders.push({ x, z, r: reach, h: reach * 1.2 });
         placed++;
       }
       mesh.count = placed;
@@ -330,7 +330,7 @@ export class Props {
     pole.position.set(FLAG.x, 0, FLAG.z);
     pole.rotation.y = -0.5;
     this.group.add(pole);
-    this.colliders.push({ x: FLAG.x, z: FLAG.z, r: 0.35 });
+    this.colliders.push({ x: FLAG.x, z: FLAG.z, r: 0.35, h: 5.2 });
   }
 
   private buildCrates(): void {

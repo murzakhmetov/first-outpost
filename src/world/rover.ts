@@ -8,6 +8,8 @@
  */
 import * as THREE from 'three';
 import type { Collider } from './base';
+import type { SolidBox } from './keepclear';
+import { newRoverBoxes, roverBoxes } from './lumifollow';
 
 /** Where the rover is parked, and the way it faces (by the plaza, nose toward the outpost). */
 export const ROVER = { x: 10.5, z: 9 };
@@ -40,6 +42,8 @@ export class Rover {
   y = 0;
   driving = false;
   readonly top: number;
+  /** The body at its current pose (boxes with the real heights). Always on, also while driven, when the circle colliders are off. Lumi keeps clear of these. */
+  readonly boxes: SolidBox[] = newRoverBoxes();
 
   private pitch = 0;
   private roll = 0;
@@ -242,6 +246,7 @@ export class Rover {
     this.y = (front + back) / 2;
     this.group.position.set(this.x, this.y, this.z);
     this.group.rotation.set(this.pitch, this.heading, this.roll);
+    roverBoxes(this.boxes, this.x, this.y, this.z, this.heading, this.pitch, this.roll);
 
     const spin = travelled / WHEEL_RADIUS;
     this.wheels.forEach((wheel, index) => {
