@@ -187,6 +187,68 @@ void main() {
   gl_FragColor = vec4(vec3(clamp(light, 0.0, 1.0) * reach), 1.0);
 }`;
 
+// Volumetric dust (ultra, Mars): march from the camera to each pixel's world position and count the dust that
+// the Sun reaches, using the Sun's shadow map. Same half-size target and same final-pass path as SHAFT_FRAG.
+const SHAFT_VOL_FRAG = /* glsl */ `
+precision highp float;
+uniform sampler2D tDepth;
+uniform sampler2D tShadow;
+uniform mat4 uInvViewProj;
+uniform mat4 uShadowMat;
+uniform vec3 uCam;
+uniform vec3 uSunDir;
+uniform float uShadowBias;
+uniform float uDensity;
+varying vec2 vUv;
+float hash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+// Same unpacking as three's unpackRGBAToDepth: the shadow map is an RGBA8 colour image holding packed depth.
+float unpackShadowDepth(vec4 v) {
+  return dot(v, vec4(255.0 / 256.0, 255.0 / 65536.0, 255.0 / 16777216.0, 1.0 / 16777216.0));
+}
+// Sun reaches the point: 1 lit, 0 shadowed. Outside the shadow box it is a neutral 0.75, blended in over the
+// outer edge of the box, so the box edge and the box-size steps never show as a seam in the haze.
+float sunReach(vec3 p) {
+  vec4 sc = uShadowMat * vec4(p, 1.0);
+  vec3 s = sc.xyz / sc.w;
+  float edge = smoothstep(0.0, 0.12, min(min(s.x, 1.0 - s.x), min(s.y, 1.0 - s.y)));
+  if (edge <= 0.0 || s.z > 1.0) return 0.75;
+  float lit = step(s.z + uShadowBias, unpackShadowDepth(texture2D(tShadow, s.xy)));
+  return mix(0.75, lit, edge);
+}
+void main() {
+  float d = texture2D(tDepth, vUv).x;
+  vec4 w = uInvViewProj * vec4(vUv * 2.0 - 1.0, min(d, 0.99999) * 2.0 - 1.0, 1.0);
+  vec3 target = w.xyz / w.w;
+  vec3 ray = target - uCam;
+  float len = min(length(ray), VOL_MAX_LEN);
+  vec3 dir = normalize(ray);
+  float stepLen = len / float(SHAFT_SAMPLES);
+  // Fixed per-pixel jitter: no frame-to-frame change, so nothing shimmers.
+  float jitter = hash12(gl_FragCoord.xy);
+  float sum = 0.0;
+  for (int i = 0; i < SHAFT_SAMPLES; i++) {
+    float t = (float(i) + jitter) * stepLen;
+    vec3 p = uCam + dir * t;
+    float layer = 1.0 - smoothstep(VOL_LAYER * 0.4, VOL_LAYER, p.y);
+    if (layer <= 0.0) continue;
+    float lit = sunReach(p);
+    sum += lit * layer;
+  }
+  // Forward scatter: Henyey-Greenstein, brightest looking towards the Sun, a floor so the air is lit from the side too.
+  float c = dot(dir, uSunDir);
+  float g = 0.55;
+  float phase = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * c, 1.5);
+  // Shadowed ground gets less haze than sunlit ground (its air column is the same, but the glow would lift
+  // the shadow and flatten the contrast); sky pixels are not dimmed.
+  float reach = d >= 0.99999 ? 1.0 : sunReach(target - dir * 0.3);
+  float amount = sum * stepLen * (1.0 / 100.0) * uDensity * (0.1 + 0.2 * phase) * mix(0.2, 1.0, reach * reach);
+  gl_FragColor = vec4(vec3(clamp(1.0 - exp(-amount), 0.0, 1.0)), 1.0);
+}`;
+
 // Where the film camera focuses: the depth at the middle of the picture, followed slowly.
 const FOCUS_FRAG = /* glsl */ `
 precision highp float;
@@ -584,7 +646,14 @@ export class PostFX {
   /** Contact shadow strength, 0-1. */
   aoStrength = 0.85;
   /** Light shafts: direction to the Sun, its colour and how strong the shafts are (0 = none). Set each frame by the Daylight. */
-  readonly sun = { dir: new THREE.Vector3(0, 1, 0), color: new THREE.Color(1, 0.9, 0.7), shafts: 0 };
+  readonly sun = {
+    dir: new THREE.Vector3(0, 1, 0),
+    color: new THREE.Color(1, 0.9, 0.7),
+    shafts: 0,
+    /** Dust amount 0..1 and the Sun's shadow (null without shadows): used by the volumetric dust on ultra. */
+    dust: 0,
+    shadow: null as THREE.DirectionalLightShadow | null,
+  };
   /** True while a building's inside is drawn: no light shafts and no world colour mood there. */
   indoor = false;
   /** Set from the "less motion" setting: no colour fringes, a calmer film look, no flicker in the shafts. */
@@ -610,6 +679,8 @@ export class PostFX {
   private ao: THREE.ShaderMaterial | null = null;
   private aoBlur: THREE.ShaderMaterial | null = null;
   private shafts: THREE.ShaderMaterial | null = null;
+  private shaftsVol: THREE.ShaderMaterial | null = null;
+  private readonly invViewProj = new THREE.Matrix4();
   private focus: THREE.ShaderMaterial | null = null;
   private quality: QualityOptions;
   private readonly hdrSupported: boolean;
@@ -813,6 +884,28 @@ export class PostFX {
       this.shaftTarget = makeTarget(hw, hh, THREE.UnsignedByteType);
       this.shafts ??= fullscreenMaterial(SHAFT_FRAG, { tDepth: { value: null }, uSunUv: { value: new THREE.Vector2() }, uTime: { value: 0 } });
       this.setDefine(this.shafts, 'SHAFT_SAMPLES', String(q.shafts));
+      if (q.shaftsVolumetric) {
+        this.shaftsVol ??= fullscreenMaterial(SHAFT_VOL_FRAG, {
+          tDepth: { value: null },
+          tShadow: { value: null },
+          uInvViewProj: { value: new THREE.Matrix4() },
+          uShadowMat: { value: new THREE.Matrix4() },
+          uCam: { value: new THREE.Vector3() },
+          uSunDir: { value: new THREE.Vector3() },
+          uShadowBias: { value: 0 },
+          uDensity: { value: 1 },
+        });
+        this.setDefine(this.shaftsVol, 'SHAFT_SAMPLES', '18');
+        this.setDefine(this.shaftsVol, 'VOL_MAX_LEN', '120.0');
+        this.setDefine(this.shaftsVol, 'VOL_LAYER', '25.0');
+      } else if (this.shaftsVol) {
+        this.shaftsVol.dispose();
+        this.shaftsVol = null;
+      }
+    }
+    if (!useShafts && this.shaftsVol) {
+      this.shaftsVol.dispose();
+      this.shaftsVol = null;
     }
     this.setDefine(this.final, 'USE_SHAFTS', useShafts ? '' : null);
     this.setDefine(this.final, 'USE_GRADE', q.grade ? '' : null);
@@ -904,7 +997,24 @@ export class PostFX {
       this.sunView.copy(this.sun.dir).transformDirection(camera.matrixWorldInverse);
       const facing = -this.sunView.z;
       shaft = this.sun.shafts * THREE.MathUtils.smoothstep(facing, -0.05, 0.3);
-      if (shaft > 0.002) {
+      const shadowMap = this.sun.shadow?.map?.texture;
+      const vol = this.quality.shaftsVolumetric && this.shaftsVol && shadowMap && flag('G10') && this.sun.shadow ? this.shaftsVol : null;
+      if (vol && this.sun.shadow && shadowMap) {
+        // The phase term carries the direction to the Sun, so the strength does not fade with it.
+        shaft = this.sun.shafts;
+        this.invViewProj.multiplyMatrices(camera.matrixWorld, camera.projectionMatrixInverse);
+        const v = vol.uniforms;
+        v.tDepth.value = depth;
+        v.tShadow.value = shadowMap;
+        v.uInvViewProj.value.copy(this.invViewProj);
+        v.uShadowMat.value.copy(this.sun.shadow.matrix);
+        v.uCam.value.setFromMatrixPosition(camera.matrixWorld);
+        v.uSunDir.value.copy(this.sun.dir);
+        v.uShadowBias.value = this.sun.shadow.bias - 0.0008;
+        v.uDensity.value = 0.5 + 1.5 * this.sun.dust;
+        this.pass(vol, this.shaftTarget);
+        u.tShafts.value = this.shaftTarget.texture;
+      } else if (shaft > 0.002) {
         const e = camera.projectionMatrix.elements;
         const w = Math.max(facing, 0.05);
         const sx = (this.sunView.x * e[0] + this.sunView.z * e[8]) / w;
@@ -1017,6 +1127,7 @@ export class PostFX {
     this.ao?.dispose();
     this.aoBlur?.dispose();
     this.shafts?.dispose();
+    this.shaftsVol?.dispose();
     this.focus?.dispose();
     this.quad.geometry.dispose();
     this.black.dispose();

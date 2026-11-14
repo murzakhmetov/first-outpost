@@ -45,6 +45,8 @@ export interface QualityOptions {
   ao: number;
   /** Sun light shafts through dust and haze. 0 = off, else the number of samples along each ray. */
   shafts: number;
+  /** Mars dust lit through the Sun's shadow map instead of screen-space rays (ultra only). */
+  shaftsVolumetric: boolean;
   /** Per-world colour grade and the soft anime glow on highlights. */
   grade: boolean;
   /** Film look for cutscenes: depth of field and colour fringes. */
@@ -82,6 +84,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 0,
     shafts: 0,
+    shaftsVolumetric: false,
     grade: false,
     cinematic: false,
     skyFancy: false,
@@ -111,6 +114,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 0,
     shafts: 0,
+    shaftsVolumetric: false,
     grade: false,
     cinematic: false,
     skyFancy: false,
@@ -140,6 +144,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 8,
     shafts: 20,
+    shaftsVolumetric: false,
     grade: true,
     cinematic: true,
     skyFancy: true,
@@ -169,6 +174,7 @@ export const QUALITY: Record<QualityTier, QualityOptions> = {
     dynamicResolution: true,
     ao: 14,
     shafts: 32,
+    shaftsVolumetric: true,
     grade: true,
     cinematic: true,
     skyFancy: true,

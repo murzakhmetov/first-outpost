@@ -480,6 +480,8 @@ export class Daylight {
     // Light shafts: Mars only (the Moon has no air to catch the light). They are strongest when the Sun is low and in dust.
     const shafts = this.post.sun;
     shafts.dir.copy(this.sunDir);
+    shafts.dust = dust;
+    shafts.shadow = this.sun.castShadow ? this.sun.shadow : null;
     if (this.site === 'mars') {
       const risen = THREE.MathUtils.smoothstep(this.sunDir.y, -0.03, 0.08);
       const low = 1 - THREE.MathUtils.smoothstep(this.sunDir.y, 0.1, 0.5);
