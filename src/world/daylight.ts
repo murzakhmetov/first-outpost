@@ -169,6 +169,8 @@ const NUMBER_KEYS = ['sunPower', 'glowAmount', 'haloAmount', 'stars', 'clouds', 
 /** Where the cool fill light stands (Mars), relative to the view centre. */
 const FILL_OFFSET = new THREE.Vector3(-40, 80, -30);
 
+const WARM_SHADE = new THREE.Color(1.05, 0.97, 0.9);
+
 export class Daylight {
   readonly sun = new THREE.DirectionalLight(0xffffff, 3);
   readonly hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
@@ -353,6 +355,22 @@ export class Daylight {
     this.sunDir.set(Math.cos(azimuth) * flat, elevation, Math.sin(azimuth) * flat);
   }
 
+  /** Bounce light colours (G3): sky above, sunlit ground below, horizon at the sides, and the shadow mood. */
+  private setBounce(cur: Stop, up: boolean): void {
+    const sunUp = up ? THREE.MathUtils.clamp(this.sunDir.y * 2.5, 0, 1) : 0;
+    const power = cur.hemiPower * (1 - 0.35 * this.dust);
+    GLOBALS.bounce.value = flag('G3') ? 1 : 0;
+    GLOBALS.ambSky.value.copy(cur.hemiSky).multiplyScalar(power);
+    // Ground: lit by the Sun, so it brightens with a high Sun and takes the light's colour.
+    GLOBALS.ambGround.value
+      .copy(cur.hemiGround)
+      .multiplyScalar(power * (1 + 0.8 * sunUp * Math.min(cur.lightPower, 3) / 3));
+    GLOBALS.ambSide.value.copy(cur.horizon).multiplyScalar(power * 0.6);
+    // Mars: the shade side is lit from the warm sand, so the violet of the world look is pulled most of the way to a warm rose.
+    GLOBALS.shadowTint.value.copy(this.post.look.shadow);
+    if (this.site === 'mars') GLOBALS.shadowTint.value.lerp(WARM_SHADE, 0.8);
+  }
+
   private sample(y: number): void {
     const stops = this.stops;
     let a = stops[0];
@@ -447,6 +465,7 @@ export class Daylight {
     GLOBALS.skyColor.value.copy(c.horizon).lerp(c.zenith, 0.35);
     if (this.site === 'moon') GLOBALS.skyColor.value.set(0.16, 0.2, 0.32);
     GLOBALS.sunDirView.value.copy(lightDir).transformDirection(camera.matrixWorldInverse);
+    this.setBounce(c, up);
 
     // Outdoors the picture always starts from the same grade: a room's own grade must not leak out of the door.
     const grade = this.post.grade;

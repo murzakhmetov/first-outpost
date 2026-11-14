@@ -24,6 +24,7 @@ import type { CameraRig } from './cameraRig';
 import type { InputState } from './input';
 import type { Lumi } from './lumi';
 import { GLOBALS, canvasTexture, glow, toon } from './materials';
+import { flag } from './devflags';
 import { emblemTexture } from './textures';
 import { hasModel, modelPart } from './models';
 import type { PostFX } from './post';
@@ -1823,6 +1824,7 @@ export class Interior {
     GLOBALS.skyColor.value.set(tone.sky);
     GLOBALS.night.value = 0.65;
     GLOBALS.dust.value = 0;
+    this.setRoomBounce(tone);
     const grade = tone.grade;
     post.grade.exposure = grade.exposure;
     post.grade.saturation = grade.saturation;
@@ -2363,6 +2365,15 @@ export class Interior {
     const half = shell.w / 2;
     const share = Math.min(1, Math.abs(x) / half);
     return shell.wall + shell.rise * Math.sqrt(1 - share * share);
+  }
+
+  /** Bounce light (G3): the room's sky tone above, its ground tone below, the mean at the sides; no shadow tint. */
+  private setRoomBounce(tone: Tone): void {
+    GLOBALS.bounce.value = flag('G3') ? 1 : 0;
+    GLOBALS.ambSky.value.set(tone.sky).multiplyScalar(tone.hemi);
+    GLOBALS.ambGround.value.set(tone.ground).multiplyScalar(tone.hemi);
+    GLOBALS.ambSide.value.copy(GLOBALS.ambSky.value).add(GLOBALS.ambGround.value).multiplyScalar(0.5);
+    GLOBALS.shadowTint.value.setRGB(1, 1, 1);
   }
 
   private buildLights(plan: Plan): void {

@@ -22,7 +22,34 @@ export const GLOBALS = {
   night: { value: 0 },
   /** 1 on high and ultra: the anime look of characters (sharper shadow edge, rim tinted by the sky, glints) and brighter lights at night. */
   anime: { value: 0 },
+  /** Bounce light (dev switch G3): 1 in production. The effect is also multiplied by `anime`. */
+  bounce: { value: 1 },
+  /** Ambient colour of up-facing, down-facing and side-facing surfaces (neutral until a Daylight or room fills them). */
+  ambSky: { value: new THREE.Color(0, 0, 0) },
+  ambGround: { value: new THREE.Color(0, 0, 0) },
+  ambSide: { value: new THREE.Color(0, 0, 0) },
+  /** The colour mood of shadows (copied from the world look: violet on Mars, blue on the Moon). */
+  shadowTint: { value: new THREE.Color(1, 1, 1) },
 };
+
+/**
+ * Ambient light by world normal: up faces lean to the sky colour, down faces to the ground colour, side faces to the
+ * horizon colour. The mean over the sphere is taken out, so energy is redistributed, not added. Weight 0.25 at most.
+ */
+const BOUNCE_UNIFORMS = /* glsl */ `
+uniform float uBounce;
+uniform vec3 uAmbSky;
+uniform vec3 uAmbGround;
+uniform vec3 uAmbSide;`;
+
+const BOUNCE_DELTA = /* glsl */ `
+vec3 bounceDelta( vec3 normalView ) {
+  vec3 wn = normalize( ( vec4( normalView, 0.0 ) * viewMatrix ).xyz );
+  float up = max( wn.y, 0.0 );
+  float dn = max( -wn.y, 0.0 );
+  float sd = 1.0 - abs( wn.y );
+  return ( uAmbSky * up + uAmbGround * dn + uAmbSide * sd - ( uAmbSky + uAmbGround + uAmbSide * 2.0 ) * 0.25 ) * 0.25;
+}`;
 
 /** Fog values that three.js fills in for custom shaders that opt into fog. */
 export function fogUniforms(): Record<string, THREE.IUniform> {
@@ -98,6 +125,11 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
     shader.uniforms.uSunDirView = GLOBALS.sunDirView;
     shader.uniforms.uDust = GLOBALS.dust;
     shader.uniforms.uDustColor = GLOBALS.dustColor;
+    shader.uniforms.uBounce = GLOBALS.bounce;
+    shader.uniforms.uAmbSky = GLOBALS.ambSky;
+    shader.uniforms.uAmbGround = GLOBALS.ambGround;
+    shader.uniforms.uAmbSide = GLOBALS.ambSide;
+    shader.uniforms.uShadowTint = GLOBALS.shadowTint;
 
     shader.fragmentShader = shader.fragmentShader
       .replace(
@@ -114,13 +146,18 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
         uniform vec3 uSunDirView;
         uniform float uDust;
         uniform vec3 uDustColor;
+        uniform vec3 uShadowTint;
+        ${BOUNCE_UNIFORMS}
+        ${BOUNCE_DELTA}
         vec3 getGradientIrradiance( vec3 normal, vec3 lightDirection ) {
           float dotNL = dot( normal, lightDirection );
           // Characters (they keep some of their colour in shadow) get a crisper light/shadow edge on high and ultra.
           float soft = uBand.y * mix( 1.0, 0.38, uAnime * step( 0.001, uLift ) );
           float lit = smoothstep( uBand.x - soft, uBand.x + soft, dotNL );
           float bright = smoothstep( uBand.x + 0.45 - soft, uBand.x + 0.45 + soft, dotNL );
-          return vec3( lit * 0.84 + bright * 0.16 );
+          // High and ultra: a narrow mid-tone between light and shadow (zero when uAnime or the dev switch is 0).
+          float core = smoothstep( uBand.x - 0.3 - soft, uBand.x - 0.3 + soft, dotNL ) * ( 1.0 - lit );
+          return vec3( lit * 0.84 + bright * 0.16 + uAnime * uBounce * 0.14 * core );
         }`,
       )
       .replace(
@@ -132,6 +169,15 @@ export function toon(options: ToonOptions): THREE.MeshToonMaterial {
       .replace(
         '#include <opaque_fragment>',
         /* glsl */ `
+        {
+          // Bounce light: ambient by normal, and a tint on the shadow side (both zero when gk is 0).
+          float gk = uAnime * uBounce;
+          outgoingLight += bounceDelta( normal ) * material.diffuseColor * gk;
+          float lumD = dot( reflectedLight.directDiffuse, vec3( 0.333 ) );
+          float lumI = dot( reflectedLight.indirectDiffuse, vec3( 0.333 ) );
+          float shade = 1.0 - lumD / ( lumD + lumI + 0.0001 );
+          outgoingLight += ( uShadowTint - 1.0 ) * ( reflectedLight.directDiffuse + reflectedLight.indirectDiffuse ) * ( shade * 0.5 * gk );
+        }
         {
           vec3 viewDir = normalize( vViewPosition );
           float facing = saturate( dot( viewDir, normal ) );
@@ -445,6 +491,20 @@ const GROUND_RELIEF = /* glsl */ `
 }
 #endif`;
 
+const GROUND_BOUNCE_PARS = /* glsl */ `
+#ifdef USE_RELIEF
+uniform float uAnime;
+${BOUNCE_UNIFORMS}
+${BOUNCE_DELTA}
+#endif`;
+
+const GROUND_BOUNCE = /* glsl */ `
+#ifdef USE_RELIEF
+// Ground faces mostly up, so half weight keeps the sand warm.
+outgoingLight += bounceDelta( normal ) * material.diffuseColor * ( uAnime * uBounce * 0.5 );
+#endif
+#include <opaque_fragment>`;
+
 /** Painted-looking ground with patches, pebbles and (on Mars) sand ripples. */
 export function ground(options: {
   speck: THREE.ColorRepresentation;
@@ -465,9 +525,18 @@ export function ground(options: {
       .replace('#include <common>', '#include <common>\nvarying vec3 vWorldPos;')
       .replace('#include <project_vertex>', '#include <project_vertex>\nvWorldPos = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;');
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <gradientmap_pars_fragment>', options.relief ? GROUND_PARS + GROUND_RELIEF_PARS : GROUND_PARS)
+      .replace('#include <gradientmap_pars_fragment>', options.relief ? GROUND_PARS + GROUND_RELIEF_PARS + GROUND_BOUNCE_PARS : GROUND_PARS)
       .replace('#include <color_fragment>', GROUND_COLOR);
-    if (options.relief) shader.fragmentShader = shader.fragmentShader.replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>' + GROUND_RELIEF);
+    if (options.relief) {
+      shader.uniforms.uAnime = GLOBALS.anime;
+      shader.uniforms.uBounce = GLOBALS.bounce;
+      shader.uniforms.uAmbSky = GLOBALS.ambSky;
+      shader.uniforms.uAmbGround = GLOBALS.ambGround;
+      shader.uniforms.uAmbSide = GLOBALS.ambSide;
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>' + GROUND_RELIEF)
+        .replace('#include <opaque_fragment>', GROUND_BOUNCE);
+    }
   };
   if (options.relief) material.defines.USE_RELIEF = '';
   material.customProgramCacheKey = () => (options.relief ? 'ground-relief' : 'ground');
