@@ -325,6 +325,12 @@ describe('decideAutoSpeak', () => {
     forgetSpoken();
     expect(isRepeat('lumi.plan.over')).toBe(false);
   });
+  it('speaks the same alert again after a few seconds', () => {
+    forgetSpoken();
+    markSpoken('lumi.eva.alert', 1000);
+    expect(isRepeat('lumi.eva.alert', 2000)).toBe(true);
+    expect(isRepeat('lumi.eva.alert', 14000)).toBe(false);
+  });
 });
 
 describe('the new setting', () => {

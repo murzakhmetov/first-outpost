@@ -79,21 +79,30 @@ describe('playLines', () => {
     expect(spoken).toEqual(['Заголовок. Текст.']);
   });
 
-  it('falls back to the whole text when a file cannot be decoded', async () => {
+  it('stays silent (no device voice) when a file that exists cannot be decoded', async () => {
     vi.spyOn(audio, 'decodeVoice').mockResolvedValue(null);
     await expect(playLines(['ev.e.title', 'ev.e.body'], 'en', { text: 'Title. Body.', fallback: true })).resolves.toBe(false);
     expect(played).toEqual([]);
-    expect(spoken).toEqual(['Title. Body.']);
+    expect(spoken).toEqual([]);
   });
 
-  it('falls back to the whole text when a later segment cannot start', async () => {
+  it('does not read the title again with the device voice when a later segment cannot start', async () => {
     let calls = 0;
     vi.spyOn(audio, 'playVoice').mockImplementation(() => {
       calls++;
       return calls === 1 ? { done: Promise.resolve(), stop: () => undefined } : null;
     });
     await expect(playLines(['ev.a.title', 'ev.a.body'], 'en', { text: 'Title. Body.', fallback: true })).resolves.toBe(false);
-    expect(spoken).toEqual(['Title. Body.']);
+    expect(calls).toBe(2);
+    expect(spoken).toEqual([]);
+  });
+
+  it('downloads no manifest, no file and no device voice for a recorded line when the sound volume is 0', async () => {
+    audio.setVolumes(0, 0.5);
+    await playLines(['ev.a.title'], 'en', { text: 'Title.', fallback: true });
+    audio.setVolumes(0.8, 0.5);
+    expect(fetched).toEqual([]);
+    expect(spoken).toEqual([]);
   });
 
   it('downloads no file and plays nothing from the recorded voices when the sound volume is 0', async () => {

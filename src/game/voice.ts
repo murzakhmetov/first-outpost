@@ -180,6 +180,9 @@ export async function prefetchLines(keys: string[], lang: string): Promise<void>
 let token = 0;
 let current: { stop: () => void; ended: Promise<unknown> } | null = null;
 let spoke = false;
+/** The call of playLines that is loading or playing now (0 when none), and the key list it was asked for. */
+let activeId = 0;
+let talkingKey = '';
 
 function endCurrent(): void {
   const line = current;
@@ -187,14 +190,29 @@ function endCurrent(): void {
   line?.stop();
 }
 
+function deviceBusy(): boolean {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
+  return window.speechSynthesis.speaking || window.speechSynthesis.pending;
+}
+
 /** Stops the line that is playing (and a line the device's voice is reading for it). */
 export function stopLine(): void {
   token += 1;
+  activeId = 0;
   endCurrent();
   if (spoke) {
     spoke = false;
     stopSpeaking();
   }
+}
+
+/**
+ * True while the line (or list of lines) with this id is loading, playing or being read by the device's voice, so
+ * that its speaker button can stop it instead of starting it again. The id is the keys joined with "|".
+ */
+export function isTalking(id: string): boolean {
+  if (!id || talkingKey !== id) return false;
+  return activeId !== 0 || current !== null || (spoke && deviceBusy());
 }
 
 function fallbackSpeech(options: PlayOptions, lang: string): false {
@@ -207,6 +225,13 @@ function fallbackSpeech(options: PlayOptions, lang: string): false {
     }
   }
   return false;
+}
+
+/** Waits (at most 20 s) until the device's voice has finished the text it is reading, or the call is replaced. */
+async function deviceSpeechEnded(id: number): Promise<void> {
+  for (let waited = 0; waited < 100 && id === token && deviceBusy(); waited++) {
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+  }
 }
 
 /** Plays one recorded segment to its end. `false` when it was stopped. */
@@ -229,53 +254,67 @@ function playSegment(handle: { stop: () => void; done: Promise<unknown> }): Prom
 
 /**
  * Plays the recorded lines of a list of text keys one after another (a card: its title, then its body).
- * Only when EVERY key has a file does it play them; if any key has none (or a file cannot be loaded), nothing
- * recorded plays and the whole shown text falls back exactly as for a single line (the device's voice when the
- * caller asks for it). Resolves `true` when the last line played to its end, and `false` when there was no file,
- * it could not be played, or it was stopped. Never rejects. A new call stops what is playing.
+ * Only when EVERY key has a file does it play them; if any key has none, nothing recorded plays and the whole
+ * shown text falls back exactly as for a single line (the device's voice when the caller asks for it). A list
+ * that does have files never falls back to the device's voice: if a file cannot be loaded or started (slow
+ * network, sound at 0, tab hidden) it stays silent, and a list that has started never reads its text again.
+ * With the sound volume at 0 the manifest and the files are not downloaded.
+ * Resolves `true` when the last line played to its end, and `false` when there was no file, it could not be
+ * played, or it was stopped. Never rejects. A new call stops what is playing.
  */
 export async function playLines(keys: string[], lang: string, options: PlayOptions = {}): Promise<boolean> {
   const id = ++token;
+  activeId = id;
+  talkingKey = keys.join('|');
+  try {
+    return await runLines(id, keys, lang, options);
+  } finally {
+    if (activeId === id) activeId = 0;
+  }
+}
+
+async function runLines(id: number, keys: string[], lang: string, options: PlayOptions): Promise<boolean> {
   // A line that comes while another plays waits for it when asked to (`queue`), else it replaces it.
   const waitFor = options.queue ? current : null;
   if (!waitFor) endCurrent();
-  if (spoke) {
+  const waitDevice = !!options.queue && spoke && !waitFor;
+  if (spoke && !waitDevice) {
     spoke = false;
-    if (!options.queue) stopSpeaking();
+    stopSpeaking();
   }
   try {
-    const lines = await loadManifest();
+    // Sound at 0: the manifest is not downloaded either (what is already known is used).
+    const lines = audio.voiceAudible ? await loadManifest() : (voiceLines.value ?? {});
     if (id !== token) return false;
     if (waitFor) {
       await waitFor.ended;
       if (id !== token) return false;
     }
+    if (waitDevice) {
+      await deviceSpeechEnded(id);
+      if (id !== token) return false;
+      spoke = false;
+    }
     const entries = keys.map((key) => findEntry(lines, lang, key));
     const whole = entries.length > 0 && entries.every((entry): entry is VoiceEntry => entry !== null);
-    // With the sound volume at 0 the file would be silent: it is not downloaded (the device's voice may still read it).
-    if (whole && decide(entries[0], options) === 'file' && audio.voiceAudible) {
+    if (whole) {
+      // The device's voice never reads a line that has a recording; with the sound at 0 the file would be silent.
+      if (!audio.voiceAudible) return false;
       const buffers: AudioBuffer[] = [];
       for (const entry of entries as VoiceEntry[]) {
         const buffer = await loadBuffer(entry);
         if (id !== token) return false;
-        if (!buffer) break;
+        if (!buffer) return false;
         buffers.push(buffer);
       }
-      if (buffers.length === entries.length) {
-        let complete = true;
-        for (let index = 0; index < buffers.length; index++) {
-          const entry = entries[index] as VoiceEntry;
-          const handle = audio.playVoice(buffers[index], entry.speaker === 'mc');
-          if (!handle) {
-            complete = false; // cannot start: the whole text falls back below (the device's voice when asked)
-            break;
-          }
-          stopSpeaking(); // the device's voice and a recorded line must not talk at once
-          if (!(await playSegment(handle))) return false;
-          if (id !== token) return false;
-        }
-        if (complete) return true;
+      for (let index = 0; index < buffers.length; index++) {
+        const handle = audio.playVoice(buffers[index], (entries[index] as VoiceEntry).speaker === 'mc');
+        if (!handle) return false; // cannot start (sound at 0, tab hidden): silent, never the device's voice
+        stopSpeaking(); // the device's voice and a recorded line must not talk at once
+        if (!(await playSegment(handle))) return false;
+        if (id !== token) return false;
       }
+      return true;
     }
   } catch {
     /* fall back below */
@@ -314,21 +353,27 @@ export function decideAutoSpeak(input: AutoSpeakInput): 'file' | 'speech' | 'non
 }
 
 let lastAutoKey = '';
+let lastAutoAt = 0;
 let autoToken = -1;
+/** The same key counts as a repeat only for this long: a fresh alert of the same kind is spoken again. */
+const REPEAT_MS = 12_000;
 
 /**
- * The same line is not spoken twice in a row (a hint that comes again on every tap of the plan, or a line that
- * comes back after a film). The key decides, not the text: only the numbers in it change.
+ * The same line is not spoken twice in a row within a few seconds (a hint that comes again on every tap of the
+ * plan). The key decides, not the text: only the numbers in it change. A line that a film or a close cut off is
+ * forgotten (see stopAutoLine), so that its copy after the film is heard.
  */
-export function isRepeat(key: string): boolean {
-  return lastAutoKey === key;
+export function isRepeat(key: string, now: number = Date.now()): boolean {
+  return lastAutoKey === key && now - lastAutoAt < REPEAT_MS;
 }
-export function markSpoken(key: string): void {
+export function markSpoken(key: string, now: number = Date.now()): void {
   lastAutoKey = key;
+  lastAutoAt = now;
 }
 /** A new mission starts: the first line is spoken even if it is the one spoken last. */
 export function forgetSpoken(): void {
   lastAutoKey = '';
+  lastAutoAt = 0;
   autoToken = -1;
 }
 
@@ -342,6 +387,7 @@ export function speakAutoLine(what: 'file' | 'speech', key: string, text: string
     void playLines([key], lang, { text, fallback: true });
   } else {
     stopLine();
+    talkingKey = key;
     try {
       speak(text, lang);
       spoke = true;
@@ -357,6 +403,9 @@ export function speakAutoLine(what: 'file' | 'speech', key: string, text: string
  * may already be playing, and must not be cut).
  */
 export function stopAutoLine(): void {
-  if (autoToken === token) stopLine();
+  if (autoToken === token) {
+    stopLine();
+    lastAutoKey = ''; // it was cut off: its copy after a film is heard
+  }
   autoToken = -1;
 }

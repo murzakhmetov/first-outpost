@@ -5,7 +5,7 @@ import type { ComponentChildren, JSX } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { audio, canSpeak, speak, stopSpeaking } from '../game/audio';
 import { cutscene, settings } from '../game/store';
-import { hasLine, loadManifest, playLines, stopLine } from '../game/voice';
+import { hasLine, isTalking, loadManifest, playLines, stopLine } from '../game/voice';
 import { has, lang, num, signed, t } from '../i18n';
 import type { Effects } from '../sim/types';
 import { Icon } from './icons';
@@ -112,9 +112,11 @@ export function SpeakBtn({ text, voiceKey, auto = true, onPlay }: { text: string
   const keys = voiceKey === undefined ? [] : Array.isArray(voiceKey) ? voiceKey : [voiceKey];
   const keyId = keys.join('|');
   const useFile = keys.length > 0 && settings.value.voice;
+  // Sound at 0: nothing would play, so the list of voices is not downloaded either.
+  const audible = settings.value.volume > 0;
   useEffect(() => {
-    if (useFile) void loadManifest();
-  }, [useFile]);
+    if (useFile && audible) void loadManifest();
+  }, [useFile, audible]);
   const filed = useFile && keys.every((key) => hasLine(key, lang.value));
   // Only a text the child asked for stops when its card closes; an automatic reading is left to finish.
   useEffect(() => () => {
@@ -142,17 +144,19 @@ export function SpeakBtn({ text, voiceKey, auto = true, onPlay }: { text: string
           onPlay();
           return;
         }
-        byHand.current = !on;
-        if (on) {
+        // A line that is being spoken (also one that Lumi began by itself) is stopped by a tap, not started again.
+        const talking = on || (keys.length > 0 && isTalking(keyId));
+        byHand.current = !talking;
+        if (talking) {
           stopSpeaking();
-          if (useFile) stopLine();
+          if (keys.length) stopLine();
         } else if (useFile) void playLines(keys, lang.value, { text, fallback: true }).then(() => setOn(false));
         else {
           stopLine(); // a recorded line and the device's voice must not talk at once
           speak(text, lang.value);
         }
-        setOn(!on);
-        if (!on) window.setTimeout(() => setOn(false), Math.min(20000, 600 + text.length * 70));
+        setOn(!talking);
+        if (!talking) window.setTimeout(() => setOn(false), Math.min(20000, 600 + text.length * 70));
       }}
     >
       <Icon name="speaker" size={18} />

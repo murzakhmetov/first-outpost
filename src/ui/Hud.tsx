@@ -581,7 +581,10 @@ function speakNewLine(line: NonNullable<typeof lumiLine.value>): void {
   // Nothing to do (the setting is off, a film plays, or the sound is off): nothing is downloaded either.
   if (now(false) === 'none') return;
   const text = lumiText(line);
+  // The same line again (a hint on every tap of the plan) goes on as it is.
   if (isRepeat(line.key)) return;
+  // The old bubble is gone: its voice stops, even when the new line is not spoken.
+  stopAutoLine();
   void (settings.value.voice ? loadManifest() : Promise.resolve({})).then(() => {
     // A newer line came while the list of voices was loading: that one speaks.
     if (lumiLine.peek()?.id !== line.id) return;
@@ -599,7 +602,9 @@ export function LumiBubble(): JSX.Element | null {
   const [hidden, setHidden] = useState(0);
   const inFilm = cutscene.value;
   useEffect(() => {
+    // No line (hushed, or a timed line ran out): its voice stops with the bubble.
     if (line) speakNewLine(line);
+    else stopAutoLine();
   }, [line?.id]);
   // A film speaks for itself: a line of Lumi that is still being read stops when it starts.
   useEffect(() => {
@@ -618,7 +623,10 @@ export function LumiBubble(): JSX.Element | null {
       </div>
       <div class="lumi-tools">
         <SpeakBtn text={text} voiceKey={line.key} auto={false} />
-        <button type="button" class="lumi-close" aria-label={t('common.close')} onClick={() => setHidden(line.id)}>
+        <button type="button" class="lumi-close" aria-label={t('common.close')} onClick={() => {
+            setHidden(line.id);
+            stopAutoLine(); // closing the bubble silences Lumi's own line
+          }}>
           <Icon name="close" size={14} />
         </button>
       </div>

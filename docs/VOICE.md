@@ -19,7 +19,12 @@ How it works in the game (`src/game/voice.ts`):
 - A line with no file is read by the device's own voice only when "Read texts aloud" is on (or, for Lumi's
   bubble, when `Lumi speaks by itself` is on), as before.
 - Setting `Voices` (on by default) switches the recorded voices off. Players can also turn off the
-  sound effects volume, which silences the voice too (it uses that volume).
+  sound effects volume, which silences the recorded voices too (they use that volume); with it at 0 neither the
+  manifest nor a file is downloaded. A line that has a recording is never read by the device's voice instead:
+  if its file cannot be loaded or started it stays silent, and a card that has started (title played) does not
+  read its text again. Only texts with no recording are read by the device's voice, whatever the volume.
+- A speaker button stops its line when it is tapped while that line is being spoken (also a line that Lumi
+  began by itself). Closing Lumi's bubble, or a new line / hush / timeout replacing it, stops Lumi's own voice.
 - Mission Control lines get a light radio filter. The music gets quieter while a line plays.
 
 ## Lumi speaks by itself
@@ -35,7 +40,7 @@ plays, the sound volume; output: `'file'`, `'speech'` or `'none'`).
   the recorded voice says the `voice.<key>` version.
 - OFF: nothing plays until the speaker button on the bubble is tapped.
 - In both cases: never over a film (films speak for themselves); one line at a time and a new line stops the
-  old one; the same line is not spoken twice in a row (for example when it comes back after a film); and with
+  old one; the same line is not spoken twice in a row within 12 seconds (a hint on every tap of the plan; a line that a film cut off is spoken again when it comes back); and with
   the sound volume at 0 nothing is downloaded or spoken.
 - "Read texts aloud" keeps its meaning for the other texts (the cards, the panels). Lumi's bubble is handled by
   `Lumi speaks by itself` only, so the two settings never read a bubble twice.
