@@ -827,6 +827,7 @@ export class World {
     this.rig.update(dt, time);
     this.focus.copy(this.mode === 'eva' ? this.eva.position : this.rig.target);
     this.focus.y = 0;
+    this.daylight.titleLight = this.mode === 'title';
     this.daylight.update(this.engine.camera, time, this.focus);
     this.base.update(dt, time, this.daylight.sunDir);
     this.props.update(time);

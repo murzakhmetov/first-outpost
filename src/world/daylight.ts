@@ -169,6 +169,13 @@ const NUMBER_KEYS = ['sunPower', 'glowAmount', 'haloAmount', 'stars', 'clouds', 
 /** Where the cool fill light stands (Mars), relative to the view centre. */
 const FILL_OFFSET = new THREE.Vector3(-40, 80, -30);
 
+/** G14 title balance: the light stands this much higher, the sky light and the camera-side fill grow. */
+const TITLE_LIFT = 0.26;
+const TITLE_AMBIENT = 0.3;
+const TITLE_FILL = 0.45;
+const UP = new THREE.Vector3(0, 1, 0);
+const TITLE_FILL_COLOR = new THREE.Color('#ffc9a0');
+
 const WARM_SHADE = new THREE.Color(1.05, 0.97, 0.9);
 
 export class Daylight {
@@ -196,6 +203,7 @@ export class Daylight {
   private readonly shadowFocus = new THREE.Vector3(1e9, 0, 0);
   private readonly skyColors: SkyColors;
   private readonly tmp = new THREE.Vector3();
+  private readonly tmpFill = new THREE.Vector3();
   private readonly dustFog = new THREE.Color('#8a5636');
   private readonly dustLight = new THREE.Color('#ffb070');
   private shadowRange = 46;
@@ -206,6 +214,10 @@ export class Daylight {
   /** Range step in use while the wide box is on (0 = base range). */
   private rangeStep = 0;
   private wideActive = false;
+  /** Title screen balance (G14): 1 while the title is shown, eased in and out. Set from the world. */
+  titleLight = false;
+  private titleMix = 0;
+  private titleTime = 0;
   private readonly lightX = new THREE.Vector3();
   private readonly lightY = new THREE.Vector3();
 
@@ -356,9 +368,9 @@ export class Daylight {
   }
 
   /** Bounce light colours (G3): sky above, sunlit ground below, horizon at the sides, and the shadow mood. */
-  private setBounce(cur: Stop, up: boolean): void {
+  private setBounce(cur: Stop, up: boolean, title = 0): void {
     const sunUp = up ? THREE.MathUtils.clamp(this.sunDir.y * 2.5, 0, 1) : 0;
-    const power = cur.hemiPower * (1 - 0.35 * this.dust);
+    const power = cur.hemiPower * (1 - 0.35 * this.dust) * (1 + TITLE_AMBIENT * title);
     GLOBALS.bounce.value = flag('G3') ? 1 : 0;
     GLOBALS.ambSky.value.copy(cur.hemiSky).multiplyScalar(power);
     // Ground: lit by the Sun, so it brightens with a high Sun and takes the light's colour.
@@ -369,6 +381,17 @@ export class Daylight {
     // Mars: the shade side is lit from the warm sand, so the violet of the world look is pulled most of the way to a warm rose.
     GLOBALS.shadowTint.value.copy(this.post.look.shadow);
     if (this.site === 'mars') GLOBALS.shadowTint.value.lerp(WARM_SHADE, 0.8);
+  }
+
+  /** Eases the title balance in and out (high and ultra, dev switch G14). Returns 0-1. */
+  private updateTitleMix(time: number): number {
+    const dt = Math.min(0.1, Math.abs(time - this.titleTime));
+    this.titleTime = time;
+    const goal = this.titleLight && this.shadowWide && this.site === 'mars' && flag('G14') ? 1 : 0;
+    // Frozen time (gfxlab, dt 0) jumps straight to the goal so A/B shots show the finished look.
+    this.titleMix = dt === 0 ? goal : this.titleMix + (goal - this.titleMix) * Math.min(1, dt * 2.5);
+    if (Math.abs(goal - this.titleMix) < 0.002) this.titleMix = goal;
+    return this.titleMix;
   }
 
   private sample(y: number): void {
@@ -403,6 +426,12 @@ export class Daylight {
     const lightDir = this.tmp;
     if (up) lightDir.copy(this.sunDir);
     else lightDir.set(0.25, 0.9, 0.35).normalize();
+    const title = this.updateTitleMix(time);
+    // G14: on the title the light (not the sky disc) stands a little higher, so the long shadows are shorter.
+    if (title > 0 && up) {
+      lightDir.y += TITLE_LIFT * title * THREE.MathUtils.smoothstep(this.sunDir.y, 0.01, 0.09);
+      lightDir.normalize();
+    }
     this.sun.color.copy(c.light).lerp(this.dustLight, dust * 0.7);
     this.sun.intensity = c.lightPower * (1 - 0.78 * dust);
 
@@ -420,7 +449,7 @@ export class Daylight {
 
     this.hemi.color.copy(c.hemiSky);
     this.hemi.groundColor.copy(c.hemiGround);
-    this.hemi.intensity = c.hemiPower * (1 - 0.35 * dust);
+    this.hemi.intensity = c.hemiPower * (1 - 0.35 * dust) * (1 + TITLE_AMBIENT * title);
 
     if (this.site === 'moon') {
       this.fill.color.set('#7ea2dc');
@@ -430,6 +459,13 @@ export class Daylight {
       this.fill.color.set('#6f86c9');
       this.fill.intensity = 0.3 * c.night;
       this.fill.position.copy(focus).add(FILL_OFFSET);
+    }
+    if (title > 0) {
+      // G14: a soft warm fill from the camera side lights the cadet, the rover and the shade; blended, so leaving the title never pops.
+      this.fill.color.lerp(TITLE_FILL_COLOR, title);
+      this.fill.intensity += (TITLE_FILL - this.fill.intensity) * title;
+      this.tmpFill.copy(camera.position).sub(focus).setY(0).normalize().multiplyScalar(70).addScaledVector(UP, 55).add(focus);
+      this.fill.position.lerp(this.tmpFill, title);
     }
     this.fill.target.position.copy(focus);
     this.fill.target.updateMatrixWorld();
@@ -465,7 +501,7 @@ export class Daylight {
     GLOBALS.skyColor.value.copy(c.horizon).lerp(c.zenith, 0.35);
     if (this.site === 'moon') GLOBALS.skyColor.value.set(0.16, 0.2, 0.32);
     GLOBALS.sunDirView.value.copy(lightDir).transformDirection(camera.matrixWorldInverse);
-    this.setBounce(c, up);
+    this.setBounce(c, up, title);
 
     // Outdoors the picture always starts from the same grade: a room's own grade must not leak out of the door.
     const grade = this.post.grade;
