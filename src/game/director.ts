@@ -49,7 +49,9 @@ import {
 import type { BuildingId, DecorId, GameId, RoomId, ToolId } from '../sim/outpost';
 import { PRINT } from '../sim/print';
 import { FEATURED_WINDOWS } from '../sim/sites';
-import type { EvaResult, MissionConfig, MissionState, ModuleId, OptionId, WeekEnv } from '../sim/types';
+import type { ChoiceResult } from '../sim/mission';
+import type { CoopStage } from '../sim/coop';
+import type { EvaResult, MissionConfig, MissionState, ModuleId, OptionId, WeekEnv, WeekRecord } from '../sim/types';
 import { MAX_LEVEL } from '../sim/types';
 import { FARM, LAB } from '../world/base';
 import { LANDER } from '../world/props';
@@ -122,6 +124,113 @@ let saidOnce = new Set<string>();
 /** Samples picked up quickly one after another on a walk (only for a cheer: it changes no score). */
 let sampleStreak = 0;
 let lastSampleAt = 0;
+
+/**
+ * The co-op seam ("One base together", src/net/coop.ts). While a port is set, every mutating export below first asks it
+ * `take(call, args)`: true means the port handles the call (a guest sends an intent, the host applies it through the sim)
+ * and the local code does not run. With no port (solo play and the "each their own base" crew mode) nothing changes.
+ */
+export type CoopCall =
+  | 'orderBuilding'
+  | 'winRoomGame'
+  | 'finishRoomGame'
+  | 'finishPrint'
+  | 'craftTool'
+  | 'continueBriefing'
+  | 'chooseEvent'
+  | 'askMissionControl'
+  | 'confirmEvent'
+  | 'changeAlloc'
+  | 'cycleAlloc'
+  | 'useSafePlan'
+  | 'confirmPlan'
+  | 'beginWalk'
+  | 'skipWalk'
+  | 'finishWalk'
+  | 'goNextWeek'
+  | 'walkEnd'
+  | 'find';
+
+export interface CoopPort {
+  take(call: CoopCall, args: readonly unknown[]): boolean;
+}
+
+let coop: CoopPort | null = null;
+/** The stage and week the screen already shows for a co-op mirror (null: nothing shown yet). */
+let shownStage: { stage: CoopStage; week: number } | null = null;
+
+/** Connect or disconnect the co-op session. Null = solo behaviour. */
+export function setCoopPort(port: CoopPort | null): void {
+  coop = port;
+  shownStage = null;
+}
+
+/**
+ * Co-op: take the host's shared state and show it. `stage` is the host's stage. The state replaces ours at once
+ * (the host decides); the screen follows when the stage or the week changed, otherwise only the live numbers refresh.
+ * `choice` is the card's result while the stage is eventResult. Does nothing without a port.
+ */
+export function coopAdopt(next: MissionState, stage: CoopStage, choice?: ChoiceResult | null): void {
+  if (!coop || !world) return;
+  const first = state === null;
+  state = next;
+  if (first) ensureOutpost(state);
+  const same = shownStage !== null && shownStage.stage === stage && shownStage.week === next.week;
+  shownStage = { stage, week: next.week };
+  if (same) {
+    publish();
+    return;
+  }
+  presentStage(stage, choice ?? null);
+}
+
+/**
+ * Show a stage the host is in: the screen, the camera and Lumi, from the state alone. Modelled on resumeSaved, but
+ * it also knows the night, the report and the walk. Needs `state` to be set.
+ */
+function presentStage(stage: CoopStage, choice: ChoiceResult | null): void {
+  if (!world || !state) return;
+  const s = state;
+  switch (stage) {
+    case 'briefing':
+      startWeek();
+      break;
+    case 'event':
+      enterEvent();
+      break;
+    case 'eventResult':
+      if (!choice) {
+        goPlan();
+        break;
+      }
+      eventResult.value = choice;
+      step.value = 'eventResult';
+      world.setMood(choice.optionId === choice.advice ? 'happy' : 'think');
+      hush();
+      publish();
+      break;
+    case 'plan':
+      goPlan();
+      break;
+    case 'walk':
+      enterEvaIntro();
+      break;
+    case 'night':
+      void nightBegin(s);
+      break;
+    case 'report': {
+      const record = s.history.find((item) => item.week === s.week) ?? s.history[s.history.length - 1];
+      if (!record) break;
+      nightResolve(s, record);
+      nightEnd(s, record);
+      break;
+    }
+    case 'end':
+      finishMission();
+      break;
+  }
+}
+
 
 const wait = (seconds: number): Promise<void> => new Promise((resolve) => window.setTimeout(resolve, seconds * 1000));
 
@@ -270,6 +379,7 @@ function bindWorld(): void {
     if (what === 'devil' && step.value === 'eva' && !lumiLine.peek() && once('devil')) say('lumi.eva.dustDevil', undefined, 'happy', 9);
   };
   world.eva.onFinish = (result, reason) => {
+    if (coop?.take('walkEnd', [result, reason])) return;
     if (!state || !world) return;
     audio.setAlarm(false);
     audio.setMotor(0, false);
@@ -595,6 +705,7 @@ export function devRefresh(): void {
 
 /** Order a new building. The builder robot puts it up with the cells given to it in the power plan. */
 export function orderBuilding(id: BuildingId): boolean {
+  if (coop?.take('orderBuilding', [id])) return false;
   if (!state || step.value === 'night') return false;
   if (!startBuilding(state, id)) {
     audio.play('deny');
@@ -741,6 +852,7 @@ function useStation(station: Station): void {
 
 /** The win card of a room game is on screen: pay now (see `finishRoomGame`, which then only closes). */
 export function winRoomGame(id: RoomId, game: GameId): void {
+  if (coop?.take('winRoomGame', [id, game])) return;
   if (!state || roomWinPaid) return;
   finishRoomGame(id, game, true);
   roomWinPaid = true;
@@ -748,6 +860,7 @@ export function winRoomGame(id: RoomId, game: GameId): void {
 
 /** A room game ended. A win helps the outpost, once a week per room. */
 export function finishRoomGame(id: RoomId, game: GameId, won: boolean): void {
+  if (coop?.take('finishRoomGame', [id, game, won])) return;
   if (!state) return;
   if (won && roomWinPaid) {
     // Paid when the win card appeared.
@@ -989,6 +1102,7 @@ export function cancelPrint(): void {
 
 /** The print is finished: the tool is made, and a neat print saves one metal. */
 export function finishPrint(accuracy: number): void {
+  if (coop?.take('finishPrint', [accuracy])) return;
   const id = printing.value;
   printing.value = null;
   if (!id || !state || !craftTool(id)) return;
@@ -1002,6 +1116,7 @@ export function finishPrint(accuracy: number): void {
 
 /** Make a tool in the workshop. */
 export function craftTool(id: ToolId): boolean {
+  if (coop?.take('craftTool', [id])) return false;
   if (!state || !craft(state, id)) {
     audio.play('deny');
     return false;
@@ -1098,6 +1213,7 @@ function glanceAtSky(): void {
 
 /** Player pressed "Start the week" on the forecast. */
 export function continueBriefing(): void {
+  if (coop?.take('continueBriefing', [])) return;
   if (!state) return;
   audio.play('click');
   if (state.now.eventId && !state.now.eventDone) enterEvent();
@@ -1134,6 +1250,7 @@ function enterEvent(): void {
 }
 
 export function chooseEvent(optionId: OptionId): void {
+  if (coop?.take('chooseEvent', [optionId])) return;
   if (!state) return;
   const result = chooseOption(state, optionId);
   if (!result) {
@@ -1150,6 +1267,7 @@ export function chooseEvent(optionId: OptionId): void {
 }
 
 export function askMissionControl(): void {
+  if (coop?.take('askMissionControl', [])) return;
   if (!state) return;
   const answer = askEarth(state);
   if (!answer) {
@@ -1162,6 +1280,7 @@ export function askMissionControl(): void {
 }
 
 export function confirmEvent(): void {
+  if (coop?.take('confirmEvent', [])) return;
   audio.play('click');
   eventResult.value = null;
   earthAnswer.value = null;
@@ -1199,6 +1318,7 @@ function advise(): void {
 }
 
 export function changeAlloc(module: ModuleId, delta: number): void {
+  if (coop?.take('changeAlloc', [module, delta])) return;
   if (!state || step.value !== 'plan') return;
   const before = state.alloc[module];
   const wanted = before + delta;
@@ -1219,6 +1339,7 @@ export function changeAlloc(module: ModuleId, delta: number): void {
 
 /** Tap on a building label: one more cell, or back to zero when it cannot take more. */
 export function cycleAlloc(module: ModuleId): void {
+  if (coop?.take('cycleAlloc', [module])) return;
   if (!state || step.value !== 'plan') return;
   const level = state.alloc[module];
   const full = level >= MAX_LEVEL[module] || (module === 'shield' && robotIdle(state));
@@ -1229,6 +1350,7 @@ export function cycleAlloc(module: ModuleId): void {
 }
 
 export function useSafePlan(): void {
+  if (coop?.take('useSafePlan', [])) return;
   if (!state || step.value !== 'plan') return;
   state.alloc = suggestAlloc(state);
   planTouched = true;
@@ -1238,21 +1360,26 @@ export function useSafePlan(): void {
 }
 
 export function confirmPlan(): void {
+  if (coop?.take('confirmPlan', [])) return;
   if (!world || !state) return;
   audio.play('confirm');
-  if (state.now.evaAllowed) {
-    step.value = 'evaIntro';
-    world.lookAt('airlock');
-    if (state.config.tutorial && once('evaIntro')) say('lumi.t2.eva', undefined, 'happy');
-    else hush();
-    publish();
-    taskFilm('walk');
-  } else {
-    void runNight();
-  }
+  if (state.now.evaAllowed) enterEvaIntro();
+  else void runNight();
+}
+
+/** The walk's first screen: who goes out, and the camera at the airlock. */
+function enterEvaIntro(): void {
+  if (!world || !state) return;
+  step.value = 'evaIntro';
+  world.lookAt('airlock');
+  if (state.config.tutorial && once('evaIntro')) say('lumi.t2.eva', undefined, 'happy');
+  else hush();
+  publish();
+  taskFilm('walk');
 }
 
 export function beginWalk(): void {
+  if (coop?.take('beginWalk', [])) return;
   if (!world || !state) return;
   stopPlacement();
   const level = state.config.difficulty;
@@ -1309,6 +1436,7 @@ function onEvaEvent(event: EvaEvent, value = 0): void {
     case 'find': {
       // A discovery: its story goes into the Science log, and Lumi tells the short version.
       const find = FINDS[state.config.site][value];
+      if (coop?.take('find', [value])) break;
       if (!find || !recordFind(state, find.id)) break;
       audio.play('discover');
       announce(find.id, FIND_SCIENCE, unlockMission([find.id]).length > 0);
@@ -1390,11 +1518,13 @@ export function recallWalk(): void {
 }
 
 export function skipWalk(): void {
+  if (coop?.take('skipWalk', [])) return;
   audio.play('click');
   void runNight();
 }
 
 export function finishWalk(): void {
+  if (coop?.take('finishWalk', [])) return;
   audio.play('click');
   evaResult.value = null;
   void runNight();
@@ -1410,14 +1540,29 @@ export function skipNight(): void {
   hurryNight?.();
 }
 
-/** The week runs: the Sun crosses the sky, the meters move, the log is written. */
+/** The week runs: the Sun crosses the sky, the meters move, the log is written. Solo plays the three parts in a row. */
 async function runNight(): Promise<void> {
   if (!world || !state) return;
   const s = state;
+  const { clock, seconds } = nightBegin(s);
+  // A tap skips the rest of the night (see skipNight).
+  await Promise.race([wait(seconds * 0.5), new Promise<void>((resolve) => (hurryNight = resolve))]);
+  hurryNight = null;
+  if (state !== s) return; // the player left the mission meanwhile
+
+  const record = nightResolve(s);
+  await clock;
+  if (state !== s) return;
+  nightEnd(s, record);
+}
+
+/** Night, part 1 (shown on every device): the screen goes dark and the Sun starts to cross the sky. */
+function nightBegin(s: MissionState): { clock: Promise<void>; seconds: number } {
+  const w = world!;
   stopPlacement();
   step.value = 'night';
-  world.setCrewOutside(false); // everyone sleeps indoors
-  world.setMode('overview');
+  w.setCrewOutside(false); // everyone sleeps indoors
+  w.setMode('overview');
   audio.play('night');
   setAmbience();
   const site = s.config.site;
@@ -1427,26 +1572,33 @@ async function runNight(): Promise<void> {
   else hush();
   publish();
 
-  const from = world.getClock();
+  const from = w.getClock();
   // Mars: one full sol stands for the week. Moon: the Sun moves a week along the horizon.
   const to = site === 'mars' ? from + 1 : from + (7 * 12.19074912) / 360;
   const seconds = settings.value.lessMotion ? 2.4 : 3.6;
-  const clock = world.runClock(to, seconds);
-  // A tap skips the rest of the night (see skipNight).
-  await Promise.race([wait(seconds * 0.5), new Promise<void>((resolve) => (hurryNight = resolve))]);
-  hurryNight = null;
-  if (state !== s) return; // the player left the mission meanwhile
+  return { clock: w.runClock(to, seconds), seconds };
+}
 
-  const record = resolveWeek(s);
+/**
+ * Night, part 2: the week is worked out (only where the mission is run: solo and the co-op host) and its record is
+ * shown. A co-op guest passes the record it received instead of working it out.
+ */
+function nightResolve(s: MissionState, given?: WeekRecord): WeekRecord {
+  const record = given ?? resolveWeek(s);
   lastRecord.value = record;
   if (record.harvested) {
     audio.play('harvest');
     unlockMission(['space_farming']);
   }
   publish();
-  await clock;
-  if (state !== s) return;
-  if (site === 'mars') world.setClock(0.38);
+  return record;
+}
+
+/** Night, part 3 (shown on every device): the sky is back, then the report, or the end of the mission. */
+function nightEnd(s: MissionState, record: WeekRecord): void {
+  const w = world;
+  if (!w) return;
+  if (s.config.site === 'mars') w.setClock(0.38);
 
   if (s.end) {
     finishMission();
@@ -1454,7 +1606,7 @@ async function runNight(): Promise<void> {
   }
   step.value = 'report';
   const rough = record.hungry || record.cropDied || record.evaCaught || record.air < 30;
-  world.setMood(rough ? 'sad' : 'happy');
+  w.setMood(rough ? 'sad' : 'happy');
   if (record.built) {
     // A new building stands: a banner, and Lumi says what it does.
     announce(record.built, 0, true, 'building');
@@ -1475,6 +1627,7 @@ async function runNight(): Promise<void> {
 }
 
 export function goNextWeek(): void {
+  if (coop?.take('goNextWeek', [])) return;
   if (!state) return;
   audio.play('click');
   nextWeek(state);
