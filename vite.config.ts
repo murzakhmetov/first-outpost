@@ -92,5 +92,7 @@ export default defineConfig({
   test: {
     include: ['tests/**/*.test.ts'],
     environment: 'node',
+    // The rooms sign and check with a deterministic fake in tests (tests/sign.test.ts runs the real Web Crypto).
+    setupFiles: ['tests/setup-crypto.ts'],
   },
 });

@@ -726,7 +726,7 @@ describe('protocol: names, sizes and the mode in the start', () => {
   });
 
   it('the protocol version moved on', () => {
-    expect(PROTOCOL).toBe(2);
+    expect(PROTOCOL).toBe(3);
   });
 });
 
@@ -892,10 +892,10 @@ describe('the room passes co-op messages, in co-op mode only', () => {
     expect(host.room.view.start?.mode).toBeUndefined();
     expect(host.room.sendCoop('st', stBody(host.id, guests.map((g) => g.id)))).toBe(false);
     expect(guests[0].room.sendCoop('sync', encodeSync(guests[0].id, 0))).toBe(false);
-    // Well-formed messages from the right senders, put on the network by their own transports (the way a
-    // modified client would): the commander's st and rec, a guest's int and sync.
+    // Well-formed, signed messages from the right senders, put on the network by their own rooms (the way a
+    // modified client with its own key would): the commander's st and rec, a guest's int and sync.
     const rec = playRigs().find((r) => r.co.mission.history.length)!.co.mission.history[0];
-    const wire = (c: Client) => (c.room as unknown as { transport: MemoryTransport }).transport;
+    const wire = (c: Client) => ({ send: (event: string, body: Record<string, unknown>) => (c.room as unknown as { out(event: string, body: Record<string, unknown>): boolean }).out(event, body) });
     wire(host).send('st', stBody(host.id, guests.map((g) => g.id)));
     wire(host).send('rec', encodeRecord(host.id, rec));
     wire(guests[0]).send('int', { from: guests[0].id, n: 1, w: 1, s: 'briefing', k: 'ready', on: true });

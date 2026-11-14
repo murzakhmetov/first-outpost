@@ -4,6 +4,7 @@
  * by recorders, so the test sees exactly who starts a host session, who starts a guest session, and when it ends.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fakeCrypto } from './fake-crypto';
 import { shims } from './harness';
 
 const rec = vi.hoisted(() => ({
@@ -67,6 +68,8 @@ const tick = async (ms: number): Promise<void> => {
 /** One device: its own copy of crew.ts. */
 async function device(): Promise<Crew> {
   vi.resetModules();
+  // A fresh module registry has a fresh default crypto: give this device the deterministic fake again.
+  (await import('../src/net/sign')).setCrewCrypto(fakeCrypto);
   return (await import('../src/net/crew')) as Crew;
 }
 

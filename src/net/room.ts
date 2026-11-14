@@ -14,6 +14,11 @@
  *    copy of the host entry that outlives the host connection);
  *  - every message is checked (protocol.ts) and limited in rate before it is believed;
  *  - the host cannot start while a seat speaks another protocol version (a mixed crew would play two different games);
+ *  - every message and the host's decisions are signed (sign.ts): a message counts only when it verifies against the
+ *    public key pinned for the id it claims (the guest pins the host's key when it locks the host in, the host pins a
+ *    player's key when it seats them, the host's signed seat list carries the seated keys to everyone). Everything
+ *    that arrives, presence included, goes through ONE ordered queue, because pins come from presence and a check
+ *    that finishes later must never let a later message overtake an earlier one;
  *  - the shared-base messages (coopwire.ts) are only passed through: this room checks who may send them and that they
  *    are well formed, and hands them to `onCoop`; src/net/coop.ts (the session) decides what they mean. They are
  *    read only when the host started the mission in "coop" mode, so a race-mode room never looks at them.
@@ -21,6 +26,7 @@
 import { isCoopEvent, parseCoopMessage, senderOf } from './coopwire';
 import type { CoopIncoming } from './coopwire';
 import {
+  EVENT_NAMES,
   MAX_PLAYERS,
   POSITION_MIN_MS,
   PROTOCOL,
@@ -28,10 +34,13 @@ import {
   STATUS_MIN_MS,
   channelName,
   freeName,
+  isRecord,
+  isSignature,
   normalizeCode,
   parseMessage,
   parseMeta,
   parseStart,
+  playerId,
   randomCode,
   seatOrder,
   sizeLimit,
@@ -39,6 +48,8 @@ import {
   wire,
 } from './protocol';
 import type { CoopEventName, CrewChoice, GameMode, Meta, Position, ReactionId, StartPayload, Status } from './protocol';
+import { Ordered, SIG_OVERHEAD, getCrewCrypto, isPromise, messageText, presenceText } from './sign';
+import type { CrewCrypto, Identity, Maybe } from './sign';
 import type { PresenceEntry, Transport, TransportHandlers } from './transport';
 
 type Timer = ReturnType<typeof setTimeout> | 0;
@@ -86,18 +97,36 @@ export interface RoomOptions {
   createGraceMs?: number;
   /** How long the host may be out of sight before a lobby closes (ms). */
   hostGoneMs?: number;
+  /** Signing and checking. Production uses Web Crypto (the default); tests pass a fake or the real thing. */
+  crypto?: CrewCrypto;
 }
 
 /** Inbound limits: at most this many messages of a kind from one player in a 2 second window. */
 const WINDOW_MS = 2000;
 const INBOUND_LIMIT: Record<string, number> = { status: 8, final: 3, react: 3, pos: 16, st: 12, rec: 24, int: 24, sync: 3 };
+/** How many inbound (or outbound) jobs may wait for a check that finishes later. A job over the limit is dropped. */
+const QUEUE_MAX = 256;
+/** A message counter is a positive integer that fits a double exactly. */
+const COUNTER_MAX = 2 ** 40;
+
+/** The wire form of a presence entry: no empty signature and no empty seat keys. */
+function metaOnWire(meta: Meta): Meta {
+  const out = { ...meta } as Partial<Meta> & Record<string, unknown>;
+  if (!out.g) delete out.g;
+  if (!out.mk || out.mk.length === 0) delete out.mk;
+  if (!out.k) delete out.k;
+  return out as Meta;
+}
 
 export class CrewRoom {
   private transport: Transport | null = null;
   private token = 0;
   private listeners = new Set<(view: RoomView) => void>();
   private roster = new Map<string, Player>();
+  /** The believed entries of the last presence list (see applyPresence), ordered. */
   private present: Meta[] = [];
+  /** The parsed entries of the last presence list. */
+  private entries: Meta[] = [];
   private meta: Meta;
   private phase: Phase = 'idle';
   private code = '';
@@ -123,6 +152,21 @@ export class CrewRoom {
   private lastPosAt = -Infinity;
   private seen = new Map<string, number[]>();
 
+  // Signing. The pins, the counters and the verified host entries live as long as one room; the key pair as long as this object.
+  private readonly crypto: CrewCrypto;
+  private identity: Identity | null = null;
+  /** The public key we trust for an id: the host's from the moment we lock it in, a player's from the moment the host seats them. */
+  private pins = new Map<string, string>();
+  /** The highest counter seen from each sender (only a verified message moves it): a copy of an older message is dropped. */
+  private lastCounter = new Map<string, number>();
+  /** Our own counter. It never goes back, also when the room is left and another one is joined. */
+  private counter = 0;
+  /** Ids whose host entry (the one in `present`) carries a signature that checks out. */
+  private verifiedHosts = new Set<string>();
+  private checked = new Map<string, boolean>();
+  private readonly inbox = new Ordered(QUEUE_MAX);
+  private readonly outbox = new Ordered(QUEUE_MAX);
+
   /** The host started the mission (also called on the host itself). */
   onStart: ((start: StartPayload) => void) | null = null;
   onReaction: ((player: Player, reaction: ReactionId) => void) | null = null;
@@ -140,6 +184,7 @@ export class CrewRoom {
     private makeTransport: () => Transport,
     private options: RoomOptions,
   ) {
+    this.crypto = options.crypto ?? getCrewCrypto();
     this.now = options.now ?? Date.now;
     this.random = options.random ?? Math.random;
     this.joinGraceMs = options.joinGraceMs ?? 1500;
@@ -186,7 +231,7 @@ export class CrewRoom {
 
   // ----- Opening and closing -----------------------------------------------------
 
-  private freshMeta(host: boolean): Meta {
+  private freshMeta(host: boolean, key = ''): Meta {
     this.isHost = host;
     return {
       id: this.options.me.id,
@@ -195,6 +240,9 @@ export class CrewRoom {
       r: host,
       h: host,
       m: host ? [this.options.me.id] : [],
+      mk: host && key ? [key] : [],
+      g: '',
+      k: key,
       p: null,
       s: false,
       t: this.now(),
@@ -220,9 +268,16 @@ export class CrewRoom {
     this.lastStatusAt = -Infinity;
     this.lastStatusJson = '';
     this.seen.clear();
+    this.pins.clear();
+    this.lastCounter.clear();
+    this.verifiedHosts.clear();
+    this.checked.clear();
+    this.entries = [];
   }
 
   private cleanup(): void {
+    this.inbox.clear();
+    this.outbox.clear();
     clearTimeout(this.hostGoneTimer);
     clearTimeout(this.waitTimer);
     clearTimeout(this.statusTimer);
@@ -278,6 +333,27 @@ export class CrewRoom {
     this.hostId = asHost ? this.meta.id : null;
     this.emit();
 
+    // This visit's key pair, and for a host its first signed entry. A device that cannot sign cannot join a crew:
+    // that is the same "offline" the player sees when the network cannot be reached.
+    let first: Meta;
+    try {
+      const made = this.makeIdentity();
+      const identity = isPromise(made) ? await made : made;
+      if (token !== this.token) return 'fail';
+      this.meta = { ...this.meta, k: identity.publicKey, mk: asHost ? [identity.publicKey] : [] };
+      if (asHost) this.pins.set(this.meta.id, identity.publicKey);
+      first = this.meta;
+      if (asHost) {
+        const signed = identity.sign(presenceText(code, this.meta));
+        first = { ...this.meta, g: isPromise(signed) ? await signed : signed };
+        if (token !== this.token) return 'fail';
+      }
+    } catch {
+      if (token !== this.token) return 'fail';
+      this.fail('offline');
+      return 'fail';
+    }
+
     const transport = this.makeTransport();
     this.transport = transport;
     const handlers: TransportHandlers = {
@@ -286,7 +362,7 @@ export class CrewRoom {
       status: (state) => this.onStatus(token, state),
     };
     try {
-      await transport.connect(channelName(code), this.meta.id, this.meta, handlers);
+      await transport.connect(channelName(code), this.meta.id, metaOnWire(first), handlers);
     } catch {
       if (token !== this.token) return 'fail';
       this.fail('offline');
@@ -327,7 +403,16 @@ export class CrewRoom {
       this.fail('started');
       return 'fail';
     }
+    // The host's key is pinned from here on. An entry whose signature does not check out (or a host of an older
+    // version, which cannot sign) is not a host we can trust: there is no unsigned mode.
+    if (!this.verifiedHosts.has(host.id) || !host.k) {
+      this.fail('noRoom');
+      return 'fail';
+    }
+    this.pins.set(host.id, host.k);
     this.hostId = host.id;
+    // From here on the friends' keys come from the host's signed seat list (also from the list we already hold).
+    this.applyPresence();
     this.settled = true;
     // The host decides who has a seat: wait until we are on its list (or told the room is full).
     const verdict = await new Promise<'ok' | 'full' | 'started' | 'timeout'>((resolve) => {
@@ -359,29 +444,130 @@ export class CrewRoom {
 
   // ----- Who is here -------------------------------------------------------------
 
+  /** Everything from the network goes through the one ordered inbox, presence and messages together (pins come from presence). */
   private onPresence(token: number, list: PresenceEntry[]): void {
+    this.inbox.push(() => this.takePresence(token, list));
+  }
+
+  private onMessage(token: number, event: string, payload: unknown): void {
+    this.inbox.push(() => this.takeMessage(token, event, payload));
+  }
+
+  /** A presence list from the network. Runs inside the ordered inbox: a signature that is checked later holds the queue. */
+  private takePresence(token: number, list: PresenceEntry[]): Maybe<void> {
     if (token !== this.token) return;
-    const byKey = new Map<string, { meta: Meta; json: string }[]>();
+    const entries: Meta[] = [];
     for (const entry of list) {
       const meta = parseMeta(entry.meta);
       // A player can only speak for themselves: the id inside must be the id of the entry.
-      if (!meta || meta.id !== entry.key) continue;
-      const group = byKey.get(entry.key) ?? [];
-      group.push({ meta, json: JSON.stringify(meta) });
-      byKey.set(entry.key, group);
+      if (meta && meta.id === entry.key) entries.push(meta);
     }
-    const metas: Meta[] = [];
-    for (const group of byKey.values()) {
-      // Two different entries under one key: somebody is speaking in another player's name. Believe neither.
-      if (group.some((item) => item.json !== group[0].json)) continue;
-      metas.push(group[0].meta);
+    // The host's entry is the only one with signed decisions (the start, the seat list). Check each candidate once.
+    const waits: Promise<void>[] = [];
+    for (const meta of entries) {
+      if (!this.needsCheck(meta)) continue;
+      const result = this.checkHostEntry(meta);
+      if (isPromise(result)) waits.push(result);
+    }
+    const apply = (): void => {
+      if (token !== this.token) return;
+      this.entries = entries;
+      this.applyPresence();
+    };
+    if (waits.length) return Promise.all(waits).then(apply);
+    apply();
+  }
+
+  /** A host entry we could check: current version, signed, and (once the host is locked in) the locked host's. */
+  private needsCheck(meta: Meta): boolean {
+    if (!meta.h || meta.id === this.meta.id || meta.v !== PROTOCOL || !meta.g || !meta.k) return false;
+    return this.hostId === null || meta.id === this.hostId;
+  }
+
+  private checkKey(meta: Meta): string {
+    return `${meta.k}.${meta.g}.${presenceText(this.code, meta)}`;
+  }
+
+  /** Check the host's signature over its decisions (once per distinct entry). Never rejects. */
+  private checkHostEntry(meta: Meta): Maybe<void> {
+    const key = this.checkKey(meta);
+    if (this.checked.has(key)) return;
+    const remember = (ok: boolean): void => {
+      if (this.checked.size >= 64) this.checked.clear();
+      this.checked.set(key, ok);
+    };
+    try {
+      const result = this.crypto.verify(meta.k, presenceText(this.code, meta), meta.g);
+      if (isPromise(result)) return result.then(remember, () => remember(false));
+      remember(result);
+    } catch {
+      remember(false);
+    }
+  }
+
+  /** The signature of this host entry has checked out (our own entry needs no check). */
+  private signedOk(meta: Meta): boolean {
+    return meta.id === this.meta.id || this.checked.get(this.checkKey(meta)) === true;
+  }
+
+  /**
+   * Who is here, from the entries of the last list. Rules:
+   *  - two different entries under one id are believed for neither (somebody speaks in another player's name);
+   *  - an entry whose key is not the one pinned for its id counts the same way: a pin is never replaced;
+   *  - a guest takes the other players' keys from the host's signed seat list (never from the players' own entries).
+   */
+  private applyPresence(): void {
+    let metas = this.believed();
+    if (!this.isHost && this.hostId) {
+      const host = metas.find((meta) => meta.id === this.hostId);
+      if (host && this.signedOk(host) && host.k === this.pins.get(host.id)) {
+        let added = false;
+        host.m.forEach((id, index) => {
+          const key = host.mk[index];
+          if (key && id !== this.meta.id && !this.pins.has(id)) {
+            this.pins.set(id, key);
+            added = true;
+          }
+        });
+        if (added) metas = this.believed();
+      }
     }
     this.present = metas.sort(seatOrder);
+    this.verifiedHosts = new Set(this.present.filter((meta) => meta.h && this.signedOk(meta)).map((meta) => meta.id));
     if (this.settled) this.reconcile();
   }
 
+  private believed(): Meta[] {
+    const byKey = new Map<string, { meta: Meta; json: string }[]>();
+    for (const meta of this.entries) {
+      const group = byKey.get(meta.id) ?? [];
+      group.push({ meta, json: JSON.stringify(meta) });
+      byKey.set(meta.id, group);
+    }
+    const metas: Meta[] = [];
+    for (const [id, group] of byKey) {
+      // Two different entries under one key: somebody is speaking in another player's name. Believe neither.
+      if (group.some((item) => item.json !== group[0].json)) continue;
+      // The same when an entry shows another key than the one pinned for its id: a pin is never replaced, and the id is
+      // believed for neither until the other entry is gone (the usual "left" for a friend, "host out of sight" for the host).
+      const pin = this.pins.get(id);
+      if (pin && group[0].meta.k !== pin) continue;
+      metas.push(group[0].meta);
+    }
+    return metas;
+  }
+
+  /** The host's entry, only while its signed decisions check out. Without that it is as if the host were out of sight. */
   private hostMeta(): Meta | null {
-    return this.present.find((meta) => meta.id === this.hostId) ?? null;
+    const meta = this.present.find((candidate) => candidate.id === this.hostId) ?? null;
+    if (meta && !this.isHost && !this.verifiedHosts.has(meta.id)) return null;
+    return meta;
+  }
+
+  /** The host's signed seat list gives this player a seat, under the key this device really has. */
+  private listedIn(host: Meta): boolean {
+    const index = host.m.indexOf(this.meta.id);
+    return index >= 0 && host.mk[index] === this.meta.k;
   }
 
   /** Host only: seat the players who are here, at most four, in the order they came. */
@@ -393,12 +579,17 @@ export class CrewRoom {
     if (!this.meta.s) {
       for (const meta of this.present) {
         if (seats.length >= MAX_PLAYERS) break;
-        if (meta.id !== mine && !meta.h && !seats.includes(meta.id)) seats.push(meta.id);
+        if (meta.id !== mine && !meta.h && !seats.includes(meta.id)) {
+          seats.push(meta.id);
+          // The host pins a player's key when it seats them.
+          if (meta.k && !this.pins.has(meta.id)) this.pins.set(meta.id, meta.k);
+        }
       }
     }
-    if (seats.join() !== this.meta.m.join()) {
-      this.meta = { ...this.meta, m: seats };
-      this.transport?.track(this.meta);
+    const keys = seats.map((id) => this.pins.get(id) ?? '');
+    if (seats.join() !== this.meta.m.join() || keys.join() !== this.meta.mk.join()) {
+      this.meta = { ...this.meta, m: seats, mk: keys };
+      this.publish();
     }
     return seats.map((id) => (id === mine ? this.meta : this.present.find((meta) => meta.id === id))).filter((meta): meta is Meta => !!meta);
   }
@@ -408,7 +599,7 @@ export class CrewRoom {
     // A joiner that is still waiting for its seat.
     if (this.phase === 'connecting' && this.settled && !this.isHost) {
       const host = this.hostMeta();
-      if (host && host.m.includes(mine)) this.admission?.('ok');
+      if (host && this.listedIn(host)) this.admission?.('ok');
       else if (host?.s) this.admission?.('started'); // the host started without us: the seats are frozen
       else if (host && host.m.length >= MAX_PLAYERS) this.admission?.('full');
       return;
@@ -417,11 +608,11 @@ export class CrewRoom {
     // The host has started the mission: that is how a friend learns of it.
     if (this.phase === 'lobby' && !this.isHost) {
       const started = this.hostMeta();
-      if (started?.p && started.m.includes(mine)) {
+      if (started?.p && this.listedIn(started)) {
         this.startPayload = started.p;
         this.phase = 'playing';
         this.meta = { ...this.meta, s: true };
-        this.transport?.track(this.meta);
+        this.publish();
         this.emit();
         this.onStart?.(started.p);
         return;
@@ -436,7 +627,7 @@ export class CrewRoom {
     } else if (this.isHost) {
       admitted = this.seat();
     } else if (host) {
-      if (!host.m.includes(mine)) {
+      if (!this.listedIn(host)) {
         // The host dropped us from the list (a blink, or no seat left), or started without us.
         if (host.s) this.fail('started');
         else if (host.m.length >= MAX_PLAYERS) this.fail('full');
@@ -479,7 +670,7 @@ export class CrewRoom {
       if (earlier.some((meta) => meta.n === this.meta.n)) {
         const taken = (admitted ?? []).filter((meta) => meta.id !== mine).map((meta) => meta.n);
         this.meta = { ...this.meta, n: freeName(taken, this.meta.n) };
-        this.transport?.track(this.meta);
+        this.publish();
       }
       // The host is gone before the start: the room closes (after a short wait, in case it was a blink).
       if (this.hostId && !this.isHost && !host) {
@@ -516,7 +707,7 @@ export class CrewRoom {
     if (token !== this.token) return;
     this.online = state === 'online';
     if (this.online && this.settled) {
-      this.transport?.track(this.meta);
+      this.publish();
       if (this.phase === 'playing') this.shareAgain();
     }
     this.emit();
@@ -529,7 +720,7 @@ export class CrewRoom {
       const now = this.now();
       if (now - this.lastFinalAt >= STATUS_MIN_MS) {
         this.lastFinalAt = now;
-        this.transport?.send('final', statusToWire(this.meta.id, this.finalStatus));
+        this.out('final', statusToWire(this.meta.id, this.finalStatus));
       }
     } else if (this.latestStatus) {
       this.queueStatus();
@@ -541,7 +732,7 @@ export class CrewRoom {
   setReady(ready: boolean): void {
     if (this.phase !== 'lobby' || this.meta.r === ready) return;
     this.meta = { ...this.meta, r: ready };
-    this.transport?.track(this.meta);
+    this.publish();
     this.reconcile();
   }
 
@@ -569,7 +760,7 @@ export class CrewRoom {
     this.startPayload = payload;
     this.phase = 'playing';
     this.meta = { ...this.meta, s: true, r: true, p: payload };
-    this.transport?.track(this.meta);
+    this.publish();
     this.reconcile();
     this.onStart?.(payload);
     return true;
@@ -606,7 +797,7 @@ export class CrewRoom {
     if (json === this.lastStatusJson) return;
     this.lastStatusJson = json;
     this.lastStatusAt = this.now();
-    this.transport?.send('status', statusToWire(this.meta.id, status));
+    this.out('status', statusToWire(this.meta.id, status));
   }
 
   /** The mission is over: send the final numbers, once. */
@@ -621,7 +812,7 @@ export class CrewRoom {
       own.status = status;
       own.finished = true;
     }
-    this.transport?.send('final', statusToWire(this.meta.id, status));
+    this.out('final', statusToWire(this.meta.id, status));
     this.emit();
   }
 
@@ -631,7 +822,7 @@ export class CrewRoom {
     const now = this.now();
     if (now - this.lastReactionAt < REACTION_MIN_MS) return false;
     this.lastReactionAt = now;
-    this.transport?.send('react', wire(this.meta.id, { id: reaction }));
+    this.out('react', wire(this.meta.id, { id: reaction }));
     return true;
   }
 
@@ -641,7 +832,7 @@ export class CrewRoom {
     const now = this.now();
     if (now - this.lastPosAt < POSITION_MIN_MS - 1) return false;
     this.lastPosAt = now;
-    this.transport?.send('pos', wire(this.meta.id, { ...position }));
+    this.out('pos', wire(this.meta.id, { ...position }));
     return true;
   }
 
@@ -661,8 +852,70 @@ export class CrewRoom {
       return false;
     }
     if (size > sizeLimit(event)) return false;
-    this.transport?.send(event, payload);
-    return true;
+    return this.out(event, payload);
+  }
+
+  // ----- Signing and sending -------------------------------------------------------------
+
+  /** This visit's key pair, made once per room object (so once per visit). */
+  private makeIdentity(): Maybe<Identity> {
+    if (this.identity) return this.identity;
+    const made = this.crypto.generate();
+    if (isPromise(made)) return made.then((identity) => (this.identity = identity));
+    return (this.identity = made);
+  }
+
+  /**
+   * Show the others our presence entry. The host's entry carries its signature over the decisions in it (`g`); it is
+   * never published without one that matches what it says. Goes through the outbox, so it keeps its place among the
+   * messages while a signature is made.
+   */
+  private publish(): void {
+    const identity = this.identity;
+    if (!this.transport || !identity) return;
+    const token = this.token;
+    const meta = this.meta;
+    this.outbox.push(() => {
+      if (token !== this.token) return;
+      if (!meta.h) {
+        this.transport?.track(metaOnWire(meta));
+        return;
+      }
+      const done = (g: string): void => {
+        if (token === this.token) this.transport?.track(metaOnWire({ ...meta, g }));
+      };
+      const signed = identity.sign(presenceText(this.code, meta));
+      return isPromise(signed) ? signed.then(done, () => undefined) : done(signed);
+    });
+  }
+
+  /**
+   * Sign one message and send it. The message gets our id and the next counter, and the signature covers the room, the
+   * event and all of it. The signing may take a moment (Web Crypto); the outbox keeps the order of the calls.
+   * Returns false when nothing was queued.
+   */
+  private out(event: string, body: Record<string, unknown>): boolean {
+    const identity = this.identity;
+    const token = this.token;
+    if (!identity || !this.transport) return false;
+    let plain: Record<string, unknown>;
+    try {
+      // The same plain data the other side will read back from the network.
+      plain = JSON.parse(JSON.stringify({ ...body, from: this.meta.id, q: this.counter + 1 })) as Record<string, unknown>;
+    } catch {
+      return false;
+    }
+    const text = messageText(this.code, event, plain);
+    const queued = this.outbox.push(() => {
+      if (token !== this.token) return;
+      const send = (sig: string): void => {
+        if (token === this.token) this.transport?.send(event, { ...plain, sig });
+      };
+      const signed = identity.sign(text);
+      return isPromise(signed) ? signed.then(send, () => undefined) : send(signed);
+    });
+    if (queued) this.counter++;
+    return queued;
   }
 
   // ----- Receiving ---------------------------------------------------------------------
@@ -680,35 +933,79 @@ export class CrewRoom {
     return true;
   }
 
+  /** Who may send this shared-base message to us: state and records only from the commander (to the guests), intents and resync requests only to the commander. */
+  private mayReceive(event: string, from: string): boolean {
+    if (!isCoopEvent(event)) return true;
+    if (this.phase !== 'playing' || this.startPayload?.mode !== 'coop') return false;
+    if (event === 'st' || event === 'rec') return !this.isHost && from === this.hostId;
+    return this.isHost;
+  }
+
+  /**
+   * One message from the network, inside the ordered inbox. The order of the checks matters: the cheap ones first (size,
+   * who the sender is, whether we hold a key for it), then the signature, and only then the counter and the rate budget,
+   * so a stranger who writes in a friend's name can neither use up the friend's budget nor push the friend's counter up.
+   */
+  private takeMessage(token: number, event: string, payload: unknown): Maybe<void> {
+    if (token !== this.token || (this.phase !== 'lobby' && this.phase !== 'playing')) return;
+    if (!(EVENT_NAMES as readonly string[]).includes(event) || !isRecord(payload)) return;
+    const { sig, q, ...body } = payload;
+    if (!isSignature(sig) || typeof q !== 'number' || !Number.isInteger(q) || q < 1 || q > COUNTER_MAX) return;
+    let size: number;
+    try {
+      size = JSON.stringify(payload).length;
+    } catch {
+      return;
+    }
+    if (size > sizeLimit(event) + SIG_OVERHEAD) return;
+    const from = playerId(body.from);
+    if (from === null || from === this.meta.id) return;
+    const sender = this.roster.get(from);
+    if (!sender || !sender.here || !this.mayReceive(event, from)) return;
+    // No pinned key for this id: nothing it says can be believed.
+    const key = this.pins.get(from);
+    if (!key) return;
+    const accept = (good: boolean): void => {
+      if (!good || token !== this.token) return;
+      if (q <= (this.lastCounter.get(from) ?? 0)) return; // a copy of an older message
+      this.lastCounter.set(from, q);
+      this.deliver(event, body, from);
+    };
+    try {
+      const result = this.crypto.verify(key, messageText(this.code, event, { ...body, q }), sig);
+      if (isPromise(result)) return result.then(accept, () => undefined);
+      accept(result);
+    } catch {
+      /* a check that throws is a message that does not count */
+    }
+  }
+
+  /** A checked shared-base message (signature already verified): who it is from, who may send it, the rate, then every field. */
   private onCoopMessage(event: CoopEventName, payload: unknown): void {
     if (this.phase !== 'playing' || this.startPayload?.mode !== 'coop') return;
     const from = senderOf(payload);
     if (from === null || from === this.meta.id) return;
     const sender = this.roster.get(from);
     if (!sender || !sender.here) return;
-    // State and records only from the commander (to the guests); intents and resync requests only to the commander.
-    if (event === 'st' || event === 'rec') {
-      if (this.isHost || from !== this.hostId) return;
-    } else if (!this.isHost) {
-      return;
-    }
+    if (!this.mayReceive(event, from)) return;
     if (!this.allowed(from, event)) return;
     const incoming = parseCoopMessage(event, payload);
     if (!incoming || incoming.from !== from) return;
     this.onCoop?.(incoming, { ...sender });
   }
 
-  private onMessage(token: number, event: string, payload: unknown): void {
-    if (token !== this.token || (this.phase !== 'lobby' && this.phase !== 'playing')) return;
+  /** A message whose signature checked out, from a player we know. The body is the payload without `sig` and `q`. */
+  private deliver(event: string, body: Record<string, unknown>, from: string): void {
+    if (this.phase !== 'lobby' && this.phase !== 'playing') return;
+    const sender = this.roster.get(from);
+    if (!sender || !sender.here || !this.mayReceive(event, from)) return;
     if (isCoopEvent(event)) {
-      this.onCoopMessage(event, payload);
+      this.onCoopMessage(event, body);
       return;
     }
-    const message = parseMessage(event, payload);
-    if (!message || message.from === this.meta.id) return;
-    const sender = this.roster.get(message.from);
-    if (!sender || !sender.here) return;
-    if (!this.allowed(message.from, message.event)) return;
+    const message = parseMessage(event, body);
+    if (!message || message.from !== from) return;
+    if (!this.allowed(from, message.event)) return;
     switch (message.event) {
       case 'status':
         if (this.phase !== 'playing' || sender.finished) return;
@@ -730,4 +1027,3 @@ export class CrewRoom {
     }
   }
 }
-

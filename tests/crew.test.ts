@@ -33,6 +33,7 @@ import { MemoryHub, MemoryTransport } from '../src/net/transport';
 import { createMission } from '../src/sim/mission';
 import type { MissionConfig } from '../src/sim/types';
 import { DATA, BOTS, play } from './bots';
+import { Handmade } from './handmade';
 
 // ----- Helpers -------------------------------------------------------------------
 
@@ -292,10 +293,10 @@ describe('message validation', () => {
 
   it('presence must say who it is, with numbers only', () => {
     const meta = { id: 'abc123def4', n: 3, c: 2, r: true, h: false, s: false, t: 1, v: 1 };
-    expect(parseMeta(meta)).toEqual({ ...meta, m: [], p: null });
+    expect(parseMeta(meta)).toEqual({ ...meta, m: [], p: null, k: '', mk: [], g: '' });
     const mission = { choice: CHOICE, seed: 5, startDate: START_DATE };
     const host = { ...meta, h: true, s: true, m: ['abc123def4', 'player01aa'], p: mission };
-    expect(parseMeta(host)).toEqual(host);
+    expect(parseMeta(host)).toEqual({ ...host, k: '', mk: [], g: '' });
     const badPatches: Record<string, unknown>[] = [
       { p: { ...mission, seed: 1.5 } },
       { p: 'go' },
@@ -868,51 +869,70 @@ describe('numbers and stickers in the game', () => {
 });
 
 describe('bad and abusive messages', () => {
-  async function playing() {
+  /** A started crew of two. With `hand`, a hand-made client with a seat and a key of its own too (it signs for itself, so only the message rules are tested). */
+  async function playing(hand = false) {
     const hub = new MemoryHub();
     const set = await lobby(hub, 1);
+    const maker = hand ? await Handmade.join(hub, set.code, { id: 'handmade01' }) : null;
+    await tick(100);
     set.host.room.start(CHOICE, 9, START_DATE);
     await tick(10);
     host_status(set.host);
     await tick(10);
-    return { hub, ...set };
+    if (maker) {
+      await maker.send('status', status({ week: 2 }));
+      await tick(10);
+    }
+    return { hub, hand: maker!, ...set };
   }
   function host_status(c: Client): void {
     c.room.sendStatus(status({ week: 2 }));
   }
 
   it('malformed messages change nothing and break nothing', async () => {
-    const { hub, host, guests, code } = await playing();
+    const { host, guests, hand } = await playing(true);
     const guest = guests[0];
-    const sender = await intruder(hub, code, host.id); // pretends to be the host's id
-    const junk: [string, unknown][] = [
-      ['status', null],
-      ['status', 'hello'],
-      ['status', { from: host.id, week: 'ten' }],
-      ['status', { from: host.id, ...status(), air: 'lots' }],
-      ['status', { from: host.id, ...status(), step: 'hack' }],
-      ['status', { from: host.id, ...status(), air: 1e12 }],
-      ['final', { from: host.id }],
-      ['react', { from: host.id, id: 'Hello friend, what is your name?' }],
-      ['chat', { from: host.id, text: 'hi' }],
-      ['pos', { from: host.id, x: 'far' }],
-      ['start', { from: host.id, choice: 7, seed: 1, startDate: 'x' }],
+    // A seated client with a key of its own, signing everything it sends: the rules for the content still apply.
+    const junk: [string, Record<string, unknown>][] = [
+      ['status', { week: 'ten' }],
+      ['status', { ...status(), air: 'lots' }],
+      ['status', { ...status(), step: 'hack' }],
+      ['status', { ...status(), air: 1e12 }],
+      ['final', {}],
+      ['react', { id: 'Hello friend, what is your name?' }],
+      ['chat', { text: 'hi' }],
+      ['pos', { x: 'far' }],
+      ['start', { choice: 7, seed: 1, startDate: 'x' }],
+      // Signed with its own key, but in the host name: the host key is the one pinned for that id.
+      ['status', { ...status({ week: 6 }), from: host.id }],
+      ['react', { id: 'wow', from: host.id }],
     ];
-    for (const [event, payload] of junk) sender.send(event, payload);
+    for (const [event, body] of junk) await hand.send(event, body);
+    // Things that are no message at all.
+    hand.raw('status', null);
+    hand.raw('status', 'hello');
+    hand.raw('status', { from: hand.id, ...status() }); // not signed
     await tick(10);
-    const seen = guest.room.view.players.find((p) => p.id === host.id)!;
+    const seen = guest.room.view.players.find((p) => p.id === hand.id)!;
     expect(seen.status!.week).toBe(2);
     expect(seen.finished).toBe(false);
+    expect(guest.room.view.players.find((p) => p.id === host.id)!.status!.week).toBe(2);
     expect(guest.reactions).toHaveLength(0);
     expect(guest.room.view.phase).toBe('playing');
+    // The same road does carry a good one (so the zero above means "dropped", not "never arrived").
+    await hand.send('status', status({ week: 3 }));
+    await hand.send('react', { id: 'wow' });
+    await tick(10);
+    expect(guest.room.view.players.find((p) => p.id === hand.id)!.status!.week).toBe(3);
+    expect(guest.reactions).toHaveLength(1);
   });
 
   it('an oversized message is dropped', async () => {
-    const { hub, host, guests, code } = await playing();
-    const sender = await intruder(hub, code, host.id);
-    sender.send('status', { from: host.id, ...status({ week: 5 }), pad: 'z'.repeat(5000) });
+    const { guests, hand } = await playing(true);
+    await hand.send('status', { ...status({ week: 5 }), pad: 'z'.repeat(5000) });
+    await hand.send('status', { ...status({ week: 4 }), pad: 'z'.repeat(40) }); // a little extra is not a field: rebuilt and taken without it
     await tick(10);
-    expect(guests[0].room.view.players.find((p) => p.id === host.id)!.status!.week).toBe(2);
+    expect(guests[0].room.view.players.find((p) => p.id === hand.id)!.status!.week).toBe(4);
   });
 
   it('messages from somebody who is not in the room are ignored', async () => {
@@ -927,12 +947,11 @@ describe('bad and abusive messages', () => {
   });
 
   it('a flood of messages is cut off', async () => {
-    const { hub, host, guests, code } = await playing();
-    const sender = await intruder(hub, code, host.id);
-    for (let i = 0; i < 100; i++) sender.send('react', { from: host.id, id: 'wow' });
+    const { guests, hand } = await playing(true);
+    for (let i = 0; i < 100; i++) await hand.send('react', { id: 'wow' });
     await tick(10);
     expect(guests[0].reactions.length).toBeLessThanOrEqual(3);
-    for (let i = 0; i < 100; i++) sender.send('status', { from: host.id, ...status({ week: 1 + (i % 5) }) });
+    for (let i = 0; i < 100; i++) await hand.send('status', status({ week: 1 + (i % 5) }));
     await tick(10);
     expect(guests[0].room.view.phase).toBe('playing');
   });
