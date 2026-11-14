@@ -20,7 +20,7 @@
 import { EVENTS } from '../sim/events';
 import { FINDS } from '../sim/finds';
 import { parseIntent } from '../sim/coop';
-import type { CoopMeta, CoopStage, Intent } from '../sim/coop';
+import type { Contribution, CoopMeta, CoopStage, Intent } from '../sim/coop';
 import { COOP_STAGES } from '../sim/coop';
 import type { CoopSim } from '../sim/coop';
 import type { ChoiceResult } from '../sim/mission';
@@ -376,6 +376,11 @@ function seatList(raw: unknown, seats: readonly string[], anyone = false): strin
   return out;
 }
 
+function readContribution(raw: unknown): Contribution {
+  const o = obj(raw);
+  return { samples: nint(o.samples, 0, 999), finds: nint(o.finds, 0, 999), games: nint(o.games, 0, 999), prints: nint(o.prints, 0, 999), votes: nint(o.votes, 0, 999) };
+}
+
 function readMeta(o: Record<string, unknown>, from: string): CoopMeta {
   const seats: string[] = [];
   for (const item of nlist(o.seats, 4)) {
@@ -385,7 +390,7 @@ function readMeta(o: Record<string, unknown>, from: string): CoopMeta {
   }
   // The commander is the first seat, and it is the sender: nobody else can send the state.
   if (seats.length < 1 || seats[0] !== from) bad();
-  return {
+  const meta: CoopMeta = {
     stage: nid<CoopStage>(o.stage, COOP_STAGES),
     rev: nint(o.rev, 0, 1e9),
     week: nint(o.week, 1, 99),
@@ -399,6 +404,8 @@ function readMeta(o: Record<string, unknown>, from: string): CoopMeta {
     acks: seatMap(o.acks, seats, (v) => nint(v, 0, 1_000_000), true),
     choice: o.choice === null ? null : readChoice(o.choice),
   };
+  if (o.contrib !== undefined) meta.contrib = seatMap(o.contrib, seats, readContribution, true);
+  return meta;
 }
 
 /** What a guest reads from one `st`. */

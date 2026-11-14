@@ -139,6 +139,14 @@ export const crewEn: Record<string, string> = {
   'crew.line.storm': 'Week {week}: the crew kept working in the storm.',
   'crew.line.calm': 'No big solar storm in this mission.',
   'crew.res.leave': 'Leave the crew',
+  'crew.co.title': 'One crew, one result',
+  'crew.co.did': 'What each friend did',
+  'crew.co.friend': 'A friend',
+  'crew.co.samples': 'Samples: {n}',
+  'crew.co.finds': 'Finds: {n}',
+  'crew.co.games': 'Room games: {n}',
+  'crew.co.prints': 'Prints: {n}',
+  'crew.co.votes': 'Votes: {n}',
 
   // ----- Preset crew names
   'crew.name.0': 'Cadet Comet',
@@ -294,6 +302,14 @@ export const crewRu: Record<string, string> = {
   'crew.line.storm': 'Неделя {week}: экипаж продолжал работать в бурю.',
   'crew.line.calm': 'В этой миссии не было сильной солнечной бури.',
   'crew.res.leave': 'Выйти из экипажа',
+  'crew.co.title': 'Общий результат экипажа',
+  'crew.co.did': 'Что сделал каждый друг',
+  'crew.co.friend': 'Друг',
+  'crew.co.samples': 'Образцы: {n}',
+  'crew.co.finds': 'Находки: {n}',
+  'crew.co.games': 'Игры в комнатах: {n}',
+  'crew.co.prints': 'Печать: {n}',
+  'crew.co.votes': 'Голоса: {n}',
 
   // ----- Preset crew names
   'crew.name.0': 'Кадет Комета',

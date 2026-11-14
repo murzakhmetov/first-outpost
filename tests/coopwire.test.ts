@@ -971,3 +971,40 @@ describe('the real transport subscribes to every message name', () => {
     vi.doUnmock('@supabase/realtime-js');
   });
 });
+
+describe('what each seat did, for the debrief', () => {
+  const crew = ['seat000001', 'seat000002', 'seat000003', 'seat000004'];
+  const body = (stage: CoopSim['stage']): Record<string, unknown> => {
+    const co = createCoop(createMission(config(5, { weeks: 6 }), DATA), crew, 0);
+    co.stage = stage;
+    co.contrib[crew[1]] = { samples: 9, finds: 2, games: 1, prints: 3, votes: 4 };
+    return JSON.parse(JSON.stringify(encodeSnapshot(HOST_SEAT, co, 0))) as Record<string, unknown>;
+  };
+  const HOST_SEAT = crew[0];
+
+  it('travels on the report and the end only, and reads back the same', () => {
+    for (const stage of ['report', 'end'] as const) {
+      const msg = parseCoopMessage('st', body(stage));
+      expect(msg && msg.event === 'st' && msg.snap.meta.contrib?.[crew[1]]).toEqual({ samples: 9, finds: 2, games: 1, prints: 3, votes: 4 });
+    }
+    for (const stage of ['briefing', 'event', 'plan', 'walk'] as const) expect(body(stage).contrib).toBeUndefined();
+  });
+
+  it('stays inside the size limit with four seats', () => {
+    expect(JSON.stringify(body('end')).length).toBeLessThanOrEqual(2600);
+  });
+
+  it('refuses numbers out of range, strangers, and more than four entries', () => {
+    const bad = (patch: (contrib: Record<string, unknown>) => void): unknown => {
+      const b = body('end');
+      patch(b.contrib as Record<string, unknown>);
+      return parseCoopMessage('st', b);
+    };
+    expect(bad((c) => (c[crew[1]] = { samples: -1, finds: 0, games: 0, prints: 0, votes: 0 }))).toBeNull();
+    expect(bad((c) => (c[crew[1]] = { samples: 1e6, finds: 0, games: 0, prints: 0, votes: 0 }))).toBeNull();
+    expect(bad((c) => (c[crew[1]] = { samples: 1 }))).toBeNull();
+    expect(bad((c) => (c[crew[1]] = 'many'))).toBeNull();
+    expect(bad((c) => (c['<b>x</b>'] = { samples: 1, finds: 0, games: 0, prints: 0, votes: 0 }))).toBeNull();
+    expect(bad((c) => (c['seat000005'] = { samples: 1, finds: 0, games: 0, prints: 0, votes: 0 }))).toBeNull();
+  });
+});

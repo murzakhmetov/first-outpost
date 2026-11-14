@@ -11,7 +11,7 @@
  */
 import { signal } from '@preact/signals';
 import { COOP_TIMING } from '../sim/coop';
-import type { CoopMeta, CoopStage } from '../sim/coop';
+import type { Contribution, CoopMeta, CoopStage } from '../sim/coop';
 import type { Alloc, ModuleId, OptionId } from '../sim/types';
 import { MODULES } from '../sim/types';
 
@@ -61,6 +61,8 @@ export interface CoopLive {
   alloc: Alloc;
   flash: CoopFlash | null;
   cleared: CoopCleared | null;
+  /** What each seat did for the crew (known from the report on). */
+  contrib: Record<string, Contribution>;
   /** The same stage, week and walk phase: a new one starts a new "since". */
   key: string;
 }
@@ -122,6 +124,7 @@ export function makeLive(prev: CoopLive | null, meta: CoopMeta, ctx: CoopContext
     alloc: { ...ctx.alloc },
     flash,
     cleared,
+    contrib: meta.contrib ?? (prev && prev.me === ctx.me ? prev.contrib : {}),
     key,
   };
 }
@@ -223,6 +226,19 @@ export function doingKey(live: CoopLive): string | null {
     default:
       return null;
   }
+}
+
+// ----- The debrief ------------------------------------------------------------------------
+
+export const CONTRIB_KEYS = ['samples', 'finds', 'games', 'prints', 'votes'] as const;
+
+const NO_CONTRIB: Contribution = { samples: 0, finds: 0, games: 0, prints: 0, votes: 0 };
+
+/** Who did what for the crew, one row per seat (the seats still in the crew first, then friends who left), in room order. */
+export function contribRows(live: CoopLive, order: readonly string[]): { id: string; c: Contribution; left: boolean }[] {
+  const known = [...live.seats, ...Object.keys(live.contrib).filter((id) => !live.seats.includes(id))];
+  const ids = [...order.filter((id) => known.includes(id)), ...known.filter((id) => !order.includes(id))];
+  return ids.map((id) => ({ id, c: live.contrib[id] ?? NO_CONTRIB, left: !live.seats.includes(id) }));
 }
 
 // ----- The signal and the controls -------------------------------------------------------------

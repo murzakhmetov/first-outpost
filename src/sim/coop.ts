@@ -653,10 +653,12 @@ export interface CoopMeta {
   left: number | null;
   acks: Record<string, number>;
   choice: ChoiceResult | null;
+  /** What each seat did for the crew. Sent only on the report and the end (the debrief), to keep the other messages small. */
+  contrib?: Record<string, Contribution>;
 }
 
 export function coopMeta(co: CoopSim, now: number): CoopMeta {
-  return {
+  const meta: CoopMeta = {
     stage: co.stage,
     rev: co.rev,
     week: co.mission.week,
@@ -670,4 +672,6 @@ export function coopMeta(co: CoopSim, now: number): CoopMeta {
     acks: { ...co.acks },
     choice: co.choice,
   };
+  if (co.stage === 'report' || co.stage === 'end') meta.contrib = Object.fromEntries(Object.entries(co.contrib).map(([id, c]) => [id, { ...c }]));
+  return meta;
 }
