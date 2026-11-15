@@ -14,7 +14,7 @@ A free game for ages 7–12. You command a small outpost on **Mars** or at the *
 - **Every week is a trade-off.** A few energy cells and four systems that want them: life support, the greenhouse, the lab and the radiation shield. There are never enough. The game shows what each choice did, and the final review says which choice caused what.
 - **Every task is explained: what to do and why.** The opening film lands the crew, then Lumi flies over the outpost and shows each task of a week (forecast, power plan, air, food, lab, shield, walk, events, night). The forecast, the event card, the power plan (and each of its four systems), the walk briefing and the weekly report have a **Why?** button that replays the task's short film and ends on a card: what to do, why it matters, and a true fact with its source. Big moments get their own film: a solar storm, a Mars dust storm, an eclipse seen from the Moon, the week the Sun blocks the radio to Mars, the first harvest, the first new building, the flight home.
 - **Play alone or with friends.** Crew mode is optional: up to four friends fly the very same mission (the same real Sun, the same cards), see each other's astronauts walk around the outpost (with a preset name tag) and send preset stickers. It has two ways to play: **each their own base** (everyone runs their own game, waits for the others at the weekly report and compares crews at the end) and **one base together** (the crew shares one outpost, votes on the event card, plans the power, walks outside together and reads one report; the commander's device runs the rules). Both ways are on; a switch (`COOP_DEFAULT_VISIBLE` in `src/net/config.ts`) can hide the shared base again. Every message between friends is signed, so nobody can pose as another player. No chat, no typed names, no account.
-- **Made for 7–12.** Short sentences, science words that explain themselves on tap, recorded voices for the films and Lumi, read-aloud, three text sizes, colour-blind patterns, phone or computer. Lumi, the helper robot, speaks from rules and lines written for the game, not from an AI chatbot: it only says what the team wrote and checked. Its voice is synthetic speech reading those same lines.
+- **Made for childrens.** Short sentences, science words that explain themselves on tap, recorded voices for the films and Lumi, read-aloud, three text sizes, colour-blind patterns, phone or computer. Lumi, the helper robot, speaks from rules and lines written for the game, not from an AI chatbot: it only says what the team wrote and checked. Its voice is synthetic speech reading those same lines.
 
 **For teachers:** [learning goals, a 40-minute lesson and questions for the class](docs/TEACHERS.md).
 
@@ -153,40 +153,6 @@ tests        unit tests and the balance simulation
 docs         data sources, fact sheets, screenshots
 ```
 
-## Keeping the Sun data fresh
-
-```bash
-npm run data        # rebuild the full archive (DONKI since 2010, REMS)
-node scripts/fetch-donki.ts --latest   # only the last 90 days
-```
-
-`.github/workflows/update-space-weather.yml` is scheduled to run the second command every day and commit the small "latest" file (a manual run on 13 November 2026 fetched the data and committed it; the first scheduled run is still to be seen). Players who are online also get newer records straight from NASA.
-
-## Rebuilding the 3D models
-
-The models in `public/models/` are built by Blender (4.2 or newer) from the Python scripts in `scripts/models/`:
-
-```bash
-blender -b --factory-startup --python-exit-code 1 -P scripts/models/build.py
-```
-
-Add model names after `--` to build only some of them, for example `-- astronaut rover`. You do not need Blender to play or to build the site: the finished `.glb` files are in the repository.
-
-## Deploy
-
-The site is static and uses relative paths, so it works from any folder on any host.
-
-- **GitHub Pages:** turn on Pages (Settings → Pages → Source: GitHub Actions), then run `.github/workflows/pages.yml` from the Actions tab.
-- **Checks:** `.github/workflows/ci.yml` runs the type check, the tests and the build on every push.
-- **Vercel / Netlify / any host:** build command `npm run build`, output folder `dist`. The public version runs on Vercel: <https://first-outpost.vercel.app>.
-
-## Use of AI
-
-### How this was made
-
-The team directed the project and made the design decisions; the code, the Blender scripts, the texts and most checks were written by AI agents (Anthropic Claude, in Claude Code) working in the team's folder. The first commit is one large import because the folder was put under version control when the game was already playable; every later commit is a small, described step, and the review rounds (bugs found by separate reviewer agents, each with a test or a reproduction) are visible in the commit messages. The claims checks (212 claims, 83 links) were also done by agents against the linked NASA pages, not by a human reader. No child has played the game yet: that is the next step, and [docs/TEACHERS.md](docs/TEACHERS.md) is written so a teacher can run it in a lesson.
-
-AI tools (Anthropic Claude) wrote the code, the texts, the Blender scripts that build the 3D models, and the code that makes textures and sound. The facts and numbers shown to players were checked against the linked NASA pages by AI agents, not by a human reader, and the finished texts were checked a second time the same way (212 claims, 83 links); the quotes are kept so a person can re-check them. The eight discovery cards were written from their own check of NASA pages. The records, with quotes, are in [docs/sources/](docs/sources/). No AI image or video generator was used: every model is the output of a script in this repository, and textures, sound effects and music are produced by the game's own code at run time. The voices are the one exception: they are synthetic speech made with ElevenLabs text-to-speech from the game's own checked lines, and the game says so in its About panel.
 
 ## Credits and notes
 
