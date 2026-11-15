@@ -8,7 +8,7 @@ Straight into the real solar storm of May 2024: [on Mars](https://first-outpost.
 
 In the browser, on a phone, a tablet or a computer. No install, no account, no ads, no tracking. English and Russian.
 
-A free game for ages 7–12. You command a small outpost on **Mars** or at the **Moon's south pole** for 6 or 10 weeks.
+A free game for browser. You command a small outpost on **Mars** or at the **Moon's south pole** for 6 or 10 weeks.
 
 - **The Sun in the game is the real Sun.** Every mission replays real dates from NASA's space-weather records (DONKI, 2010–2026). The solar storm of May 2024 arrives in the game on the day it arrived in real life, Mars forecasts show the temperatures Curiosity measured on those dates, and the radio delay to Earth comes from where the planets really were.
 - **Every week is a trade-off.** A few energy cells and four systems that want them: life support, the greenhouse, the lab and the radiation shield. There are never enough. The game shows what each choice did, and the final review says which choice caused what.
